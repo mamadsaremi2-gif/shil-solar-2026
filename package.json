@@ -1,0 +1,26 @@
+{
+  "name": "shil-solar-design-suite",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Solar Design Suite - SHIL engineering PWA for solar and battery system design",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "dev:host": "vite --host 0.0.0.0",
+    "build": "node ./node_modules/vite/bin/vite.js build",
+    "build:github": "VITE_BASE=./ node ./node_modules/vite/bin/vite.js build",
+    "preview": "vite preview",
+    "preview:host": "vite preview --host 0.0.0.0"
+  },
+  "dependencies": {
+    "html2canvas": "^1.4.1",
+    "jspdf": "^2.5.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.1",
+    "vite": "^5.4.21",
+    "vite-plugin-pwa": "^0.20.5"
+  }
+}
