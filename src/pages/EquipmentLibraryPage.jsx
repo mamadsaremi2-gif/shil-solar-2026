@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useProjectStore } from '../app/store/projectStore';
 import { EquipmentRepository } from '../data/repositories/EquipmentRepository';
+import { parseFaNumber } from '../shared/utils/faNumbers';
 
 const CUSTOM_SPEC_FIELDS = {
   panel: [
@@ -31,6 +32,16 @@ const CUSTOM_SPEC_FIELDS = {
     ['mpptMinVoltage', 'حداقل MPPT'],
     ['mpptMaxVoltage', 'حداکثر MPPT'],
     ['controllerEfficiency', 'راندمان کنترلر'],
+  ],
+  load: [
+    ['name', 'نام مصرف‌کننده'],
+    ['qty', 'تعداد پیش‌فرض'],
+    ['power', 'توان هر عدد (W)'],
+    ['hours', 'ساعت کار روزانه'],
+    ['powerFactor', 'ضریب توان PF'],
+    ['coincidenceFactor', 'ضریب همزمانی'],
+    ['loadType', 'نوع بار'],
+    ['surgeFactor', 'ضریب راه‌اندازی'],
   ],
 };
 
@@ -80,7 +91,7 @@ export function EquipmentLibraryPage() {
     return Object.fromEntries(
       Object.entries(draft.specs).map(([key, value]) => {
         const trimmed = String(value ?? '').trim();
-        const num = Number(trimmed);
+        const num = parseFaNumber(trimmed, NaN);
         return [key, trimmed !== '' && Number.isFinite(num) ? num : trimmed];
       })
     );

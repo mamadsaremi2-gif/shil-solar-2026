@@ -1,6 +1,5 @@
-
--- SHIL SOLAR Supabase schema
--- Run this file in Supabase SQL Editor.
+-- SHIL SOLAR Supabase schema - Cloud/Admin production setup
+-- Run this file in Supabase SQL Editor before publishing the app.
 
 create extension if not exists "pgcrypto";
 
@@ -25,6 +24,7 @@ create table if not exists public.profiles (
   request_note text,
   approved_by uuid references auth.users(id),
   approved_at timestamptz,
+  last_seen_at timestamptz,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -51,6 +51,31 @@ create table if not exists public.usage_events (
   user_agent text,
   created_at timestamptz not null default now()
 );
+
+create index if not exists idx_profiles_status_role on public.profiles(status, role);
+create index if not exists idx_app_projects_owner_updated on public.app_projects(owner_id, updated_at desc);
+create index if not exists idx_usage_events_user_created on public.usage_events(user_id, created_at desc);
+create index if not exists idx_usage_events_name_created on public.usage_events(event_name, created_at desc);
+
+create or replace function public.set_updated_at()
+returns trigger
+language plpgsql
+as $$
+begin
+  new.updated_at = now();
+  return new;
+end;
+$$;
+
+drop trigger if exists profiles_set_updated_at on public.profiles;
+create trigger profiles_set_updated_at
+before update on public.profiles
+for each row execute procedure public.set_updated_at();
+
+drop trigger if exists app_projects_set_updated_at on public.app_projects;
+create trigger app_projects_set_updated_at
+before update on public.app_projects
+for each row execute procedure public.set_updated_at();
 
 create or replace function public.is_admin()
 returns boolean
@@ -99,7 +124,12 @@ begin
     'pending',
     'user'
   )
-  on conflict (id) do nothing;
+  on conflict (id) do update set
+    email = excluded.email,
+    full_name = coalesce(nullif(excluded.full_name, ''), public.profiles.full_name),
+    phone = coalesce(nullif(excluded.phone, ''), public.profiles.phone),
+    company = coalesce(nullif(excluded.company, ''), public.profiles.company),
+    request_note = coalesce(nullif(excluded.request_note, ''), public.profiles.request_note);
   return new;
 end;
 $$;
@@ -108,6 +138,44 @@ drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
 after insert on auth.users
 for each row execute procedure public.handle_new_user();
+
+-- Secure admin-only profile management. Users cannot self-promote or self-approve.
+create or replace function public.admin_update_profile(
+  target_user_id uuid,
+  next_status user_status default null,
+  next_role user_role default null,
+  actor_id uuid default null
+)
+returns public.profiles
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  updated_profile public.profiles;
+begin
+  if not public.is_admin() then
+    raise exception 'Admin access required';
+  end if;
+
+  update public.profiles
+  set
+    status = coalesce(next_status, status),
+    role = coalesce(next_role, role),
+    approved_by = case when next_status = 'approved' then coalesce(actor_id, auth.uid()) else approved_by end,
+    approved_at = case when next_status = 'approved' then now() else approved_at end
+  where id = target_user_id
+  returning * into updated_profile;
+
+  if updated_profile.id is null then
+    raise exception 'Profile not found';
+  end if;
+
+  return updated_profile;
+end;
+$$;
+
+grant execute on function public.admin_update_profile(uuid, user_status, user_role, uuid) to authenticated;
 
 alter table public.profiles enable row level security;
 alter table public.app_projects enable row level security;
@@ -119,16 +187,8 @@ on public.profiles for select
 using (id = auth.uid() or public.is_admin());
 
 drop policy if exists "profiles_update_self_limited" on public.profiles;
-create policy "profiles_update_self_limited"
-on public.profiles for update
-using (id = auth.uid())
-with check (id = auth.uid());
-
 drop policy if exists "profiles_admin_update" on public.profiles;
-create policy "profiles_admin_update"
-on public.profiles for update
-using (public.is_admin())
-with check (public.is_admin());
+-- Direct profile updates are intentionally disabled; admin changes happen via admin_update_profile RPC.
 
 drop policy if exists "projects_read_own_or_admin" on public.app_projects;
 create policy "projects_read_own_or_admin"
@@ -161,7 +221,7 @@ create policy "events_admin_read"
 on public.usage_events for select
 using (public.is_admin());
 
--- IMPORTANT:
--- After your admin user signs up, run this once with your actual email:
--- update public.profiles set role='admin', status='approved', approved_at=now()
+-- After your first admin signs up, run this once with your real email:
+-- update public.profiles
+-- set role='admin', status='approved', approved_at=now()
 -- where email='YOUR_ADMIN_EMAIL@example.com';

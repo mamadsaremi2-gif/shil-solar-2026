@@ -4,10 +4,10 @@ function nextStandard(current) {
 }
 
 export function calculateProtection(input, cabling, controller, inverter) {
-  const dcFuseA = controller ? nextStandard(controller.selectedCurrentA * 1.25) : 0;
+  const dcFuseA = controller ? nextStandard((controller.perControllerA ?? controller.selectedCurrentA) * 1.25) : 0;
   const batteryFuseA = nextStandard(cabling.batteryCurrentA * 1.25);
   const acFuseA = nextStandard(cabling.acCurrentA * 1.25);
-  const dcDisconnectRating = controller ? `${nextStandard(Math.max(controller.selectedCurrentA, cabling.dcPvCurrentA) * 1.25)}A / ${input.controllerMaxVoc}VDC` : '—';
+  const dcDisconnectRating = controller ? `${nextStandard(Math.max(controller.perControllerA ?? controller.selectedCurrentA, cabling.dcPvCurrentA / Math.max(controller.controllerCount ?? 1, 1)) * 1.25)}A / ${input.controllerMaxVoc}VDC` : '—';
   const acBreakerRating = `${acFuseA}A / ${input.loadVoltage}VAC`;
   const spdRequired = input.systemType !== 'backup';
 

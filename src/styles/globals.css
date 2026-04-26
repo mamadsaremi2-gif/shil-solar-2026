@@ -2104,3 +2104,111 @@ select { cursor: pointer; }
     width: 100%;
   }
 }
+
+.admin-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.admin-toolbar h2 {
+  margin: 4px 0 0;
+}
+.admin-toolbar__controls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.admin-toolbar__controls input,
+.admin-toolbar__controls select {
+  min-height: 42px;
+  min-width: 210px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(15,23,42,.78);
+  color: #e5edf7;
+  padding: 0 12px;
+}
+.admin-report-grid {
+  align-items: stretch;
+}
+.admin-table-wrap--compact {
+  max-height: 360px;
+}
+@media (max-width: 880px) {
+  .admin-toolbar,
+  .admin-toolbar__controls {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-content: stretch;
+  }
+  .admin-toolbar__controls input,
+  .admin-toolbar__controls select,
+  .admin-toolbar__controls .btn {
+    width: 100%;
+  }
+}
+
+/* Engineering patch: labeled load cells, quick load search, real-demand summary */
+.load-search-panel .panel__header.compact,
+.equipment-custom-panel .panel__header.compact {
+  align-items: flex-start;
+}
+.quick-load-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.75rem;
+  margin-top: 0.85rem;
+}
+.quick-load-item {
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 1rem;
+  background: rgba(15, 23, 42, 0.72);
+  color: inherit;
+  padding: 0.9rem;
+  text-align: right;
+  display: grid;
+  gap: 0.35rem;
+  cursor: pointer;
+}
+.quick-load-item:hover {
+  border-color: rgba(56, 189, 248, 0.5);
+  transform: translateY(-1px);
+}
+.quick-load-item span,
+.quick-load-item small {
+  color: var(--muted);
+}
+.load-factor-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 0.9rem;
+}
+.load-card-grid--labeled {
+  grid-template-columns: 1.4fr repeat(7, minmax(110px, 1fr)) auto;
+  align-items: end;
+}
+.load-card-grid--labeled label {
+  display: grid;
+  gap: 0.35rem;
+}
+.load-card-grid--labeled label span {
+  color: var(--muted);
+  font-size: 0.78rem;
+  padding-inline: 0.25rem;
+}
+@media (max-width: 1100px) {
+  .load-card-grid--labeled {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.table-like { overflow-x: auto; padding-bottom: 4px; }
+.load-card-grid--labeled { min-width: 1180px; grid-template-columns: minmax(260px, 2.1fr) repeat(7, minmax(105px, .82fr)) auto; }
+.load-card-grid--labeled label:first-child input { min-width: 240px; font-weight: 700; text-align: right; }
+@media (max-width: 1100px) {
+  .load-card-grid--labeled { min-width: 0; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .load-card-grid--labeled label:first-child { grid-column: 1 / -1; }
+}

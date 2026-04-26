@@ -19,6 +19,7 @@ import { EquipmentRepository } from "../data/repositories/EquipmentRepository";
 import { PUBLIC_ASSETS } from "../shared/constants/publicAssets";
 import { getSmartPresetsForSystem } from "../data/seed/smartProjectPresets";
 import { IRAN_CITIES } from "../data/seed/iranCities";
+import { parseFaNumber } from "../shared/utils/faNumbers";
 
 function getCityClimate(cityName) {
   return IRAN_CITIES.find((city) => city.name === cityName) || null;
@@ -140,10 +141,10 @@ function LoadProfileEditor() {
     <div className="stack-lg">
       <div className="profile-summary-grid">
         <Field label="انرژی روزانه (kWh/day)" hint="پروفایل ساعتی بر اساس این انرژی نرمال می‌شود.">
-          <input type="number" value={activeProject.form.dailyEnergyKwh} onChange={(e) => updateForm({ dailyEnergyKwh: e.target.value })} />
+          <input type="text" inputMode="decimal" value={activeProject.form.dailyEnergyKwh} onChange={(e) => updateForm({ dailyEnergyKwh: e.target.value })} />
         </Field>
         <Field label="Peak Factor" hint="برای بررسی پیک طراحی در کنار پروفایل">
-          <input type="number" step="0.1" value={activeProject.form.peakFactor} onChange={(e) => updateForm({ peakFactor: e.target.value })} />
+          <input type="text" inputMode="decimal" step="0.1" value={activeProject.form.peakFactor} onChange={(e) => updateForm({ peakFactor: e.target.value })} />
         </Field>
       </div>
 
@@ -160,7 +161,7 @@ function LoadProfileEditor() {
           <div key={slot.id} className="profile-card">
             <span className="profile-card__hour">{slot.label}</span>
             <input
-              type="number"
+              type="text" inputMode="decimal"
               min="0"
               step="0.05"
               value={slot.factor}
@@ -261,31 +262,120 @@ function SmartPresetPicker() {
 }
 
 
+
+function LoadEquipmentQuickAdd({ onAdd }) {
+  const [query, setQuery] = useState("");
+  const options = useMemo(() => EquipmentRepository.search({ category: "load", query }), [query]);
+  const visible = options.slice(0, 8);
+
+  function addItem(item) {
+    if (!item) return;
+    onAdd({ ...(item.specs || {}), name: item.specs?.name || item.title });
+    setQuery("");
+  }
+
+  function handleKeyDown(event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      addItem(visible[0]);
+    }
+  }
+
+  return (
+    <section className="panel panel--soft load-search-panel">
+      <div className="panel__header compact">
+        <div>
+          <h3>افزودن مصرف‌کننده از کتابخانه</h3>
+          <p className="section-note">نام تجهیز را سرچ کن و Enter بزن؛ اولین مورد لیست مستقیم به بارها اضافه می‌شود.</p>
+        </div>
+        <span className="badge">{EquipmentRepository.list("load").length} مصرف‌کننده آماده</span>
+      </div>
+      <input
+        className="search-input"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        onKeyDown={handleKeyDown}
+        placeholder="مثلاً یخچال، پمپ، کولر، لامپ، مودم..."
+      />
+      <div className="quick-load-list">
+        {visible.map((item) => (
+          <button key={item.id} type="button" className="quick-load-item" onClick={() => addItem(item)}>
+            <strong>{item.title}</strong>
+            <span>{item.summary}</span>
+            <small>{item.specs?.power ?? "—"}W × {item.specs?.qty ?? 1} | {item.specs?.hours ?? "—"}h | همزمانی {item.specs?.coincidenceFactor ?? 1}</small>
+          </button>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function StepLoads() {
   const { activeProject, updateForm, updateLoadItem, addLoadItem, removeLoadItem } = useProjectStore();
   const form = activeProject.form;
+
+  const loadSummary = useMemo(() => {
+    const items = form.loadItems || [];
+    const connectedPowerW = items.reduce((sum, item) => sum + (parseFaNumber(item.qty, 1) * parseFaNumber(item.power, 0)), 0);
+    const realRunPowerW = items.reduce((sum, item) => sum + (parseFaNumber(item.qty, 1) * parseFaNumber(item.power, 0) * parseFaNumber(item.coincidenceFactor, 1)), 0);
+    const dailyEnergyWh = items.reduce((sum, item) => sum + (parseFaNumber(item.qty, 1) * parseFaNumber(item.power, 0) * parseFaNumber(item.hours, 0) * parseFaNumber(item.coincidenceFactor, 1)), 0);
+    const connectedApparentVA = items.reduce((sum, item) => {
+      const pf = Math.max(parseFaNumber(item.powerFactor, 0.95), 0.1);
+      return sum + ((parseFaNumber(item.qty, 1) * parseFaNumber(item.power, 0)) / pf);
+    }, 0);
+    const surgePowerW = items.reduce((sum, item) => sum + (parseFaNumber(item.qty, 1) * parseFaNumber(item.power, 0) * parseFaNumber(item.surgeFactor, 1) * parseFaNumber(item.coincidenceFactor, 1)), 0);
+    return { connectedPowerW, realRunPowerW, dailyEnergyWh, connectedApparentVA, surgePowerW, averageCoincidence: connectedPowerW > 0 ? realRunPowerW / connectedPowerW : 1, averagePowerFactor: connectedApparentVA > 0 ? connectedPowerW / connectedApparentVA : 0.95 };
+  }, [form.loadItems]);
+
   if (form.calculationMode === "loads") {
     return (
       <div className="stack-lg">
         <SmartPresetPicker />
+        <LoadEquipmentQuickAdd onAdd={addLoadItem} />
+        <div className="load-factor-grid">
+          <div className="metric-card metric-card--blue">
+            <div className="metric-card__label">مجموع توان نصب‌شده تجهیزات</div>
+            <div className="metric-card__value">{loadSummary.connectedPowerW.toFixed(0)} W</div>
+          </div>
+          <div className="metric-card metric-card--purple">
+            <div className="metric-card__label">ضریب همزمانی میانگین</div>
+            <div className="metric-card__value">{(loadSummary.averageCoincidence * 100).toFixed(0)}%</div>
+          </div>
+          <div className="metric-card metric-card--green">
+            <div className="metric-card__label">نیاز واقعی اجرا</div>
+            <div className="metric-card__value">{loadSummary.realRunPowerW.toFixed(0)} W</div>
+          </div>
+          <div className="metric-card metric-card--amber">
+            <div className="metric-card__label">انرژی روزانه واقعی</div>
+            <div className="metric-card__value">{loadSummary.dailyEnergyWh.toFixed(0)} Wh</div>
+          </div>
+          <div className="metric-card metric-card--blue">
+            <div className="metric-card__label">ضریب توان میانگین</div>
+            <div className="metric-card__value">{(loadSummary.averagePowerFactor * 100).toFixed(0)}%</div>
+          </div>
+          <div className="metric-card metric-card--purple">
+            <div className="metric-card__label">توان راه‌اندازی تخمینی</div>
+            <div className="metric-card__value">{loadSummary.surgePowerW.toFixed(0)} W</div>
+          </div>
+        </div>
         <div className="table-like">
           {form.loadItems.map((item) => (
-            <div key={item.id} className="load-card-grid">
-              <input value={item.name} onChange={(e) => updateLoadItem(item.id, { name: e.target.value })} placeholder="نام بار" />
-              <input type="number" value={item.qty} onChange={(e) => updateLoadItem(item.id, { qty: e.target.value })} placeholder="تعداد" />
-              <input type="number" value={item.power} onChange={(e) => updateLoadItem(item.id, { power: e.target.value })} placeholder="توان" />
-              <input type="number" value={item.hours} onChange={(e) => updateLoadItem(item.id, { hours: e.target.value })} placeholder="ساعت کار" />
-              <input type="number" step="0.01" value={item.powerFactor ?? 0.95} onChange={(e) => updateLoadItem(item.id, { powerFactor: e.target.value })} placeholder="PF" />
-              <input type="number" step="0.01" value={item.coincidenceFactor ?? 1} onChange={(e) => updateLoadItem(item.id, { coincidenceFactor: e.target.value })} placeholder="ضریب همزمانی" />
-              <select value={item.loadType ?? "mixed"} onChange={(e) => updateLoadItem(item.id, { loadType: e.target.value })}>
+            <div key={item.id} className="load-card-grid load-card-grid--labeled">
+              <label><span>نام تجهیز</span><input value={item.name} onChange={(e) => updateLoadItem(item.id, { name: e.target.value })} placeholder="نام بار" /></label>
+              <label><span>تعداد</span><input type="text" inputMode="decimal" value={item.qty} onChange={(e) => updateLoadItem(item.id, { qty: e.target.value })} placeholder="تعداد" /></label>
+              <label><span>توان هر عدد (W)</span><input type="text" inputMode="decimal" value={item.power} onChange={(e) => updateLoadItem(item.id, { power: e.target.value })} placeholder="توان" /></label>
+              <label><span>ساعت کار روزانه</span><input type="text" inputMode="decimal" value={item.hours} onChange={(e) => updateLoadItem(item.id, { hours: e.target.value })} placeholder="ساعت کار" /></label>
+              <label><span>ضریب توان PF</span><input type="text" inputMode="decimal" value={item.powerFactor ?? 0.95} onChange={(e) => updateLoadItem(item.id, { powerFactor: e.target.value })} placeholder="PF" /></label>
+              <label><span>ضریب همزمانی</span><input type="text" inputMode="decimal" value={item.coincidenceFactor ?? 1} onChange={(e) => updateLoadItem(item.id, { coincidenceFactor: e.target.value })} placeholder="ضریب همزمانی" /></label>
+              <label><span>نوع بار</span><select value={item.loadType ?? "mixed"} onChange={(e) => updateLoadItem(item.id, { loadType: e.target.value })}>
                 {LOAD_TYPES.map((v) => <option key={v} value={v}>{v}</option>)}
-              </select>
-              <input type="number" step="0.1" value={item.surgeFactor ?? 1} onChange={(e) => updateLoadItem(item.id, { surgeFactor: e.target.value })} placeholder="ضریب راه‌اندازی" />
+              </select></label>
+              <label><span>ضریب راه‌اندازی</span><input type="text" inputMode="decimal" value={item.surgeFactor ?? 1} onChange={(e) => updateLoadItem(item.id, { surgeFactor: e.target.value })} placeholder="ضریب راه‌اندازی" /></label>
               <button type="button" className="btn btn--ghost" onClick={() => removeLoadItem(item.id)}>حذف</button>
             </div>
           ))}
         </div>
-        <button type="button" className="btn btn--secondary" onClick={addLoadItem}>افزودن بار</button>
+        <button type="button" className="btn btn--secondary" onClick={() => addLoadItem()}>افزودن بار دستی</button>
       </div>
     );
   }
@@ -304,19 +394,19 @@ function StepLoads() {
       <SmartPresetPicker />
       <div className="form-grid two-cols">
         {form.calculationMode === "current" ? (
-          <Field label="جریان کل (A)"><input type="number" value={form.current} onChange={(e) => updateForm({ current: e.target.value })} /></Field>
+          <Field label="جریان کل (A)"><input type="text" inputMode="decimal" value={form.current} onChange={(e) => updateForm({ current: e.target.value })} /></Field>
         ) : null}
         {form.calculationMode === "power" ? (
-          <Field label="توان کل (W)"><input type="number" value={form.loadPower} onChange={(e) => updateForm({ loadPower: e.target.value })} /></Field>
+          <Field label="توان کل (W)"><input type="text" inputMode="decimal" value={form.loadPower} onChange={(e) => updateForm({ loadPower: e.target.value })} /></Field>
         ) : null}
         {form.calculationMode === "daily_energy" ? (
-          <Field label="انرژی روزانه (kWh/day)"><input type="number" value={form.dailyEnergyKwh} onChange={(e) => updateForm({ dailyEnergyKwh: e.target.value })} /></Field>
+          <Field label="انرژی روزانه (kWh/day)"><input type="text" inputMode="decimal" value={form.dailyEnergyKwh} onChange={(e) => updateForm({ dailyEnergyKwh: e.target.value })} /></Field>
         ) : null}
-        <Field label="ولتاژ بار (V)"><input type="number" value={form.loadVoltage} onChange={(e) => updateForm({ loadVoltage: e.target.value })} /></Field>
-        <Field label="ضریب توان PF"><input type="number" step="0.01" value={form.powerFactor} onChange={(e) => updateForm({ powerFactor: e.target.value })} /></Field>
-        <Field label={form.systemType === "backup" ? "ساعت برق اضطراری موردنیاز مشتری" : "زمان بکاپ / مرجع (h)"}><input type="number" step="0.5" value={form.backupHours} onChange={(e) => updateForm({ backupHours: e.target.value })} /></Field>
+        <Field label="ولتاژ بار (V)"><input type="text" inputMode="decimal" value={form.loadVoltage} onChange={(e) => updateForm({ loadVoltage: e.target.value })} /></Field>
+        <Field label="ضریب توان PF"><input type="text" inputMode="decimal" value={form.powerFactor} onChange={(e) => updateForm({ powerFactor: e.target.value })} /></Field>
+        <Field label={form.systemType === "backup" ? "ساعت برق اضطراری موردنیاز مشتری" : "زمان بکاپ / مرجع (h)"}><input type="text" inputMode="decimal" value={form.backupHours} onChange={(e) => updateForm({ backupHours: e.target.value })} /></Field>
         {form.calculationMode === "daily_energy" ? (
-          <Field label="Peak Factor"><input type="number" step="0.1" value={form.peakFactor} onChange={(e) => updateForm({ peakFactor: e.target.value })} /></Field>
+          <Field label="Peak Factor"><input type="text" inputMode="decimal" value={form.peakFactor} onChange={(e) => updateForm({ peakFactor: e.target.value })} /></Field>
         ) : null}
       </div>
     </div>
@@ -342,28 +432,28 @@ function StepSite() {
       <ClimateInfoCard form={form} />
       <div className="form-grid two-cols">
         <Field label="ساعات تابش موثر شهر (PSH)">
-          <input type="number" value={form.sunHours} onChange={(e) => updateForm({ sunHours: e.target.value })} />
+          <input type="text" inputMode="decimal" value={form.sunHours} onChange={(e) => updateForm({ sunHours: e.target.value })} />
         </Field>
         <Field label="دمای متوسط شهر (°C)">
-          <input type="number" value={form.averageTemperature} onChange={(e) => updateForm({ averageTemperature: e.target.value })} />
+          <input type="text" inputMode="decimal" value={form.averageTemperature} onChange={(e) => updateForm({ averageTemperature: e.target.value })} />
         </Field>
         <Field label="حداقل دما برای Voc سرد (°C)">
-          <input type="number" value={form.minTemperature} onChange={(e) => updateForm({ minTemperature: e.target.value })} />
+          <input type="text" inputMode="decimal" value={form.minTemperature} onChange={(e) => updateForm({ minTemperature: e.target.value })} />
         </Field>
         <Field label="حداکثر دما برای افت توان پنل (°C)">
-          <input type="number" value={form.maxTemperature} onChange={(e) => updateForm({ maxTemperature: e.target.value })} />
+          <input type="text" inputMode="decimal" value={form.maxTemperature} onChange={(e) => updateForm({ maxTemperature: e.target.value })} />
         </Field>
         <Field label="ارتفاع از سطح دریا (m)">
-          <input type="number" value={form.altitude} onChange={(e) => updateForm({ altitude: e.target.value })} />
+          <input type="text" inputMode="decimal" value={form.altitude} onChange={(e) => updateForm({ altitude: e.target.value })} />
         </Field>
         <Field label="ضریب سایه">
-          <input type="number" step="0.01" value={form.shadingFactor} onChange={(e) => updateForm({ shadingFactor: e.target.value })} />
+          <input type="text" inputMode="decimal" step="0.01" value={form.shadingFactor} onChange={(e) => updateForm({ shadingFactor: e.target.value })} />
         </Field>
         <Field label="ضریب گردوغبار">
-          <input type="number" step="0.01" value={form.dustFactor} onChange={(e) => updateForm({ dustFactor: e.target.value })} />
+          <input type="text" inputMode="decimal" step="0.01" value={form.dustFactor} onChange={(e) => updateForm({ dustFactor: e.target.value })} />
         </Field>
         <Field label="زاویه نصب">
-          <input type="number" value={form.tiltAngle} onChange={(e) => updateForm({ tiltAngle: e.target.value })} />
+          <input type="text" inputMode="decimal" value={form.tiltAngle} onChange={(e) => updateForm({ tiltAngle: e.target.value })} />
         </Field>
       </div>
     </div>
@@ -373,7 +463,7 @@ function StepSite() {
 
 function estimateUpsRuntime(form) {
   const num = (value, fallback = 0) => {
-    const parsed = Number(value);
+    const parsed = parseFaNumber(value, fallback);
     return Number.isFinite(parsed) ? parsed : fallback;
   };
 
@@ -388,10 +478,10 @@ function estimateUpsRuntime(form) {
       const pf = Math.max(num(item.powerFactor, 1), 0.1);
       const coincidence = num(item.coincidenceFactor, 1);
       const surge = num(item.surgeFactor, form.surgeFactor || 1);
-      const itemPower = qty * power / pf;
-      connectedPowerW += itemPower;
-      demandPowerW += itemPower * coincidence;
-      surgePowerW += itemPower * surge;
+      const activePowerW = qty * power;
+      connectedPowerW += activePowerW;
+      demandPowerW += activePowerW * coincidence;
+      surgePowerW += activePowerW * surge * coincidence;
     });
   } else if (form.calculationMode === "current") {
     demandPowerW = num(form.current) * num(form.loadVoltage, 220) * num(form.powerFactor, 0.95);
@@ -463,7 +553,7 @@ function UpsRuntimePreview() {
 
       <div className="form-grid two-cols">
         <Field label="ساعت برق اضطراری موردنیاز مشتری">
-          <input type="number" step="0.5" min="0.5" value={form.backupHours} onChange={(e) => updateForm({ backupHours: e.target.value })} />
+          <input type="text" inputMode="decimal" step="0.5" min="0.5" value={form.backupHours} onChange={(e) => updateForm({ backupHours: e.target.value })} />
         </Field>
         <Field label="توان بار محاسبه‌شده">
           <input readOnly value={`${estimate.demandPowerW.toFixed(0)} W`} />
@@ -620,33 +710,33 @@ function StepSystemConfig() {
         </Field>
       ) : null}
       {form.systemType === "gridtie" ? (
-        <Field label="هدف جبران انرژی (%)"><input type="number" value={form.targetOffsetPercent} onChange={(e) => updateForm({ targetOffsetPercent: e.target.value })} /></Field>
+        <Field label="هدف جبران انرژی (%)"><input type="text" inputMode="decimal" value={form.targetOffsetPercent} onChange={(e) => updateForm({ targetOffsetPercent: e.target.value })} /></Field>
       ) : null}
       <Field label="ظرفیت واحد باتری (Ah)">{form.systemType === "backup" ? (
         <select value={form.batteryUnitAh} onChange={(e) => updateForm({ batteryUnitAh: e.target.value })}>{BACKUP_BATTERY_CAPACITY_OPTIONS.map((v) => <option key={v} value={v}>{v}Ah</option>)}</select>
       ) : (
-        <input type="number" value={form.batteryUnitAh} onChange={(e) => updateForm({ batteryUnitAh: e.target.value })} />
+        <input type="text" inputMode="decimal" value={form.batteryUnitAh} onChange={(e) => updateForm({ batteryUnitAh: e.target.value })} />
       )}</Field>
       <Field label="ولتاژ واحد باتری (V)">{form.systemType === "backup" ? (
         <select value={form.batteryUnitVoltage} onChange={(e) => updateForm({ batteryUnitVoltage: e.target.value })}>{availableBatteryVoltages.map((v) => <option key={v} value={v}>{v}V</option>)}</select>
       ) : (
-        <input type="number" value={form.batteryUnitVoltage} onChange={(e) => updateForm({ batteryUnitVoltage: e.target.value })} />
+        <input type="text" inputMode="decimal" value={form.batteryUnitVoltage} onChange={(e) => updateForm({ batteryUnitVoltage: e.target.value })} />
       )}</Field>
-      <Field label="روزهای خودمختاری"><input type="number" step="0.1" value={form.daysAutonomy} onChange={(e) => updateForm({ daysAutonomy: e.target.value })} /></Field>
-      <Field label="عمق دشارژ DoD"><input type="number" step="0.01" value={form.dod} onChange={(e) => updateForm({ dod: e.target.value })} /></Field>
-      <Field label="راندمان اینورتر"><input type="number" step="0.01" value={form.inverterEfficiency} onChange={(e) => updateForm({ inverterEfficiency: e.target.value })} /></Field>
-      {form.systemType !== "backup" ? <Field label="راندمان کنترلر"><input type="number" step="0.01" value={form.controllerEfficiency} onChange={(e) => updateForm({ controllerEfficiency: e.target.value })} /></Field> : null}
-      {form.systemType !== "backup" ? <Field label="توان پنل (W)"><input type="number" value={form.panelWatt} onChange={(e) => updateForm({ panelWatt: e.target.value })} /></Field> : null}
+      <Field label="روزهای خودمختاری"><input type="text" inputMode="decimal" step="0.1" value={form.daysAutonomy} onChange={(e) => updateForm({ daysAutonomy: e.target.value })} /></Field>
+      <Field label="عمق دشارژ DoD"><input type="text" inputMode="decimal" step="0.01" value={form.dod} onChange={(e) => updateForm({ dod: e.target.value })} /></Field>
+      <Field label="راندمان اینورتر"><input type="text" inputMode="decimal" step="0.01" value={form.inverterEfficiency} onChange={(e) => updateForm({ inverterEfficiency: e.target.value })} /></Field>
+      {form.systemType !== "backup" ? <Field label="راندمان کنترلر"><input type="text" inputMode="decimal" step="0.01" value={form.controllerEfficiency} onChange={(e) => updateForm({ controllerEfficiency: e.target.value })} /></Field> : null}
+      {form.systemType !== "backup" ? <Field label="توان پنل (W)"><input type="text" inputMode="decimal" value={form.panelWatt} onChange={(e) => updateForm({ panelWatt: e.target.value })} /></Field> : null}
       {form.systemType !== "backup" ? <Field label="نوع پنل">
         <select value={form.panelType} onChange={(e) => updateForm({ panelType: e.target.value })}>{PANEL_TYPES.map((v) => <option key={v} value={v}>{v}</option>)}</select>
       </Field> : null}
-      {form.systemType !== "backup" ? <Field label="Voc پنل"><input type="number" step="0.1" value={form.panelVoc} onChange={(e) => updateForm({ panelVoc: e.target.value })} /></Field> : null}
-      {form.systemType !== "backup" ? <Field label="Vmp پنل"><input type="number" step="0.1" value={form.panelVmp} onChange={(e) => updateForm({ panelVmp: e.target.value })} /></Field> : null}
-      {form.systemType !== "backup" ? <Field label="حداکثر Voc کنترلر"><input type="number" value={form.controllerMaxVoc} onChange={(e) => updateForm({ controllerMaxVoc: e.target.value })} /></Field> : null}
-      {form.systemType !== "backup" ? <Field label="حداقل MPPT"><input type="number" value={form.mpptMinVoltage} onChange={(e) => updateForm({ mpptMinVoltage: e.target.value })} /></Field> : null}
-      {form.systemType !== "backup" ? <Field label="حداکثر MPPT"><input type="number" value={form.mpptMaxVoltage} onChange={(e) => updateForm({ mpptMaxVoltage: e.target.value })} /></Field> : null}
-      <Field label="ضریب طراحی"><input type="number" step="0.01" value={form.designFactor} onChange={(e) => updateForm({ designFactor: e.target.value })} /></Field>
-        <Field label="ضریب Surge پیش‌فرض"><input type="number" step="0.1" value={form.surgeFactor} onChange={(e) => updateForm({ surgeFactor: e.target.value })} /></Field>
+      {form.systemType !== "backup" ? <Field label="Voc پنل"><input type="text" inputMode="decimal" step="0.1" value={form.panelVoc} onChange={(e) => updateForm({ panelVoc: e.target.value })} /></Field> : null}
+      {form.systemType !== "backup" ? <Field label="Vmp پنل"><input type="text" inputMode="decimal" step="0.1" value={form.panelVmp} onChange={(e) => updateForm({ panelVmp: e.target.value })} /></Field> : null}
+      {form.systemType !== "backup" ? <Field label="حداکثر Voc کنترلر"><input type="text" inputMode="decimal" value={form.controllerMaxVoc} onChange={(e) => updateForm({ controllerMaxVoc: e.target.value })} /></Field> : null}
+      {form.systemType !== "backup" ? <Field label="حداقل MPPT"><input type="text" inputMode="decimal" value={form.mpptMinVoltage} onChange={(e) => updateForm({ mpptMinVoltage: e.target.value })} /></Field> : null}
+      {form.systemType !== "backup" ? <Field label="حداکثر MPPT"><input type="text" inputMode="decimal" value={form.mpptMaxVoltage} onChange={(e) => updateForm({ mpptMaxVoltage: e.target.value })} /></Field> : null}
+      <Field label="ضریب طراحی"><input type="text" inputMode="decimal" step="0.01" value={form.designFactor} onChange={(e) => updateForm({ designFactor: e.target.value })} /></Field>
+        <Field label="ضریب Surge پیش‌فرض"><input type="text" inputMode="decimal" step="0.1" value={form.surgeFactor} onChange={(e) => updateForm({ surgeFactor: e.target.value })} /></Field>
       </div>
     </div>
   );

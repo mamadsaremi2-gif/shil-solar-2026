@@ -1,10 +1,12 @@
+import { parseFaNumber } from "../../../shared/utils/faNumbers";
+
 function positive(value, fallback = 0) {
-  const n = Number(value);
+  const n = parseFaNumber(value, fallback);
   return Number.isFinite(n) && n > 0 ? n : fallback;
 }
 
 function bounded(value, fallback, min, max) {
-  const n = Number(value);
+  const n = parseFaNumber(value, fallback);
   if (!Number.isFinite(n)) return fallback;
   return Math.min(Math.max(n, min), max);
 }
@@ -13,7 +15,7 @@ const BACKUP_SYSTEM_VOLTAGES = [12, 24, 48];
 const BATTERY_UNIT_VOLTAGES = [12, 24, 48];
 
 function nearestAllowed(value, allowed, fallback) {
-  const n = Number(value);
+  const n = parseFaNumber(value, fallback);
   if (!Number.isFinite(n)) return fallback;
   return allowed.includes(n) ? n : fallback;
 }
@@ -80,9 +82,9 @@ export function normalizeInput(form) {
     panelVmp: positive(form.panelVmp, 44.8),
     panelTempCoeffVoc: positive(form.panelTempCoeffVoc, 0.0024),
     panelTypeTemperatureFactor: positive(form.panelTypeTemperatureFactor, 0.29),
-    averageTemperature: Number(form.averageTemperature ?? 30),
-    minTemperature: Number(form.minTemperature ?? 0),
-    maxTemperature: Number(form.maxTemperature ?? 40),
+    averageTemperature: parseFaNumber(form.averageTemperature, 30),
+    minTemperature: parseFaNumber(form.minTemperature, 0),
+    maxTemperature: parseFaNumber(form.maxTemperature, 40),
     altitude: positive(form.altitude, 0),
     shadingFactor: bounded(form.shadingFactor, 0.95, 0.5, 1),
     dustFactor: bounded(form.dustFactor, 0.96, 0.5, 1),

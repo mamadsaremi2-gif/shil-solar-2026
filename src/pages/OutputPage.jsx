@@ -224,7 +224,7 @@ export function OutputPage() {
     return <div className="shell"><div className="panel empty-state">محاسبات معتبر موجود نیست.</div></div>;
   }
 
-  const { summary, battery, pv, inverter, controller, cabling, protection, loads, simulation, advisor } = output.result;
+  const { summary, battery, pv, inverter, controller, cabling, protection, loads, simulation, industrial, advisor } = output.result;
   const designStatusLabel = useMemo(() => summary.designStatus === 'error' ? 'نیازمند اصلاح' : summary.designStatus === 'warning' ? 'دارای هشدار' : 'معتبر', [summary.designStatus]);
   const projectTitle = activeProject.form.projectTitle || 'Solar Design Suite';
   const projectDate = new Date().toLocaleDateString('fa-IR');
@@ -250,16 +250,20 @@ export function OutputPage() {
   ];
 
   const calculationSummaryRows = [
-    ['بار موثر مصرف کننده', `${formatNumber(summary.demandPowerW)} W`],
+    ['مجموع توان تجهیزات', `${formatNumber(loads.connectedPowerW)} W`],
+    ['ضریب همزمانی میانگین', `${loads.connectedPowerW ? formatNumber((loads.demandPowerW / loads.connectedPowerW) * 100, 0) : 100} %`],
+    ['نیاز واقعی اجرا', `${formatNumber(summary.demandPowerW)} W`],
+    ['بار ظاهری طراحی', `${formatNumber(summary.demandApparentVA || loads.demandApparentVA)} VA`],
     [summary.systemType === 'backup' ? 'انرژی مصرفی' : 'انرژی روزانه', `${formatNumber(summary.totalDailyEnergyWh)} Wh`],
-    ['زمان پشتیبانی واقعی', `${formatNumber(summary.batteryBackupHours, 1)} h`],
+    [summary.systemType === 'offgrid' ? 'خودمختاری واقعی باتری' : 'زمان پشتیبانی واقعی', summary.systemType === 'offgrid' ? `${formatNumber(summary.batteryAutonomyDays, 2)} روز / ${formatNumber(summary.batteryBackupHours, 1)} h` : `${formatNumber(summary.batteryBackupHours, 1)} h`],
     ['ولتاژ سیستم', `${formatNumber(activeProject.form.systemVoltage)} V`],
     ['ظرفیت موردنیاز باتری', `${formatNumber(summary.batteryAh)} Ah`],
     ['توان پیک / راه اندازی', `${formatNumber(loads.surgePowerW)} W`],
   ];
 
   const requiredEquipmentRows = [
-    [summary.systemType === 'backup' ? 'سانورتر پیشنهادی' : 'اینورتر پیشنهادی', `${formatNumber(summary.inverterPowerW)} W / Surge ${formatNumber(summary.inverterSurgePowerW)} W`],
+    [summary.systemType === 'backup' ? 'سانورتر پیشنهادی' : 'اینورتر پیشنهادی', `${formatNumber(summary.inverterPowerW)} W / ${formatNumber(summary.inverterPowerVA || inverter.continuousPowerVA)} VA`],
+    ['Surge پیشنهادی', `${formatNumber(summary.inverterSurgePowerW)} W / ${formatNumber(summary.inverterSurgePowerVA || inverter.surgePowerVA)} VA`],
     ['بانک باتری', `${formatNumber(battery.totalCount)} عدد - ${battery.seriesCount} سری × ${battery.parallelCount} موازی`],
     ['مشخصات باتری', `${formatNumber(activeProject.form.batteryUnitVoltage)}V ${formatNumber(activeProject.form.batteryUnitAh)}Ah - ${battery.chemistry}`],
     ['کابل باتری', `${formatNumber(cabling.batteryCableSizeMm2, 1)} mm²`],
@@ -268,7 +272,10 @@ export function OutputPage() {
 
   if (summary.systemType !== 'backup') {
     requiredEquipmentRows.splice(1, 0, ['آرایه پنل', `${formatNumber(summary.panelCount)} عدد - ${formatNumber(summary.pvInstalledPowerW)} W`]);
-    requiredEquipmentRows.push(['شارژ کنترلر', `${controller?.controllerType ?? '—'} - ${controller?.selectedCurrentA ? formatNumber(controller.selectedCurrentA) : '—'} A`]);
+    const controllerLabel = controller?.controllerCount > 1
+      ? `${controller.controllerType ?? 'MPPT'} - ${controller.controllerCount} × ${formatNumber(controller.perControllerA)} A`
+      : `${controller?.controllerType ?? '—'} - ${controller?.selectedCurrentA ? formatNumber(controller.selectedCurrentA) : '—'} A`;
+    requiredEquipmentRows.push(['شارژ کنترلر', controllerLabel]);
   }
 
 
@@ -391,18 +398,25 @@ export function OutputPage() {
           </section>
 
           <section className="metric-grid metric-grid--tight">
-            <MetricCard label="بار مؤثر" value={`${formatNumber(summary.demandPowerW)} W`} />
+            <MetricCard label="مجموع توان تجهیزات" value={`${formatNumber(loads.connectedPowerW)} W`} />
+            <MetricCard label="ضریب همزمانی" value={`${loads.connectedPowerW ? formatNumber((loads.demandPowerW / loads.connectedPowerW) * 100, 0) : 100} %`} accent="blue" />
+            <MetricCard label="نیاز واقعی اجرا" value={`${formatNumber(summary.demandPowerW)} W`} accent="green" />
+            <MetricCard label="بار ظاهری طراحی" value={`${formatNumber(summary.demandApparentVA || loads.demandApparentVA)} VA`} accent="blue" />
             <MetricCard label={summary.systemType === 'backup' ? 'انرژی مصرفی' : 'انرژی روزانه'} value={`${formatNumber(summary.totalDailyEnergyWh)} Wh`} accent="green" />
             <MetricCard label="باتری موردنیاز" value={`${formatNumber(summary.batteryAh)} Ah`} accent="purple" />
-            <MetricCard label="زمان بکاپ واقعی" value={`${formatNumber(summary.batteryBackupHours, 1)} h`} accent="purple" />
-            <MetricCard label={summary.systemType === 'backup' ? 'سانورتر پیشنهادی' : 'اینورتر پیشنهادی'} value={`${formatNumber(summary.inverterPowerW)} W`} accent="amber" />
-            <MetricCard label={summary.systemType === 'backup' ? 'Surge سانورتر' : 'Surge اینورتر'} value={`${formatNumber(summary.inverterSurgePowerW)} W`} accent="amber" />
+            <MetricCard label={summary.systemType === 'offgrid' ? 'خودمختاری واقعی' : 'زمان بکاپ واقعی'} value={summary.systemType === 'offgrid' ? `${formatNumber(summary.batteryAutonomyDays, 2)} روز` : `${formatNumber(summary.batteryBackupHours, 1)} h`} accent="purple" />
+            <MetricCard label={summary.systemType === 'backup' ? 'سانورتر پیشنهادی' : 'اینورتر پیشنهادی'} value={`${formatNumber(summary.inverterPowerW)} W / ${formatNumber(summary.inverterPowerVA || inverter.continuousPowerVA)} VA`} accent="amber" />
+            <MetricCard label={summary.systemType === 'backup' ? 'Surge سانورتر' : 'Surge اینورتر'} value={`${formatNumber(summary.inverterSurgePowerW)} W / ${formatNumber(summary.inverterSurgePowerVA || inverter.surgePowerVA)} VA`} accent="amber" />
             {summary.systemType !== 'backup' ? <MetricCard label="تعداد پنل" value={formatNumber(summary.panelCount)} accent="green" /> : null}
             {summary.systemType !== 'backup' ? <MetricCard label="توان نصب شده PV" value={`${formatNumber(summary.pvInstalledPowerW)} W`} accent="blue" /> : null}
-            {summary.systemType !== 'backup' ? <MetricCard label="کنترلر" value={summary.controllerCurrentA ? `${formatNumber(summary.controllerCurrentA)} A` : '—'} accent="blue" /> : null}
+            {summary.systemType !== 'backup' ? <MetricCard label="کنترلر" value={summary.controllerCount > 1 ? `${summary.controllerCount} × ${formatNumber(summary.controllerPerUnitA)} A` : (summary.controllerCurrentA ? `${formatNumber(summary.controllerCurrentA)} A` : '—')} accent="blue" /> : null}
             <MetricCard label="کابل باتری" value={`${formatNumber(summary.batteryCableSizeMm2, 1)} mm²`} accent="amber" />
             <MetricCard label="فیوز AC" value={summary.acFuseA ? `${formatNumber(summary.acFuseA)} A` : '—'} accent="amber" />
             <MetricCard label="افت کابل AC" value={`${formatNumber(cabling.acVoltageDropPercent || 0, 2)} %`} accent="amber" />
+            <MetricCard label="امتیاز صنعتی" value={`${formatNumber(industrial?.serviceabilityScore || 0)} / 100`} accent="green" />
+            <MetricCard label="پوشش بکاپ" value={`${formatNumber((industrial?.backupCoverageRatio || 0) * 100, 0)} %`} accent="purple" />
+            {summary.systemType !== 'backup' ? <MetricCard label="پوشش PV" value={`${formatNumber((industrial?.pvCoverageRatio || 0) * 100, 0)} %`} accent="blue" /> : null}
+            <MetricCard label="جریان DC طراحی" value={`${formatNumber(industrial?.dcCurrentAtDemandA || 0, 1)} A`} accent="amber" />
           </section>
         </section>
 
@@ -420,12 +434,16 @@ export function OutputPage() {
                 <div><span>نوع سیستم</span><strong>{formatSystemType(summary.systemType)}</strong></div>
                 <div><span>روش محاسبه</span><strong>{formatCalculationMode(summary.calculationMode)}</strong></div>
                 <div><span>بار متصل / بار مؤثر</span><strong>{formatNumber(loads.connectedPowerW)} W / {formatNumber(loads.demandPowerW)} W</strong></div>
+                <div><span>بار ظاهری / PF میانگین</span><strong>{formatNumber(loads.demandApparentVA)} VA / {formatNumber(loads.averagePowerFactor, 2)}</strong></div>
                 <div><span>توان پیک / Surge</span><strong>{formatNumber(loads.peakLoadPowerW)} W / {formatNumber(loads.surgePowerW)} W</strong></div>
                 <div><span>تعداد کل باتری</span><strong>{formatNumber(battery.totalCount)}</strong></div>
                 <div><span>سری / موازی</span><strong>{battery.seriesCount} / {battery.parallelCount}</strong></div>
                 <div><span>ظرفیت نامی بانک</span><strong>{formatNumber(battery.bankNominalAh)} Ah</strong></div>
                 <div><span>Charge / Discharge C-rate</span><strong>{formatNumber(battery.chargeCRate, 2)} / {formatNumber(battery.dischargeCRate, 2)} C</strong></div>
-                <div><span>{summary.systemType === 'backup' ? 'توان سانورتر' : 'توان اینورتر'}</span><strong>{formatNumber(inverter.continuousPowerW)} W / {formatNumber(inverter.surgePowerW)} W</strong></div>
+                {summary.systemType === 'offgrid' ? <div><span>بکاپ در بار پیک</span><strong>{formatNumber(summary.batteryBackupHoursAtPeak, 1)} h</strong></div> : null}
+                {summary.systemType === 'offgrid' ? <div><span>خودمختاری بر اساس مصرف روزانه</span><strong>{formatNumber(summary.batteryAutonomyDays, 2)} روز</strong></div> : null}
+                <div><span>{summary.systemType === 'backup' ? 'توان سانورتر' : 'توان اینورتر'}</span><strong>{formatNumber(inverter.continuousPowerW)} W / {formatNumber(inverter.continuousPowerVA)} VA</strong></div>
+                <div><span>Surge خروجی</span><strong>{formatNumber(inverter.surgePowerW)} W / {formatNumber(inverter.surgePowerVA)} VA</strong></div>
                 {pv ? <div><span>PR طراحی</span><strong>{formatNumber(pv.performanceRatio, 2)}</strong></div> : null}
                 {pv ? <div><span>رشته پنل (سری × موازی)</span><strong>{pv.panelSeriesCount} × {pv.panelParallelCount}</strong></div> : null}
                 {pv ? <div><span>String Vmp / Voc(cold)</span><strong>{formatNumber(pv.stringVmp)} / {formatNumber(pv.stringVocCold)} V</strong></div> : null}
@@ -438,7 +456,7 @@ export function OutputPage() {
               <div className="panel__header"><h2>کنترلر، کابل و حفاظت</h2></div>
               <div className="summary-list">
                 {summary.systemType !== 'backup' ? <div><span>نوع کنترلر</span><strong>{controller?.controllerType ?? '—'}</strong></div> : null}
-                {summary.systemType !== 'backup' ? <div><span>جریان کنترلر / انتخابی</span><strong>{controller ? `${formatNumber(controller.requiredCurrentA, 1)} / ${formatNumber(controller.selectedCurrentA)} A` : '—'}</strong></div> : null}
+                {summary.systemType !== 'backup' ? <div><span>جریان کنترلر / انتخابی</span><strong>{controller ? `${formatNumber(controller.requiredCurrentA, 1)} / ${controller.controllerCount > 1 ? `${controller.controllerCount} × ${formatNumber(controller.perControllerA)}` : formatNumber(controller.selectedCurrentA)} A` : '—'}</strong></div> : null}
                 {summary.systemType !== 'backup' ? <div><span>کابل DC پنل</span><strong>{pv ? `${formatNumber(cabling.dcCableSizeMm2, 1)} mm² | افت ${formatNumber(cabling.dcVoltageDropPercent, 2)}%` : '—'}</strong></div> : null}
                 <div><span>کابل باتری</span><strong>{`${formatNumber(cabling.batteryCableSizeMm2, 1)} mm² | افت ${formatNumber(cabling.batteryVoltageDropPercent, 2)}%`}</strong></div>
                 <div><span>کابل AC خروجی</span><strong>{`${formatNumber(cabling.acCableSizeMm2, 1)} mm² | افت ${formatNumber(cabling.acVoltageDropPercent, 2)}%`}</strong></div>
@@ -462,6 +480,28 @@ export function OutputPage() {
           </section>
 
           {summary.systemType === 'backup' ? <BackupScenarioTable scenarios={battery.scenarios} /> : null}
+
+          <section className="panel panel--full">
+            <div className="panel__header">
+              <h2>تحلیل صنعتی قابلیت اجرا</h2>
+              <span className="badge">V6 Industrial</span>
+            </div>
+            <div className="summary-list">
+              <div><span>امتیاز صنعتی</span><strong>{formatNumber(industrial?.serviceabilityScore || 0)} / 100</strong></div>
+              <div><span>پوشش زمان پشتیبانی</span><strong>{formatNumber((industrial?.backupCoverageRatio || 0) * 100, 0)} %</strong></div>
+              <div><span>زمان پشتیبانی هدف / واقعی</span><strong>{formatNumber(industrial?.requiredBackupHours || 0, 1)} h / {formatNumber(industrial?.realBackupHours || 0, 1)} h</strong></div>
+              <div><span>جریان DC دائم / لحظه‌ای</span><strong>{formatNumber(industrial?.dcCurrentAtDemandA || 0, 1)} A / {formatNumber(industrial?.dcCurrentAtSurgeA || 0, 1)} A</strong></div>
+              <div><span>ولتاژ DC پیشنهادی</span><strong>{formatNumber(industrial?.recommendedDcVoltage || activeProject.form.systemVoltage)} V</strong></div>
+              {summary.systemType !== 'backup' ? <div><span>پوشش انرژی PV</span><strong>{formatNumber((industrial?.pvCoverageRatio || 0) * 100, 0)} %</strong></div> : null}
+              {summary.systemType !== 'backup' ? <div><span>کمبود / مازاد انرژی PV</span><strong>{formatNumber(industrial?.pvShortageWh || 0)} / {formatNumber(industrial?.pvSurplusWh || 0)} Wh</strong></div> : null}
+              <div><span>استفاده از ظرفیت اینورتر</span><strong>{formatNumber(industrial?.inverterUtilizationPercent || 0, 0)} %</strong></div>
+            </div>
+            {industrial?.actionItems?.length ? (
+              <div className="advisor-list">
+                {industrial.actionItems.map((item) => <div key={item} className="advisor-card advisor-card--warning"><strong>اقدام پیشنهادی</strong><span>{item}</span></div>)}
+              </div>
+            ) : <p className="section-note">در این مرحله اقدام بحرانی برای اصلاح طراحی تشخیص داده نشد.</p>}
+          </section>
 
           <section className="panel panel--full">
             <div className="panel__header"><h2>تحلیل Advisor</h2></div>

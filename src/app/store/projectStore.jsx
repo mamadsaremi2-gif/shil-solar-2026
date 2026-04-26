@@ -2,6 +2,7 @@ import { createContext, useContext, useMemo, useState } from "react";
 import { DEFAULT_PROJECT_FORM } from "../../domain/models/project";
 import { ProjectRepository } from "../../data/repositories/ProjectRepository";
 import { CloudProjectRepository } from "../../data/repositories/CloudProjectRepository";
+import { isSupabaseConfigured, supabase } from "../../shared/lib/supabaseClient";
 import { runEngineeringDesign } from "../../domain/engine/orchestrator/runEngineeringDesign";
 import { trackEvent } from "../../shared/lib/usageTracker";
 
@@ -77,6 +78,23 @@ function hydrateSessionFromProject(project, versionId) {
     form: targetVersion?.form ?? project.draftForm ?? DEFAULT_PROJECT_FORM,
     result: targetVersion?.result ?? null,
   });
+}
+
+async function getCloudOwnerId() {
+  if (!isSupabaseConfigured) return null;
+  const { data } = await supabase.auth.getSession();
+  return data?.session?.user?.id || null;
+}
+
+async function persistProjectToCloud(project) {
+  try {
+    const ownerId = await getCloudOwnerId();
+    if (!ownerId || !project) return;
+    await CloudProjectRepository.upsert(project, ownerId);
+    trackEvent("cloud_project_saved", { projectId: project.id, status: project.status });
+  } catch (error) {
+    console.warn("Cloud project save failed", error);
+  }
 }
 
 export function ProjectStoreProvider({ children }) {
@@ -176,27 +194,26 @@ export function ProjectStoreProvider({ children }) {
         return next;
       });
     },
-    addLoadItem() {
+    addLoadItem(payload = {}) {
       setActiveProject((prev) => {
+        const item = {
+          id: crypto.randomUUID(),
+          name: "بار جدید",
+          qty: 1,
+          power: 100,
+          hours: 1,
+          powerFactor: 0.95,
+          coincidenceFactor: 1,
+          loadType: "mixed",
+          surgeFactor: 1,
+          ...payload,
+        };
         const next = {
           ...prev,
           updatedAt: new Date().toISOString(),
           form: {
             ...prev.form,
-            loadItems: [
-              ...prev.form.loadItems,
-              {
-                id: crypto.randomUUID(),
-                name: "بار جدید",
-                qty: 1,
-                power: 100,
-                hours: 1,
-                powerFactor: 0.95,
-                coincidenceFactor: 1,
-                loadType: "mixed",
-                surgeFactor: 1,
-              },
-            ],
+            loadItems: [...prev.form.loadItems, item],
           },
         };
         syncDraft(next);
@@ -305,7 +322,10 @@ export function ProjectStoreProvider({ children }) {
         savedProject = updated;
         return { ...prev, versionId: nextVersion.id, updatedAt: updated.updatedAt };
       });
-      if (savedProject) refreshProjects();
+      if (savedProject) {
+        refreshProjects();
+        void persistProjectToCloud(savedProject);
+      }
       return savedProject;
     },
     saveProject() {
@@ -351,7 +371,10 @@ export function ProjectStoreProvider({ children }) {
         savedProject = updated;
         return { ...prev, updatedAt: updated.updatedAt };
       });
-      if (savedProject) refreshProjects();
+      if (savedProject) {
+        refreshProjects();
+        void persistProjectToCloud(savedProject);
+      }
       return savedProject;
     },
     openProject(projectId, versionId = null) {
@@ -395,6 +418,9 @@ export function ProjectStoreProvider({ children }) {
     },
     deleteProject(projectId) {
       ProjectRepository.remove(projectId);
+      if (CloudProjectRepository.isEnabled()) {
+        void CloudProjectRepository.remove(projectId).catch((error) => console.warn("Cloud project delete failed", error));
+      }
       const items = refreshProjects();
       if (activeProject.projectId === projectId) {
         setActiveProject(createProjectSession());

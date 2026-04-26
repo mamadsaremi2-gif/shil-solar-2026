@@ -1,4 +1,5 @@
 import { DEFAULT_EQUIPMENT_LIBRARY, EQUIPMENT_CATEGORIES } from '../seed/equipmentLibrary';
+import { toEnglishDigits } from '../../shared/utils/faNumbers';
 import {
   loadCustomEquipment,
   removeCustomEquipmentById,
@@ -7,7 +8,7 @@ import {
 } from '../adapters/localStorageEquipmentAdapter';
 
 function normalizeSearch(text) {
-  return String(text || '').toLowerCase();
+  return toEnglishDigits(String(text || '')).toLowerCase().trim();
 }
 
 function slugify(text) {
@@ -35,7 +36,7 @@ export const EquipmentRepository = {
     const q = normalizeSearch(query);
     return this.list(category).filter((item) => {
       if (!q) return true;
-      return [item.title, item.brand, item.model, item.summary].some((part) => normalizeSearch(part).includes(q));
+      return [item.title, item.brand, item.model, item.summary, item.specs?.name, item.specs?.power].some((part) => normalizeSearch(part).includes(q));
     });
   },
   getById(equipmentId) {
