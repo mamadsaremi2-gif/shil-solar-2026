@@ -66,7 +66,7 @@ function buildProjectRecordFromSession(session) {
 
   return {
     id: crypto.randomUUID(),
-    title: session.form.projectTitle,
+    title: session.form.projectTitle || "پروژه جدید",
     systemType: session.form.systemType,
     clientName: session.form.clientName,
     city: session.form.city,
@@ -81,8 +81,8 @@ function buildProjectRecordFromSession(session) {
 
 function hydrateSessionFromProject(project, versionId) {
   const targetVersion =
-    project.versions.find((item) => item.id === versionId) ??
-    project.versions.at(-1) ??
+    project.versions?.find((item) => item.id === versionId) ??
+    project.versions?.at(-1) ??
     null;
 
   return createProjectSession({
@@ -151,7 +151,7 @@ export function ProjectStoreProvider({ children }) {
 
     ProjectRepository.upsert({
       ...record,
-      title: nextSession.form.projectTitle,
+      title: nextSession.form.projectTitle || "پروژه جدید",
       systemType: nextSession.form.systemType,
       clientName: nextSession.form.clientName,
       city: nextSession.form.city,
@@ -226,7 +226,6 @@ export function ProjectStoreProvider({ children }) {
       });
 
       refreshProjects();
-
       await persistProjectToCloud(created);
 
       setStepIndex(0);
@@ -384,29 +383,21 @@ export function ProjectStoreProvider({ children }) {
     },
 
     saveProjectVersion() {
-      let savedProject;
+      let savedProject = null;
 
       setActiveProject((prev) => {
-        const safeResult = prev.result?.ok
-          ? prev.result
-          : runEngineeringDesign(prev.form);
-
-        if (!safeResult?.ok) {
-          savedProject = null;
-          alert("محاسبات هنوز معتبر نیست. لطفاً اطلاعات پروژه را بررسی کنید.");
-
-          return {
-            ...prev,
-            result: safeResult,
-            updatedAt: new Date().toISOString(),
-          };
-        }
+        const freshResult = runEngineeringDesign(prev.form);
 
         const safePrev = {
           ...prev,
-          result: safeResult,
+          result: freshResult,
           updatedAt: new Date().toISOString(),
         };
+
+        if (!freshResult) {
+          alert("محاسبات انجام نشد. لطفاً اطلاعات پروژه را بررسی کنید.");
+          return safePrev;
+        }
 
         if (!safePrev.projectId) {
           const created = buildProjectRecordFromSession(safePrev);
@@ -445,11 +436,11 @@ export function ProjectStoreProvider({ children }) {
 
         const updated = {
           ...record,
-          title: safePrev.form.projectTitle,
+          title: safePrev.form.projectTitle || "پروژه جدید",
           systemType: safePrev.form.systemType,
           clientName: safePrev.form.clientName,
           city: safePrev.form.city,
-          status: "calculated",
+          status: freshResult?.ok ? "calculated" : "draft",
           draftForm: cloneForm(safePrev.form),
           currentVersionId: nextVersion.id,
           updatedAt: new Date().toISOString(),
@@ -479,13 +470,13 @@ export function ProjectStoreProvider({ children }) {
     },
 
     saveDraftProject() {
-      let savedProject;
+      let savedProject = null;
 
       setActiveProject((prev) => {
         if (!prev.projectId) {
           const created = {
             id: crypto.randomUUID(),
-            title: prev.form.projectTitle,
+            title: prev.form.projectTitle || "پروژه جدید",
             systemType: prev.form.systemType,
             clientName: prev.form.clientName,
             city: prev.form.city,
@@ -516,7 +507,7 @@ export function ProjectStoreProvider({ children }) {
 
         const updated = {
           ...record,
-          title: prev.form.projectTitle,
+          title: prev.form.projectTitle || "پروژه جدید",
           systemType: prev.form.systemType,
           clientName: prev.form.clientName,
           city: prev.form.city,
@@ -548,7 +539,9 @@ export function ProjectStoreProvider({ children }) {
 
       setActiveProject(hydrateSessionFromProject(found, versionId));
       setStepIndex(0);
-      setRoute({ name: versionId || found.currentVersionId ? "output" : "workspace" });
+      setRoute({
+        name: versionId || found.currentVersionId ? "output" : "workspace",
+      });
     },
 
     openWorkspace(projectId) {
