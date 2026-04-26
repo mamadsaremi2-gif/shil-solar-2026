@@ -14,9 +14,11 @@ function cloneForm(form) {
 
 function createProjectSession(seed = {}) {
   const baseForm = cloneForm(seed.form ?? DEFAULT_PROJECT_FORM);
+
   if (!baseForm.loadProfile || baseForm.loadProfile.length !== 24) {
     baseForm.loadProfile = cloneForm(DEFAULT_PROJECT_FORM.loadProfile);
   }
+
   return {
     projectId: seed.projectId ?? null,
     versionId: seed.versionId ?? null,
@@ -29,13 +31,20 @@ function createProjectSession(seed = {}) {
 
 function summarizeVersion(version) {
   const summary = version.result?.summary ?? {};
+
   return {
     demandPowerW: summary.demandPowerW ?? 0,
     totalDailyEnergyWh: summary.totalDailyEnergyWh ?? 0,
     batteryAh: summary.batteryAh ?? 0,
     panelCount: summary.panelCount ?? 0,
     inverterPowerW: summary.inverterPowerW ?? 0,
-    status: version.result?.ok ? (version.result?.advisor?.some((item) => item.severity === "error") ? "error" : version.result?.advisor?.some((item) => item.severity === "warning") ? "warning" : "success") : "draft",
+    status: version.result?.ok
+      ? version.result?.advisor?.some((item) => item.severity === "error")
+        ? "error"
+        : version.result?.advisor?.some((item) => item.severity === "warning")
+          ? "warning"
+          : "success"
+      : "draft",
   };
 }
 
@@ -54,6 +63,7 @@ function buildVersionSnapshot(session, versionNumber) {
 function buildProjectRecordFromSession(session) {
   const now = new Date().toISOString();
   const version = buildVersionSnapshot(session, 1);
+
   return {
     id: crypto.randomUUID(),
     title: session.form.projectTitle,
@@ -70,7 +80,11 @@ function buildProjectRecordFromSession(session) {
 }
 
 function hydrateSessionFromProject(project, versionId) {
-  const targetVersion = project.versions.find((item) => item.id === versionId) ?? project.versions.at(-1) ?? null;
+  const targetVersion =
+    project.versions.find((item) => item.id === versionId) ??
+    project.versions.at(-1) ??
+    null;
+
   return createProjectSession({
     projectId: project.id,
     versionId: targetVersion?.id ?? null,
@@ -82,6 +96,7 @@ function hydrateSessionFromProject(project, versionId) {
 
 async function getCloudOwnerId() {
   if (!isSupabaseConfigured) return null;
+
   const { data } = await supabase.auth.getSession();
   return data?.session?.user?.id || null;
 }
@@ -89,9 +104,15 @@ async function getCloudOwnerId() {
 async function persistProjectToCloud(project) {
   try {
     const ownerId = await getCloudOwnerId();
+
     if (!ownerId || !project) return;
+
     await CloudProjectRepository.upsert(project, ownerId);
-    trackEvent("cloud_project_saved", { projectId: project.id, status: project.status });
+
+    trackEvent("cloud_project_saved", {
+      projectId: project.id,
+      status: project.status,
+    });
   } catch (error) {
     console.warn("Cloud project save failed", error);
   }
@@ -102,6 +123,7 @@ export function ProjectStoreProvider({ children }) {
   const [projects, setProjects] = useState(() => ProjectRepository.list());
   const [activeProject, setActiveProject] = useState(() => createProjectSession());
   const [stepIndex, setStepIndex] = useState(0);
+
   const steps = useMemo(
     () => [
       { key: "project", label: "اطلاعات پروژه" },
@@ -123,8 +145,10 @@ export function ProjectStoreProvider({ children }) {
 
   function syncDraft(nextSession) {
     if (!nextSession.projectId) return;
+
     const record = ProjectRepository.getById(nextSession.projectId);
     if (!record) return;
+
     ProjectRepository.upsert({
       ...record,
       title: nextSession.form.projectTitle,
@@ -135,6 +159,7 @@ export function ProjectStoreProvider({ children }) {
       updatedAt: new Date().toISOString(),
       status: record.versions?.length ? record.status : "draft",
     });
+
     refreshProjects();
   }
 
@@ -143,59 +168,72 @@ export function ProjectStoreProvider({ children }) {
       setRoute({ name: "dashboard" });
       trackEvent("open_dashboard");
     },
+
     openAdmin() {
       setRoute({ name: "admin" });
       trackEvent("open_admin");
     },
+
     openEquipmentLibrary(origin = null) {
       setRoute({ name: "equipment", origin: origin ?? route.name });
       trackEvent("open_equipment_library", { origin: origin ?? route.name });
     },
+
     goBackFromEquipment() {
       const origin = route.origin === "workspace" ? "workspace" : "dashboard";
       setRoute({ name: origin });
     },
+
     openContact(origin = null) {
       setRoute({ name: "contact", origin: origin ?? route.name });
       trackEvent("open_contact", { origin: origin ?? route.name });
     },
+
     goBackFromContact() {
-      const origin = route.origin === "workspace" ? "workspace" : route.origin === "output" ? "output" : "dashboard";
+      const origin =
+        route.origin === "workspace"
+          ? "workspace"
+          : route.origin === "output"
+            ? "output"
+            : "dashboard";
+
       setRoute({ name: origin });
     },
+
     async startNewProject() {
-  const session = createProjectSession();
+      const session = createProjectSession();
 
-  const created = {
-    id: crypto.randomUUID(),
-    title: session.form.projectTitle || "پروژه جدید",
-    systemType: session.form.systemType,
-    clientName: session.form.clientName,
-    city: session.form.city,
-    status: "draft",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    draftForm: cloneForm(session.form),
-    currentVersionId: null,
-    versions: [],
-  };
+      const created = {
+        id: crypto.randomUUID(),
+        title: session.form.projectTitle || "پروژه جدید",
+        systemType: session.form.systemType,
+        clientName: session.form.clientName,
+        city: session.form.city,
+        status: "draft",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        draftForm: cloneForm(session.form),
+        currentVersionId: null,
+        versions: [],
+      };
 
-  ProjectRepository.upsert(created);
+      ProjectRepository.upsert(created);
 
-  setActiveProject({
-    ...session,
-    projectId: created.id,
-    updatedAt: created.updatedAt,
-  });
+      setActiveProject({
+        ...session,
+        projectId: created.id,
+        updatedAt: created.updatedAt,
+      });
 
-  refreshProjects();
+      refreshProjects();
 
-  await persistProjectToCloud(created);
+      await persistProjectToCloud(created);
 
-  setStepIndex(0);
-  setRoute({ name: "workspace" });
-  trackEvent("start_new_project");
-},
+      setStepIndex(0);
+      setRoute({ name: "workspace" });
+      trackEvent("start_new_project");
+    },
+
     updateForm(patch) {
       setActiveProject((prev) => {
         const next = {
@@ -203,10 +241,12 @@ export function ProjectStoreProvider({ children }) {
           updatedAt: new Date().toISOString(),
           form: { ...prev.form, ...patch },
         };
+
         syncDraft(next);
         return next;
       });
     },
+
     updateLoadItem(id, patch) {
       setActiveProject((prev) => {
         const next = {
@@ -214,13 +254,17 @@ export function ProjectStoreProvider({ children }) {
           updatedAt: new Date().toISOString(),
           form: {
             ...prev.form,
-            loadItems: prev.form.loadItems.map((item) => (item.id === id ? { ...item, ...patch } : item)),
+            loadItems: prev.form.loadItems.map((item) =>
+              item.id === id ? { ...item, ...patch } : item
+            ),
           },
         };
+
         syncDraft(next);
         return next;
       });
     },
+
     addLoadItem(payload = {}) {
       setActiveProject((prev) => {
         const item = {
@@ -235,6 +279,7 @@ export function ProjectStoreProvider({ children }) {
           surgeFactor: 1,
           ...payload,
         };
+
         const next = {
           ...prev,
           updatedAt: new Date().toISOString(),
@@ -243,10 +288,12 @@ export function ProjectStoreProvider({ children }) {
             loadItems: [...prev.form.loadItems, item],
           },
         };
+
         syncDraft(next);
         return next;
       });
     },
+
     updateLoadProfileValue(id, factor) {
       setActiveProject((prev) => {
         const next = {
@@ -254,13 +301,17 @@ export function ProjectStoreProvider({ children }) {
           updatedAt: new Date().toISOString(),
           form: {
             ...prev.form,
-            loadProfile: (prev.form.loadProfile || []).map((slot) => (slot.id === id ? { ...slot, factor } : slot)),
+            loadProfile: (prev.form.loadProfile || []).map((slot) =>
+              slot.id === id ? { ...slot, factor } : slot
+            ),
           },
         };
+
         syncDraft(next);
         return next;
       });
     },
+
     resetLoadProfile() {
       setActiveProject((prev) => {
         const next = {
@@ -271,10 +322,12 @@ export function ProjectStoreProvider({ children }) {
             loadProfile: cloneForm(DEFAULT_PROJECT_FORM.loadProfile),
           },
         };
+
         syncDraft(next);
         return next;
       });
     },
+
     removeLoadItem(id) {
       setActiveProject((prev) => {
         const next = {
@@ -285,81 +338,149 @@ export function ProjectStoreProvider({ children }) {
             loadItems: prev.form.loadItems.filter((item) => item.id !== id),
           },
         };
+
         syncDraft(next);
         return next;
       });
     },
+
     nextStep() {
       setStepIndex((prev) => Math.min(prev + 1, steps.length - 1));
     },
+
     prevStep() {
       setStepIndex((prev) => Math.max(prev - 1, 0));
     },
+
     goToStep(index) {
       setStepIndex(index);
     },
+
     runCalculation() {
       const output = runEngineeringDesign(activeProject.form);
+
       setActiveProject((prev) => {
-        const next = { ...prev, updatedAt: new Date().toISOString(), result: output };
+        const next = {
+          ...prev,
+          updatedAt: new Date().toISOString(),
+          result: output,
+        };
+
         syncDraft(next);
         return next;
       });
-      trackEvent("run_calculation", { ok: output.ok, systemType: activeProject.form.systemType, calculationMode: activeProject.form.calculationMode });
-      if (output.ok) setRoute({ name: "output" });
+
+      trackEvent("run_calculation", {
+        ok: output.ok,
+        systemType: activeProject.form.systemType,
+        calculationMode: activeProject.form.calculationMode,
+      });
+
+      if (output.ok) {
+        setRoute({ name: "output" });
+      }
+
       return output;
     },
+
     saveProjectVersion() {
       let savedProject;
+
       setActiveProject((prev) => {
-        if (!prev.result?.ok) {
+        const safeResult = prev.result?.ok
+          ? prev.result
+          : runEngineeringDesign(prev.form);
+
+        if (!safeResult?.ok) {
           savedProject = null;
-          return prev;
-        }
-        if (!prev.projectId) {
-          const created = buildProjectRecordFromSession(prev);
-          ProjectRepository.upsert(created);
-          savedProject = created;
+          alert("محاسبات هنوز معتبر نیست. لطفاً اطلاعات پروژه را بررسی کنید.");
+
           return {
             ...prev,
+            result: safeResult,
+            updatedAt: new Date().toISOString(),
+          };
+        }
+
+        const safePrev = {
+          ...prev,
+          result: safeResult,
+          updatedAt: new Date().toISOString(),
+        };
+
+        if (!safePrev.projectId) {
+          const created = buildProjectRecordFromSession(safePrev);
+
+          ProjectRepository.upsert(created);
+          savedProject = created;
+
+          return {
+            ...safePrev,
             projectId: created.id,
             versionId: created.currentVersionId,
             updatedAt: created.updatedAt,
           };
         }
-        const record = ProjectRepository.getById(prev.projectId);
+
+        const record = ProjectRepository.getById(safePrev.projectId);
+
         if (!record) {
-          savedProject = null;
-          return prev;
+          const created = buildProjectRecordFromSession(safePrev);
+
+          ProjectRepository.upsert(created);
+          savedProject = created;
+
+          return {
+            ...safePrev,
+            projectId: created.id,
+            versionId: created.currentVersionId,
+            updatedAt: created.updatedAt,
+          };
         }
-        const nextVersion = buildVersionSnapshot(prev, (record.versions?.length ?? 0) + 1);
+
+        const nextVersion = buildVersionSnapshot(
+          safePrev,
+          (record.versions?.length ?? 0) + 1
+        );
+
         const updated = {
           ...record,
-          title: prev.form.projectTitle,
-          systemType: prev.form.systemType,
-          clientName: prev.form.clientName,
-          city: prev.form.city,
+          title: safePrev.form.projectTitle,
+          systemType: safePrev.form.systemType,
+          clientName: safePrev.form.clientName,
+          city: safePrev.form.city,
           status: "calculated",
-          draftForm: cloneForm(prev.form),
+          draftForm: cloneForm(safePrev.form),
           currentVersionId: nextVersion.id,
           updatedAt: new Date().toISOString(),
           versions: [...(record.versions ?? []), nextVersion],
         };
+
         ProjectRepository.upsert(updated);
         savedProject = updated;
-        return { ...prev, versionId: nextVersion.id, updatedAt: updated.updatedAt };
+
+        return {
+          ...safePrev,
+          versionId: nextVersion.id,
+          updatedAt: updated.updatedAt,
+        };
       });
+
       if (savedProject) {
         refreshProjects();
         void persistProjectToCloud(savedProject);
       }
+
       return savedProject;
     },
+
     saveProject() {
       return actions.saveDraftProject();
     },
+
     saveDraftProject() {
       let savedProject;
+
       setActiveProject((prev) => {
         if (!prev.projectId) {
           const created = {
@@ -375,15 +496,24 @@ export function ProjectStoreProvider({ children }) {
             currentVersionId: null,
             versions: [],
           };
+
           ProjectRepository.upsert(created);
           savedProject = created;
-          return { ...prev, projectId: created.id, updatedAt: created.updatedAt };
+
+          return {
+            ...prev,
+            projectId: created.id,
+            updatedAt: created.updatedAt,
+          };
         }
+
         const record = ProjectRepository.getById(prev.projectId);
+
         if (!record) {
           savedProject = null;
           return prev;
         }
+
         const updated = {
           ...record,
           title: prev.form.projectTitle,
@@ -394,61 +524,105 @@ export function ProjectStoreProvider({ children }) {
           draftForm: cloneForm(prev.form),
           updatedAt: new Date().toISOString(),
         };
+
         ProjectRepository.upsert(updated);
         savedProject = updated;
-        return { ...prev, updatedAt: updated.updatedAt };
+
+        return {
+          ...prev,
+          updatedAt: updated.updatedAt,
+        };
       });
+
       if (savedProject) {
         refreshProjects();
         void persistProjectToCloud(savedProject);
       }
+
       return savedProject;
     },
+
     openProject(projectId, versionId = null) {
       const found = ProjectRepository.getById(projectId);
       if (!found) return;
+
       setActiveProject(hydrateSessionFromProject(found, versionId));
       setStepIndex(0);
       setRoute({ name: versionId || found.currentVersionId ? "output" : "workspace" });
     },
+
     openWorkspace(projectId) {
       const found = ProjectRepository.getById(projectId);
       if (!found) return;
+
       setActiveProject(
         createProjectSession({
           projectId: found.id,
           versionId: found.currentVersionId,
           createdAt: found.createdAt,
-          form: found.draftForm ?? found.versions?.at(-1)?.form ?? DEFAULT_PROJECT_FORM,
-          result: found.versions?.find((item) => item.id === found.currentVersionId)?.result ?? found.versions?.at(-1)?.result ?? null,
+          form:
+            found.draftForm ??
+            found.versions?.at(-1)?.form ??
+            DEFAULT_PROJECT_FORM,
+          result:
+            found.versions?.find((item) => item.id === found.currentVersionId)
+              ?.result ??
+            found.versions?.at(-1)?.result ??
+            null,
         })
       );
+
       setStepIndex(0);
       setRoute({ name: "workspace" });
     },
+
     async syncCloudProjects(userId) {
-      if (!CloudProjectRepository.isEnabled()) return { ok: false, message: "Supabase تنظیم نشده است." };
+      if (!CloudProjectRepository.isEnabled()) {
+        return {
+          ok: false,
+          message: "Supabase تنظیم نشده است.",
+        };
+      }
+
       try {
         const cloudItems = await CloudProjectRepository.list();
+
         cloudItems.forEach((item) => ProjectRepository.upsert(item));
+
         const localItems = ProjectRepository.list();
+
         for (const item of localItems) {
           await CloudProjectRepository.upsert(item, userId);
         }
+
         refreshProjects();
-        trackEvent("sync_cloud_projects", { count: localItems.length });
+
+        trackEvent("sync_cloud_projects", {
+          count: localItems.length,
+        });
+
         return { ok: true };
       } catch (error) {
         console.error("Cloud sync failed", error);
-        return { ok: false, message: error.message };
+
+        return {
+          ok: false,
+          message: error.message,
+        };
       }
     },
+
     deleteProject(projectId) {
       ProjectRepository.remove(projectId);
+
       if (CloudProjectRepository.isEnabled()) {
-        void CloudProjectRepository.remove(projectId).catch((error) => console.warn("Cloud project delete failed", error));
+        void CloudProjectRepository.remove(projectId).catch((error) =>
+          console.warn("Cloud project delete failed", error)
+        );
       }
+
       const items = refreshProjects();
+
       if (activeProject.projectId === projectId) {
         setActiveProject(createProjectSession());
         setRoute({ name: items.length ? "dashboard" : "dashboard" });
@@ -456,7 +630,10 @@ export function ProjectStoreProvider({ children }) {
     },
   };
 
-  const activeRecord = activeProject.projectId ? projects.find((item) => item.id === activeProject.projectId) ?? null : null;
+  const activeRecord = activeProject.projectId
+    ? projects.find((item) => item.id === activeProject.projectId) ?? null
+    : null;
+
   const projectVersions = activeRecord?.versions ?? [];
 
   const value = {
@@ -470,11 +647,19 @@ export function ProjectStoreProvider({ children }) {
     ...actions,
   };
 
-  return <ProjectStoreContext.Provider value={value}>{children}</ProjectStoreContext.Provider>;
+  return (
+    <ProjectStoreContext.Provider value={value}>
+      {children}
+    </ProjectStoreContext.Provider>
+  );
 }
 
 export function useProjectStore() {
   const context = useContext(ProjectStoreContext);
-  if (!context) throw new Error("useProjectStore must be used within ProjectStoreProvider");
+
+  if (!context) {
+    throw new Error("useProjectStore must be used within ProjectStoreProvider");
+  }
+
   return context;
 }
