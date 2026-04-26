@@ -163,12 +163,39 @@ export function ProjectStoreProvider({ children }) {
       const origin = route.origin === "workspace" ? "workspace" : route.origin === "output" ? "output" : "dashboard";
       setRoute({ name: origin });
     },
-    startNewProject() {
-      setActiveProject(createProjectSession());
-      setStepIndex(0);
-      setRoute({ name: "workspace" });
-      trackEvent("start_new_project");
-    },
+    async startNewProject() {
+  const session = createProjectSession();
+
+  const created = {
+    id: crypto.randomUUID(),
+    title: session.form.projectTitle || "پروژه جدید",
+    systemType: session.form.systemType,
+    clientName: session.form.clientName,
+    city: session.form.city,
+    status: "draft",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    draftForm: cloneForm(session.form),
+    currentVersionId: null,
+    versions: [],
+  };
+
+  ProjectRepository.upsert(created);
+
+  setActiveProject({
+    ...session,
+    projectId: created.id,
+    updatedAt: created.updatedAt,
+  });
+
+  refreshProjects();
+
+  await persistProjectToCloud(created);
+
+  setStepIndex(0);
+  setRoute({ name: "workspace" });
+  trackEvent("start_new_project");
+},
     updateForm(patch) {
       setActiveProject((prev) => {
         const next = {
