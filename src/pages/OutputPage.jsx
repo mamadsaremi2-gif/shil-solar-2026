@@ -280,11 +280,8 @@ export function OutputPage() {
 
 
   function handleSave() {
-    const saved = saveProjectVersion();
-    if (!saved) {
-      window.alert('برای ذخیره نسخه جدید ابتدا محاسبات معتبر داشته باش.');
-    }
-  }
+  saveProjectVersion();
+}
 
   async function handleExportPdf() {
     try {
