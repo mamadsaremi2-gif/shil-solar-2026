@@ -1,16 +1,16 @@
-import { isSupabaseConfigured, supabase } from './supabaseClient.js';
+import { getSupabaseClient, isSupabaseConfigured } from './supabaseLazy.js';
 
-export async function trackEvent(eventName, metadata = {}) {
+export async function trackEvent(eventName, payload = {}) {
   if (!isSupabaseConfigured) return;
   try {
+    const supabase = await getSupabaseClient();
+    if (!supabase) return;
     const { data: sessionData } = await supabase.auth.getSession();
-    const userId = sessionData?.session?.user?.id || null;
+    const user = sessionData?.session?.user;
     await supabase.from('usage_events').insert({
-      user_id: userId,
       event_name: eventName,
-      route: metadata.route || window.location.pathname || '/',
-      metadata,
-      user_agent: navigator.userAgent,
+      payload,
+      user_id: user?.id ?? null,
     });
   } catch (error) {
     console.warn('Usage tracking failed', error);

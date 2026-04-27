@@ -1,32 +1,73 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Suspense, lazy } from "react";
+import { DashboardPage } from "../pages/DashboardPage";
+import { AuthGate } from "../features/auth/AuthGate";
+import { useProjectStore } from "./store/projectStore";
 
-// صفحات اصلی
-import DashboardPage from "../pages/DashboardPage";
-import EquipmentLibraryPage from "../pages/EquipmentLibraryPage";
-import ReadyScenariosPage from "../pages/ReadyScenariosPage";
-import ContactPage from "../pages/ContactPage";
-import ProjectWorkspacePage from "../pages/ProjectWorkspacePage";
-import OutputPage from "../pages/OutputPage";
-import AdminPage from "../pages/AdminPage";
+const ProjectWorkspacePage = lazy(() => import("../pages/ProjectWorkspacePage").then((m) => ({ default: m.ProjectWorkspacePage })));
+const OutputPage = lazy(() => import("../pages/OutputPage").then((m) => ({ default: m.OutputPage })));
+const EquipmentLibraryPage = lazy(() => import("../pages/EquipmentLibraryPage").then((m) => ({ default: m.EquipmentLibraryPage })));
+const ReadyScenariosPage = lazy(() => import("../pages/ReadyScenariosPage").then((m) => ({ default: m.ReadyScenariosPage })));
+const ContactPage = lazy(() => import("../pages/ContactPage").then((m) => ({ default: m.ContactPage })));
+const AdminPage = lazy(() => import("../pages/AdminPage").then((m) => ({ default: m.AdminPage })));
+
+function PageLoader() {
+  return <div className="shell"><div className="panel empty-state">در حال بارگذاری ماژول...</div></div>;
+}
 
 export function App() {
-  return (
-    <Router>
-      <Routes>
+  const { route } = useProjectStore();
 
-        {/* صفحه اصلی */}
-        <Route path="/" element={<DashboardPage />} />
+  const renderRoute = () => {
+    if (route.name === "workspace") {
+      return (
+        <Suspense fallback={<PageLoader />}>
+          <ProjectWorkspacePage />
+        </Suspense>
+      );
+    }
 
-        {/* صفحات اپ */}
-        <Route path="/equipment" element={<EquipmentLibraryPage />} />
-        <Route path="/scenarios" element={<ReadyScenariosPage />} />
-        <Route path="/contact" element={<ContactPage />} />
-        <Route path="/workspace" element={<ProjectWorkspacePage />} />
-        <Route path="/output" element={<OutputPage />} />
-        <Route path="/admin" element={<AdminPage />} />
+    if (route.name === "output") {
+      return (
+        <Suspense fallback={<PageLoader />}>
+          <OutputPage />
+        </Suspense>
+      );
+    }
 
-      </Routes>
-    </Router>
-  );
+    if (route.name === "equipment") {
+      return (
+        <Suspense fallback={<PageLoader />}>
+          <EquipmentLibraryPage />
+        </Suspense>
+      );
+    }
+
+    if (route.name === "scenarios") {
+      return (
+        <Suspense fallback={<PageLoader />}>
+          <ReadyScenariosPage />
+        </Suspense>
+      );
+    }
+
+    if (route.name === "contact") {
+      return (
+        <Suspense fallback={<PageLoader />}>
+          <ContactPage />
+        </Suspense>
+      );
+    }
+
+    if (route.name === "admin") {
+      return (
+        <Suspense fallback={<PageLoader />}>
+          <AdminPage />
+        </Suspense>
+      );
+    }
+
+    return <DashboardPage />;
+  };
+
+  return <AuthGate>{renderRoute()}</AuthGate>;
 }

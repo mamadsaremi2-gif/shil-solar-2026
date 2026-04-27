@@ -1,4 +1,4 @@
-import { isSupabaseConfigured, supabase } from '../../shared/lib/supabaseClient.js';
+import { getSupabaseClient, isSupabaseConfigured } from '../../shared/lib/supabaseLazy.js';
 
 function toDbProject(project, ownerId) {
   return {
@@ -36,6 +36,8 @@ export const CloudProjectRepository = {
 
   async list() {
     if (!isSupabaseConfigured) return [];
+    const supabase = await getSupabaseClient();
+    if (!supabase) return [];
     const { data, error } = await supabase
       .from('app_projects')
       .select('*')
@@ -47,6 +49,8 @@ export const CloudProjectRepository = {
 
   async upsert(project, ownerId) {
     if (!isSupabaseConfigured || !ownerId) return null;
+    const supabase = await getSupabaseClient();
+    if (!supabase) return null;
     const payload = toDbProject(project, ownerId);
     const { data, error } = await supabase
       .from('app_projects')
@@ -60,6 +64,8 @@ export const CloudProjectRepository = {
 
   async remove(projectId) {
     if (!isSupabaseConfigured) return;
+    const supabase = await getSupabaseClient();
+    if (!supabase) return;
     const { error } = await supabase
       .from('app_projects')
       .delete()

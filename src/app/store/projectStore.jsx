@@ -1,12 +1,19 @@
 import { createContext, useContext, useMemo, useState } from "react";
 import { DEFAULT_PROJECT_FORM } from "../../domain/models/project";
 import { ProjectRepository } from "../../data/repositories/ProjectRepository";
-import { CloudProjectRepository } from "../../data/repositories/CloudProjectRepository";
-import { isSupabaseConfigured, supabase } from "../../shared/lib/supabaseClient";
+import { getSupabaseClient, isSupabaseConfigured } from "../../shared/lib/supabaseLazy";
 import { runEngineeringDesign } from "../../domain/engine/orchestrator/runEngineeringDesign";
-import { trackEvent } from "../../shared/lib/usageTracker";
 
 const ProjectStoreContext = createContext(null);
+
+async function trackEventSafe(eventName, payload = {}) {
+  try {
+    const { trackEvent } = await import("../../shared/lib/usageTracker");
+    await trackEventSafe(eventName, payload);
+  } catch (error) {
+    console.warn("Usage tracking failed", error);
+  }
+}
 
 function cloneForm(form) {
   return JSON.parse(JSON.stringify(form));
@@ -112,6 +119,8 @@ function hydrateSessionFromProject(project, versionId) {
 
 async function getCloudOwnerId() {
   if (!isSupabaseConfigured) return null;
+  const supabase = await getSupabaseClient();
+  if (!supabase) return null;
   const { data } = await supabase.auth.getSession();
   return data?.session?.user?.id || null;
 }
@@ -120,8 +129,9 @@ async function persistProjectToCloud(project) {
   try {
     const ownerId = await getCloudOwnerId();
     if (!ownerId || !project) return;
+    const { CloudProjectRepository } = await import("../../data/repositories/CloudProjectRepository");
     await CloudProjectRepository.upsert(project, ownerId);
-    trackEvent("cloud_project_saved", { projectId: project.id, status: project.status });
+    trackEventSafe("cloud_project_saved", { projectId: project.id, status: project.status });
   } catch (error) {
     console.warn("Cloud project save failed", error);
   }
@@ -171,15 +181,15 @@ export function ProjectStoreProvider({ children }) {
   const actions = {
     goDashboard() {
       setRoute({ name: "dashboard" });
-      trackEvent("open_dashboard");
+      trackEventSafe("open_dashboard");
     },
     openAdmin() {
       setRoute({ name: "admin" });
-      trackEvent("open_admin");
+      trackEventSafe("open_admin");
     },
     openEquipmentLibrary(origin = null) {
       setRoute({ name: "equipment", origin: origin ?? route.name });
-      trackEvent("open_equipment_library", { origin: origin ?? route.name });
+      trackEventSafe("open_equipment_library", { origin: origin ?? route.name });
     },
     goBackFromEquipment() {
       const origin = route.origin === "workspace" ? "workspace" : "dashboard";
@@ -187,7 +197,7 @@ export function ProjectStoreProvider({ children }) {
     },
     openContact(origin = null) {
       setRoute({ name: "contact", origin: origin ?? route.name });
-      trackEvent("open_contact", { origin: origin ?? route.name });
+      trackEventSafe("open_contact", { origin: origin ?? route.name });
     },
     goBackFromContact() {
       const origin = route.origin === "workspace" ? "workspace" : route.origin === "output" ? "output" : "dashboard";
@@ -197,11 +207,11 @@ export function ProjectStoreProvider({ children }) {
       setActiveProject(createProjectSession());
       setStepIndex(0);
       setRoute({ name: "workspace" });
-      trackEvent("start_new_project");
+      trackEventSafe("start_new_project");
     },
     openScenarios(origin = null) {
       setRoute({ name: "scenarios", origin: origin ?? route.name });
-      trackEvent("open_ready_scenarios", { origin: origin ?? route.name });
+      trackEventSafe("open_ready_scenarios", { origin: origin ?? route.name });
     },
     goBackFromScenarios() {
       const origin = route.origin === "workspace" ? "workspace" : "dashboard";
@@ -212,7 +222,7 @@ export function ProjectStoreProvider({ children }) {
       setActiveProject(createProjectSession({ form }));
       setStepIndex(0);
       setRoute({ name: "workspace" });
-      trackEvent("start_project_from_scenario", { scenarioId: preset?.id, systemType: form.systemType });
+      trackEventSafe("start_project_from_scenario", { scenarioId: preset?.id, systemType: form.systemType });
     },
     updateForm(patch) {
       setActiveProject((prev) => {
@@ -323,7 +333,7 @@ export function ProjectStoreProvider({ children }) {
         syncDraft(next);
         return next;
       });
-      trackEvent("run_calculation", { ok: output.ok, systemType: activeProject.form.systemType, calculationMode: activeProject.form.calculationMode });
+      trackEventSafe("run_calculation", { ok: output.ok, systemType: activeProject.form.systemType, calculationMode: activeProject.form.calculationMode });
       if (output.ok) setRoute({ name: "output" });
       return output;
     },
@@ -445,8 +455,9 @@ export function ProjectStoreProvider({ children }) {
       setRoute({ name: "workspace" });
     },
     async syncCloudProjects(userId) {
-      if (!CloudProjectRepository.isEnabled()) return { ok: false, message: "Supabase تنظیم نشده است." };
+      if (!isSupabaseConfigured) return { ok: false, message: "Supabase تنظیم نشده است." };
       try {
+        const { CloudProjectRepository } = await import("../../data/repositories/CloudProjectRepository");
         const cloudItems = await CloudProjectRepository.list();
         cloudItems.forEach((item) => ProjectRepository.upsert(item));
         const localItems = ProjectRepository.list();
@@ -454,7 +465,7 @@ export function ProjectStoreProvider({ children }) {
           await CloudProjectRepository.upsert(item, userId);
         }
         refreshProjects();
-        trackEvent("sync_cloud_projects", { count: localItems.length });
+        trackEventSafe("sync_cloud_projects", { count: localItems.length });
         return { ok: true };
       } catch (error) {
         console.error("Cloud sync failed", error);
@@ -463,8 +474,10 @@ export function ProjectStoreProvider({ children }) {
     },
     deleteProject(projectId) {
       ProjectRepository.remove(projectId);
-      if (CloudProjectRepository.isEnabled()) {
-        void CloudProjectRepository.remove(projectId).catch((error) => console.warn("Cloud project delete failed", error));
+      if (isSupabaseConfigured) {
+        void import("../../data/repositories/CloudProjectRepository")
+          .then(({ CloudProjectRepository }) => CloudProjectRepository.remove(projectId))
+          .catch((error) => console.warn("Cloud project delete failed", error));
       }
       const items = refreshProjects();
       if (activeProject.projectId === projectId) {

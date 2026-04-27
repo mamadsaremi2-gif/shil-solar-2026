@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { isSupabaseConfigured, supabase } from '../../shared/lib/supabaseClient';
+import { getSupabaseClient, isSupabaseConfigured } from '../../shared/lib/supabaseLazy';
 
 const AuthContext = createContext(null);
 
@@ -20,6 +20,12 @@ export function AuthProvider({ children }) {
 
   async function loadProfile(userId) {
     if (!isSupabaseConfigured || !userId) {
+      setProfile(DEV_PROFILE);
+      return DEV_PROFILE;
+    }
+
+    const supabase = await getSupabaseClient();
+    if (!supabase) {
       setProfile(DEV_PROFILE);
       return DEV_PROFILE;
     }
@@ -47,32 +53,46 @@ export function AuthProvider({ children }) {
     }
 
     let mounted = true;
+    let subscriptionRef = null;
 
-    supabase.auth.getSession().then(async ({ data }) => {
-      if (!mounted) return;
-      setSession(data.session);
-      if (data.session?.user?.id) await loadProfile(data.session.user.id);
-      setLoading(false);
-    });
+    getSupabaseClient()
+      .then((supabase) => {
+        if (!mounted || !supabase) return;
 
-    const { data: subscription } = supabase.auth.onAuthStateChange(async (_event, nextSession) => {
-      setSession(nextSession);
-      if (nextSession?.user?.id) {
-        await loadProfile(nextSession.user.id);
-      } else {
-        setProfile(null);
-      }
-      setLoading(false);
-    });
+        supabase.auth.getSession().then(async ({ data }) => {
+          if (!mounted) return;
+          setSession(data.session);
+          if (data.session?.user?.id) await loadProfile(data.session.user.id);
+          setLoading(false);
+        });
+
+        const { data: subscription } = supabase.auth.onAuthStateChange(async (_event, nextSession) => {
+          if (!mounted) return;
+          setSession(nextSession);
+          if (nextSession?.user?.id) {
+            await loadProfile(nextSession.user.id);
+          } else {
+            setProfile(null);
+          }
+          setLoading(false);
+        });
+
+        subscriptionRef = subscription;
+      })
+      .catch((error) => {
+        console.error('Supabase auth init failed', error);
+        if (mounted) setLoading(false);
+      });
 
     return () => {
       mounted = false;
-      subscription?.subscription?.unsubscribe();
+      subscriptionRef?.subscription?.unsubscribe();
     };
   }, []);
 
   async function signIn(email, password) {
     if (!isSupabaseConfigured) return { ok: true };
+    const supabase = await getSupabaseClient();
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) return { ok: false, error: error.message };
     return { ok: true };
@@ -80,6 +100,7 @@ export function AuthProvider({ children }) {
 
   async function signUp({ email, password, fullName, phone, company, requestNote }) {
     if (!isSupabaseConfigured) return { ok: true };
+    const supabase = await getSupabaseClient();
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -97,7 +118,10 @@ export function AuthProvider({ children }) {
   }
 
   async function signOut() {
-    if (isSupabaseConfigured) await supabase.auth.signOut();
+    if (isSupabaseConfigured) {
+      const supabase = await getSupabaseClient();
+      await supabase.auth.signOut();
+    }
     setSession(null);
     setProfile(isSupabaseConfigured ? null : DEV_PROFILE);
   }

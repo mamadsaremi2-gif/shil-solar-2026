@@ -7,7 +7,7 @@ const CONTACT_ITEMS = [
   {
     key: "instagramShil",
     title: "اینستاگرام SHIL",
-    description: "صفحه رسمی محصولات و پروژه‌های SHIL",
+    description: "صفحه رسمی محصولات، پروژه‌ها و اخبار برند SHIL",
     qr: PUBLIC_ASSETS.qr.instagramShil,
     type: "Instagram",
     url: CONTACT_LINKS.instagramShil,
@@ -16,7 +16,7 @@ const CONTACT_ITEMS = [
   {
     key: "instagram",
     title: "اینستاگرام مهندس صارمی",
-    description: "آموزش‌ها، نمونه‌کارها و نکات اجرایی",
+    description: "آموزش‌ها، نمونه‌کارها و نکات اجرایی سیستم‌های خورشیدی",
     qr: PUBLIC_ASSETS.qr.instagram,
     type: "Instagram",
     url: CONTACT_LINKS.instagramPersonal,
@@ -25,7 +25,7 @@ const CONTACT_ITEMS = [
   {
     key: "telegram",
     title: "تلگرام",
-    description: "ارتباط سریع و ارسال فایل‌های پروژه",
+    description: "ارتباط سریع، ارسال فایل‌های پروژه و پیگیری هماهنگی‌ها",
     qr: PUBLIC_ASSETS.qr.telegram,
     type: "Telegram",
     url: CONTACT_LINKS.telegram,
@@ -34,7 +34,7 @@ const CONTACT_ITEMS = [
   {
     key: "whatsapp",
     title: "واتساپ",
-    description: "هماهنگی سریع و پشتیبانی پروژه",
+    description: "هماهنگی سریع، مشاوره اولیه و پشتیبانی پروژه",
     qr: PUBLIC_ASSETS.qr.whatsapp,
     type: "WhatsApp",
     url: CONTACT_LINKS.whatsapp,
@@ -42,10 +42,9 @@ const CONTACT_ITEMS = [
   },
 ];
 
-
 function ContactCard({ item }) {
   return (
-    <article className="contact-card">
+    <article className="contact-card contact-card--premium">
       <a className="contact-card__qr-wrap" href={item.url} target="_blank" rel="noreferrer" aria-label={item.actionLabel}>
         <img className="contact-card__qr" src={item.qr} alt={`QR ${item.title}`} loading="lazy" />
       </a>
@@ -62,61 +61,58 @@ function ContactCard({ item }) {
   );
 }
 
-
 export function ContactPage() {
   const { goBackFromContact, goDashboard } = useProjectStore();
 
   return (
     <div className="shell shell--contact">
       <header
-        className="contact-hero"
-        style={{ backgroundImage: `linear-gradient(135deg, rgba(8,17,31,0.86), rgba(15,23,42,0.68)), url(${PUBLIC_ASSETS.backgrounds.home})` }}
+        className="contact-hero contact-hero--premium"
+        style={{ backgroundImage: `linear-gradient(110deg, rgba(8,17,31,0.26) 0%, rgba(8,17,31,0.40) 42%, rgba(8,17,31,0.66) 100%), url(${PUBLIC_ASSETS.backgrounds.home})` }}
       >
         <button className="btn btn--ghost btn--back" onClick={goBackFromContact} type="button">
           بازگشت
         </button>
 
-        <div className="contact-hero__content">
+        <div className="contact-hero__content contact-hero__content--glass">
           <img className="contact-hero__logo" src={PUBLIC_ASSETS.branding.logo} alt="SHIL" />
-          <span className="eyebrow">Contact / SHIL.IR</span>
-          <h1>ارتباط با SHIL</h1>
+          <span className="eyebrow">مرکز ارتباط رسمی SHIL</span>
+          <h1>ارتباط سریع با SHIL</h1>
           <p>
-            برای مشاهده محصولات SHIL، ارتباط سریع، دریافت فایل‌ها و هماهنگی پروژه، از مسیرهای زیر استفاده کنید.
+            برای مشاهده محصولات، دریافت مشاوره، ارسال فایل‌های پروژه و هماهنگی اجرای سیستم‌های خورشیدی از مسیرهای رسمی زیر استفاده کنید.
           </p>
           <div className="contact-hero__actions">
             <a className="btn btn--primary" href={CONTACT_LINKS.website} target="_blank" rel="noreferrer">
-              ورود به سایت SHIL.IR
+              وب‌سایت رسمی شرکت
             </a>
-            <button className="btn btn--secondary" onClick={goDashboard} type="button">
+            <a className="btn btn--secondary" href={CONTACT_LINKS.whatsapp} target="_blank" rel="noreferrer">
+              ارتباط سریع واتساپ
+            </a>
+            <button className="btn btn--ghost" onClick={goDashboard} type="button">
               بازگشت به داشبورد
             </button>
           </div>
         </div>
       </header>
 
-      <section className="panel contact-site-panel">
-        <div>
-          <span className="eyebrow">Official Website</span>
-          <h2>SHIL.IR</h2>
-          <p>وب‌سایت رسمی برای معرفی محصولات، اطلاعات فنی و مسیرهای ارتباطی.</p>
-        </div>
-        <a className="site-link-card" href={CONTACT_LINKS.website} target="_blank" rel="noreferrer">
-          SHIL.IR
-        </a>
-      </section>
-
-      <section className="panel contact-share-panel">
-        <div className="panel__header">
-          <h2>ارسال لینک برنامه</h2>
-        </div>
-        <p className="section-note">لینک برنامه یا صفحه ارتباط را با پیامک، واتساپ، ایمیل، Gmail و برنامه‌های داخلی نصب‌شده روی موبایل ارسال کنید.</p>
-        <ShareActions title="ارتباط با SHIL" text="مسیرهای ارتباطی SHIL و برنامه طراحی سیستم خورشیدی" />
+      <section className="panel contact-channel-heading">
+        <span className="eyebrow">مسیرهای ارتباطی</span>
+        <h2>انتخاب مسیر ارتباطی رسمی</h2>
+        <p>از QR یا دکمه ورود هر کارت برای ارتباط سریع، مشاهده نمونه‌کارها، ارسال فایل پروژه و پیگیری هماهنگی‌ها استفاده کنید.</p>
       </section>
 
       <section className="contact-grid">
         {CONTACT_ITEMS.map((item) => (
           <ContactCard key={item.key} item={item} />
         ))}
+      </section>
+
+      <section className="panel contact-share-panel contact-share-panel--compact">
+        <div className="panel__header">
+          <h2>ارسال لینک برنامه</h2>
+        </div>
+        <p className="section-note">لینک برنامه یا صفحه ارتباط را با پیامک، واتساپ، ایمیل، Gmail و برنامه‌های داخلی نصب‌شده روی موبایل ارسال کنید.</p>
+        <ShareActions title="ارتباط با SHIL" text="مسیرهای ارتباطی SHIL و برنامه طراحی سیستم خورشیدی" />
       </section>
     </div>
   );
