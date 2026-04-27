@@ -1,4 +1,4 @@
-import { isSupabaseConfigured, supabase } from './supabaseClient';
+import { isSupabaseConfigured, supabase } from './supabaseClient.js';
 
 export async function trackEvent(eventName, metadata = {}) {
   if (!isSupabaseConfigured) return;

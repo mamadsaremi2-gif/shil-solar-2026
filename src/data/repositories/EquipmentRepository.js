@@ -1,11 +1,11 @@
-import { DEFAULT_EQUIPMENT_LIBRARY, EQUIPMENT_CATEGORIES } from '../seed/equipmentLibrary';
-import { toEnglishDigits } from '../../shared/utils/faNumbers';
+import { DEFAULT_EQUIPMENT_LIBRARY, EQUIPMENT_CATEGORIES } from '../seed/equipmentLibrary.js';
+import { toEnglishDigits } from '../../shared/utils/faNumbers.js';
 import {
   loadCustomEquipment,
   removeCustomEquipmentById,
   saveCustomEquipment,
   upsertCustomEquipment,
-} from '../adapters/localStorageEquipmentAdapter';
+} from '../adapters/localStorageEquipmentAdapter.js';
 
 function normalizeSearch(text) {
   return toEnglishDigits(String(text || '')).toLowerCase().trim();

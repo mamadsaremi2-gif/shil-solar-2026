@@ -1,4 +1,4 @@
-import { isSupabaseConfigured, supabase } from '../../shared/lib/supabaseClient';
+import { isSupabaseConfigured, supabase } from '../../shared/lib/supabaseClient.js';
 
 function toDbProject(project, ownerId) {
   return {

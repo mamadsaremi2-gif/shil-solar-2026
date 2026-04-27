@@ -98,7 +98,6 @@ function renderEquipmentSpecs(item) {
 
   if (item.category === 'panel') {
     if (specs.panelWatt) rows.push(['توان پنل', `${formatNumber(specs.panelWatt)} W`]);
-    if (specs.panelType) rows.push(['نوع پنل', specs.panelType]);
     if (specs.panelVmp) rows.push(['Vmp', `${formatNumber(specs.panelVmp)} V`]);
     if (specs.panelVoc) rows.push(['Voc', `${formatNumber(specs.panelVoc)} V`]);
   }
@@ -116,13 +115,6 @@ function renderEquipmentSpecs(item) {
     if (specs.inverterEfficiency) rows.push(['راندمان', `${formatNumber(Number(specs.inverterEfficiency) * 100, 0)} %`]);
   }
 
-  if (item.category === 'controller') {
-    if (specs.controllerType) rows.push(['نوع', specs.controllerType]);
-    if (specs.controllerMaxVoc) rows.push(['حداکثر Voc', `${formatNumber(specs.controllerMaxVoc)} V`]);
-    if (specs.mpptMinVoltage || specs.mpptMaxVoltage) {
-      rows.push(['بازه MPPT', `${formatNumber(specs.mpptMinVoltage || 0)} تا ${formatNumber(specs.mpptMaxVoltage || 0)} V`]);
-    }
-  }
 
   return rows.slice(0, 4);
 }
@@ -224,7 +216,7 @@ export function OutputPage() {
     return <div className="shell"><div className="panel empty-state">محاسبات معتبر موجود نیست.</div></div>;
   }
 
-  const { summary, battery, pv, inverter, controller, cabling, protection, loads, simulation, industrial, advisor } = output.result;
+  const { summary, battery, pv, inverter, controller, cabling, protection, loads, simulation, industrial, advisor, validation } = output.result;
   const designStatusLabel = useMemo(() => summary.designStatus === 'error' ? 'نیازمند اصلاح' : summary.designStatus === 'warning' ? 'دارای هشدار' : 'معتبر', [summary.designStatus]);
   const projectTitle = activeProject.form.projectTitle || 'Solar Design Suite';
   const projectDate = new Date().toLocaleDateString('fa-IR');
@@ -272,16 +264,15 @@ export function OutputPage() {
 
   if (summary.systemType !== 'backup') {
     requiredEquipmentRows.splice(1, 0, ['آرایه پنل', `${formatNumber(summary.panelCount)} عدد - ${formatNumber(summary.pvInstalledPowerW)} W`]);
-    const controllerLabel = controller?.controllerCount > 1
-      ? `${controller.controllerType ?? 'MPPT'} - ${controller.controllerCount} × ${formatNumber(controller.perControllerA)} A`
-      : `${controller?.controllerType ?? '—'} - ${controller?.selectedCurrentA ? formatNumber(controller.selectedCurrentA) : '—'} A`;
-    requiredEquipmentRows.push(['شارژ کنترلر', controllerLabel]);
   }
 
 
   function handleSave() {
-  saveProjectVersion();
-}
+    const saved = saveProjectVersion();
+    if (!saved) {
+      window.alert('برای ذخیره نسخه جدید ابتدا محاسبات معتبر داشته باش.');
+    }
+  }
 
   async function handleExportPdf() {
     try {
@@ -381,7 +372,7 @@ export function OutputPage() {
               <img className="report-cover__logo" src={PUBLIC_ASSETS.branding.logo} alt="Solar Design Suite" />
               <span className="eyebrow">Solar Design Suite</span>
               <h1>{projectTitle}</h1>
-              <p>{summary.systemType === 'backup' ? 'گزارش طراحی سانورتر و باطری شامل خلاصه بار، ظرفیت باطری، توان سانورتر، کابل، حفاظت و تحلیل پشتیبانی روزانه است.' : 'گزارش مهندسی سیستم خورشیدی شامل خلاصه طراحی، نتایج محاسبات، وضعیت باتری، پنل، اینورتر، کنترلر، کابل و حفاظت، به همراه تحلیل شبیه سازی روزانه.'}</p>
+              <p>{summary.systemType === 'backup' ? 'گزارش طراحی سانورتر و باطری شامل خلاصه بار، ظرفیت باطری، توان سانورتر، کابل، حفاظت و تحلیل پشتیبانی روزانه است.' : 'گزارش مهندسی سیستم خورشیدی شامل خلاصه طراحی، نتایج محاسبات، وضعیت باتری، پنل، اینورتر، MPPT داخلی، کابل و حفاظت، به همراه تحلیل شبیه سازی روزانه.'}</p>
             </div>
             <div className="report-cover__meta">
               <div><span>نوع سیستم</span><strong>{formatSystemType(summary.systemType)}</strong></div>
@@ -406,7 +397,6 @@ export function OutputPage() {
             <MetricCard label={summary.systemType === 'backup' ? 'Surge سانورتر' : 'Surge اینورتر'} value={`${formatNumber(summary.inverterSurgePowerW)} W / ${formatNumber(summary.inverterSurgePowerVA || inverter.surgePowerVA)} VA`} accent="amber" />
             {summary.systemType !== 'backup' ? <MetricCard label="تعداد پنل" value={formatNumber(summary.panelCount)} accent="green" /> : null}
             {summary.systemType !== 'backup' ? <MetricCard label="توان نصب شده PV" value={`${formatNumber(summary.pvInstalledPowerW)} W`} accent="blue" /> : null}
-            {summary.systemType !== 'backup' ? <MetricCard label="کنترلر" value={summary.controllerCount > 1 ? `${summary.controllerCount} × ${formatNumber(summary.controllerPerUnitA)} A` : (summary.controllerCurrentA ? `${formatNumber(summary.controllerCurrentA)} A` : '—')} accent="blue" /> : null}
             <MetricCard label="کابل باتری" value={`${formatNumber(summary.batteryCableSizeMm2, 1)} mm²`} accent="amber" />
             <MetricCard label="فیوز AC" value={summary.acFuseA ? `${formatNumber(summary.acFuseA)} A` : '—'} accent="amber" />
             <MetricCard label="افت کابل AC" value={`${formatNumber(cabling.acVoltageDropPercent || 0, 2)} %`} accent="amber" />
@@ -452,8 +442,8 @@ export function OutputPage() {
             <section className="panel">
               <div className="panel__header"><h2>کنترلر، کابل و حفاظت</h2></div>
               <div className="summary-list">
-                {summary.systemType !== 'backup' ? <div><span>نوع کنترلر</span><strong>{controller?.controllerType ?? '—'}</strong></div> : null}
-                {summary.systemType !== 'backup' ? <div><span>جریان کنترلر / انتخابی</span><strong>{controller ? `${formatNumber(controller.requiredCurrentA, 1)} / ${controller.controllerCount > 1 ? `${controller.controllerCount} × ${formatNumber(controller.perControllerA)}` : formatNumber(controller.selectedCurrentA)} A` : '—'}</strong></div> : null}
+                {summary.systemType !== 'backup' ? <div><span>نوع MPPT داخلی</span><strong>{controller?.controllerType ?? '—'}</strong></div> : null}
+                {summary.systemType !== 'backup' ? <div><span>جریان MPPT داخلی / انتخابی</span><strong>{controller ? `${formatNumber(controller.requiredCurrentA, 1)} / ${controller.controllerCount > 1 ? `${controller.controllerCount} × ${formatNumber(controller.perControllerA)}` : formatNumber(controller.selectedCurrentA)} A` : '—'}</strong></div> : null}
                 {summary.systemType !== 'backup' ? <div><span>کابل DC پنل</span><strong>{pv ? `${formatNumber(cabling.dcCableSizeMm2, 1)} mm² | افت ${formatNumber(cabling.dcVoltageDropPercent, 2)}%` : '—'}</strong></div> : null}
                 <div><span>کابل باتری</span><strong>{`${formatNumber(cabling.batteryCableSizeMm2, 1)} mm² | افت ${formatNumber(cabling.batteryVoltageDropPercent, 2)}%`}</strong></div>
                 <div><span>کابل AC خروجی</span><strong>{`${formatNumber(cabling.acCableSizeMm2, 1)} mm² | افت ${formatNumber(cabling.acVoltageDropPercent, 2)}%`}</strong></div>
@@ -472,7 +462,6 @@ export function OutputPage() {
               {summary.systemType !== 'backup' ? <EquipmentCard title="پنل خورشیدی" item={panelItem} /> : null}
               <EquipmentCard title="باتری" item={batteryItem} />
               <EquipmentCard title={summary.systemType === 'backup' ? 'سانورتر' : 'اینورتر'} item={inverterItem} />
-              {summary.systemType !== 'backup' ? <EquipmentCard title="شارژ کنترلر" item={controllerItem} /> : null}
             </div>
           </section>
 
@@ -498,6 +487,27 @@ export function OutputPage() {
                 {industrial.actionItems.map((item) => <div key={item} className="advisor-card advisor-card--warning"><strong>اقدام پیشنهادی</strong><span>{item}</span></div>)}
               </div>
             ) : <p className="section-note">در این مرحله اقدام بحرانی برای اصلاح طراحی تشخیص داده نشد.</p>}
+          </section>
+
+          <section className="panel panel--full">
+            <div className="panel__header">
+              <h2>Validation مهندسی هوشمند</h2>
+              <span className="badge">{validation?.summary?.label || "Engineering Validation"}</span>
+            </div>
+            <div className="summary-list">
+              <div><span>امتیاز اعتبارسنجی</span><strong>{formatNumber(validation?.summary?.score || 0)} / 100</strong></div>
+              <div><span>درجه طراحی</span><strong>{validation?.summary?.grade || "—"}</strong></div>
+              <div><span>خطا / هشدار</span><strong>{formatNumber(validation?.summary?.counts?.error || 0)} / {formatNumber(validation?.summary?.counts?.warning || 0)}</strong></div>
+            </div>
+            <div className="advisor-list">
+              {(validation?.checks || []).map((item) => (
+                <div key={item.id} className={`advisor-card advisor-card--${item.severity}`}>
+                  <strong>{item.title}</strong>
+                  <p>{item.message}</p>
+                  {item.recommendation ? <p><b>اقدام پیشنهادی:</b> {item.recommendation}</p> : null}
+                </div>
+              ))}
+            </div>
           </section>
 
           <section className="panel panel--full">

@@ -1,4 +1,4 @@
-import { buildShareText } from "../constants/contactLinks";
+import { buildShareText } from "../constants/contactLinks.js";
 
 export async function copyToClipboard(text) {
   if (navigator.clipboard?.writeText) {

@@ -7,17 +7,21 @@
   "scripts": {
     "dev": "vite",
     "dev:host": "vite --host 0.0.0.0",
-    "build": "node ./node_modules/vite/bin/vite.js build",
-    "build:github": "VITE_BASE=./ node ./node_modules/vite/bin/vite.js build",
+    "build": "vite build",
+    "build:github": "VITE_BASE=./ vite build",
     "preview": "vite preview",
-    "preview:host": "vite preview --host 0.0.0.0"
+    "preview:host": "vite preview --host 0.0.0.0",
+    "test:engineering": "node scripts/engineering-smoke-test.mjs",
+    "test:engineering:real": "node scripts/engineering-real-tests.mjs",
+    "test:engineering:all": "node scripts/run-engineering-tests.mjs",
+    "test:engineering:validation": "node scripts/engineering-validation-tests.mjs"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.47.10",
     "html2canvas": "^1.4.1",
     "jspdf": "^2.5.1",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "@supabase/supabase-js": "^2.47.10"
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.1",

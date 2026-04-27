@@ -9,7 +9,6 @@ import {
   BACKUP_SYSTEM_VOLTAGES,
   BATTERY_UNIT_VOLTAGE_OPTIONS,
   BACKUP_BATTERY_CAPACITY_OPTIONS,
-  PANEL_TYPES,
   LOAD_TYPES,
   HYBRID_MODES,
 } from "../domain/models/project";
@@ -589,9 +588,15 @@ function UpsRuntimePreview() {
 }
 
 
-function EquipmentSelector({ category, label, selectedId, onSelect, disabled = false }) {
+function EquipmentSelector({ category, label, selectedId, onSelect, disabled = false, systemType = null }) {
   const [query, setQuery] = useState("");
-  const options = useMemo(() => EquipmentRepository.search({ category, query }), [category, query]);
+  const options = useMemo(() => {
+    const found = EquipmentRepository.search({ category, query });
+    if (category !== "inverter") return found;
+    if (systemType === "hybrid") return found.filter((item) => item.specs?.inverterMode === "hybrid");
+    if (systemType === "offgrid" || systemType === "backup") return found.filter((item) => item.specs?.inverterMode === "offgrid");
+    return found;
+  }, [category, query, systemType]);
   const selectedItem = selectedId ? EquipmentRepository.getById(selectedId) : null;
 
   return (
@@ -682,16 +687,9 @@ function StepSystemConfig() {
             category="inverter"
             label={form.systemType === "backup" ? "سانورتر" : "اینورتر"}
             selectedId={form.selectedEquipment?.inverter}
+            systemType={form.systemType}
             onSelect={(item) => applyEquipment("inverter", item)}
           />
-          {form.systemType !== "backup" ? (
-            <EquipmentSelector
-              category="controller"
-              label="شارژ کنترلر"
-              selectedId={form.selectedEquipment?.controller}
-              onSelect={(item) => applyEquipment("controller", item)}
-            />
-          ) : null}
         </div>
       </section>
 
@@ -725,14 +723,11 @@ function StepSystemConfig() {
       <Field label="روزهای خودمختاری"><input type="text" inputMode="decimal" step="0.1" value={form.daysAutonomy} onChange={(e) => updateForm({ daysAutonomy: e.target.value })} /></Field>
       <Field label="عمق دشارژ DoD"><input type="text" inputMode="decimal" step="0.01" value={form.dod} onChange={(e) => updateForm({ dod: e.target.value })} /></Field>
       <Field label="راندمان اینورتر"><input type="text" inputMode="decimal" step="0.01" value={form.inverterEfficiency} onChange={(e) => updateForm({ inverterEfficiency: e.target.value })} /></Field>
-      {form.systemType !== "backup" ? <Field label="راندمان کنترلر"><input type="text" inputMode="decimal" step="0.01" value={form.controllerEfficiency} onChange={(e) => updateForm({ controllerEfficiency: e.target.value })} /></Field> : null}
+      {form.systemType !== "backup" ? <Field label="راندمان MPPT داخلی"><input type="text" inputMode="decimal" step="0.01" value={form.controllerEfficiency} onChange={(e) => updateForm({ controllerEfficiency: e.target.value })} /></Field> : null}
       {form.systemType !== "backup" ? <Field label="توان پنل (W)"><input type="text" inputMode="decimal" value={form.panelWatt} onChange={(e) => updateForm({ panelWatt: e.target.value })} /></Field> : null}
-      {form.systemType !== "backup" ? <Field label="نوع پنل">
-        <select value={form.panelType} onChange={(e) => updateForm({ panelType: e.target.value })}>{PANEL_TYPES.map((v) => <option key={v} value={v}>{v}</option>)}</select>
-      </Field> : null}
       {form.systemType !== "backup" ? <Field label="Voc پنل"><input type="text" inputMode="decimal" step="0.1" value={form.panelVoc} onChange={(e) => updateForm({ panelVoc: e.target.value })} /></Field> : null}
       {form.systemType !== "backup" ? <Field label="Vmp پنل"><input type="text" inputMode="decimal" step="0.1" value={form.panelVmp} onChange={(e) => updateForm({ panelVmp: e.target.value })} /></Field> : null}
-      {form.systemType !== "backup" ? <Field label="حداکثر Voc کنترلر"><input type="text" inputMode="decimal" value={form.controllerMaxVoc} onChange={(e) => updateForm({ controllerMaxVoc: e.target.value })} /></Field> : null}
+      {form.systemType !== "backup" ? <Field label="حداکثر Voc ورودی MPPT"><input type="text" inputMode="decimal" value={form.controllerMaxVoc} onChange={(e) => updateForm({ controllerMaxVoc: e.target.value })} /></Field> : null}
       {form.systemType !== "backup" ? <Field label="حداقل MPPT"><input type="text" inputMode="decimal" value={form.mpptMinVoltage} onChange={(e) => updateForm({ mpptMinVoltage: e.target.value })} /></Field> : null}
       {form.systemType !== "backup" ? <Field label="حداکثر MPPT"><input type="text" inputMode="decimal" value={form.mpptMaxVoltage} onChange={(e) => updateForm({ mpptMaxVoltage: e.target.value })} /></Field> : null}
       <Field label="ضریب طراحی"><input type="text" inputMode="decimal" step="0.01" value={form.designFactor} onChange={(e) => updateForm({ designFactor: e.target.value })} /></Field>
@@ -754,7 +749,7 @@ function StepReview() {
       {form.systemType !== "backup" ? <div><span>شهر / تابش</span><strong>{form.city} / {form.sunHours} h</strong></div> : <div><span>حالت طراحی</span><strong>سانورتر و باطری بدون پنل</strong></div>}
       <div><span>ولتاژ سیستم</span><strong>{form.systemVoltage} V</strong></div>
       <div><span>نوع باتری</span><strong>{form.batteryType}</strong></div>
-      <div><span>تجهیزات انتخاب‌شده</span><strong>{[form.systemType !== "backup" ? form.selectedEquipment?.panel : null, form.selectedEquipment?.battery, form.selectedEquipment?.inverter, form.systemType !== "backup" ? form.selectedEquipment?.controller : null].filter(Boolean).length} مورد</strong></div>
+      <div><span>تجهیزات انتخاب‌شده</span><strong>{[form.systemType !== "backup" ? form.selectedEquipment?.panel : null, form.selectedEquipment?.battery, form.selectedEquipment?.inverter, null].filter(Boolean).length} مورد</strong></div>
       {form.calculationMode === "load_profile" ? <div><span>بیشترین ضریب ساعتی</span><strong>{profilePeak.toFixed(2)}</strong></div> : null}
       {form.calculationMode === "load_profile" ? <div><span>انرژی روزانه هدف</span><strong>{form.dailyEnergyKwh} kWh/day</strong></div> : null}
     </div>
@@ -772,13 +767,13 @@ const stepMap = [
 ];
 
 export function ProjectWorkspacePage() {
-  const { stepIndex, nextStep, prevStep, runCalculation, saveProject, goDashboard } = useProjectStore();
+  const { stepIndex, nextStep, prevStep, runCalculation, saveProject, goDashboard, openScenarios } = useProjectStore();
   const CurrentStep = stepMap[stepIndex].component;
 
   return (
     <div className="shell">
       <header className="topbar topbar--workspace" style={{ backgroundImage: `linear-gradient(135deg, rgba(8,17,31,0.92), rgba(15,23,42,0.82)), url(${PUBLIC_ASSETS.backgrounds.workspace})` }}>
-        <button className="btn btn--ghost" onClick={goDashboard}>بازگشت به داشبورد</button>
+        <div className="topbar__actions"><button className="btn btn--ghost" onClick={goDashboard}>بازگشت به داشبورد</button><button className="btn btn--secondary" type="button" onClick={() => openScenarios("workspace")}>سناریوهای آماده</button></div>
         <div className="topbar__title topbar__title--brand"><img src={PUBLIC_ASSETS.branding.appLogo} alt="SDS" className="topbar__brand-logo" /> <span>Solar Design Suite / Workspace</span></div>
       </header>
       <WizardShell

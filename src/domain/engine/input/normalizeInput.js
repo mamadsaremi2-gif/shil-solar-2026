@@ -1,4 +1,4 @@
-import { parseFaNumber } from "../../../shared/utils/faNumbers";
+import { parseFaNumber } from "../../../shared/utils/faNumbers.js";
 
 function positive(value, fallback = 0) {
   const n = parseFaNumber(value, fallback);

@@ -1,6 +1,6 @@
 # Solar Design Suite - SHIL
 
-اپلیکیشن مهندسی طراحی سیستم خورشیدی و «سانورتر و باطری» با React + Vite + PWA.
+اپلیکیشن مهندسی طراحی سیستم خورشیدی، سانورتر و باتری با React + Vite + PWA.
 
 ## اجرای محلی
 
@@ -23,12 +23,24 @@ npm run dev:host
 
 سپس آدرس Network که Vite نمایش می‌دهد را در مرورگر گوشی باز کنید.
 
+## تست مهندسی موتور محاسبات
+
+```bash
+npm run test:engineering
+```
+
+این تست، محاسبات اصلی را برای سناریوی off-grid و backup کنترل می‌کند.
+
 ## ساخت نسخه نهایی
 
 ```bash
+npm ci
+npm run test:engineering
 npm run build
 npm run preview
 ```
+
+خروجی production پس از اجرای build داخل پوشه `dist/` ساخته می‌شود. پوشه `dist/` داخل سورس نگهداری نمی‌شود و باید هنگام انتشار ساخته شود.
 
 ## انتشار روی Vercel
 
@@ -49,12 +61,14 @@ Workflow آماده است:
 
 بعد از Push روی branch `main`، در GitHub:
 
+```text
 Settings -> Pages -> Source: GitHub Actions
+```
 
 ## امکانات اصلی
 
 - Off-Grid / Hybrid / Grid-Tie
-- حالت اختصاصی سانورتر و باطری
+- حالت اختصاصی سانورتر و باتری
 - جدول سناریوهای باتری 12V / 24V / 48V
 - پروفایل مصرف ساعتی
 - شبیه‌سازی SOC

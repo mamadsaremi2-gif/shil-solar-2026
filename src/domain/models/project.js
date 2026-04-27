@@ -85,7 +85,6 @@ export const DEFAULT_PROJECT_FORM = {
   designFactor: 1.2,
   surgeFactor: 1.7,
   panelWatt: 585,
-  panelType: "TOPCon",
   panelVoc: 53.1,
   panelVmp: 44.8,
   panelTempCoeffVoc: 0.0024,

@@ -6,6 +6,7 @@ import { useProjectStore } from "./store/projectStore";
 const ProjectWorkspacePage = lazy(() => import("../pages/ProjectWorkspacePage").then((m) => ({ default: m.ProjectWorkspacePage })));
 const OutputPage = lazy(() => import("../pages/OutputPage").then((m) => ({ default: m.OutputPage })));
 const EquipmentLibraryPage = lazy(() => import("../pages/EquipmentLibraryPage").then((m) => ({ default: m.EquipmentLibraryPage })));
+const ReadyScenariosPage = lazy(() => import("../pages/ReadyScenariosPage").then((m) => ({ default: m.ReadyScenariosPage })));
 const ContactPage = lazy(() => import("../pages/ContactPage").then((m) => ({ default: m.ContactPage })));
 const AdminPage = lazy(() => import("../pages/AdminPage").then((m) => ({ default: m.AdminPage })));
 
@@ -37,6 +38,14 @@ export function App() {
       return (
         <Suspense fallback={<PageLoader />}>
           <EquipmentLibraryPage />
+        </Suspense>
+      );
+    }
+
+    if (route.name === "scenarios") {
+      return (
+        <Suspense fallback={<PageLoader />}>
+          <ReadyScenariosPage />
         </Suspense>
       );
     }

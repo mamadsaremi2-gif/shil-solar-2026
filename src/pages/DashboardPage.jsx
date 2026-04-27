@@ -46,7 +46,7 @@ function QuickAction({ title, icon, onClick }) {
 }
 
 export function DashboardPage() {
-  const { projects, startNewProject, openProject, openWorkspace, openEquipmentLibrary, openContact, openAdmin, deleteProject, syncCloudProjects } = useProjectStore();
+  const { projects, startNewProject, openProject, openWorkspace, openEquipmentLibrary, openScenarios, openContact, openAdmin, deleteProject, syncCloudProjects } = useProjectStore();
   const { profile, isAdmin, user, signOut, isConfigured } = useAuth();
   const [syncMessage, setSyncMessage] = useState("");
   const calculatedCount = projects.filter((project) => (project.versions?.length ?? 0) > 0).length;
@@ -66,6 +66,7 @@ export function DashboardPage() {
         <nav className="dashboard-nav__links" aria-label="navigation">
           <button type="button" className="is-active">داشبورد</button>
           <button type="button" onClick={() => openEquipmentLibrary("dashboard")}>کتابخانه تجهیزات</button>
+          <button type="button" onClick={() => openScenarios("dashboard")}>سناریوهای آماده</button>
           <button type="button" onClick={() => openContact("dashboard")}>ارتباط با ما</button>
           {isAdmin ? <button type="button" onClick={openAdmin}>مدیریت</button> : null}
           <button type="button" onClick={signOut}>خروج</button>
@@ -74,20 +75,21 @@ export function DashboardPage() {
 
       <section
         className="dashboard-hero-xl"
-        style={{ backgroundImage: `linear-gradient(90deg, rgba(3,7,18,0.18), rgba(3,7,18,0.55) 52%, rgba(3,7,18,0.94)), url(${PUBLIC_ASSETS.backgrounds.method})` }}
+        style={{ backgroundImage: `linear-gradient(90deg, rgba(3,7,18,0.06), rgba(3,7,18,0.22) 42%, rgba(3,7,18,0.58) 100%), url(${PUBLIC_ASSETS.backgrounds.method})` }}
       >
         <div className="dashboard-hero-xl__brand-mark">
           <img src={PUBLIC_ASSETS.branding.appLogo} alt="Solar Design Suite" />
         </div>
         <div className="dashboard-hero-xl__content">
           <span className="eyebrow">SHIL SOLAR</span>
-          <h1>SHIL SOLAR<br /><span>مهندسی انرژی خورشیدی</span></h1>
+          <h1><span>مهندسی انرژی خورشیدی</span></h1>
           <p>
-            پروژه‌ها را هوشمند طراحی کنید، دقیق محاسبه کنید و نسخه‌های مهندسی را حرفه‌ای مدیریت کنید.
+            تحلیل مهندسی، انتخاب تجهیزات SHIL و اعتبارسنجی طراحی در یک محیط حرفه‌ای.
           </p>
           <div className="dashboard-hero-xl__actions">
             <button className="btn btn--primary" onClick={startNewProject}>+ پروژه جدید</button>
             <button className="btn btn--ghost" onClick={() => openEquipmentLibrary("dashboard")}>کتابخانه تجهیزات</button>
+            <button className="btn btn--ghost" onClick={() => openScenarios("dashboard")}>سناریوهای آماده</button>
             <button className="btn btn--ghost" onClick={() => openContact("dashboard")}>ارتباط مستقیم</button>
           </div>
         </div>
@@ -157,6 +159,7 @@ export function DashboardPage() {
           </div>
           <div className="quick-action-grid">
             <QuickAction title="محاسبه بار" icon="⚡" onClick={startNewProject} />
+            <QuickAction title="سناریوهای آماده" icon="📋" onClick={() => openScenarios("dashboard")} />
             <QuickAction title="انتخاب اینورتر" icon="▣" onClick={() => openEquipmentLibrary("dashboard")} />
             <QuickAction title="کتابخانه تجهیزات" icon="📦" onClick={() => openEquipmentLibrary("dashboard")} />
             <QuickAction title="گزارش مهندسی" icon="📄" onClick={startNewProject} />

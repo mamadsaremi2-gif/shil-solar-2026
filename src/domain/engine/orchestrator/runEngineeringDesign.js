@@ -10,6 +10,7 @@ import { calculateProtection } from "../protection/calculateProtection.js";
 import { generateAdvisorMessages } from "../advisor/generateAdvisorMessages.js";
 import { simulateSystem } from "../simulation/simulateSystem.js";
 import { calculateIndustrialMetrics } from "../industrial/calculateIndustrialMetrics.js";
+import { evaluateDesignValidation } from "../validation/evaluateDesignValidation.js";
 
 export function runEngineeringDesign(rawForm) {
   const input = normalizeInput(rawForm);
@@ -28,8 +29,9 @@ export function runEngineeringDesign(rawForm) {
   const simulation = simulateSystem(input, loads, battery, pv);
   const industrial = calculateIndustrialMetrics(input, loads, battery, pv, inverter, controller, cabling, protection, simulation);
   const advisor = generateAdvisorMessages(input, loads, battery, pv, inverter, controller, cabling, protection, simulation, industrial);
-  const hasError = advisor.some((item) => item.severity === "error");
-  const hasWarning = advisor.some((item) => item.severity === "warning");
+  const validation = evaluateDesignValidation(input, loads, battery, pv, inverter, controller, cabling, protection, simulation, industrial);
+  const hasError = advisor.some((item) => item.severity === "error") || validation.summary.status === "error";
+  const hasWarning = advisor.some((item) => item.severity === "warning") || validation.summary.status === "warning";
 
   return {
     ok: true,
@@ -76,6 +78,11 @@ export function runEngineeringDesign(rawForm) {
         gridImportWh: simulation?.summary?.gridImportWh ?? 0,
         gridExportWh: simulation?.summary?.gridExportWh ?? 0,
         serviceabilityScore: industrial.serviceabilityScore,
+        validationScore: validation.summary.score,
+        validationGrade: validation.summary.grade,
+        validationLabel: validation.summary.label,
+        validationErrors: validation.summary.counts.error,
+        validationWarnings: validation.summary.counts.warning,
         requiredBackupHours: industrial.requiredBackupHours,
         realBackupHours: industrial.realBackupHours,
         backupCoverageRatio: industrial.backupCoverageRatio,
@@ -94,6 +101,7 @@ export function runEngineeringDesign(rawForm) {
       simulation,
       industrial,
       advisor,
+      validation,
     },
   };
 }

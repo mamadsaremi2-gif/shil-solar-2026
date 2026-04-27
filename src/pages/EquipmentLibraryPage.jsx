@@ -8,8 +8,6 @@ const CUSTOM_SPEC_FIELDS = {
     ['panelWatt', 'توان پنل (W)'],
     ['panelVoc', 'Voc پنل'],
     ['panelVmp', 'Vmp پنل'],
-    ['panelType', 'نوع پنل'],
-    ['panelTypeTemperatureFactor', 'ضریب دمایی توان %/°C'],
     ['panelTempCoeffVoc', 'ضریب دمایی Voc'],
   ],
   battery: [
@@ -24,14 +22,6 @@ const CUSTOM_SPEC_FIELDS = {
     ['ratedPowerW', 'توان نامی (W)'],
     ['surgePowerW', 'توان لحظه ای (W)'],
     ['inverterEfficiency', 'راندمان اینورتر'],
-  ],
-  controller: [
-    ['controllerType', 'نوع کنترلر'],
-    ['selectedCurrentA', 'جریان نامی (A)'],
-    ['controllerMaxVoc', 'حداکثر Voc'],
-    ['mpptMinVoltage', 'حداقل MPPT'],
-    ['mpptMaxVoltage', 'حداکثر MPPT'],
-    ['controllerEfficiency', 'راندمان کنترلر'],
   ],
   load: [
     ['name', 'نام مصرف‌کننده'],
