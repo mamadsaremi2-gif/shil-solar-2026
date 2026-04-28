@@ -103,10 +103,16 @@ function WaitingApproval() {
   );
 }
 
-export function AuthGate({ children }) {
+export function AuthGate({ children, requireApproval = false }) {
   const { loading, user, profile, isApproved, isConfigured } = useAuth();
 
-  if (loading) return <div className="shell"><div className="panel empty-state">در حال بررسی دسترسی...</div></div>;
+  // Public visitor access:
+  // The main calculator must stay usable for guests, even while Supabase/auth is loading
+  // or when the visitor has not signed in. Admin-only areas can still opt in by passing
+  // requireApproval={true}.
+  if (!requireApproval) return children;
+
+  if (loading) return null;
 
   if (!isConfigured) return children;
 
