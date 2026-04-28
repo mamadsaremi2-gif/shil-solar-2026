@@ -1,3 +1,4 @@
+import NewProjectHero from "../components/NewProjectHero";
 import { useMemo, useState } from "react";
 import { useProjectStore } from "../app/store/projectStore";
 import { WizardShell } from "../features/project-wizard/components/WizardShell";
@@ -772,6 +773,7 @@ export function ProjectWorkspacePage() {
 
   return (
     <div className="shell">
+      <NewProjectHero />
       <header className="topbar topbar--workspace" style={{ backgroundImage: `linear-gradient(135deg, rgba(8,17,31,0.92), rgba(15,23,42,0.82)), url(${PUBLIC_ASSETS.backgrounds.workspace})` }}>
         <div className="topbar__actions"><button className="btn btn--ghost" onClick={goDashboard}>بازگشت به داشبورد</button><button className="btn btn--secondary" type="button" onClick={() => openScenarios("workspace")}>سناریوهای آماده</button></div>
         <div className="topbar__title topbar__title--brand"><img src={PUBLIC_ASSETS.branding.appLogo} alt="SDS" className="topbar__brand-logo" /> <span>Solar Design Suite / Workspace</span></div>
