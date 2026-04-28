@@ -6,7 +6,6 @@ import { AdvisorList } from '../features/engineering-output/components/AdvisorLi
 import { SimpleBarChart, SimpleLineChart } from '../features/simulation/components/SimpleCharts';
 import { EquipmentRepository } from '../data/repositories/EquipmentRepository';
 import { PUBLIC_ASSETS } from '../shared/constants/publicAssets';
-import { ShareActions } from '../shared/components/ShareActions';
 import { IRAN_CITIES } from '../data/seed/iranCities';
 
 function formatSystemType(value) {
@@ -301,13 +300,6 @@ export function OutputPage() {
           <button className="btn btn--primary" onClick={handleExportPdf} disabled={isExporting}>{isExporting ? 'در حال ساخت PDF...' : 'گزارش PDF'}</button>
         </div>
       </header>
-
-      <section className="panel share-panel share-panel--compact">
-        <div className="panel__header">
-          <h2>ارسال لینک این خروجی</h2>
-        </div>
-        <ShareActions title={`گزارش ${projectTitle}`} text={`خروجی طراحی مهندسی پروژه ${projectTitle}`} />
-      </section>
 
       <div ref={reportRef} className="report-export-root">
         <section className="pdf-page-section report-page executive-summary-page" style={{ backgroundImage: `linear-gradient(135deg, rgba(8,17,31,0.92), rgba(15,23,42,0.86)), url(${PUBLIC_ASSETS.backgrounds.report})` }}>

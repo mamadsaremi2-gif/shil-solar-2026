@@ -17,7 +17,7 @@ export const BATTERY_TYPES = ["AGM", "GEL", "LFP", "NMC"];
 export const SYSTEM_VOLTAGES = [12, 24, 48, 96];
 export const BACKUP_SYSTEM_VOLTAGES = [12, 24, 48];
 export const BATTERY_UNIT_VOLTAGE_OPTIONS = [12, 24, 48];
-export const BACKUP_BATTERY_CAPACITY_OPTIONS = [50, 75, 100, 120, 150, 180, 200, 250, 300, 400];
+export const BACKUP_BATTERY_CAPACITY_OPTIONS = [50, 75, 100, 120, 150, 180, 200, 250, 300, 400, 500, 600, 800, 1000];
 export const PANEL_TYPES = ["Mono", "Poly", "Half-Cut", "TOPCon", "HJT"];
 export const LOAD_TYPES = ["resistive", "motor", "switching", "mixed"];
 export const HYBRID_MODES = [
@@ -46,8 +46,8 @@ export const HOURLY_PROFILE_TEMPLATE = [
 
 export const DEFAULT_PROJECT_FORM = {
   projectTitle: "پروژه جدید Solar Design Suite",
-  clientName: "",
-  city: "تهران",
+  clientName: "SHIL CO",
+  city: "اصفهان",
   systemType: "offgrid",
   modeType: "advanced",
   calculationMode: "power",

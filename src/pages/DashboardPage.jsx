@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { useProjectStore } from "../app/store/projectStore";
 import { PUBLIC_ASSETS } from "../shared/constants/publicAssets";
-import { ShareActions } from "../shared/components/ShareActions";
-import { CONTACT_LINKS } from "../shared/constants/contactLinks";
 import { useAuth } from "../features/auth/AuthProvider";
 
 function statusLabel(status) {
@@ -166,19 +164,6 @@ export function DashboardPage() {
           </div>
         </section>
 
-        <section className="panel share-panel">
-          <div className="panel__header">
-            <h2>ارسال لینک برنامه</h2>
-          </div>
-          <p className="section-note">لینک برنامه را برای مشتری یا همکار از طریق پیامک، ایمیل، Gmail، واتساپ یا هر برنامه نصب‌شده روی موبایل ارسال کنید.</p>
-          <ShareActions title="SHIL Solar Design Suite" text="لینک برنامه طراحی و محاسبه سیستم خورشیدی SHIL" />
-          <div className="direct-contact-links">
-            <a href={CONTACT_LINKS.website} target="_blank" rel="noreferrer">SHIL.IR</a>
-            <a href={CONTACT_LINKS.instagramShil} target="_blank" rel="noreferrer">Instagram SHIL</a>
-            <a href={CONTACT_LINKS.telegram} target="_blank" rel="noreferrer">Telegram</a>
-          </div>
-        </section>
-
         <section
           className="panel dashboard-contact-card"
           style={{ backgroundImage: `linear-gradient(135deg, rgba(8,17,31,0.28), rgba(8,17,31,0.88)), url(${PUBLIC_ASSETS.backgrounds.report})` }}
@@ -187,13 +172,7 @@ export function DashboardPage() {
             <img src={PUBLIC_ASSETS.branding.logo} alt="SHIL IRAN" />
             <span>وبسایت رسمی</span>
             <strong>SHIL.IR</strong>
-            <p>راهکارهای هوشمند انرژی خورشیدی و مسیرهای ارتباطی رسمی.</p>
             <button className="btn btn--primary" type="button" onClick={() => openContact("dashboard")}>ارتباط با ما</button>
-          </div>
-          <div className="dashboard-contact-card__qr-list">
-            <img src={PUBLIC_ASSETS.qr.instagramShil} alt="SHIL Instagram QR" />
-            <img src={PUBLIC_ASSETS.qr.telegram} alt="Telegram QR" />
-            <img src={PUBLIC_ASSETS.qr.whatsapp} alt="WhatsApp QR" />
           </div>
         </section>
       </section>

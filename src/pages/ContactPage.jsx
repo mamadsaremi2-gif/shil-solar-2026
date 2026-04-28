@@ -1,44 +1,70 @@
 import { useProjectStore } from "../app/store/projectStore";
 import { PUBLIC_ASSETS } from "../shared/constants/publicAssets";
 import { CONTACT_LINKS } from "../shared/constants/contactLinks";
-import { ShareActions } from "../shared/components/ShareActions";
 
 const CONTACT_ITEMS = [
   {
-    key: "instagramShil",
-    title: "اینستاگرام SHIL",
-    description: "صفحه رسمی محصولات، پروژه‌ها و اخبار برند SHIL",
+    key: "website",
+    title: "سایت SHIL",
+    description: "مشاهده محصولات کامل برند SHIL و اطلاعات رسمی شرکت",
     qr: PUBLIC_ASSETS.qr.instagramShil,
-    type: "Instagram",
-    url: CONTACT_LINKS.instagramShil,
-    actionLabel: "ورود به اینستاگرام SHIL",
-  },
-  {
-    key: "instagram",
-    title: "اینستاگرام مهندس صارمی",
-    description: "آموزش‌ها، نمونه‌کارها و نکات اجرایی سیستم‌های خورشیدی",
-    qr: PUBLIC_ASSETS.qr.instagram,
-    type: "Instagram",
-    url: CONTACT_LINKS.instagramPersonal,
-    actionLabel: "ورود به اینستاگرام",
-  },
-  {
-    key: "telegram",
-    title: "تلگرام",
-    description: "ارتباط سریع، ارسال فایل‌های پروژه و پیگیری هماهنگی‌ها",
-    qr: PUBLIC_ASSETS.qr.telegram,
-    type: "Telegram",
-    url: CONTACT_LINKS.telegram,
-    actionLabel: "ورود به تلگرام",
+    type: "Website",
+    url: CONTACT_LINKS.website,
+    actionLabel: "ورود به سایت SHIL",
   },
   {
     key: "whatsapp",
     title: "واتساپ",
-    description: "هماهنگی سریع، مشاوره اولیه و پشتیبانی پروژه",
+    description: "ارتباط سریع و ارسال اطلاعات پروژه",
     qr: PUBLIC_ASSETS.qr.whatsapp,
     type: "WhatsApp",
     url: CONTACT_LINKS.whatsapp,
     actionLabel: "ورود به واتساپ",
+  },
+  {
+    key: "phone",
+    title: "تماس",
+    description: "تماس مستقیم با واحد ارتباط SHIL",
+    qr: PUBLIC_ASSETS.qr.whatsapp,
+    type: "Phone",
+    url: "tel:03133122",
+    actionLabel: "تماس مستقیم",
+  },
+  {
+    key: "email",
+    title: "ایمیل",
+    description: "ارسال مشخصات پروژه، فایل‌ها و درخواست مشاوره",
+    qr: PUBLIC_ASSETS.qr.instagramShil,
+    type: "Email",
+    url: CONTACT_LINKS.email,
+    actionLabel: "ارسال ایمیل",
+  },
+  {
+    key: "eitaa",
+    title: "ایتا",
+    description: "مسیر ارتباطی داخلی برای پیگیری پروژه",
+    qr: PUBLIC_ASSETS.qr.telegram,
+    type: "Eitaa",
+    url: CONTACT_LINKS.eitaa,
+    actionLabel: "ورود به ایتا",
+  },
+  {
+    key: "bale",
+    title: "بله",
+    description: "مسیر ارتباطی داخلی برای هماهنگی و پیگیری",
+    qr: PUBLIC_ASSETS.qr.telegram,
+    type: "Bale",
+    url: CONTACT_LINKS.bale,
+    actionLabel: "ورود به بله",
+  },
+  {
+    key: "rubika",
+    title: "روبیکا",
+    description: "مسیر ارتباطی داخلی برای پیام‌رسانی سریع",
+    qr: PUBLIC_ASSETS.qr.telegram,
+    type: "Rubika",
+    url: CONTACT_LINKS.rubika,
+    actionLabel: "ورود به روبیکا",
   },
 ];
 
@@ -79,7 +105,7 @@ export function ContactPage() {
           <span className="eyebrow">مرکز ارتباط رسمی SHIL</span>
           <h1>ارتباط سریع با SHIL</h1>
           <p>
-            برای مشاهده محصولات، دریافت مشاوره، ارسال فایل‌های پروژه و هماهنگی اجرای سیستم‌های خورشیدی از مسیرهای رسمی زیر استفاده کنید.
+            همه مسیرهای ارتباطی رسمی در همین صفحه قرار دارد: سایت، واتساپ، تماس، ایمیل، ایتا، بله و روبیکا.
           </p>
           <div className="contact-hero__actions">
             <a className="btn btn--primary" href={CONTACT_LINKS.website} target="_blank" rel="noreferrer">
@@ -98,21 +124,13 @@ export function ContactPage() {
       <section className="panel contact-channel-heading">
         <span className="eyebrow">مسیرهای ارتباطی</span>
         <h2>انتخاب مسیر ارتباطی رسمی</h2>
-        <p>از QR یا دکمه ورود هر کارت برای ارتباط سریع، مشاهده نمونه‌کارها، ارسال فایل پروژه و پیگیری هماهنگی‌ها استفاده کنید.</p>
+        <p>بارکدها و دکمه‌های ورود هر مسیر در بلوک‌های جداگانه قرار گرفته‌اند.</p>
       </section>
 
       <section className="contact-grid">
         {CONTACT_ITEMS.map((item) => (
           <ContactCard key={item.key} item={item} />
         ))}
-      </section>
-
-      <section className="panel contact-share-panel contact-share-panel--compact">
-        <div className="panel__header">
-          <h2>ارسال لینک برنامه</h2>
-        </div>
-        <p className="section-note">لینک برنامه یا صفحه ارتباط را با پیامک، واتساپ، ایمیل، Gmail و برنامه‌های داخلی نصب‌شده روی موبایل ارسال کنید.</p>
-        <ShareActions title="ارتباط با SHIL" text="مسیرهای ارتباطی SHIL و برنامه طراحی سیستم خورشیدی" />
       </section>
     </div>
   );

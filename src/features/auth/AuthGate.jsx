@@ -103,22 +103,18 @@ function WaitingApproval() {
   );
 }
 
-export function AuthGate({ children, requireApproval = false }) {
+export function AuthGate({ children }) {
   const { loading, user, profile, isApproved, isConfigured } = useAuth();
-
-  // Public visitor access:
-  // The main calculator must stay usable for guests, even while Supabase/auth is loading
-  // or when the visitor has not signed in. Admin-only areas can still opt in by passing
-  // requireApproval={true}.
-  if (!requireApproval) return children;
 
   if (loading) return null;
 
+  // Public visitor mode: visitors can use the app without login.
+  // Admin/user authentication still works when the user chooses to sign in elsewhere.
   if (!isConfigured) return children;
 
-  if (!user) return <AuthForm />;
+  if (!user) return children;
 
-  if (!profile || !isApproved) return <WaitingApproval />;
+  if (!profile || !isApproved) return children;
 
   return children;
 }

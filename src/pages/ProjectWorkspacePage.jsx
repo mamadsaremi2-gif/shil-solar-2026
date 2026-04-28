@@ -1,5 +1,6 @@
-import NewProjectHero from "../components/NewProjectHero";
 import { useMemo, useState } from "react";
+import ShilWorkspaceHero from "../components/ShilWorkspaceHero";
+import ShilContactCard from "../components/ShilContactCard";
 import { useProjectStore } from "../app/store/projectStore";
 import { WizardShell } from "../features/project-wizard/components/WizardShell";
 import {
@@ -461,6 +462,98 @@ function StepSite() {
 }
 
 
+
+function getLoadDemandForRecommendation(form) {
+  const num = (value, fallback = 0) => {
+    const parsed = parseFaNumber(value, fallback);
+    return Number.isFinite(parsed) ? parsed : fallback;
+  };
+
+  if (form.calculationMode === "loads" && Array.isArray(form.loadItems) && form.loadItems.length) {
+    const dailyEnergyWh = form.loadItems.reduce((sum, item) => sum + (num(item.qty, 1) * num(item.power, 0) * num(item.hours, 0) * num(item.coincidenceFactor, 1)), 0);
+    const demandPowerW = form.loadItems.reduce((sum, item) => sum + (num(item.qty, 1) * num(item.power, 0) * num(item.coincidenceFactor, 1)), 0);
+    const surgePowerW = form.loadItems.reduce((sum, item) => sum + (num(item.qty, 1) * num(item.power, 0) * num(item.surgeFactor, form.surgeFactor || 1.5) * num(item.coincidenceFactor, 1)), 0);
+    return { dailyEnergyWh, demandPowerW, surgePowerW };
+  }
+
+  if (form.calculationMode === "current") {
+    const demandPowerW = num(form.current) * num(form.loadVoltage, 220) * num(form.powerFactor, 0.95);
+    return { dailyEnergyWh: demandPowerW * num(form.backupHours, 1), demandPowerW, surgePowerW: demandPowerW * num(form.surgeFactor, 1.5) };
+  }
+
+  if (form.calculationMode === "daily_energy" || form.calculationMode === "load_profile") {
+    const dailyEnergyWh = num(form.dailyEnergyKwh) * 1000;
+    const demandPowerW = Math.max(dailyEnergyWh / Math.max(num(form.backupHours, 1), 1), dailyEnergyWh / 24);
+    return { dailyEnergyWh, demandPowerW, surgePowerW: demandPowerW * num(form.peakFactor, 2) };
+  }
+
+  const demandPowerW = num(form.loadPower, 0);
+  return { dailyEnergyWh: demandPowerW * num(form.backupHours, 1), demandPowerW, surgePowerW: demandPowerW * num(form.surgeFactor, 1.5) };
+}
+
+function buildSmartSystemRecommendation(form) {
+  const { dailyEnergyWh, demandPowerW, surgePowerW } = getLoadDemandForRecommendation(form);
+  const dailyKwh = dailyEnergyWh / 1000;
+  const peakKw = Math.max(demandPowerW, surgePowerW) / 1000;
+  const isBackup = form.systemType === "backup";
+
+  let systemVoltage = 12;
+  if (peakKw > 1.2 || dailyKwh > 2) systemVoltage = 24;
+  if (peakKw > 3 || dailyKwh > 5 || isBackup) systemVoltage = 48;
+  if (!isBackup && (peakKw > 7 || dailyKwh > 14)) systemVoltage = 96;
+
+  const batteryType = dailyKwh > 2 || isBackup ? "LFP" : "AGM";
+  const dod = batteryType === "LFP" ? 0.8 : 0.5;
+  const inverterEfficiency = 0.92;
+  const controllerEfficiency = 0.96;
+  const daysAutonomy = isBackup ? Math.max(0.2, Math.min(1, (parseFaNumber(form.backupHours, 2) || 2) / 24)) : (dailyKwh > 8 ? 1.5 : 1);
+  const batteryUnitVoltage = isBackup ? (systemVoltage >= 48 ? 48 : 24) : (batteryType === "LFP" && systemVoltage >= 48 ? 48 : 12);
+  const usableEnergyNeededWh = Math.max(dailyEnergyWh * daysAutonomy, demandPowerW * Math.max(parseFaNumber(form.backupHours, 1), 1));
+  const batteryUnitAhRaw = usableEnergyNeededWh / Math.max(batteryUnitVoltage * dod * inverterEfficiency, 1);
+  const preferredAh = [50, 75, 100, 120, 150, 180, 200, 250, 300, 400, 500, 600, 800, 1000];
+  const batteryUnitAh = preferredAh.find((ah) => ah >= batteryUnitAhRaw) || 1000;
+
+  const panelWatt = 550;
+  const psh = Math.max(parseFaNumber(form.sunHours, 5), 3.5);
+  const solarArrayW = Math.ceil((dailyEnergyWh * 1.25) / (psh * controllerEfficiency) / panelWatt) * panelWatt || panelWatt;
+
+  return {
+    patch: {
+      systemVoltage: String(systemVoltage),
+      batteryType,
+      batteryUnitAh: String(batteryUnitAh),
+      batteryUnitVoltage: String(batteryUnitVoltage),
+      daysAutonomy: String(daysAutonomy),
+      dod: String(dod),
+      inverterEfficiency: String(inverterEfficiency),
+      controllerEfficiency: String(controllerEfficiency),
+      designFactor: dailyKwh > 8 ? "1.25" : "1.2",
+      surgeFactor: peakKw > 2 ? "2" : "1.5",
+      panelWatt: String(panelWatt),
+      panelVoc: form.panelVoc || "49.5",
+      panelVmp: form.panelVmp || "41.8",
+      controllerMaxVoc: systemVoltage >= 48 ? "500" : "150",
+      mpptMinVoltage: systemVoltage >= 48 ? "120" : "60",
+      mpptMaxVoltage: systemVoltage >= 48 ? "450" : "145",
+      batteryRoundTripEfficiency: batteryType === "LFP" ? "0.95" : "0.85",
+      dcVoltageDropLimit: "3",
+      batteryVoltageDropLimit: "2",
+      acVoltageDropLimit: "3",
+      cableLossFactor: "0.97",
+      panelLossFactor: "0.9",
+    },
+    summary: {
+      dailyKwh,
+      demandPowerW,
+      surgePowerW,
+      solarArrayW,
+      note: isBackup
+        ? "پیشنهاد بر اساس زمان برق اضطراری، توان بار و آرایش باتری انجام شده است."
+        : "پیشنهاد بر اساس انرژی روزانه، تابش شهر و ضریب اطمینان طراحی انجام شده است.",
+    },
+  };
+}
+
 function estimateUpsRuntime(form) {
   const num = (value, fallback = 0) => {
     const parsed = parseFaNumber(value, fallback);
@@ -641,6 +734,11 @@ function StepSystemConfig() {
   const availableBatteryVoltages = form.systemType === "backup"
     ? BATTERY_UNIT_VOLTAGE_OPTIONS.filter((voltage) => voltage <= Number(form.systemVoltage) && Number(form.systemVoltage) % voltage === 0)
     : BATTERY_UNIT_VOLTAGE_OPTIONS;
+  const smartRecommendation = useMemo(() => buildSmartSystemRecommendation(form), [form]);
+
+  function applySmartRecommendation() {
+    updateForm(smartRecommendation.patch);
+  }
 
   function applyEquipment(role, item) {
     if (!item) {
@@ -696,42 +794,70 @@ function StepSystemConfig() {
 
       <UpsRuntimePreview />
 
+      <section className="panel panel--soft smart-system-panel">
+        <div className="panel__header">
+          <div>
+            <h3>پیشنهاد هوشمند تنظیمات سیستم</h3>
+            <p className="section-note">این پیشنهاد بر اساس مصرف وارد شده، نوع سیستم، زمان بکاپ و شرایط شهر ساخته می‌شود. بعد از اعمال، همه فیلدها همچنان قابل ویرایش دستی هستند.</p>
+          </div>
+          <button type="button" className="btn btn--primary" onClick={applySmartRecommendation}>اعمال پیشنهاد هوشمند سیستم</button>
+        </div>
+        <div className="smart-system-summary">
+          <div><span>انرژی روزانه مبنا</span><strong>{smartRecommendation.summary.dailyKwh.toFixed(1)} kWh/day</strong></div>
+          <div><span>توان کارکرد تخمینی</span><strong>{smartRecommendation.summary.demandPowerW.toFixed(0)} W</strong></div>
+          <div><span>توان راه‌اندازی</span><strong>{smartRecommendation.summary.surgePowerW.toFixed(0)} W</strong></div>
+          {form.systemType !== "backup" ? <div><span>آرایه پیشنهادی پنل</span><strong>{smartRecommendation.summary.solarArrayW.toFixed(0)} W</strong></div> : null}
+        </div>
+        <p className="section-note smart-system-note">{smartRecommendation.summary.note}</p>
+      </section>
+
       <div className="form-grid two-cols">
         <Field label="ولتاژ سیستم">
-        <select value={form.systemVoltage} onChange={(e) => updateForm({ systemVoltage: e.target.value })}>{availableSystemVoltages.map((v) => <option key={v} value={v}>{v}V</option>)}</select>
-      </Field>
-      <Field label="نوع باتری">
-        <select value={form.batteryType} onChange={(e) => updateForm({ batteryType: e.target.value })}>{BATTERY_TYPES.map((v) => <option key={v} value={v}>{v}</option>)}</select>
-      </Field>
-      {form.systemType === "hybrid" ? (
-        <Field label="استراتژی هیبرید">
-          <select value={form.hybridMode} onChange={(e) => updateForm({ hybridMode: e.target.value })}>{HYBRID_MODES.map((v) => <option key={v.value} value={v.value}>{v.label}</option>)}</select>
+          <select value={form.systemVoltage} onChange={(e) => updateForm({ systemVoltage: e.target.value })}>{availableSystemVoltages.map((v) => <option key={v} value={v}>{v}V</option>)}</select>
         </Field>
-      ) : null}
-      {form.systemType === "gridtie" ? (
-        <Field label="هدف جبران انرژی (%)"><input type="text" inputMode="decimal" value={form.targetOffsetPercent} onChange={(e) => updateForm({ targetOffsetPercent: e.target.value })} /></Field>
-      ) : null}
-      <Field label="ظرفیت واحد باتری (Ah)">{form.systemType === "backup" ? (
-        <select value={form.batteryUnitAh} onChange={(e) => updateForm({ batteryUnitAh: e.target.value })}>{BACKUP_BATTERY_CAPACITY_OPTIONS.map((v) => <option key={v} value={v}>{v}Ah</option>)}</select>
-      ) : (
-        <input type="text" inputMode="decimal" value={form.batteryUnitAh} onChange={(e) => updateForm({ batteryUnitAh: e.target.value })} />
-      )}</Field>
-      <Field label="ولتاژ واحد باتری (V)">{form.systemType === "backup" ? (
-        <select value={form.batteryUnitVoltage} onChange={(e) => updateForm({ batteryUnitVoltage: e.target.value })}>{availableBatteryVoltages.map((v) => <option key={v} value={v}>{v}V</option>)}</select>
-      ) : (
-        <input type="text" inputMode="decimal" value={form.batteryUnitVoltage} onChange={(e) => updateForm({ batteryUnitVoltage: e.target.value })} />
-      )}</Field>
-      <Field label="روزهای خودمختاری"><input type="text" inputMode="decimal" step="0.1" value={form.daysAutonomy} onChange={(e) => updateForm({ daysAutonomy: e.target.value })} /></Field>
-      <Field label="عمق دشارژ DoD"><input type="text" inputMode="decimal" step="0.01" value={form.dod} onChange={(e) => updateForm({ dod: e.target.value })} /></Field>
-      <Field label="راندمان اینورتر"><input type="text" inputMode="decimal" step="0.01" value={form.inverterEfficiency} onChange={(e) => updateForm({ inverterEfficiency: e.target.value })} /></Field>
-      {form.systemType !== "backup" ? <Field label="راندمان MPPT داخلی"><input type="text" inputMode="decimal" step="0.01" value={form.controllerEfficiency} onChange={(e) => updateForm({ controllerEfficiency: e.target.value })} /></Field> : null}
-      {form.systemType !== "backup" ? <Field label="توان پنل (W)"><input type="text" inputMode="decimal" value={form.panelWatt} onChange={(e) => updateForm({ panelWatt: e.target.value })} /></Field> : null}
-      {form.systemType !== "backup" ? <Field label="Voc پنل"><input type="text" inputMode="decimal" step="0.1" value={form.panelVoc} onChange={(e) => updateForm({ panelVoc: e.target.value })} /></Field> : null}
-      {form.systemType !== "backup" ? <Field label="Vmp پنل"><input type="text" inputMode="decimal" step="0.1" value={form.panelVmp} onChange={(e) => updateForm({ panelVmp: e.target.value })} /></Field> : null}
-      {form.systemType !== "backup" ? <Field label="حداکثر Voc ورودی MPPT"><input type="text" inputMode="decimal" value={form.controllerMaxVoc} onChange={(e) => updateForm({ controllerMaxVoc: e.target.value })} /></Field> : null}
-      {form.systemType !== "backup" ? <Field label="حداقل MPPT"><input type="text" inputMode="decimal" value={form.mpptMinVoltage} onChange={(e) => updateForm({ mpptMinVoltage: e.target.value })} /></Field> : null}
-      {form.systemType !== "backup" ? <Field label="حداکثر MPPT"><input type="text" inputMode="decimal" value={form.mpptMaxVoltage} onChange={(e) => updateForm({ mpptMaxVoltage: e.target.value })} /></Field> : null}
-      <Field label="ضریب طراحی"><input type="text" inputMode="decimal" step="0.01" value={form.designFactor} onChange={(e) => updateForm({ designFactor: e.target.value })} /></Field>
+        <Field label="نوع باتری">
+          <select value={form.batteryType} onChange={(e) => updateForm({ batteryType: e.target.value })}>{BATTERY_TYPES.map((v) => <option key={v} value={v}>{v}</option>)}</select>
+        </Field>
+        {form.systemType === "hybrid" ? (
+          <Field label="استراتژی هیبرید">
+            <select value={form.hybridMode} onChange={(e) => updateForm({ hybridMode: e.target.value })}>{HYBRID_MODES.map((v) => <option key={v.value} value={v.value}>{v.label}</option>)}</select>
+          </Field>
+        ) : null}
+        {form.systemType === "gridtie" ? (
+          <Field label="هدف جبران انرژی (%)"><input type="text" inputMode="decimal" value={form.targetOffsetPercent} onChange={(e) => updateForm({ targetOffsetPercent: e.target.value })} /></Field>
+        ) : null}
+        <Field label="ظرفیت واحد باتری (Ah)" hint="تا سقف ۱۰۰۰Ah قابل انتخاب و ویرایش است.">
+          <input
+            type="text"
+            inputMode="decimal"
+            list="battery-capacity-options"
+            value={form.batteryUnitAh}
+            onChange={(e) => updateForm({ batteryUnitAh: e.target.value })}
+          />
+          <datalist id="battery-capacity-options">{BACKUP_BATTERY_CAPACITY_OPTIONS.map((v) => <option key={v} value={v}>{v}Ah</option>)}</datalist>
+        </Field>
+        <Field label="ولتاژ واحد باتری (V)">{form.systemType === "backup" ? (
+          <select value={form.batteryUnitVoltage} onChange={(e) => updateForm({ batteryUnitVoltage: e.target.value })}>{availableBatteryVoltages.map((v) => <option key={v} value={v}>{v}V</option>)}</select>
+        ) : (
+          <input type="text" inputMode="decimal" value={form.batteryUnitVoltage} onChange={(e) => updateForm({ batteryUnitVoltage: e.target.value })} />
+        )}</Field>
+        <Field label="روزهای خودمختاری"><input type="text" inputMode="decimal" step="0.1" value={form.daysAutonomy} onChange={(e) => updateForm({ daysAutonomy: e.target.value })} /></Field>
+        <Field label="عمق دشارژ DoD"><input type="text" inputMode="decimal" step="0.01" value={form.dod} onChange={(e) => updateForm({ dod: e.target.value })} /></Field>
+        <Field label="راندمان اینورتر"><input type="text" inputMode="decimal" step="0.01" value={form.inverterEfficiency} onChange={(e) => updateForm({ inverterEfficiency: e.target.value })} /></Field>
+        <Field label="راندمان رفت‌وبرگشت باتری"><input type="text" inputMode="decimal" step="0.01" value={form.batteryRoundTripEfficiency} onChange={(e) => updateForm({ batteryRoundTripEfficiency: e.target.value })} /></Field>
+        {form.systemType !== "backup" ? <Field label="راندمان MPPT داخلی"><input type="text" inputMode="decimal" step="0.01" value={form.controllerEfficiency} onChange={(e) => updateForm({ controllerEfficiency: e.target.value })} /></Field> : null}
+        {form.systemType !== "backup" ? <Field label="توان پنل (W)"><input type="text" inputMode="decimal" value={form.panelWatt} onChange={(e) => updateForm({ panelWatt: e.target.value })} /></Field> : null}
+        {form.systemType !== "backup" ? <Field label="Voc پنل"><input type="text" inputMode="decimal" step="0.1" value={form.panelVoc} onChange={(e) => updateForm({ panelVoc: e.target.value })} /></Field> : null}
+        {form.systemType !== "backup" ? <Field label="Vmp پنل"><input type="text" inputMode="decimal" step="0.1" value={form.panelVmp} onChange={(e) => updateForm({ panelVmp: e.target.value })} /></Field> : null}
+        {form.systemType !== "backup" ? <Field label="حداکثر Voc ورودی MPPT"><input type="text" inputMode="decimal" value={form.controllerMaxVoc} onChange={(e) => updateForm({ controllerMaxVoc: e.target.value })} /></Field> : null}
+        {form.systemType !== "backup" ? <Field label="حداقل MPPT"><input type="text" inputMode="decimal" value={form.mpptMinVoltage} onChange={(e) => updateForm({ mpptMinVoltage: e.target.value })} /></Field> : null}
+        {form.systemType !== "backup" ? <Field label="حداکثر MPPT"><input type="text" inputMode="decimal" value={form.mpptMaxVoltage} onChange={(e) => updateForm({ mpptMaxVoltage: e.target.value })} /></Field> : null}
+        <Field label="ضریب طراحی"><input type="text" inputMode="decimal" step="0.01" value={form.designFactor} onChange={(e) => updateForm({ designFactor: e.target.value })} /></Field>
+        <Field label="افت مجاز کابل DC (%)"><input type="text" inputMode="decimal" step="0.1" value={form.dcVoltageDropLimit} onChange={(e) => updateForm({ dcVoltageDropLimit: e.target.value })} /></Field>
+        <Field label="افت مجاز کابل باتری (%)"><input type="text" inputMode="decimal" step="0.1" value={form.batteryVoltageDropLimit} onChange={(e) => updateForm({ batteryVoltageDropLimit: e.target.value })} /></Field>
+        <Field label="افت مجاز کابل AC (%)"><input type="text" inputMode="decimal" step="0.1" value={form.acVoltageDropLimit} onChange={(e) => updateForm({ acVoltageDropLimit: e.target.value })} /></Field>
+        <Field label="ضریب تلفات کابل"><input type="text" inputMode="decimal" step="0.01" value={form.cableLossFactor} onChange={(e) => updateForm({ cableLossFactor: e.target.value })} /></Field>
+        <Field label="ضریب تلفات پنل"><input type="text" inputMode="decimal" step="0.01" value={form.panelLossFactor} onChange={(e) => updateForm({ panelLossFactor: e.target.value })} /></Field>
         <Field label="ضریب Surge پیش‌فرض"><input type="text" inputMode="decimal" step="0.1" value={form.surgeFactor} onChange={(e) => updateForm({ surgeFactor: e.target.value })} /></Field>
       </div>
     </div>
@@ -773,11 +899,12 @@ export function ProjectWorkspacePage() {
 
   return (
     <div className="shell">
-      <NewProjectHero />
       <header className="topbar topbar--workspace" style={{ backgroundImage: `linear-gradient(135deg, rgba(8,17,31,0.92), rgba(15,23,42,0.82)), url(${PUBLIC_ASSETS.backgrounds.workspace})` }}>
         <div className="topbar__actions"><button className="btn btn--ghost" onClick={goDashboard}>بازگشت به داشبورد</button><button className="btn btn--secondary" type="button" onClick={() => openScenarios("workspace")}>سناریوهای آماده</button></div>
         <div className="topbar__title topbar__title--brand"><img src={PUBLIC_ASSETS.branding.appLogo} alt="SDS" className="topbar__brand-logo" /> <span>Solar Design Suite / Workspace</span></div>
       </header>
+      <ShilWorkspaceHero />
+      <ShilContactCard />
       <WizardShell
         title={stepMap[stepIndex].title}
         actions={(
