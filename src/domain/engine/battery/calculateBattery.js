@@ -139,7 +139,8 @@ export function calculateBattery(input, loadResult) {
   const requiredBatteryWh = requiredBatteryAh * input.systemVoltage;
 
   const seriesCount = Math.max(1, Math.ceil(input.systemVoltage / input.batteryUnitVoltage));
-  const parallelCount = Math.max(1, Math.ceil(requiredBatteryAh / input.batteryUnitAh));
+  const batteryFactor = Math.max(input.batteryFactor || 1, 1);
+  const parallelCount = Math.max(1, Math.ceil((requiredBatteryAh / input.batteryUnitAh) * batteryFactor));
   const totalCount = seriesCount * parallelCount;
   const bankNominalAh = parallelCount * input.batteryUnitAh;
   const bankNominalWh = bankNominalAh * input.systemVoltage;

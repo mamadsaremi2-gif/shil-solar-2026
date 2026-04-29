@@ -301,7 +301,7 @@ function LoadEquipmentQuickAdd({ onAdd }) {
           <button key={item.id} type="button" className="quick-load-item" onClick={() => addItem(item)}>
             <strong>{item.title}</strong>
             <span>{item.summary}</span>
-            <small>{item.specs?.power ?? "—"}W × {item.specs?.qty ?? 1} | {item.specs?.hours ?? "—"}h | همزمانی {item.specs?.coincidenceFactor ?? 1}</small>
+            <small>{item.specs?.power ?? "—"}W × {item.specs?.qty ?? 1} | {item.specs?.hours ?? "—"}h | {item.specs?.dailyKwh ?? "—"} kWh/day | همزمانی {item.specs?.coincidenceFactor ?? 1}</small>
           </button>
         ))}
       </div>
@@ -317,7 +317,12 @@ function StepLoads() {
     const items = form.loadItems || [];
     const connectedPowerW = items.reduce((sum, item) => sum + (parseFaNumber(item.qty, 1) * parseFaNumber(item.power, 0)), 0);
     const realRunPowerW = items.reduce((sum, item) => sum + (parseFaNumber(item.qty, 1) * parseFaNumber(item.power, 0) * parseFaNumber(item.coincidenceFactor, 1)), 0);
-    const dailyEnergyWh = items.reduce((sum, item) => sum + (parseFaNumber(item.qty, 1) * parseFaNumber(item.power, 0) * parseFaNumber(item.hours, 0) * parseFaNumber(item.coincidenceFactor, 1)), 0);
+    const dailyEnergyWh = items.reduce((sum, item) => {
+      const qty = parseFaNumber(item.qty, 1);
+      const libraryDailyKwh = parseFaNumber(item.dailyKwh, 0);
+      if (libraryDailyKwh > 0) return sum + (qty * libraryDailyKwh * 1000);
+      return sum + (qty * parseFaNumber(item.power, 0) * parseFaNumber(item.hours, 0) * parseFaNumber(item.coincidenceFactor, 1));
+    }, 0);
     const connectedApparentVA = items.reduce((sum, item) => {
       const pf = Math.max(parseFaNumber(item.powerFactor, 0.95), 0.1);
       return sum + ((parseFaNumber(item.qty, 1) * parseFaNumber(item.power, 0)) / pf);
@@ -329,7 +334,6 @@ function StepLoads() {
   if (form.calculationMode === "loads") {
     return (
       <div className="stack-lg">
-        <SmartPresetPicker />
         <LoadEquipmentQuickAdd onAdd={addLoadItem} />
         <div className="load-factor-grid">
           <div className="metric-card metric-card--blue">
@@ -382,7 +386,6 @@ function StepLoads() {
   if (form.calculationMode === "load_profile") {
     return (
       <div className="stack-lg">
-        <SmartPresetPicker />
         <LoadProfileEditor />
       </div>
     );
@@ -390,7 +393,6 @@ function StepLoads() {
 
   return (
     <div className="stack-lg">
-      <SmartPresetPicker />
       <div className="form-grid two-cols">
         {form.calculationMode === "current" ? (
           <Field label="جریان کل (A)"><input type="text" inputMode="decimal" value={form.current} onChange={(e) => updateForm({ current: e.target.value })} /></Field>
@@ -468,7 +470,12 @@ function getLoadDemandForRecommendation(form) {
   };
 
   if (form.calculationMode === "loads" && Array.isArray(form.loadItems) && form.loadItems.length) {
-    const dailyEnergyWh = form.loadItems.reduce((sum, item) => sum + (num(item.qty, 1) * num(item.power, 0) * num(item.hours, 0) * num(item.coincidenceFactor, 1)), 0);
+    const dailyEnergyWh = form.loadItems.reduce((sum, item) => {
+      const qty = num(item.qty, 1);
+      const libraryDailyKwh = num(item.dailyKwh, 0);
+      if (libraryDailyKwh > 0) return sum + (qty * libraryDailyKwh * 1000);
+      return sum + (qty * num(item.power, 0) * num(item.hours, 0) * num(item.coincidenceFactor, 1));
+    }, 0);
     const demandPowerW = form.loadItems.reduce((sum, item) => sum + (num(item.qty, 1) * num(item.power, 0) * num(item.coincidenceFactor, 1)), 0);
     const surgePowerW = form.loadItems.reduce((sum, item) => sum + (num(item.qty, 1) * num(item.power, 0) * num(item.surgeFactor, form.surgeFactor || 1.5) * num(item.coincidenceFactor, 1)), 0);
     return { dailyEnergyWh, demandPowerW, surgePowerW };
@@ -507,9 +514,7 @@ function buildSmartSystemRecommendation(form) {
   const daysAutonomy = isBackup ? Math.max(0.2, Math.min(1, (parseFaNumber(form.backupHours, 2) || 2) / 24)) : (dailyKwh > 8 ? 1.5 : 1);
   const batteryUnitVoltage = isBackup ? (systemVoltage >= 48 ? 48 : 24) : (batteryType === "LFP" && systemVoltage >= 48 ? 48 : 12);
   const usableEnergyNeededWh = Math.max(dailyEnergyWh * daysAutonomy, demandPowerW * Math.max(parseFaNumber(form.backupHours, 1), 1));
-  const batteryUnitAhRaw = usableEnergyNeededWh / Math.max(batteryUnitVoltage * dod * inverterEfficiency, 1);
-  const preferredAh = [50, 75, 100, 120, 150, 180, 200, 250, 300, 400, 500, 600, 800, 1000];
-  const batteryUnitAh = preferredAh.find((ah) => ah >= batteryUnitAhRaw) || 1000;
+  const batteryUnitAh = 100;
 
   const panelWatt = 550;
   const psh = Math.max(parseFaNumber(form.sunHours, 5), 3.5);
@@ -520,6 +525,7 @@ function buildSmartSystemRecommendation(form) {
       systemVoltage: String(systemVoltage),
       batteryType,
       batteryUnitAh: String(batteryUnitAh),
+      batteryFactor: form.batteryFactor || "1",
       batteryUnitVoltage: String(batteryUnitVoltage),
       daysAutonomy: String(daysAutonomy),
       dod: String(dod),
@@ -599,7 +605,8 @@ function estimateUpsRuntime(form) {
 
   const seriesCount = Math.max(1, Math.ceil(systemVoltage / Math.max(batteryUnitVoltage, 1)));
   const requiredAhForDesired = (demandPowerW * num(form.backupHours, 1)) / (systemVoltage * inverterEfficiency * dod * batteryEfficiency);
-  const parallelCount = Math.max(1, Math.ceil(requiredAhForDesired / Math.max(batteryUnitAh, 1)));
+  const batteryFactor = Math.max(num(form.batteryFactor, 1), 1);
+  const parallelCount = Math.max(1, Math.ceil((requiredAhForDesired / Math.max(batteryUnitAh, 1)) * batteryFactor));
   const totalCount = seriesCount * parallelCount;
 
   const bankAh = parallelCount * batteryUnitAh;
@@ -726,7 +733,7 @@ function EquipmentSelector({ category, label, selectedId, onSelect, disabled = f
 }
 
 function StepSystemConfig() {
-  const { activeProject, updateForm, openEquipmentLibrary } = useProjectStore();
+  const { activeProject, updateForm } = useProjectStore();
   const form = activeProject.form;
   const availableSystemVoltages = form.systemType === "backup" ? BACKUP_SYSTEM_VOLTAGES : SYSTEM_VOLTAGES;
   const availableBatteryVoltages = form.systemType === "backup"
@@ -755,6 +762,10 @@ function StepSystemConfig() {
         [role]: item.id,
       },
       ...item.specs,
+      ...(role === "inverter" && item.specs?.systemVoltage ? {
+        systemVoltage: String(item.specs.systemVoltage),
+        batteryUnitVoltage: [12, 24, 48].includes(Number(item.specs.systemVoltage)) ? String(item.specs.systemVoltage) : form.batteryUnitVoltage,
+      } : {}),
     });
   }
 
@@ -763,7 +774,6 @@ function StepSystemConfig() {
       <section className="panel panel--soft">
         <div className="panel__header">
           <h3>انتخاب از بانک تجهیزات</h3>
-          <button type="button" className="btn btn--ghost btn--sm" onClick={() => openEquipmentLibrary("workspace")}>باز کردن کتابخانه</button>
         </div>
         <div className="equipment-selector-grid">
           {form.systemType !== "backup" ? (
@@ -824,7 +834,7 @@ function StepSystemConfig() {
         {form.systemType === "gridtie" ? (
           <Field label="هدف جبران انرژی (%)"><input type="text" inputMode="decimal" value={form.targetOffsetPercent} onChange={(e) => updateForm({ targetOffsetPercent: e.target.value })} /></Field>
         ) : null}
-        <Field label="ظرفیت واحد باتری (Ah)" hint="تا سقف ۱۰۰۰Ah قابل انتخاب و ویرایش است.">
+        <Field label="ظرفیت واحد باتری (Ah)" hint="پیش‌فرض ۱۰۰Ah است؛ متناسب با نیاز مشتری و زمان بکاپ قابل ویرایش است.">
           <input
             type="text"
             inputMode="decimal"
@@ -833,6 +843,9 @@ function StepSystemConfig() {
             onChange={(e) => updateForm({ batteryUnitAh: e.target.value })}
           />
           <datalist id="battery-capacity-options">{BACKUP_BATTERY_CAPACITY_OPTIONS.map((v) => <option key={v} value={v}>{v}Ah</option>)}</datalist>
+        </Field>
+        <Field label="ضریب افزایش باتری" hint="برای رزرو ظرفیت و تعیین تعداد نهایی باتری؛ مثلا ۱.۲ یعنی ۲۰٪ ظرفیت بیشتر.">
+          <input type="text" inputMode="decimal" step="0.05" value={form.batteryFactor ?? 1} onChange={(e) => updateForm({ batteryFactor: e.target.value })} />
         </Field>
         <Field label="ولتاژ واحد باتری (V)">{form.systemType === "backup" ? (
           <select value={form.batteryUnitVoltage} onChange={(e) => updateForm({ batteryUnitVoltage: e.target.value })}>{availableBatteryVoltages.map((v) => <option key={v} value={v}>{v}V</option>)}</select>
@@ -851,6 +864,9 @@ function StepSystemConfig() {
         {form.systemType !== "backup" ? <Field label="حداقل MPPT"><input type="text" inputMode="decimal" value={form.mpptMinVoltage} onChange={(e) => updateForm({ mpptMinVoltage: e.target.value })} /></Field> : null}
         {form.systemType !== "backup" ? <Field label="حداکثر MPPT"><input type="text" inputMode="decimal" value={form.mpptMaxVoltage} onChange={(e) => updateForm({ mpptMaxVoltage: e.target.value })} /></Field> : null}
         <Field label="ضریب طراحی"><input type="text" inputMode="decimal" step="0.01" value={form.designFactor} onChange={(e) => updateForm({ designFactor: e.target.value })} /></Field>
+        <Field label="طول مسیر کابل DC (m)" hint="اگر وارد شود، افت کابل DC دقیق‌تر محاسبه می‌شود؛ اگر خالی/صفر باشد درصد پیش‌فرض مبنا می‌ماند."><input type="text" inputMode="decimal" step="0.1" value={form.dcCableLength ?? ""} onChange={(e) => updateForm({ dcCableLength: e.target.value })} /></Field>
+        <Field label="طول مسیر کابل AC (m)" hint="برای محاسبه افت مسیر خروجی AC. در صورت عدم ورود، مقدار پیش‌فرض استفاده می‌شود."><input type="text" inputMode="decimal" step="0.1" value={form.acCableLength ?? ""} onChange={(e) => updateForm({ acCableLength: e.target.value })} /></Field>
+        <Field label="طول کابل باتری (m)"><input type="text" inputMode="decimal" step="0.1" value={form.batteryCableLength ?? ""} onChange={(e) => updateForm({ batteryCableLength: e.target.value })} /></Field>
         <Field label="افت مجاز کابل DC (%)"><input type="text" inputMode="decimal" step="0.1" value={form.dcVoltageDropLimit} onChange={(e) => updateForm({ dcVoltageDropLimit: e.target.value })} /></Field>
         <Field label="افت مجاز کابل باتری (%)"><input type="text" inputMode="decimal" step="0.1" value={form.batteryVoltageDropLimit} onChange={(e) => updateForm({ batteryVoltageDropLimit: e.target.value })} /></Field>
         <Field label="افت مجاز کابل AC (%)"><input type="text" inputMode="decimal" step="0.1" value={form.acVoltageDropLimit} onChange={(e) => updateForm({ acVoltageDropLimit: e.target.value })} /></Field>
@@ -865,18 +881,40 @@ function StepSystemConfig() {
 function StepReview() {
   const { activeProject } = useProjectStore();
   const form = activeProject.form;
-  const profilePeak = Math.max(...(form.loadProfile || []).map((slot) => Number(slot.factor) || 0), 0);
+  const systemLabel = SYSTEM_TYPES.find((item) => item.value === form.systemType)?.label || form.systemType;
+  const modeLabel = CALCULATION_MODES.find((item) => item.value === form.calculationMode)?.label || form.calculationMode;
+  const selectedCount = [form.systemType !== "backup" ? form.selectedEquipment?.panel : null, form.selectedEquipment?.battery, form.selectedEquipment?.inverter].filter(Boolean).length;
+  const loadItems = form.loadItems || [];
+  const loadTotals = loadItems.reduce((acc, item) => {
+    const qty = parseFaNumber(item.qty, 1);
+    const power = parseFaNumber(item.power, 0);
+    const hours = parseFaNumber(item.hours, 0);
+    const coincidence = parseFaNumber(item.coincidenceFactor, 1);
+    const dailyKwh = parseFaNumber(item.dailyKwh, 0);
+    acc.connectedPowerW += qty * power;
+    acc.realPowerW += qty * power * coincidence;
+    acc.dailyWh += dailyKwh > 0 ? qty * dailyKwh * 1000 : qty * power * hours * coincidence;
+    return acc;
+  }, { connectedPowerW: 0, realPowerW: 0, dailyWh: 0 });
+  const warnings = [];
+  if (form.calculationMode === "loads" && !loadItems.length) warnings.push("هیچ مصرف‌کننده‌ای انتخاب نشده است.");
+  if (!form.dcCableLength || Number(form.dcCableLength) <= 0) warnings.push("طول کابل DC وارد نشده؛ افت پیش‌فرض استفاده می‌شود.");
+  if (!form.acCableLength || Number(form.acCableLength) <= 0) warnings.push("طول کابل AC وارد نشده؛ افت پیش‌فرض استفاده می‌شود.");
+  if (Number(form.systemVoltage) % Number(form.batteryUnitVoltage || 1) !== 0) warnings.push("ولتاژ واحد باتری با ولتاژ سیستم هم‌خوانی سری کامل ندارد.");
+
   return (
-    <div className="summary-list">
-      <div><span>پروژه</span><strong>{form.projectTitle}</strong></div>
-      <div><span>نوع سیستم</span><strong>{SYSTEM_TYPES.find((item) => item.value === form.systemType)?.label || form.systemType}</strong></div>
-      <div><span>روش محاسبه</span><strong>{form.calculationMode}</strong></div>
-      {form.systemType !== "backup" ? <div><span>شهر / تابش</span><strong>{form.city} / {form.sunHours} h</strong></div> : <div><span>حالت طراحی</span><strong>سانورتر و باطری بدون پنل</strong></div>}
-      <div><span>ولتاژ سیستم</span><strong>{form.systemVoltage} V</strong></div>
-      <div><span>نوع باتری</span><strong>{form.batteryType}</strong></div>
-      <div><span>تجهیزات انتخاب‌شده</span><strong>{[form.systemType !== "backup" ? form.selectedEquipment?.panel : null, form.selectedEquipment?.battery, form.selectedEquipment?.inverter, null].filter(Boolean).length} مورد</strong></div>
-      {form.calculationMode === "load_profile" ? <div><span>بیشترین ضریب ساعتی</span><strong>{profilePeak.toFixed(2)}</strong></div> : null}
-      {form.calculationMode === "load_profile" ? <div><span>انرژی روزانه هدف</span><strong>{form.dailyEnergyKwh} kWh/day</strong></div> : null}
+    <div className="review-dashboard">
+      <section className="panel panel--soft review-section-card">
+        <div className="panel__header"><h3>چکیده نهایی قبل از محاسبه</h3><span className="badge">قابل بازگشت و ویرایش</span></div>
+        <p className="section-note">این صفحه خلاصه همه انتخاب‌های مشتری است. قبل از اجرای محاسبات، موارد زیر را کنترل کنید.</p>
+      </section>
+      <div className="review-card-grid">
+        <section className="panel review-section-card"><h3>اطلاعات پروژه</h3><div className="summary-list"><div><span>عنوان پروژه</span><strong>{form.projectTitle}</strong></div><div><span>نام کارفرما</span><strong>{form.clientName || "—"}</strong></div><div><span>شهر / تابش</span><strong>{form.systemType !== "backup" ? (form.city + " / " + form.sunHours + " h") : "سانورتر و باتری بدون پنل"}</strong></div></div></section>
+        <section className="panel review-section-card"><h3>نوع سیستم و روش محاسبه</h3><div className="summary-list"><div><span>نوع سیستم</span><strong>{systemLabel}</strong></div><div><span>روش محاسبه</span><strong>{modeLabel}</strong></div><div><span>ولتاژ سیستم</span><strong>{form.systemVoltage}V</strong></div><div><span>تجهیزات انتخاب‌شده</span><strong>{selectedCount} مورد</strong></div></div></section>
+        <section className="panel review-section-card"><h3>مدل بار</h3><div className="summary-list"><div><span>تعداد بارها</span><strong>{loadItems.length} مورد</strong></div><div><span>توان نصب‌شده</span><strong>{loadTotals.connectedPowerW.toFixed(0)} W</strong></div><div><span>توان همزمان تقریبی</span><strong>{loadTotals.realPowerW.toFixed(0)} W</strong></div><div><span>مصرف روزانه</span><strong>{(loadTotals.dailyWh / 1000 || Number(form.dailyEnergyKwh) || 0).toFixed(1)} kWh/day</strong></div><div><span>زمان بکاپ / مرجع</span><strong>{form.backupHours} h</strong></div></div></section>
+        <section className="panel review-section-card"><h3>تنظیمات باتری و کابل</h3><div className="summary-list"><div><span>نوع باتری</span><strong>{form.batteryType}</strong></div><div><span>واحد باتری</span><strong>{form.batteryUnitVoltage}V / {form.batteryUnitAh}Ah</strong></div><div><span>ضریب باتری</span><strong>{form.batteryFactor ?? 1}</strong></div><div><span>DoD / راندمان باتری</span><strong>{form.dod} / {form.batteryRoundTripEfficiency}</strong></div><div><span>کابل DC / AC / باتری</span><strong>{form.dcCableLength || "پیش‌فرض"}m / {form.acCableLength || "پیش‌فرض"}m / {form.batteryCableLength || "پیش‌فرض"}m</strong></div></div></section>
+      </div>
+      {warnings.length ? <section className="panel panel--soft review-warning-card"><h3>هشدارهای قابل بررسی</h3><ul>{warnings.map((warning) => <li key={warning}>{warning}</li>)}</ul></section> : null}
     </div>
   );
 }

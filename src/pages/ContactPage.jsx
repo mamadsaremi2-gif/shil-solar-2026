@@ -34,7 +34,7 @@ const CONTACT_ITEMS = [
     key: "eitaa",
     title: "ایتا",
     description: "مسیر ارتباطی داخلی برای پیگیری پروژه",
-    qr: PUBLIC_ASSETS.qr.telegram,
+    qr: null,
     type: "Eitaa",
     url: CONTACT_LINKS.eitaa,
     actionLabel: "ورود به ایتا",
@@ -43,7 +43,7 @@ const CONTACT_ITEMS = [
     key: "bale",
     title: "بله",
     description: "مسیر ارتباطی داخلی برای هماهنگی و پیگیری",
-    qr: PUBLIC_ASSETS.qr.telegram,
+    qr: null,
     type: "Bale",
     url: CONTACT_LINKS.bale,
     actionLabel: "ورود به بله",
@@ -52,7 +52,7 @@ const CONTACT_ITEMS = [
     key: "rubika",
     title: "روبیکا",
     description: "مسیر ارتباطی داخلی برای پیام‌رسانی سریع",
-    qr: PUBLIC_ASSETS.qr.telegram,
+    qr: null,
     type: "Rubika",
     url: CONTACT_LINKS.rubika,
     actionLabel: "ورود به روبیکا",
@@ -62,16 +62,23 @@ const CONTACT_ITEMS = [
 function ContactCard({ item }) {
   return (
     <article className="contact-card contact-card--premium">
-      <a className="contact-card__qr-wrap" href={item.url} target="_blank" rel="noreferrer" aria-label={item.actionLabel}>
-        <img className="contact-card__qr" src={item.qr} alt={`QR ${item.title}`} loading="lazy" />
-      </a>
+      {item.qr ? (
+        <a className="contact-card__qr-wrap" href={item.url} target="_blank" rel="noreferrer" aria-label={item.actionLabel}>
+          <img className="contact-card__qr" src={item.qr} alt={`QR `} loading="lazy" />
+        </a>
+      ) : (
+        <div className="contact-card__qr-wrap contact-card__qr-wrap--empty">
+          <span>آماده‌سازی</span>
+          <small>QR بعداً اضافه می‌شود</small>
+        </div>
+      )}
       <div className="contact-card__body">
         <span className="contact-card__type">{item.type}</span>
         <h3>{item.title}</h3>
         <p>{item.description}</p>
         <div className="contact-card__actions">
           <a className="btn btn--primary btn--sm" href={item.url} target="_blank" rel="noreferrer">{item.actionLabel}</a>
-          <a className="btn btn--ghost btn--sm" href={item.qr} target="_blank" rel="noreferrer">مشاهده QR</a>
+          {item.qr ? <a className="btn btn--ghost btn--sm" href={item.qr} target="_blank" rel="noreferrer">مشاهده QR</a> : <span className="btn btn--ghost btn--sm is-disabled">QR ندارد</span>}
         </div>
       </div>
     </article>

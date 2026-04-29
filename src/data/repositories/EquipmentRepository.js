@@ -36,7 +36,18 @@ export const EquipmentRepository = {
     const q = normalizeSearch(query);
     return this.list(category).filter((item) => {
       if (!q) return true;
-      return [item.title, item.brand, item.model, item.summary, item.specs?.name, item.specs?.power].some((part) => normalizeSearch(part).includes(q));
+      return [
+        item.title,
+        item.brand,
+        item.model,
+        item.summary,
+        item.specs?.name,
+        item.specs?.power,
+        item.specs?.currentA,
+        item.specs?.dailyKwh,
+        item.specs?.equipmentGroup,
+        item.specs?.description,
+      ].some((part) => normalizeSearch(part).includes(q));
     });
   },
   getById(equipmentId) {

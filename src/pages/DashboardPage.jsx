@@ -44,7 +44,7 @@ function QuickAction({ title, icon, onClick }) {
 }
 
 export function DashboardPage() {
-  const { projects, startNewProject, openProject, openWorkspace, openEquipmentLibrary, openScenarios, openContact, openAdmin, deleteProject, syncCloudProjects } = useProjectStore();
+  const { projects, startNewProject, openProject, openWorkspace, openScenarios, openContact, openAdmin, deleteProject, syncCloudProjects } = useProjectStore();
   const { profile, isAdmin, user, signOut, isConfigured } = useAuth();
   const [syncMessage, setSyncMessage] = useState("");
   const calculatedCount = projects.filter((project) => (project.versions?.length ?? 0) > 0).length;
@@ -63,7 +63,6 @@ export function DashboardPage() {
         </div>
         <nav className="dashboard-nav__links" aria-label="navigation">
           <button type="button" className="is-active">داشبورد</button>
-          <button type="button" onClick={() => openEquipmentLibrary("dashboard")}>کتابخانه تجهیزات</button>
           <button type="button" onClick={() => openScenarios("dashboard")}>سناریوهای آماده</button>
           <button type="button" onClick={() => openContact("dashboard")}>ارتباط با ما</button>
           {isAdmin ? <button type="button" onClick={openAdmin}>مدیریت</button> : null}
@@ -78,7 +77,6 @@ export function DashboardPage() {
         <div className="dashboard-hero-xl__content dashboard-hero-xl__content--minimal">
           <div className="dashboard-hero-xl__actions">
             <button className="btn btn--primary" onClick={startNewProject}>+ پروژه جدید</button>
-            <button className="btn btn--ghost" onClick={() => openEquipmentLibrary("dashboard")}>کتابخانه تجهیزات</button>
             <button className="btn btn--ghost" onClick={() => openScenarios("dashboard")}>سناریوهای آماده</button>
             <button className="btn btn--ghost" onClick={() => openContact("dashboard")}>ارتباط با ما</button>
           </div>
@@ -150,8 +148,6 @@ export function DashboardPage() {
           <div className="quick-action-grid">
             <QuickAction title="محاسبه بار" icon="⚡" onClick={startNewProject} />
             <QuickAction title="سناریوهای آماده" icon="📋" onClick={() => openScenarios("dashboard")} />
-            <QuickAction title="انتخاب اینورتر" icon="▣" onClick={() => openEquipmentLibrary("dashboard")} />
-            <QuickAction title="کتابخانه تجهیزات" icon="📦" onClick={() => openEquipmentLibrary("dashboard")} />
             <QuickAction title="گزارش مهندسی" icon="📄" onClick={startNewProject} />
           </div>
         </section>
