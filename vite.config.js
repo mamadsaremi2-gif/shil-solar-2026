@@ -47,7 +47,7 @@ export default defineConfig(async () => {
           cleanupOutdatedCaches: true,
           skipWaiting: true,
           clientsClaim: true,
-          maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
+          maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
           navigateFallback: `${base}offline.html`,
           runtimeCaching: [
             {

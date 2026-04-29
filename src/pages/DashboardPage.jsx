@@ -73,22 +73,14 @@ export function DashboardPage() {
 
       <section
         className="dashboard-hero-xl"
-        style={{ backgroundImage: `linear-gradient(90deg, rgba(3,7,18,0.06), rgba(3,7,18,0.22) 42%, rgba(3,7,18,0.58) 100%), url(${PUBLIC_ASSETS.backgrounds.method})` }}
+        style={{ backgroundImage: `linear-gradient(90deg, rgba(3,7,18,0.06), rgba(3,7,18,0.22) 42%, rgba(3,7,18,0.58) 100%), url(${PUBLIC_ASSETS.backgrounds.shilProductsHero})` }}
       >
-        <div className="dashboard-hero-xl__brand-mark">
-          <img src={PUBLIC_ASSETS.branding.appLogo} alt="Solar Design Suite" />
-        </div>
-        <div className="dashboard-hero-xl__content">
-          <span className="eyebrow">SHIL SOLAR</span>
-          <h1><span>مهندسی انرژی خورشیدی</span></h1>
-          <p>
-            تحلیل مهندسی، انتخاب تجهیزات SHIL و اعتبارسنجی طراحی در یک محیط حرفه‌ای.
-          </p>
+        <div className="dashboard-hero-xl__content dashboard-hero-xl__content--minimal">
           <div className="dashboard-hero-xl__actions">
             <button className="btn btn--primary" onClick={startNewProject}>+ پروژه جدید</button>
             <button className="btn btn--ghost" onClick={() => openEquipmentLibrary("dashboard")}>کتابخانه تجهیزات</button>
             <button className="btn btn--ghost" onClick={() => openScenarios("dashboard")}>سناریوهای آماده</button>
-            <button className="btn btn--ghost" onClick={() => openContact("dashboard")}>ارتباط مستقیم</button>
+            <button className="btn btn--ghost" onClick={() => openContact("dashboard")}>ارتباط با ما</button>
           </div>
         </div>
       </section>
@@ -168,11 +160,11 @@ export function DashboardPage() {
           className="panel dashboard-contact-card"
           style={{ backgroundImage: `linear-gradient(135deg, rgba(8,17,31,0.28), rgba(8,17,31,0.88)), url(${PUBLIC_ASSETS.backgrounds.report})` }}
         >
-          <div className="dashboard-contact-card__content">
+          <div className="dashboard-contact-card__content dashboard-contact-card__content--simple">
             <img src={PUBLIC_ASSETS.branding.logo} alt="SHIL IRAN" />
-            <span>وبسایت رسمی</span>
-            <strong>SHIL.IR</strong>
-            <button className="btn btn--primary" type="button" onClick={() => openContact("dashboard")}>ارتباط با ما</button>
+            <strong>ارتباط با ما</strong>
+            <span>اطلاعات تماس و مسیرهای ارتباطی SHIL</span>
+            <button className="btn btn--primary" type="button" onClick={() => openContact("dashboard")}>مشاهده صفحه ارتباط</button>
           </div>
         </section>
       </section>

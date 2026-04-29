@@ -9,7 +9,7 @@ export async function trackEvent(eventName, payload = {}) {
     const user = sessionData?.session?.user;
     await supabase.from('usage_events').insert({
       event_name: eventName,
-      payload,
+      metadata: payload,
       user_id: user?.id ?? null,
     });
   } catch (error) {

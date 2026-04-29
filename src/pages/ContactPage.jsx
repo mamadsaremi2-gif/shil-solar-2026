@@ -4,15 +4,6 @@ import { CONTACT_LINKS } from "../shared/constants/contactLinks";
 
 const CONTACT_ITEMS = [
   {
-    key: "website",
-    title: "سایت SHIL",
-    description: "مشاهده محصولات کامل برند SHIL و اطلاعات رسمی شرکت",
-    qr: PUBLIC_ASSETS.qr.instagramShil,
-    type: "Website",
-    url: CONTACT_LINKS.website,
-    actionLabel: "ورود به سایت SHIL",
-  },
-  {
     key: "whatsapp",
     title: "واتساپ",
     description: "ارتباط سریع و ارسال اطلاعات پروژه",
@@ -23,7 +14,7 @@ const CONTACT_ITEMS = [
   },
   {
     key: "phone",
-    title: "تماس",
+    title: "تماس مستقیم",
     description: "تماس مستقیم با واحد ارتباط SHIL",
     qr: PUBLIC_ASSETS.qr.whatsapp,
     type: "Phone",
@@ -87,44 +78,42 @@ function ContactCard({ item }) {
   );
 }
 
+function ShilProductsCard() {
+  return (
+    <section className="panel shil-products-showcase">
+      <a className="shil-products-showcase__image" href={CONTACT_LINKS.website} target="_blank" rel="noreferrer" aria-label="ورود به سایت SHIL.IR">
+        <img src={PUBLIC_ASSETS.branding.productsFullCard} alt="جهت مشاهده محصولات کامل برند SHIL" />
+        <span className="shil-products-showcase__button">ورود به سایت SHIL.IR</span>
+      </a>
+    </section>
+  );
+}
+
 export function ContactPage() {
   const { goBackFromContact, goDashboard } = useProjectStore();
 
   return (
     <div className="shell shell--contact">
-      <header
-        className="contact-hero contact-hero--premium"
-        style={{ backgroundImage: `linear-gradient(110deg, rgba(8,17,31,0.26) 0%, rgba(8,17,31,0.40) 42%, rgba(8,17,31,0.66) 100%), url(${PUBLIC_ASSETS.backgrounds.home})` }}
-      >
-        <button className="btn btn--ghost btn--back" onClick={goBackFromContact} type="button">
-          بازگشت
-        </button>
-
-        <div className="contact-hero__content contact-hero__content--glass">
-          <img className="contact-hero__logo" src={PUBLIC_ASSETS.branding.logo} alt="SHIL" />
-          <span className="eyebrow">مرکز ارتباط رسمی SHIL</span>
-          <h1>ارتباط سریع با SHIL</h1>
-          <p>
-            همه مسیرهای ارتباطی رسمی در همین صفحه قرار دارد: سایت، واتساپ، تماس، ایمیل، ایتا، بله و روبیکا.
-          </p>
-          <div className="contact-hero__actions">
-            <a className="btn btn--primary" href={CONTACT_LINKS.website} target="_blank" rel="noreferrer">
-              وب‌سایت رسمی شرکت
-            </a>
-            <a className="btn btn--secondary" href={CONTACT_LINKS.whatsapp} target="_blank" rel="noreferrer">
-              ارتباط سریع واتساپ
-            </a>
-            <button className="btn btn--ghost" onClick={goDashboard} type="button">
-              بازگشت به داشبورد
-            </button>
-          </div>
-        </div>
+      <header className="contact-page-topbar">
+        <button className="btn btn--ghost btn--back" onClick={goBackFromContact} type="button">بازگشت</button>
+        <img src={PUBLIC_ASSETS.branding.logo} alt="SHIL" />
+        <button className="btn btn--secondary" onClick={goDashboard} type="button">داشبورد</button>
       </header>
+
+      <ShilProductsCard />
 
       <section className="panel contact-channel-heading">
         <span className="eyebrow">مسیرهای ارتباطی</span>
-        <h2>انتخاب مسیر ارتباطی رسمی</h2>
-        <p>بارکدها و دکمه‌های ورود هر مسیر در بلوک‌های جداگانه قرار گرفته‌اند.</p>
+        <h2>ارتباط با ما</h2>
+        <p>همه اطلاعات تماس، QR Codeها و مسیرهای ارتباطی رسمی SHIL در این صفحه جمع‌آوری شده‌اند.</p>
+        <div className="contact-info-strip">
+          <div><span>تلفن ثابت</span><strong>031-33122</strong></div>
+          <div><span>موبایل</span><strong>09135656153</strong></div>
+          <div><span>ایمیل</span><strong>info@shil.ir</strong></div>
+          <div><span>آدرس</span><strong>اصفهان، شهرک صنعتی سجزی، خیابان اسپیرال، نبش سوم شرقی، پلاک 59</strong></div>
+          <div><span>کد پستی</span><strong>8139174361</strong></div>
+          <div><span>ساعت کاری</span><strong>شنبه تا چهارشنبه، 8:00 - 16:30</strong></div>
+        </div>
       </section>
 
       <section className="contact-grid">

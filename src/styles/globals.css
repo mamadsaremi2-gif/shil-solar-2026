@@ -2632,3 +2632,133 @@ select { cursor: pointer; }
   .shil-workspace-hero__content { width: 100%; padding-top: 118px; }
   .shil-contact-card__info { grid-template-columns: 1fr; }
 }
+
+/* Final clean UI adjustments requested by client */
+.dashboard-hero-xl__content--minimal {
+  width: auto;
+  min-width: 0;
+  margin-inline-start: auto;
+  margin-inline-end: clamp(18px, 5vw, 72px);
+  align-self: flex-end;
+  margin-bottom: clamp(22px, 4vw, 54px);
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  backdrop-filter: none;
+  padding: 0;
+}
+.dashboard-hero-xl__content--minimal .dashboard-hero-xl__actions {
+  padding: 12px;
+  border-radius: 999px;
+  background: rgba(8,17,31,0.42);
+  border: 1px solid rgba(255,255,255,0.16);
+  backdrop-filter: blur(12px);
+}
+.dashboard-contact-card__content--simple {
+  min-height: 260px;
+  justify-content: center;
+  text-align: center;
+}
+.dashboard-contact-card__content--simple img {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+  margin-inline: auto;
+}
+.contact-page-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px clamp(16px, 3vw, 28px);
+  margin-bottom: 18px;
+  border-radius: 24px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: linear-gradient(135deg, rgba(15,23,42,0.86), rgba(8,17,31,0.72));
+  box-shadow: 0 16px 44px rgba(0,0,0,0.22);
+}
+.contact-page-topbar img {
+  width: 74px;
+  height: 74px;
+  object-fit: contain;
+  padding: 8px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.08);
+}
+.shil-products-showcase {
+  padding: 0;
+  overflow: hidden;
+  border-radius: 30px;
+  background: #ffffff;
+  border: 1px solid rgba(250,204,21,0.35);
+}
+.shil-products-showcase__image {
+  position: relative;
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+.shil-products-showcase__image img {
+  width: 100%;
+  display: block;
+  height: auto;
+}
+.shil-products-showcase__button {
+  position: absolute;
+  left: clamp(24px, 8vw, 140px);
+  bottom: clamp(26px, 5vw, 70px);
+  min-width: clamp(180px, 22vw, 330px);
+  text-align: center;
+  padding: 18px 28px;
+  border-radius: 24px;
+  color: #07142c;
+  font-weight: 1000;
+  font-size: clamp(18px, 2.1vw, 30px);
+  background: linear-gradient(135deg, #f7c948, #f59e0b);
+  box-shadow: 0 18px 42px rgba(245,158,11,0.32);
+}
+.contact-info-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-top: 18px;
+}
+.contact-info-strip div {
+  padding: 14px 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.055);
+}
+.contact-info-strip span {
+  display: block;
+  margin-bottom: 6px;
+  color: #93c5fd;
+  font-size: 13px;
+  font-weight: 800;
+}
+.contact-info-strip strong {
+  color: #f8fafc;
+  line-height: 1.75;
+}
+@media (max-width: 720px) {
+  .dashboard-hero-xl__content--minimal {
+    width: 100%;
+    margin: auto 0 0;
+  }
+  .dashboard-hero-xl__content--minimal .dashboard-hero-xl__actions {
+    border-radius: 22px;
+  }
+  .contact-page-topbar {
+    flex-wrap: wrap;
+  }
+  .contact-page-topbar img {
+    order: -1;
+    margin-inline: auto;
+  }
+  .shil-products-showcase__button {
+    position: static;
+    display: block;
+    margin: 12px;
+    min-width: 0;
+  }
+}

@@ -9,7 +9,7 @@ const ProjectStoreContext = createContext(null);
 async function trackEventSafe(eventName, payload = {}) {
   try {
     const { trackEvent } = await import("../../shared/lib/usageTracker");
-    await trackEventSafe(eventName, payload);
+    await trackEvent(eventName, payload);
   } catch (error) {
     console.warn("Usage tracking failed", error);
   }

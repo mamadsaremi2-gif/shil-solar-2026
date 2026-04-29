@@ -2,12 +2,14 @@ export const PUBLIC_ASSETS = {
   branding: {
     logo: '/images/branding/logo.png',
     appLogo: '/images/branding/app-logo.png',
+    productsFullCard: '/images/branding/shil-products-full-card.png',
   },
   backgrounds: {
     home: '/images/backgrounds/home-main-bg.jpg',
     workspace: '/images/backgrounds/app-workspace-bg.jpg',
     report: '/images/backgrounds/final-bg.jpg',
     method: '/images/backgrounds/method-bg.jpg',
+    shilProductsHero: '/images/backgrounds/shil-products-solar-hero.png',
   },
   qr: {
     instagram: '/images/qr/instagram-qr.jpg',

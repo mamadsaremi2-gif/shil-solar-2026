@@ -1,6 +1,4 @@
 import { useMemo, useState } from "react";
-import ShilWorkspaceHero from "../components/ShilWorkspaceHero";
-import ShilContactCard from "../components/ShilContactCard";
 import { useProjectStore } from "../app/store/projectStore";
 import { WizardShell } from "../features/project-wizard/components/WizardShell";
 import {
@@ -903,8 +901,6 @@ export function ProjectWorkspacePage() {
         <div className="topbar__actions"><button className="btn btn--ghost" onClick={goDashboard}>بازگشت به داشبورد</button><button className="btn btn--secondary" type="button" onClick={() => openScenarios("workspace")}>سناریوهای آماده</button></div>
         <div className="topbar__title topbar__title--brand"><img src={PUBLIC_ASSETS.branding.appLogo} alt="SDS" className="topbar__brand-logo" /> <span>Solar Design Suite / Workspace</span></div>
       </header>
-      <ShilWorkspaceHero />
-      <ShilContactCard />
       <WizardShell
         title={stepMap[stepIndex].title}
         actions={(
