@@ -1,7 +1,8 @@
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useEffect } from "react";
 import { DashboardPage } from "../pages/DashboardPage";
 import { AuthGate } from "../features/auth/AuthGate";
 import { useProjectStore } from "./store/projectStore";
+import { OfflineStatus } from "../shared/components/OfflineStatus";
 
 const ProjectWorkspacePage = lazy(() => import("../pages/ProjectWorkspacePage").then((m) => ({ default: m.ProjectWorkspacePage })));
 const OutputPage = lazy(() => import("../pages/OutputPage").then((m) => ({ default: m.OutputPage })));
@@ -16,6 +17,12 @@ function PageLoader() {
 
 export function App() {
   const { route } = useProjectStore();
+
+  useEffect(() => {
+    import("../shared/lib/usageTracker")
+      .then(({ trackEvent }) => trackEvent("app_loaded", { path: window.location.pathname }))
+      .catch(() => {});
+  }, []);
 
   const renderRoute = () => {
     if (route.name === "workspace") {
@@ -69,5 +76,5 @@ export function App() {
     return <DashboardPage />;
   };
 
-  return <AuthGate>{renderRoute()}</AuthGate>;
+  return <AuthGate><OfflineStatus />{renderRoute()}</AuthGate>;
 }

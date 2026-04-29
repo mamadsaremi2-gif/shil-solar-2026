@@ -25,7 +25,7 @@ export default defineConfig(async () => {
       VitePWA({
         registerType: 'autoUpdate',
         injectRegister: 'auto',
-        includeAssets: ['favicon.svg', 'offline.html'],
+        includeAssets: ['favicon.svg', 'offline.html', 'images/backgrounds/shil-products-solar-hero.png'],
         manifest: {
           name: 'SHIL Solar Design Suite',
           short_name: 'SHIL Solar',
@@ -43,29 +43,33 @@ export default defineConfig(async () => {
           ]
         },
         workbox: {
-          globPatterns: ['**/*.{js,css,html,ico,png,svg,webmanifest}'],
+          globPatterns: ['**/*.{js,css,html,ico,png,jpg,jpeg,webp,svg,webmanifest}'],
           cleanupOutdatedCaches: true,
           skipWaiting: true,
           clientsClaim: true,
-          maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
-          navigateFallback: `${base}offline.html`,
+          maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
+          navigateFallback: `${base}index.html`,
           runtimeCaching: [
+            {
+              urlPattern: ({ request, url }) => request.destination === 'image' && url.origin === self.location.origin,
+              handler: 'CacheFirst',
+              options: {
+                cacheName: 'shil-image-assets',
+                expiration: { maxEntries: 120, maxAgeSeconds: 60 * 60 * 24 * 60 }
+              }
+            },
             {
               urlPattern: ({ url }) => url.origin === self.location.origin && url.pathname.startsWith('/assets/'),
               handler: 'CacheFirst',
               options: {
                 cacheName: 'shil-static-assets',
-                expiration: { maxEntries: 80, maxAgeSeconds: 60 * 60 * 24 * 30 }
+                expiration: { maxEntries: 100, maxAgeSeconds: 60 * 60 * 24 * 30 }
               }
             },
             {
               urlPattern: ({ url }) => url.origin.includes('supabase.co'),
-              handler: 'NetworkFirst',
-              options: {
-                cacheName: 'shil-supabase-api',
-                networkTimeoutSeconds: 5,
-                expiration: { maxEntries: 50, maxAgeSeconds: 60 * 60 * 24 }
-              }
+              handler: 'NetworkOnly',
+              options: { cacheName: 'shil-supabase-api' }
             }
           ]
         },
