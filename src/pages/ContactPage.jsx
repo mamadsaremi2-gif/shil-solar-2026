@@ -1,133 +1,18 @@
 import { useProjectStore } from "../app/store/projectStore";
 import { PUBLIC_ASSETS } from "../shared/constants/publicAssets";
 import { CONTACT_LINKS } from "../shared/constants/contactLinks";
-
-const CONTACT_ITEMS = [
-  {
-    key: "whatsapp",
-    title: "واتساپ",
-    description: "ارتباط سریع و ارسال اطلاعات پروژه",
-    qr: PUBLIC_ASSETS.qr.whatsapp,
-    type: "WhatsApp",
-    url: CONTACT_LINKS.whatsapp,
-    actionLabel: "ورود به واتساپ",
-  },
-  {
-    key: "phone",
-    title: "تماس مستقیم",
-    description: "تماس مستقیم با واحد ارتباط SHIL",
-    qr: PUBLIC_ASSETS.qr.whatsapp,
-    type: "Phone",
-    url: "tel:03133122",
-    actionLabel: "تماس مستقیم",
-  },
-  {
-    key: "email",
-    title: "ایمیل",
-    description: "ارسال مشخصات پروژه، فایل‌ها و درخواست مشاوره",
-    qr: PUBLIC_ASSETS.qr.instagramShil,
-    type: "Email",
-    url: CONTACT_LINKS.email,
-    actionLabel: "ارسال ایمیل",
-  },
-  {
-    key: "eitaa",
-    title: "ایتا",
-    description: "مسیر ارتباطی داخلی برای پیگیری پروژه",
-    qr: null,
-    type: "Eitaa",
-    url: CONTACT_LINKS.eitaa,
-    actionLabel: "ورود به ایتا",
-  },
-  {
-    key: "bale",
-    title: "بله",
-    description: "مسیر ارتباطی داخلی برای هماهنگی و پیگیری",
-    qr: null,
-    type: "Bale",
-    url: CONTACT_LINKS.bale,
-    actionLabel: "ورود به بله",
-  },
-  {
-    key: "rubika",
-    title: "روبیکا",
-    description: "مسیر ارتباطی داخلی برای پیام‌رسانی سریع",
-    qr: null,
-    type: "Rubika",
-    url: CONTACT_LINKS.rubika,
-    actionLabel: "ورود به روبیکا",
-  },
+const QR_ITEMS = [
+  { key: "instagramShil", title: "اینستاگرام شرکت SHIL", qr: PUBLIC_ASSETS.qr.instagramShil, url: CONTACT_LINKS.instagramShil },
+  { key: "instagramTraining", title: "اینستاگرام آموزش‌های فنی مهندس صارمی", qr: PUBLIC_ASSETS.qr.instagram, url: CONTACT_LINKS.instagramPersonal },
+  { key: "whatsappSaremi", title: "واتساپ مهندس صارمی", qr: PUBLIC_ASSETS.qr.whatsapp, url: CONTACT_LINKS.whatsapp },
+  { key: "telegramSaremi", title: "تلگرام مهندس صارمی", qr: PUBLIC_ASSETS.qr.telegram, url: CONTACT_LINKS.telegram },
 ];
-
-function ContactCard({ item }) {
-  return (
-    <article className="contact-card contact-card--premium">
-      {item.qr ? (
-        <a className="contact-card__qr-wrap" href={item.url} target="_blank" rel="noreferrer" aria-label={item.actionLabel}>
-          <img className="contact-card__qr" src={item.qr} alt={`QR `} loading="lazy" />
-        </a>
-      ) : (
-        <div className="contact-card__qr-wrap contact-card__qr-wrap--empty">
-          <span>آماده‌سازی</span>
-          <small>QR بعداً اضافه می‌شود</small>
-        </div>
-      )}
-      <div className="contact-card__body">
-        <span className="contact-card__type">{item.type}</span>
-        <h3>{item.title}</h3>
-        <p>{item.description}</p>
-        <div className="contact-card__actions">
-          <a className="btn btn--primary btn--sm" href={item.url} target="_blank" rel="noreferrer">{item.actionLabel}</a>
-          {item.qr ? <a className="btn btn--ghost btn--sm" href={item.qr} target="_blank" rel="noreferrer">مشاهده QR</a> : <span className="btn btn--ghost btn--sm is-disabled">QR ندارد</span>}
-        </div>
-      </div>
-    </article>
-  );
-}
-
-function ShilProductsCard() {
-  return (
-    <section className="panel shil-products-showcase">
-      <a className="shil-products-showcase__image" href={CONTACT_LINKS.website} target="_blank" rel="noreferrer" aria-label="ورود به سایت SHIL.IR">
-        <img src={PUBLIC_ASSETS.branding.productsFullCard} alt="جهت مشاهده محصولات کامل برند SHIL" />
-        <span className="shil-products-showcase__button">ورود به سایت SHIL.IR</span>
-      </a>
-    </section>
-  );
-}
-
-export function ContactPage() {
-  const { goBackFromContact, goDashboard } = useProjectStore();
-
-  return (
-    <div className="shell shell--contact">
-      <header className="contact-page-topbar">
-        <button className="btn btn--ghost btn--back" onClick={goBackFromContact} type="button">بازگشت</button>
-        <img src={PUBLIC_ASSETS.branding.logo} alt="SHIL" />
-        <button className="btn btn--secondary" onClick={goDashboard} type="button">داشبورد</button>
-      </header>
-
-      <ShilProductsCard />
-
-      <section className="panel contact-channel-heading">
-        <span className="eyebrow">مسیرهای ارتباطی</span>
-        <h2>ارتباط با ما</h2>
-        <p>همه اطلاعات تماس، QR Codeها و مسیرهای ارتباطی رسمی SHIL در این صفحه جمع‌آوری شده‌اند.</p>
-        <div className="contact-info-strip">
-          <div><span>تلفن ثابت</span><strong>031-33122</strong></div>
-          <div><span>موبایل</span><strong>09135656153</strong></div>
-          <div><span>ایمیل</span><strong>info@shil.ir</strong></div>
-          <div><span>آدرس</span><strong>اصفهان، شهرک صنعتی سجزی، خیابان اسپیرال، نبش سوم شرقی، پلاک 59</strong></div>
-          <div><span>کد پستی</span><strong>8139174361</strong></div>
-          <div><span>ساعت کاری</span><strong>شنبه تا چهارشنبه، 8:00 - 16:30</strong></div>
-        </div>
-      </section>
-
-      <section className="contact-grid">
-        {CONTACT_ITEMS.map((item) => (
-          <ContactCard key={item.key} item={item} />
-        ))}
-      </section>
-    </div>
-  );
-}
+const INTERNAL_MESSENGERS = [
+  { key: "eitaa", title: "ایتا", url: CONTACT_LINKS.eitaa },
+  { key: "bale", title: "بله", url: CONTACT_LINKS.bale },
+  { key: "rubika", title: "روبیکا", url: CONTACT_LINKS.rubika },
+];
+function copyText(text) { navigator.clipboard?.writeText(text); window.alert("کپی شد."); }
+function QrCard({ item }) { return <article className="contact-card contact-card--premium"><a className="contact-card__qr-wrap" href={item.url} target="_blank" rel="noreferrer"><img className="contact-card__qr" src={item.qr} alt={item.title} loading="lazy" /></a><div className="contact-card__body"><span className="contact-card__type">QR Code</span><h3>{item.title}</h3><p>برای ورود سریع، QR را اسکن کنید یا روی لینک زیر بزنید.</p><div className="contact-card__actions"><a className="btn btn--primary btn--sm" href={item.url} target="_blank" rel="noreferrer">باز کردن لینک</a></div></div></article>; }
+function ShilProductsCard() { return <section className="panel shil-products-showcase"><a className="shil-products-showcase__image" href={CONTACT_LINKS.website} target="_blank" rel="noreferrer"><img src={PUBLIC_ASSETS.branding.productsFullCard} alt="جهت مشاهده محصولات کامل برند SHIL" /><span className="shil-products-showcase__button">ورود به سایت SHIL.IR</span></a></section>; }
+export function ContactPage() { const { goBackFromContact, goDashboard } = useProjectStore(); const appLink = window.location.href; return <div className="shell shell--contact"><header className="contact-page-topbar"><button className="btn btn--ghost btn--back" onClick={goBackFromContact} type="button">بازگشت</button><img src={PUBLIC_ASSETS.branding.logo} alt="SHIL" /><button className="btn btn--secondary" onClick={goDashboard} type="button">داشبورد</button></header><ShilProductsCard /><section className="panel contact-channel-heading"><span className="eyebrow">مسیرهای ارتباطی</span><h2>ارتباط با ما</h2><p>تلفن، ایمیل، لینک برنامه و مسیرهای ارتباطی رسمی SHIL در این صفحه قابل کپی و انتقال هستند.</p><div className="contact-info-strip"><div><span>تلفن ثابت</span><strong><a href="tel:03133122">031-33122</a></strong><button className="btn btn--ghost btn--sm" type="button" onClick={() => copyText("031-33122")}>کپی</button></div><div><span>موبایل</span><strong><a href="tel:09135656153">09135656153</a></strong><button className="btn btn--ghost btn--sm" type="button" onClick={() => copyText("09135656153")}>کپی</button></div><div><span>ایمیل شرکت شیل</span><strong><a href="mailto:info@shil.ir">info@shil.ir</a></strong><button className="btn btn--ghost btn--sm" type="button" onClick={() => copyText("info@shil.ir")}>کپی</button></div><div><span>لینک برنامه</span><strong>{appLink}</strong><button className="btn btn--ghost btn--sm" type="button" onClick={() => copyText(appLink)}>کپی لینک</button></div></div></section><section className="panel contact-channel-heading"><h2>کیوآرکدها</h2><p className="section-note">چهار QR آماده شرکت و مهندس صارمی در این بلوک قرار گرفته‌اند.</p></section><section className="contact-grid">{QR_ITEMS.map((item) => <QrCard key={item.key} item={item} />)}</section><section className="panel contact-channel-heading"><h2>ارتباط در ایتا، بله و روبیکا</h2><p className="section-note">این بخش QR ندارد و لینک‌ها آماده‌اند تا بعداً شماره‌ها یا شناسه‌های نهایی به آن‌ها متصل شود.</p><div className="contact-info-strip">{INTERNAL_MESSENGERS.map((item) => <div key={item.key}><span>{item.title}</span><strong><a href={item.url} target="_blank" rel="noreferrer">ورود به {item.title}</a></strong></div>)}</div></section></div>; }

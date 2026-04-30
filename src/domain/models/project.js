@@ -1,8 +1,13 @@
+export const SYSTEM_GROUPS = [
+  { value: "solar", label: "سیستم به همراه پنل خورشیدی", description: "طراحی سیستم‌های آفگرید، هیبرید یا آنگرید با آرایه پنل خورشیدی" },
+  { value: "backup", label: "سیستم بدون پنل خورشیدی (برق اضطراری)", description: "طراحی UPS / سانورتر و بانک باتری بدون ورود اطلاعات پنل" },
+];
+
 export const SYSTEM_TYPES = [
-  { value: "offgrid", label: "Off-Grid", description: "طراحی مستقل از شبکه با پنل و باتری" },
-  { value: "hybrid", label: "Hybrid", description: "ترکیب شبکه، پنل و باتری با سناریوی بهره برداری" },
-  { value: "gridtie", label: "Grid-Tie", description: "متصل به شبکه با تمرکز بر جبران انرژی مصرفی" },
-  { value: "backup", label: "سانورتر و باطری", description: "سیستم بدون پنل برای بکاپ بار با سانورتر و باطری" },
+  { value: "offgrid", group: "solar", label: "آفگرید", description: "طراحی مستقل از شبکه با پنل و باتری" },
+  { value: "hybrid", group: "solar", label: "هیبرید", description: "ترکیب شبکه، پنل و باتری با سناریوی بهره برداری" },
+  { value: "gridtie", group: "solar", label: "آنگرید", description: "متصل به شبکه با تمرکز بر جبران انرژی مصرفی" },
+  { value: "backup", group: "backup", label: "برق اضطراری بدون پنل", description: "سیستم بدون پنل برای بکاپ بار با سانورتر و باطری" },
 ];
 
 export const CALCULATION_MODES = [
@@ -58,7 +63,7 @@ export const DEFAULT_PROJECT_FORM = {
   current: 20,
   loadPower: 4500,
   powerFactor: 0.95,
-  backupHours: 6,
+  backupHours: 0,
   dailyEnergyKwh: 18,
   peakFactor: 2.2,
   loadProfileSource: "template",
@@ -77,7 +82,7 @@ export const DEFAULT_PROJECT_FORM = {
   batteryUnitAh: 100,
   batteryFactor: 1,
   batteryRoundTripEfficiency: 0.95,
-  daysAutonomy: 1,
+  daysAutonomy: 0,
   dod: 0.8,
   inverterEfficiency: 0.93,
   controllerEfficiency: 0.95,
@@ -111,6 +116,7 @@ export const DEFAULT_PROJECT_FORM = {
       powerFactor: 0.98,
       coincidenceFactor: 1,
       loadType: "resistive",
+      inverterSupply: "with_inverter",
       surgeFactor: 1,
     },
     {
@@ -122,6 +128,7 @@ export const DEFAULT_PROJECT_FORM = {
       powerFactor: 0.82,
       coincidenceFactor: 1,
       loadType: "motor",
+      inverterSupply: "with_inverter",
       surgeFactor: 3,
     },
   ],

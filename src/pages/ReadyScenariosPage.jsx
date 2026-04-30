@@ -40,7 +40,8 @@ export function ReadyScenariosPage() {
 
   const scenarios = useMemo(() => {
     const q = query.trim();
-    return SMART_PROJECT_PRESETS.filter((preset) => matchesFilter(preset, filter)).filter((preset) => {
+    const customScenarios = JSON.parse(localStorage.getItem("shil_custom_scenarios") || "[]").map((item) => ({ ...item, category: "مدیریتی", bestFor: "سناریوی منتقل‌شده از پروژه محاسبه‌شده", package: item.package || {}, tags: ["مدیریتی", "ذخیره‌شده"] }));
+    return [...customScenarios, ...SMART_PROJECT_PRESETS].filter((preset) => matchesFilter(preset, filter)).filter((preset) => {
       if (!q) return true;
       const text = `${preset.title} ${preset.category} ${preset.bestFor} ${preset.summary} ${(preset.tags || []).join(" ")} ${preset.package?.panel || ""} ${preset.package?.battery || ""} ${preset.package?.inverter || ""}`;
       return text.includes(q);
@@ -63,7 +64,7 @@ export function ReadyScenariosPage() {
           <h1>پکیج‌های آماده آپارتمان، ویلا، باغ و دفتر اداری</h1>
           <p className="section-note">هر پکیج بر اساس میانگین مصرف واقعی و تجهیزات موجود در بانک SHIL ساخته شده است. با انتخاب پکیج، فرم پروژه به صورت خودکار تکمیل می‌شود و می‌توانید قبل از محاسبه نهایی مقادیر را ویرایش کنید.</p>
         </div>
-        <span className="badge">{SMART_PROJECT_PRESETS.length} پکیج آماده</span>
+        <span className="badge">{SMART_PROJECT_PRESETS.length} پکیج پایه + سناریوهای مدیریتی</span>
       </section>
 
       <section className="panel ready-scenarios-toolbar">

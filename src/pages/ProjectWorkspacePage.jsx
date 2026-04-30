@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { useProjectStore } from "../app/store/projectStore";
 import { WizardShell } from "../features/project-wizard/components/WizardShell";
 import {
+  SYSTEM_GROUPS,
   SYSTEM_TYPES,
   CALCULATION_MODES,
   BATTERY_TYPES,
@@ -98,13 +99,32 @@ function StepProjectInfo() {
 
 function StepSystemType() {
   const { activeProject, updateForm } = useProjectStore();
+  const form = activeProject.form;
+  const selectedGroup = form.systemType === "backup" ? "backup" : "solar";
+  const solarTypes = SYSTEM_TYPES.filter((item) => item.group === "solar");
   return (
-    <div className="card-grid">
-      {SYSTEM_TYPES.map((item) => (
-        <button key={item.value} type="button" className={`choice-card ${activeProject.form.systemType === item.value ? "is-selected" : ""}`} onClick={() => updateForm({ systemType: item.value })}>
-          <strong>{item.label}</strong><span>{item.description}</span>
-        </button>
-      ))}
+    <div className="stack-lg">
+      <div className="card-grid">
+        {SYSTEM_GROUPS.map((item) => (
+          <button key={item.value} type="button" className={`choice-card ${selectedGroup === item.value ? "is-selected" : ""}`} onClick={() => updateForm(item.value === "backup" ? { systemType: "backup", backupHours: form.backupHours ?? 0, daysAutonomy: 0 } : { systemType: form.systemType === "backup" ? "offgrid" : form.systemType, daysAutonomy: form.daysAutonomy ?? 0, backupHours: 0 })}>
+            <strong>{item.label}</strong><span>{item.description}</span>
+          </button>
+        ))}
+      </div>
+      {selectedGroup === "solar" ? (
+        <section className="panel panel--soft">
+          <div className="panel__header"><h3>زیرمجموعه سیستم پنل‌دار</h3><span className="badge">مرحله دوم انتخاب</span></div>
+          <div className="card-grid">
+            {solarTypes.map((item) => (
+              <button key={item.value} type="button" className={`choice-card ${form.systemType === item.value ? "is-selected" : ""}`} onClick={() => updateForm({ systemType: item.value, backupHours: 0 })}>
+                <strong>{item.label}</strong><span>{item.description}</span>
+              </button>
+            ))}
+          </div>
+        </section>
+      ) : (
+        <section className="panel panel--soft"><p className="section-note">در مسیر بدون پنل، محاسبات بر اساس برق اضطراری موردنیاز انجام می‌شود و روزهای خودمختاری حذف می‌گردد.</p></section>
+      )}
     </div>
   );
 }
@@ -201,6 +221,7 @@ function SmartPresetPicker() {
       powerFactor: 0.95,
       coincidenceFactor: 1,
       loadType: "mixed",
+      inverterSupply: "with_inverter",
       surgeFactor: 1,
       ...item,
     }));
@@ -373,6 +394,10 @@ function StepLoads() {
               <label><span>نوع بار</span><select value={item.loadType ?? "mixed"} onChange={(e) => updateLoadItem(item.id, { loadType: e.target.value })}>
                 {LOAD_TYPES.map((v) => <option key={v} value={v}>{v}</option>)}
               </select></label>
+              <label><span>تغذیه بار</span><select value={item.inverterSupply ?? "with_inverter"} onChange={(e) => updateLoadItem(item.id, { inverterSupply: e.target.value })}>
+                <option value="with_inverter">اینورتر دار</option>
+                <option value="without_inverter">بدون اینورتر / DC مستقیم</option>
+              </select></label>
               <label><span>ضریب راه‌اندازی</span><input type="text" inputMode="decimal" value={item.surgeFactor ?? 1} onChange={(e) => updateLoadItem(item.id, { surgeFactor: e.target.value })} placeholder="ضریب راه‌اندازی" /></label>
               <button type="button" className="btn btn--ghost" onClick={() => removeLoadItem(item.id)}>حذف</button>
             </div>
@@ -405,7 +430,11 @@ function StepLoads() {
         ) : null}
         <Field label="ولتاژ بار (V)"><input type="text" inputMode="decimal" value={form.loadVoltage} onChange={(e) => updateForm({ loadVoltage: e.target.value })} /></Field>
         <Field label="ضریب توان PF"><input type="text" inputMode="decimal" value={form.powerFactor} onChange={(e) => updateForm({ powerFactor: e.target.value })} /></Field>
-        <Field label={form.systemType === "backup" ? "ساعت برق اضطراری موردنیاز مشتری" : "زمان بکاپ / مرجع (h)"}><input type="text" inputMode="decimal" value={form.backupHours} onChange={(e) => updateForm({ backupHours: e.target.value })} /></Field>
+        {form.systemType === "backup" ? (
+          <Field label="زمان برق اضطراری مورد نیاز (ساعت)"><input type="text" inputMode="decimal" value={form.backupHours} onChange={(e) => updateForm({ backupHours: e.target.value })} /></Field>
+        ) : (
+          <Field label="روزهای خودمختاری"><input type="text" inputMode="decimal" value={form.daysAutonomy} onChange={(e) => updateForm({ daysAutonomy: e.target.value })} /></Field>
+        )}
         {form.calculationMode === "daily_energy" ? (
           <Field label="Peak Factor"><input type="text" inputMode="decimal" value={form.peakFactor} onChange={(e) => updateForm({ peakFactor: e.target.value })} /></Field>
         ) : null}
@@ -852,7 +881,7 @@ function StepSystemConfig() {
         ) : (
           <input type="text" inputMode="decimal" value={form.batteryUnitVoltage} onChange={(e) => updateForm({ batteryUnitVoltage: e.target.value })} />
         )}</Field>
-        <Field label="روزهای خودمختاری"><input type="text" inputMode="decimal" step="0.1" value={form.daysAutonomy} onChange={(e) => updateForm({ daysAutonomy: e.target.value })} /></Field>
+        {form.systemType !== "backup" ? <Field label="روزهای خودمختاری"><input type="text" inputMode="decimal" step="0.1" value={form.daysAutonomy} onChange={(e) => updateForm({ daysAutonomy: e.target.value })} /></Field> : <Field label="زمان برق اضطراری مورد نیاز (ساعت)"><input type="text" inputMode="decimal" step="0.5" value={form.backupHours} onChange={(e) => updateForm({ backupHours: e.target.value })} /></Field>}
         <Field label="عمق دشارژ DoD"><input type="text" inputMode="decimal" step="0.01" value={form.dod} onChange={(e) => updateForm({ dod: e.target.value })} /></Field>
         <Field label="راندمان اینورتر"><input type="text" inputMode="decimal" step="0.01" value={form.inverterEfficiency} onChange={(e) => updateForm({ inverterEfficiency: e.target.value })} /></Field>
         <Field label="راندمان رفت‌وبرگشت باتری"><input type="text" inputMode="decimal" step="0.01" value={form.batteryRoundTripEfficiency} onChange={(e) => updateForm({ batteryRoundTripEfficiency: e.target.value })} /></Field>
@@ -911,7 +940,7 @@ function StepReview() {
       <div className="review-card-grid">
         <section className="panel review-section-card"><h3>اطلاعات پروژه</h3><div className="summary-list"><div><span>عنوان پروژه</span><strong>{form.projectTitle}</strong></div><div><span>نام کارفرما</span><strong>{form.clientName || "—"}</strong></div><div><span>شهر / تابش</span><strong>{form.systemType !== "backup" ? (form.city + " / " + form.sunHours + " h") : "سانورتر و باتری بدون پنل"}</strong></div></div></section>
         <section className="panel review-section-card"><h3>نوع سیستم و روش محاسبه</h3><div className="summary-list"><div><span>نوع سیستم</span><strong>{systemLabel}</strong></div><div><span>روش محاسبه</span><strong>{modeLabel}</strong></div><div><span>ولتاژ سیستم</span><strong>{form.systemVoltage}V</strong></div><div><span>تجهیزات انتخاب‌شده</span><strong>{selectedCount} مورد</strong></div></div></section>
-        <section className="panel review-section-card"><h3>مدل بار</h3><div className="summary-list"><div><span>تعداد بارها</span><strong>{loadItems.length} مورد</strong></div><div><span>توان نصب‌شده</span><strong>{loadTotals.connectedPowerW.toFixed(0)} W</strong></div><div><span>توان همزمان تقریبی</span><strong>{loadTotals.realPowerW.toFixed(0)} W</strong></div><div><span>مصرف روزانه</span><strong>{(loadTotals.dailyWh / 1000 || Number(form.dailyEnergyKwh) || 0).toFixed(1)} kWh/day</strong></div><div><span>زمان بکاپ / مرجع</span><strong>{form.backupHours} h</strong></div></div></section>
+        <section className="panel review-section-card"><h3>مدل بار</h3><div className="summary-list"><div><span>تعداد بارها</span><strong>{loadItems.length} مورد</strong></div><div><span>توان نصب‌شده</span><strong>{loadTotals.connectedPowerW.toFixed(0)} W</strong></div><div><span>توان همزمان تقریبی</span><strong>{loadTotals.realPowerW.toFixed(0)} W</strong></div><div><span>مصرف روزانه</span><strong>{(loadTotals.dailyWh / 1000 || Number(form.dailyEnergyKwh) || 0).toFixed(1)} kWh/day</strong></div><div><span>{form.systemType === "backup" ? "زمان برق اضطراری" : "روزهای خودمختاری"}</span><strong>{form.systemType === "backup" ? `${form.backupHours} h` : `${form.daysAutonomy} روز`}</strong></div></div></section>
         <section className="panel review-section-card"><h3>تنظیمات باتری و کابل</h3><div className="summary-list"><div><span>نوع باتری</span><strong>{form.batteryType}</strong></div><div><span>واحد باتری</span><strong>{form.batteryUnitVoltage}V / {form.batteryUnitAh}Ah</strong></div><div><span>ضریب باتری</span><strong>{form.batteryFactor ?? 1}</strong></div><div><span>DoD / راندمان باتری</span><strong>{form.dod} / {form.batteryRoundTripEfficiency}</strong></div><div><span>کابل DC / AC / باتری</span><strong>{form.dcCableLength || "پیش‌فرض"}m / {form.acCableLength || "پیش‌فرض"}m / {form.batteryCableLength || "پیش‌فرض"}m</strong></div></div></section>
       </div>
       {warnings.length ? <section className="panel panel--soft review-warning-card"><h3>هشدارهای قابل بررسی</h3><ul>{warnings.map((warning) => <li key={warning}>{warning}</li>)}</ul></section> : null}
@@ -936,7 +965,7 @@ export function ProjectWorkspacePage() {
   return (
     <div className="shell">
       <header className="topbar topbar--workspace" style={{ backgroundImage: `linear-gradient(135deg, rgba(8,17,31,0.92), rgba(15,23,42,0.82)), url(${PUBLIC_ASSETS.backgrounds.workspace})` }}>
-        <div className="topbar__actions"><button className="btn btn--ghost" onClick={goDashboard}>بازگشت به داشبورد</button><button className="btn btn--secondary" type="button" onClick={() => openScenarios("workspace")}>سناریوهای آماده</button></div>
+        <div className="topbar__actions"><button className="btn btn--ghost" onClick={goDashboard}>بازگشت به داشبورد</button><button className="btn btn--ghost" type="button" onClick={prevStep}>بازگشت به صفحه قبل</button><button className="btn btn--secondary" type="button" onClick={() => openScenarios("workspace")}>سناریوهای آماده</button></div>
         <div className="topbar__title topbar__title--brand"><img src={PUBLIC_ASSETS.branding.appLogo} alt="SDS" className="topbar__brand-logo" /> <span>Solar Design Suite / Workspace</span></div>
       </header>
       <WizardShell

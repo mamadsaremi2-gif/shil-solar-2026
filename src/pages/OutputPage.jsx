@@ -256,13 +256,15 @@ export function OutputPage() {
     [summary.systemType === 'backup' ? 'سانورتر پیشنهادی' : 'اینورتر پیشنهادی', `${formatNumber(summary.inverterPowerW)} W / ${formatNumber(summary.inverterPowerVA || inverter.continuousPowerVA)} VA`],
     ['Surge پیشنهادی', `${formatNumber(summary.inverterSurgePowerW)} W / ${formatNumber(summary.inverterSurgePowerVA || inverter.surgePowerVA)} VA`],
     ['بانک باتری', `${formatNumber(battery.totalCount)} عدد - ${battery.seriesCount} سری × ${battery.parallelCount} موازی`],
+    ['توضیح بانک باتری', `برای رسیدن به ولتاژ سیستم ${formatNumber(activeProject.form.systemVoltage)}V، هر رشته شامل ${battery.seriesCount} باتری ${formatNumber(activeProject.form.batteryUnitVoltage)}V به صورت سری است. برای تأمین ظرفیت ${formatNumber(summary.batteryAh)}Ah، ${battery.parallelCount} رشته موازی لازم شده؛ بنابراین تعداد کل ${formatNumber(battery.totalCount)} عدد است.`],
     ['مشخصات باتری', `${formatNumber(activeProject.form.batteryUnitVoltage)}V ${formatNumber(activeProject.form.batteryUnitAh)}Ah - ${battery.chemistry}`],
     ['کابل باتری', `${formatNumber(cabling.batteryCableSizeMm2, 1)} mm²`],
     ['فیوز باتری / AC', `${protection?.batteryFuseA ? formatNumber(protection.batteryFuseA) : '—'} A / ${protection?.acFuseA ? formatNumber(protection.acFuseA) : '—'} A`],
   ];
 
   if (summary.systemType !== 'backup') {
-    requiredEquipmentRows.splice(1, 0, ['آرایه پنل', `${formatNumber(summary.panelCount)} عدد - ${formatNumber(summary.pvInstalledPowerW)} W`]);
+    requiredEquipmentRows.splice(1, 0, ['آرایه پنل', `${formatNumber(summary.panelCount)} عدد پنل ${formatNumber(activeProject.form.panelWatt)}W / Vmp ${formatNumber(activeProject.form.panelVmp)}V / Voc ${formatNumber(activeProject.form.panelVoc)}V - آرایش ${pv?.panelSeriesCount || 0} سری × ${pv?.panelParallelCount || 0} موازی`]);
+    requiredEquipmentRows.splice(2, 0, ['علت آرایش پنل', `تعداد سری برای قرار گرفتن ولتاژ رشته در بازه MPPT (${formatNumber(activeProject.form.mpptMinVoltage)} تا ${formatNumber(activeProject.form.mpptMaxVoltage)}V) و کنترل Voc سرد انتخاب شده؛ تعداد موازی برای رسیدن به توان نصب‌شده ${formatNumber(summary.pvInstalledPowerW)}W تکمیل شده است.`]);
   }
 
 
@@ -293,7 +295,7 @@ export function OutputPage() {
   return (
     <div className="shell">
       <header className="topbar topbar--report">
-        <button className="btn btn--ghost" onClick={goDashboard}>داشبورد</button>
+        <button className="btn btn--ghost" onClick={goDashboard}>داشبورد</button><button className="btn btn--ghost" type="button" onClick={() => openWorkspace(activeProject.projectId)}>بازگشت به صفحه قبل</button>
         <div className="topbar__title topbar__title--brand"><img src={PUBLIC_ASSETS.branding.logo} alt="Solar Design Suite" className="topbar__brand-logo" /> <span>خروجی مهندسی</span></div>
         <div className="topbar__actions">
           <button className="btn btn--secondary" onClick={handleSave}>ذخیره نسخه جدید</button>
@@ -417,6 +419,8 @@ export function OutputPage() {
                 <div><span>توان پیک / Surge</span><strong>{formatNumber(loads.peakLoadPowerW)} W / {formatNumber(loads.surgePowerW)} W</strong></div>
                 <div><span>تعداد کل باتری</span><strong>{formatNumber(battery.totalCount)}</strong></div>
                 <div><span>سری / موازی</span><strong>{battery.seriesCount} / {battery.parallelCount}</strong></div>
+                <div><span>دلیل سری شدن باتری</span><strong>{`برای رسیدن از باتری ${formatNumber(activeProject.form.batteryUnitVoltage)}V به ولتاژ بانک ${formatNumber(activeProject.form.systemVoltage)}V، تعداد ${battery.seriesCount} عدد در هر رشته سری می‌شود.`}</strong></div>
+                <div><span>دلیل موازی شدن باتری</span><strong>{`برای افزایش ظرفیت Ah و تأمین زمان/روز موردنیاز، ${battery.parallelCount} رشته مشابه با هم موازی می‌شوند.`}</strong></div>
                 <div><span>ظرفیت نامی بانک</span><strong>{formatNumber(battery.bankNominalAh)} Ah</strong></div>
                 <div><span>Charge / Discharge C-rate</span><strong>{formatNumber(battery.chargeCRate, 2)} / {formatNumber(battery.dischargeCRate, 2)} C</strong></div>
                 {summary.systemType === 'offgrid' ? <div><span>بکاپ در بار پیک</span><strong>{formatNumber(summary.batteryBackupHoursAtPeak, 1)} h</strong></div> : null}
@@ -424,7 +428,9 @@ export function OutputPage() {
                 <div><span>{summary.systemType === 'backup' ? 'توان سانورتر' : 'توان اینورتر'}</span><strong>{formatNumber(inverter.continuousPowerW)} W / {formatNumber(inverter.continuousPowerVA)} VA</strong></div>
                 <div><span>Surge خروجی</span><strong>{formatNumber(inverter.surgePowerW)} W / {formatNumber(inverter.surgePowerVA)} VA</strong></div>
                 {pv ? <div><span>PR طراحی</span><strong>{formatNumber(pv.performanceRatio, 2)}</strong></div> : null}
+                {pv ? <div><span>پنل انتخابی</span><strong>{`${formatNumber(activeProject.form.panelWatt)}W / Vmp ${formatNumber(activeProject.form.panelVmp)}V / Voc ${formatNumber(activeProject.form.panelVoc)}V`}</strong></div> : null}
                 {pv ? <div><span>رشته پنل (سری × موازی)</span><strong>{pv.panelSeriesCount} × {pv.panelParallelCount}</strong></div> : null}
+                {pv ? <div><span>علت سری / موازی پنل</span><strong>{`سری برای ساخت ولتاژ مناسب MPPT و موازی برای رسیدن به تعداد کل ${formatNumber(pv.panelCount)} پنل و توان ${formatNumber(pv.installedPvPowerW)}W است.`}</strong></div> : null}
                 {pv ? <div><span>String Vmp / Voc(cold)</span><strong>{formatNumber(pv.stringVmp)} / {formatNumber(pv.stringVocCold)} V</strong></div> : null}
                 {pv ? <div><span>تولید روزانه تخمینی</span><strong>{formatNumber(pv.estimatedDailyProductionWh)} Wh</strong></div> : null}
                 {summary.systemType === 'gridtie' ? <div><span>واردات / صادرات شبکه</span><strong>{formatNumber(summary.gridImportWh)} / {formatNumber(summary.gridExportWh)} Wh</strong></div> : null}

@@ -44,11 +44,12 @@ function QuickAction({ title, icon, onClick }) {
 }
 
 export function DashboardPage() {
-  const { projects, startNewProject, openProject, openWorkspace, openScenarios, openContact, openAdmin, deleteProject, syncCloudProjects } = useProjectStore();
+  const { projects, startNewProject, openProject, openWorkspace, openScenarios, openContact, openAdmin, deleteProject, copyProjectToScenario, syncCloudProjects } = useProjectStore();
   const { profile, isAdmin, user, signOut, isConfigured } = useAuth();
   const [syncMessage, setSyncMessage] = useState("");
   const calculatedCount = projects.filter((project) => (project.versions?.length ?? 0) > 0).length;
   const draftCount = projects.length - calculatedCount;
+  const draftProjects = projects.filter((project) => (project.versions?.length ?? 0) === 0);
   const versionCount = projects.reduce((sum, project) => sum + (project.versions?.length ?? 0), 0);
 
   return (
@@ -100,6 +101,24 @@ export function DashboardPage() {
         </div>
       </section>
 
+      {draftProjects.length ? (
+        <section className="panel continue-project-panel">
+          <div className="panel__header"><h2>ادامه مسیر پروژه نیمه‌کاره</h2><span className="badge">{draftProjects.length} پیش‌نویس</span></div>
+          <div className="project-grid">
+            {draftProjects.map((project) => (
+              <article key={project.id} className="project-card project-card--rich">
+                <strong>{project.title || project.draftForm?.projectTitle}</strong>
+                <span>آخرین مرحله ذخیره‌شده برای ادامه طراحی آماده است.</span>
+                <div className="project-card__actions">
+                  <button className="btn btn--primary btn--sm" onClick={() => openWorkspace(project.id)}>ادامه مسیر</button>
+                  {isAdmin ? <button className="btn btn--ghost btn--sm" onClick={() => deleteProject(project.id, true)}>دیگر نیاز ندارم / حذف</button> : null}
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
       <section className="metric-grid dashboard-kpi-grid">
         <DashboardStat label="کل پروژه‌ها" value={projects.length} icon="📁" tone="blue" />
         <DashboardStat label="پروژه‌های محاسبه‌شده" value={calculatedCount} icon="🧮" tone="green" />
@@ -133,7 +152,8 @@ export function DashboardPage() {
                   <div className="project-card__actions">
                     <button className="btn btn--secondary btn--sm" onClick={() => openWorkspace(project.id)}>ادامه طراحی</button>
                     <button className="btn btn--primary btn--sm" onClick={() => openProject(project.id, project.currentVersionId)}>آخرین خروجی</button>
-                    <button className="btn btn--ghost btn--sm" onClick={() => deleteProject(project.id)}>حذف</button>
+                    {isAdmin ? <button className="btn btn--secondary btn--sm" onClick={() => copyProjectToScenario(project.id)}>انتقال به سناریو</button> : null}
+                    {isAdmin ? <button className="btn btn--ghost btn--sm" onClick={() => deleteProject(project.id, true)}>حذف</button> : null}
                   </div>
                 </article>
               ))

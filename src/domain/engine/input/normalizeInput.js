@@ -5,6 +5,11 @@ function positive(value, fallback = 0) {
   return Number.isFinite(n) && n > 0 ? n : fallback;
 }
 
+function nonNegative(value, fallback = 0) {
+  const n = parseFaNumber(value, fallback);
+  return Number.isFinite(n) && n >= 0 ? n : fallback;
+}
+
 function bounded(value, fallback, min, max) {
   const n = parseFaNumber(value, fallback);
   if (!Number.isFinite(n)) return fallback;
@@ -31,6 +36,7 @@ export function normalizeInput(form) {
     coincidenceFactor: bounded(item.coincidenceFactor, 1, 0.1, 1),
     surgeFactor: positive(item.surgeFactor, 1),
     loadType: item.loadType || "mixed",
+    inverterSupply: item.inverterSupply || "with_inverter",
   }));
 
   const loadProfile = (form.loadProfile || []).map((slot, index) => ({
@@ -41,7 +47,7 @@ export function normalizeInput(form) {
   }));
 
   const systemType = form.systemType || "offgrid";
-  const safeBackupHours = systemType === "gridtie" ? positive(form.backupHours, 1) : positive(form.backupHours, 4);
+  const safeBackupHours = nonNegative(form.backupHours, 0);
   const normalizedSystemVoltage = systemType === "backup"
     ? nearestAllowed(form.systemVoltage, BACKUP_SYSTEM_VOLTAGES, 24)
     : positive(form.systemVoltage, 48);
@@ -70,7 +76,7 @@ export function normalizeInput(form) {
     batteryUnitAh: positive(form.batteryUnitAh, 100),
     batteryFactor: positive(form.batteryFactor, 1),
     batteryRoundTripEfficiency: bounded(form.batteryRoundTripEfficiency, 0.95, 0.5, 1),
-    daysAutonomy: positive(form.daysAutonomy, 1),
+    daysAutonomy: systemType === "backup" ? 0 : nonNegative(form.daysAutonomy, 0),
     dod: bounded(form.dod, 0.8, 0.1, 0.95),
     inverterEfficiency: bounded(form.inverterEfficiency, 0.93, 0.5, 1),
     controllerEfficiency: bounded(form.controllerEfficiency, 0.95, 0.5, 1),

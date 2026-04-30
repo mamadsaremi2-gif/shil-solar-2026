@@ -84,12 +84,13 @@ export function calculateLoads(input) {
     normalizedLoads = input.loadItems.map((item) => {
       const pf = Math.max(item.powerFactor || input.powerFactor || 0.95, 0.1);
       const totalConnected = item.qty * item.power;
-      const totalConnectedVA = totalConnected / pf;
+      const isDirectDcLoad = item.inverterSupply === "without_inverter";
+      const totalConnectedVA = isDirectDcLoad ? 0 : totalConnected / pf;
       const demand = totalConnected * item.coincidenceFactor;
-      const demandVA = demand / pf;
+      const demandVA = isDirectDcLoad ? 0 : demand / pf;
       const energy = demand * item.hours;
       const surge = totalConnected * getSurgeFactor(item, input.surgeFactor) * item.coincidenceFactor;
-      const surgeVA = surge / pf;
+      const surgeVA = isDirectDcLoad ? 0 : surge / pf;
       return {
         ...item,
         totalConnectedPowerW: round(totalConnected),

@@ -36,6 +36,7 @@ function normalizeScenarioPatch(preset, keepExistingTitle = false, currentTitle 
     powerFactor: 0.95,
     coincidenceFactor: 1,
     loadType: "mixed",
+    inverterSupply: "with_inverter",
     surgeFactor: 1,
     ...item,
   }));
@@ -334,7 +335,10 @@ export function ProjectStoreProvider({ children }) {
         return next;
       });
       trackEventSafe("run_calculation", { ok: output.ok, systemType: activeProject.form.systemType, calculationMode: activeProject.form.calculationMode });
-      if (output.ok) setRoute({ name: "output" });
+      if (output.ok) {
+        setTimeout(() => actions.saveProjectVersion(), 0);
+        setRoute({ name: "output" });
+      }
       return output;
     },
     saveProjectVersion() {
@@ -472,7 +476,18 @@ export function ProjectStoreProvider({ children }) {
         return { ok: false, message: error.message };
       }
     },
-    deleteProject(projectId) {
+    copyProjectToScenario(projectId) {
+      const found = ProjectRepository.getById(projectId);
+      if (!found) return false;
+      const customScenarios = JSON.parse(localStorage.getItem("shil_custom_scenarios") || "[]");
+      const form = found.draftForm ?? found.versions?.at(-1)?.form;
+      customScenarios.unshift({ id: `custom-${found.id}-${Date.now()}`, title: found.title || form?.projectTitle || "سناریوی ذخیره‌شده", createdAt: new Date().toISOString(), projectId: found.id, patch: form, systemType: form?.systemType, summary: found.versions?.at(-1)?.summary ?? null });
+      localStorage.setItem("shil_custom_scenarios", JSON.stringify(customScenarios.slice(0, 100)));
+      window.alert("پروژه به سناریوهای آماده مدیریتی منتقل شد.");
+      return true;
+    },
+    deleteProject(projectId, force = false) {
+      if (!force && !window.confirm("حذف پروژه فقط برای مدیریت مجاز است. آیا مطمئن هستید؟")) return;
       ProjectRepository.remove(projectId);
       if (isSupabaseConfigured) {
         void import("../../data/repositories/CloudProjectRepository")
