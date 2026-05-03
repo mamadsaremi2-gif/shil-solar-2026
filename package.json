@@ -1,0 +1,31 @@
+{
+  "name": "shil-solar",
+  "private": true,
+  "version": "1.0.0",
+  "description": "SHIL SOLAR - professional engineering PWA for solar and battery system design",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "dev:host": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "build:github": "VITE_BASE=./ vite build",
+    "preview": "vite preview",
+    "preview:host": "vite preview --host 0.0.0.0",
+    "test:engineering": "node scripts/engineering-smoke-test.mjs",
+    "test:engineering:real": "node scripts/engineering-real-tests.mjs",
+    "test:engineering:all": "node scripts/run-engineering-tests.mjs",
+    "test:engineering:validation": "node scripts/engineering-validation-tests.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.105.1",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^2.5.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.1",
+    "vite": "^5.4.21",
+    "vite-plugin-pwa": "^0.20.5"
+  }
+}
