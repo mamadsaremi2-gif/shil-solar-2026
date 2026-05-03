@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "../features/auth/AuthProvider";
+import { useProjectStore } from "../app/store/projectStore";
 
-export default function AdminPage() {
+export function AdminPage() {
   const { signIn } = useAuth();
-  const navigate = useNavigate();
+  const { goDashboard } = useProjectStore();
 
   const [form, setForm] = useState({
     email: "",
@@ -13,52 +13,70 @@ export default function AdminPage() {
 
   const [message, setMessage] = useState("");
 
-  async function handleSubmit(e) {
-    e.preventDefault();
+  async function handleSubmit(event) {
+    event.preventDefault();
     setMessage("");
 
     const result = await signIn(form.email, form.password);
 
     if (!result.ok) {
-      setMessage(result.error || "خطا در ورود");
+      setMessage(result.error || "ورود ناموفق بود.");
       return;
     }
 
-    // ✅ اگر ادمین بود → برو داشبورد
-    if (result.profile?.role === "admin") {
-      setMessage("ورود مدیریت انجام شد.");
-      
-      // ⛔ مهم‌ترین خط (مشکل تو همین بود)
-      navigate("/dashboard");
+    setMessage("ورود مدیریت انجام شد.");
 
-      return;
-    }
-
-    setMessage("دسترسی مدیریت ندارید.");
+    setTimeout(() => {
+      goDashboard();
+    }, 300);
   }
 
   return (
-    <div style={{ padding: 40 }}>
-      <h2>ورود به پنل مدیریت SHIL</h2>
+    <div className="shell">
+      <section className="panel">
+        <h2>ورود به پنل مدیریت SHIL</h2>
+        <p>با حساب تأییدشده مدیر وارد شوید.</p>
 
-      <input
-        placeholder="ایمیل"
-        value={form.email}
-        onChange={(e) => setForm({ ...form, email: e.target.value })}
-      />
+        <form onSubmit={handleSubmit} className="form-grid">
+          <label>
+            ایمیل
+            <input
+              type="email"
+              value={form.email}
+              onChange={(event) =>
+                setForm({ ...form, email: event.target.value })
+              }
+            />
+          </label>
 
-      <input
-        type="password"
-        placeholder="رمز عبور"
-        value={form.password}
-        onChange={(e) => setForm({ ...form, password: e.target.value })}
-      />
+          <label>
+            رمز عبور
+            <input
+              type="password"
+              value={form.password}
+              onChange={(event) =>
+                setForm({ ...form, password: event.target.value })
+              }
+            />
+          </label>
 
-      <button onClick={handleSubmit}>
-        ورود به پنل مدیریت
-      </button>
+          <button className="btn btn--primary" type="submit">
+            ورود به پنل مدیریت
+          </button>
 
-      <p>{message}</p>
+          <button
+            className="btn btn--secondary"
+            type="button"
+            onClick={goDashboard}
+          >
+            بازگشت به داشبورد
+          </button>
+        </form>
+
+        {message ? <p>{message}</p> : null}
+      </section>
     </div>
   );
 }
+
+export default AdminPage;
