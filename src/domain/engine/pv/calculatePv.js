@@ -1,11 +1,284 @@
-function round(value, digits = 2) { const f = 10 ** digits; return Math.round((Number(value) || 0) * f) / f; }
-const MONTH_FACTORS = [0.72,0.79,0.9,1.02,1.08,1.12,1.1,1.03,0.94,0.84,0.75,0.69];
-function getTemperatureLoss(avgTemp, coeff){ const loss=(Math.max(avgTemp-25,0)*coeff)/100; return Math.max(0.72,1-loss); }
-function targetFactor(input){ if(input.systemType==='gridtie') return input.targetOffsetPercent/100; if(input.systemType==='hybrid') return input.hybridMode==='backup_priority'?0.95:input.hybridMode==='peak_shaving'?0.65:0.8; return 1; }
-function mpptSpecs(input,inverter){ const internal=input.mpptArchitecture!=='external_controller'&&input.systemType!=='backup'; return { architecture: internal?'inverter_internal':'external_controller', hasInternalMppt: internal, inverterModel: input.inverterModel||input.selectedInverterName||'اینورتر انتخابی', mpptCount: Math.max(1,Math.round(Number(input.mpptCount)||1)), maxPvVocV:Number(input.maxPvVocV||input.controllerMaxVoc||500), mpptMinVoltageV:Number(input.mpptMinVoltage||120), mpptMaxVoltageV:Number(input.mpptMaxVoltage||450), mpptStartupVoltageV:Number(input.mpptStartupVoltage||input.mpptMinVoltage||120), maxInputCurrentPerMpptA:Number(input.maxInputCurrentPerMpptA||input.mpptMaxInputCurrent||100), maxShortCircuitCurrentPerMpptA:Number(input.maxShortCircuitCurrentPerMpptA||input.mpptMaxShortCircuitCurrent||125), maxStringsPerMppt:Math.max(1,Math.round(Number(input.maxStringsPerMppt)||2)), maxPvPowerW:Number(input.maxPvPowerW||input.inverterMaxPvPowerW||Infinity), maxPvPowerPerMpptW:Number(input.maxPvPowerPerMpptW||Infinity), inverterMpptProfileTitle: input.inverterMpptProfileTitle || input.hybridMpptProfileTitle || input.offgridMpptProfileTitle || "", offgridMpptProfileTitle: input.offgridMpptProfileTitle || "", hybridMpptProfileTitle: input.hybridMpptProfileTitle || "", mpptStartupToleranceV:Number(input.mpptStartupToleranceV||0), acPowerW:Number(input.inverterAcPowerW||input.inverterRatedPowerW||inverter?.continuousPowerW||0), maxDcAcRatio:Number(input.maxDcAcRatio||(input.systemType==='hybrid'?1.45:input.systemType==='offgrid'?1.3:1.4))}; }
-function module(input){ const cold=Math.max(25-input.minTemperature,0), hot=Math.max(input.maxTemperature-25,0); const vocCold=input.panelVoc*(1+input.panelTempCoeffVoc*cold); const vmpHot=input.panelVmp*Math.max(0.7,1-(hot*input.panelTypeTemperatureFactor)/100); const imp=input.panelWatt/Math.max(input.panelVmp,1); const isc=Number(input.panelIsc||input.panelShortCircuitCurrent||imp*1.08); return {vocCold,vmpHot,vmpNominal:input.panelVmp,imp,isc,watt:input.panelWatt}; }
-function candidate(input,spec,target){ const m=module(input); const minS=Math.max(1,Math.ceil(spec.mpptStartupVoltageV/Math.max(m.vmpHot,1))); const maxByMppt=Math.max(minS,Math.floor(spec.mpptMaxVoltageV/Math.max(m.vmpNominal,1))); const maxByVoc=Math.max(1,Math.floor((spec.maxPvVocV*0.98)/Math.max(m.vocCold,1))); const maxS=Math.max(1,Math.min(maxByMppt,maxByVoc)); let best=null; for(let series=minS;series<=maxS;series++){ const strings=Math.max(1,Math.ceil(target/series)); const panels=series*strings; const spm=Math.ceil(strings/spec.mpptCount); const cv=m.vocCold*series, vh=m.vmpHot*series, vn=m.vmpNominal*series; const current=spm*m.imp, isc=spm*m.isc*1.25; const powerPerMppt=spm*series*input.panelWatt; const fails=[cv>=spec.maxPvVocV,current>spec.maxInputCurrentPerMpptA,isc>spec.maxShortCircuitCurrentPerMpptA,panels*input.panelWatt>spec.maxPvPowerW,powerPerMppt>spec.maxPvPowerPerMpptW].filter(Boolean).length; const waste=panels-target; const cand={series,totalStrings:strings,panels,stringsPerMpptRaw:spm,stringVocCold:cv,stringVmpHot:vh,stringVmp:vn,inputCurrentPerMppt:current,iscPerMpptDesign:isc,powerPerMppt,failCount:fails,waste,module:m}; if(!best||cand.failCount<best.failCount||(cand.failCount===best.failCount&&cand.waste<best.waste)||(cand.failCount===best.failCount&&cand.waste===best.waste&&cand.series>best.series)) best=cand; }
- if(best) return best; const series=Math.max(1,Math.floor((spec.maxPvVocV*0.98)/Math.max(m.vocCold,1))); const strings=Math.max(1,Math.ceil(target/series)); return {series,totalStrings:strings,panels:series*strings,stringsPerMpptRaw:Math.ceil(strings/spec.mpptCount),stringVocCold:m.vocCold*series,stringVmpHot:m.vmpHot*series,stringVmp:m.vmpNominal*series,inputCurrentPerMppt:Math.ceil(strings/spec.mpptCount)*m.imp,iscPerMpptDesign:Math.ceil(strings/spec.mpptCount)*m.isc*1.25,powerPerMppt:Math.ceil(strings/spec.mpptCount)*series*input.panelWatt,failCount:99,waste:series*strings-target,module:m}; }
-function map(c,spec){ const out=[]; let rem=c.totalStrings; for(let i=1;i<=spec.mpptCount&&rem>0;i++){ const left=spec.mpptCount-i+1; const p=Math.ceil(rem/left); rem-=p; const cur=p*c.module.imp, isc=p*c.module.isc*1.25; out.push({mpptIndex:i,seriesModules:c.series,parallelStrings:p,modules:c.series*p,stringVmpV:round(c.stringVmp),stringVmpHotV:round(c.stringVmpHot),stringVocColdV:round(c.stringVocCold),inputCurrentA:round(cur,1),designIscA:round(isc,1),maxInputCurrentA:spec.maxInputCurrentPerMpptA,maxIscA:spec.maxShortCircuitCurrentPerMpptA,pvPowerOnMpptW:round(c.series*p* c.module.watt),maxPvPowerPerMpptW:Number.isFinite(spec.maxPvPowerPerMpptW)?spec.maxPvPowerPerMpptW:null,status:c.stringVocCold<spec.maxPvVocV&&c.stringVmpHot<=spec.mpptMaxVoltageV&&cur<=spec.maxInputCurrentPerMpptA&&isc<=spec.maxShortCircuitCurrentPerMpptA&&p<=spec.maxStringsPerMppt&&(c.series*p*c.module.watt)<=spec.maxPvPowerPerMpptW?'pass':'fail'}); } return out; }
-function checks(c,spec,power,ratio){ const arr=[]; const add=(id,ok,sev,msg,metric,limit)=>arr.push({id,status:ok?'pass':'fail',severity:ok?'info':sev,message:msg,metric,limit}); add('voc-cold',c.stringVocCold<spec.maxPvVocV,'error','Voc سرد رشته باید از سقف ولتاژ DC اینورتر/MPPT کمتر باشد.',round(c.stringVocCold)+'V',spec.maxPvVocV+'V'); add('vmp-hot',c.stringVmpHot>=spec.mpptMinVoltageV&&c.stringVmpHot<=spec.mpptMaxVoltageV,'warning','Vmp گرم باید داخل محدوده ردیابی MPPT بماند.',round(c.stringVmpHot)+'V',spec.mpptMinVoltageV+'-'+spec.mpptMaxVoltageV+'V'); const startupLimit=Math.max(spec.mpptMinVoltageV, spec.mpptStartupVoltageV-(spec.mpptStartupToleranceV||0)); add('mppt-startup',c.stringVmpHot>=startupLimit,'warning','ولتاژ رشته باید برای شروع به‌کار MPPT کافی باشد.',round(c.stringVmpHot)+'V',spec.mpptStartupVoltageV+(spec.mpptStartupToleranceV?`±${spec.mpptStartupToleranceV}`:'')+'V'); add('mppt-current',c.inputCurrentPerMppt<=spec.maxInputCurrentPerMpptA,'error','جریان کاری هر MPPT نباید از حد دیتاشیت بیشتر شود.',round(c.inputCurrentPerMppt,1)+'A',spec.maxInputCurrentPerMpptA+'A'); add('mppt-isc',c.iscPerMpptDesign<=spec.maxShortCircuitCurrentPerMpptA,'error','جریان اتصال کوتاه طراحی‌شده هر MPPT باید زیر حد دیتاشیت باشد.',round(c.iscPerMpptDesign,1)+'A',spec.maxShortCircuitCurrentPerMpptA+'A'); add('strings-per-mppt',c.stringsPerMpptRaw<=spec.maxStringsPerMppt,'warning','تعداد رشته موازی هر MPPT باید با ورودی فیزیکی/دیتاشیت سازگار باشد.',c.stringsPerMpptRaw+'',spec.maxStringsPerMppt+''); add('max-pv-power',power<=spec.maxPvPowerW,'error','توان نصب‌شده PV نباید از حداکثر توان مجاز PV اینورتر بیشتر شود.',round(power)+'W',Number.isFinite(spec.maxPvPowerW)?round(spec.maxPvPowerW)+'W':'بدون محدودیت ثبت‌شده'); if(Number.isFinite(spec.maxPvPowerPerMpptW)) add('max-pv-power-per-mppt',c.powerPerMppt<=spec.maxPvPowerPerMpptW,'error','توان پنل روی هر MPPT نباید از ظرفیت مجاز همان MPPT بیشتر شود.',round(c.powerPerMppt)+'W',round(spec.maxPvPowerPerMpptW)+'W'); add('dc-ac-ratio',ratio<=spec.maxDcAcRatio,ratio>spec.maxDcAcRatio*2?'error':'warning','نسبت DC/AC باید در محدوده پیشنهادی نوع سیستم باشد.',round(ratio,2)+'',spec.maxDcAcRatio+''); return arr; }
-export function calculatePv(input, loadResult, batteryResult, inverter){ if(input.systemType==='backup') return null; const temp=getTemperatureLoss(input.averageTemperature,input.panelTypeTemperatureFactor); const altitude=input.altitude>1500?1.02:1; const pr=Math.max(0.45,Math.min(0.92,input.controllerEfficiency*input.cableLossFactor*input.panelLossFactor*input.shadingFactor*input.dustFactor*temp*altitude)); const et=targetFactor(input); const targetWh=loadResult.totalDailyEnergyWh*et; const recharge=input.systemType==='offgrid'?Math.max(loadResult.totalDailyEnergyWh*(input.daysAutonomy>0?1:0.05),0):input.systemType==='hybrid'?Math.max(loadResult.totalDailyEnergyWh*(input.daysAutonomy>0?0.35:0.03),0):0; const reqWh=(targetWh+recharge)/Math.max(pr,0.1); const reqW=reqWh/Math.max(input.sunHours,1); const reserve=input.pvDesignReserveFactor||(input.systemType==='offgrid'?1.1:input.systemType==='hybrid'?1.08:1.03); const designW=reqW*reserve; const rough=Math.max(1,Math.ceil(designW/input.panelWatt)); const spec=mpptSpecs(input,inverter); const c=candidate(input,spec,rough); const power=c.panels*input.panelWatt; const ratio=spec.acPowerW>0?power/spec.acPowerW:0; const ch=checks(c,spec,power,ratio); const daily=power*input.sunHours*pr; return {performanceRatio:round(pr,3),temperatureLossFactor:round(temp,3),altitudeFactor:round(altitude,3),energyTargetFactor:round(et,2),targetEnergyWh:round(targetWh),batteryRechargeReserveWh:round(recharge),targetEnergyWithRechargeWh:round(targetWh+recharge),requiredPvEnergyWh:round(reqWh),requiredPvPowerW:round(reqW),designPvPowerW:round(designW),appliedDesignFactor:round(reserve,2),roughPanelCount:rough,panelCount:c.panels,panelSeriesCount:c.series,panelParallelCount:c.totalStrings,installedPvPowerW:round(power),grossDailyProductionWh:round(power*input.sunHours),estimatedDailyProductionWh:round(daily),worstMonthDailyProductionWh:round(daily*Math.min(...MONTH_FACTORS)),bestMonthDailyProductionWh:round(daily*Math.max(...MONTH_FACTORS)),stringVmp:round(c.stringVmp),stringVocCold:round(c.stringVocCold),stringVmpHot:round(c.stringVmpHot),stringCurrentA:round(c.inputCurrentPerMppt,1),designIscPerMpptA:round(c.iscPerMpptDesign,1),mpptWindowOk:c.stringVmp>=spec.mpptMinVoltageV&&c.stringVmp<=spec.mpptMaxVoltageV,mpptHotWindowOk:c.stringVmpHot>=spec.mpptMinVoltageV&&c.stringVmpHot<=spec.mpptMaxVoltageV,mpptStartupOk:c.stringVmpHot>=Math.max(spec.mpptMinVoltageV,spec.mpptStartupVoltageV-(spec.mpptStartupToleranceV||0)),mpptCurrentOk:c.inputCurrentPerMppt<=spec.maxInputCurrentPerMpptA,mpptIscOk:c.iscPerMpptDesign<=spec.maxShortCircuitCurrentPerMpptA,vocOk:c.stringVocCold<spec.maxPvVocV,stringingWastePanels:c.waste,dcAcRatio:round(ratio,2),mpptSpecs:spec,mpptDesign:{architecture:spec.architecture,inverterModel:spec.inverterModel,mpptCount:spec.mpptCount,maxPvVocV:spec.maxPvVocV,maxPvPowerPerMpptW:Number.isFinite(spec.maxPvPowerPerMpptW)?spec.maxPvPowerPerMpptW:null,inverterMpptProfileTitle:spec.inverterMpptProfileTitle,offgridMpptProfileTitle:spec.offgridMpptProfileTitle,hybridMpptProfileTitle:spec.hybridMpptProfileTitle,mpptStartupVoltageV:spec.mpptStartupVoltageV,mpptStartupToleranceV:spec.mpptStartupToleranceV,mpptVoltageRange:`${spec.mpptMinVoltageV}-${spec.mpptMaxVoltageV}V`,stringsPerMppt:map(c,spec),status:ch.some(x=>x.status==='fail'&&x.severity==='error')?'error':ch.some(x=>x.status==='fail')?'warning':'pass'},lossesBreakdown:{performanceRatio:round(pr,3),totalLossPercent:round((1-pr)*100,1),temperatureLossPercent:round((1-temp)*100,1),shadingLossPercent:round((1-input.shadingFactor)*100,1),dustLossPercent:round((1-input.dustFactor)*100,1),cableAssumptionLossPercent:round((1-input.cableLossFactor)*100,1),controllerInverterLossPercent:round((1-input.controllerEfficiency)*100,1)},checks:ch}; }
+function round(value, digits = 2) {
+  const f = 10 ** digits;
+  return Math.round((Number(value) || 0) * f) / f;
+}
+
+const MONTH_FACTORS = [0.72, 0.79, 0.9, 1.02, 1.08, 1.12, 1.1, 1.03, 0.94, 0.84, 0.75, 0.69];
+
+function hasBackupSolar(input) {
+  return input.systemType === "backup" && Boolean(input.backupWithSolar || input.backupSolarMode === "with_solar" || input.systemSubtype === "backup_with_solar");
+}
+
+function getTemperatureLoss(avgTemp, powerCoeffPercentPerC) {
+  const loss = (Math.max(avgTemp - 25, 0) * powerCoeffPercentPerC) / 100;
+  return Math.max(0.72, 1 - loss);
+}
+
+function getAltitudeFactor(input) {
+  if (input.altitude <= 1500) return 1;
+  const gain = Math.min((input.altitude - 1500) / 1000, 3) * 0.01;
+  return Math.min(1.03, 1 + gain);
+}
+
+function targetFactor(input) {
+  if (input.systemType === "gridtie") return input.targetOffsetPercent / 100;
+  if (input.systemType === "hybrid") {
+    return input.hybridMode === "backup_priority" ? 0.95 : input.hybridMode === "peak_shaving" ? 0.65 : 0.8;
+  }
+  return 1;
+}
+
+function getTargetEnergyWh(input, loadResult) {
+  if (hasBackupSolar(input)) {
+    const rechargeDays = Math.max(Number(input.batteryRechargeDays) || 1, 1);
+    const rechargeTargetWh = loadResult.backupEnergyWh / rechargeDays;
+    const dailySupportWh = loadResult.totalDailyEnergyWh * Math.max(Number(input.backupSolarDailySupportFactor) || 0, 0);
+    return Math.max(rechargeTargetWh, dailySupportWh, loadResult.backupEnergyWh > 0 ? rechargeTargetWh : loadResult.totalDailyEnergyWh);
+  }
+  return loadResult.totalDailyEnergyWh * targetFactor(input);
+}
+
+function getBatteryRechargeReserveWh(input, loadResult, batteryResult) {
+  const rechargeDays = Math.max(Number(input.batteryRechargeDays) || (input.systemType === "offgrid" ? 2 : 1), 1);
+  if (input.systemType === "offgrid") {
+    if (input.daysAutonomy <= 0) return loadResult.totalDailyEnergyWh * 0.05;
+    return Math.max(batteryResult?.baseEnergyWh || loadResult.totalDailyEnergyWh * input.daysAutonomy, loadResult.totalDailyEnergyWh) / rechargeDays;
+  }
+  if (input.systemType === "hybrid") {
+    if (input.daysAutonomy <= 0) return loadResult.totalDailyEnergyWh * 0.03;
+    return Math.max(batteryResult?.baseEnergyWh || loadResult.totalDailyEnergyWh * 0.35, 0) / rechargeDays;
+  }
+  if (hasBackupSolar(input)) {
+    return Math.max(loadResult.backupEnergyWh, 0) / rechargeDays;
+  }
+  return 0;
+}
+
+function mpptSpecs(input, inverter) {
+  const internal = input.mpptArchitecture !== "external_controller" && !hasBackupSolar(input) && input.systemType !== "backup";
+  return {
+    architecture: internal ? "inverter_internal" : "external_controller",
+    hasInternalMppt: internal,
+    inverterModel: input.inverterModel || input.selectedInverterName || "اینورتر انتخابی",
+    mpptCount: Math.max(1, Math.round(Number(input.mpptCount) || 1)),
+    maxPvVocV: Number(input.maxPvVocV || input.controllerMaxVoc || 500),
+    mpptMinVoltageV: Number(input.mpptMinVoltage || 120),
+    mpptMaxVoltageV: Number(input.mpptMaxVoltage || 450),
+    mpptStartupVoltageV: Number(input.mpptStartupVoltage || input.mpptMinVoltage || 120),
+    maxInputCurrentPerMpptA: Number(input.maxInputCurrentPerMpptA || input.mpptMaxInputCurrent || 100),
+    maxShortCircuitCurrentPerMpptA: Number(input.maxShortCircuitCurrentPerMpptA || input.mpptMaxShortCircuitCurrent || 125),
+    maxStringsPerMppt: Math.max(1, Math.round(Number(input.maxStringsPerMppt) || 2)),
+    maxPvPowerW: Number(input.maxPvPowerW || input.inverterMaxPvPowerW || Infinity),
+    maxPvPowerPerMpptW: Number(input.maxPvPowerPerMpptW || Infinity),
+    inverterMpptProfileTitle: input.inverterMpptProfileTitle || input.hybridMpptProfileTitle || input.offgridMpptProfileTitle || "",
+    offgridMpptProfileTitle: input.offgridMpptProfileTitle || "",
+    hybridMpptProfileTitle: input.hybridMpptProfileTitle || "",
+    mpptStartupToleranceV: Number(input.mpptStartupToleranceV || 0),
+    acPowerW: Number(input.inverterAcPowerW || input.inverterRatedPowerW || inverter?.continuousPowerW || 0),
+    maxDcAcRatio: Number(input.maxDcAcRatio || (input.systemType === "hybrid" ? 1.45 : input.systemType === "offgrid" ? 1.6 : input.systemType === "backup" ? 1.2 : 1.4)),
+  };
+}
+
+function module(input) {
+  const cold = Math.max(25 - input.minTemperature, 0);
+  const hot = Math.max(input.maxTemperature - 25, 0);
+  const vocCold = input.panelVoc * (1 + input.panelTempCoeffVoc * cold);
+  const vmpCoeff = Number(input.panelVmpTempCoeffPercentPerC || input.panelPowerTempCoeffPercentPerC || input.panelTypeTemperatureFactor || 0.29);
+  const vmpHot = input.panelVmp * Math.max(0.7, 1 - (hot * vmpCoeff) / 100);
+  const imp = input.panelWatt / Math.max(input.panelVmp, 1);
+  const isc = Number(input.panelIsc || input.panelShortCircuitCurrent || imp * 1.08);
+  return { vocCold, vmpHot, vmpNominal: input.panelVmp, imp, isc, watt: input.panelWatt, vmpCoeffPercentPerC: vmpCoeff };
+}
+
+function failReasons(cand, spec, input) {
+  const reasons = [];
+  if (cand.stringVocCold >= spec.maxPvVocV) reasons.push("Voc سرد از حد مجاز بالاتر است");
+  if (cand.stringVmpHot < spec.mpptMinVoltageV || cand.stringVmpHot > spec.mpptMaxVoltageV) reasons.push("Vmp گرم خارج از پنجره MPPT است");
+  if (cand.stringVmpHot < Math.max(spec.mpptMinVoltageV, spec.mpptStartupVoltageV - (spec.mpptStartupToleranceV || 0))) reasons.push("ولتاژ راه اندازی MPPT کافی نیست");
+  if (cand.inputCurrentPerMppt > spec.maxInputCurrentPerMpptA) reasons.push("جریان ورودی MPPT بیش از دیتاشیت است");
+  if (cand.iscPerMpptDesign > spec.maxShortCircuitCurrentPerMpptA) reasons.push("Isc طراحی MPPT بیش از دیتاشیت است");
+  if (cand.stringsPerMpptRaw > spec.maxStringsPerMppt) reasons.push("تعداد رشته موازی هر MPPT بیش از ورودی مجاز است");
+  if (cand.panels * input.panelWatt > spec.maxPvPowerW) reasons.push("توان کل PV بیش از ظرفیت مجاز اینورتر/کنترلر است");
+  if (cand.powerPerMppt > spec.maxPvPowerPerMpptW) reasons.push("توان PV هر MPPT بیش از حد مجاز است");
+  return reasons;
+}
+
+function candidate(input, spec, target) {
+  const m = module(input);
+  const minS = Math.max(1, Math.ceil(spec.mpptStartupVoltageV / Math.max(m.vmpHot, 1)));
+  const maxByMppt = Math.max(minS, Math.floor(spec.mpptMaxVoltageV / Math.max(m.vmpNominal, 1)));
+  const maxByVoc = Math.max(1, Math.floor((spec.maxPvVocV * 0.98) / Math.max(m.vocCold, 1)));
+  const maxS = Math.max(1, Math.min(maxByMppt, maxByVoc));
+  let best = null;
+  const rejected = [];
+
+  for (let series = minS; series <= maxS; series++) {
+    const strings = Math.max(1, Math.ceil(target / series));
+    const panels = series * strings;
+    const spm = Math.ceil(strings / spec.mpptCount);
+    const cv = m.vocCold * series;
+    const vh = m.vmpHot * series;
+    const vn = m.vmpNominal * series;
+    const current = spm * m.imp;
+    const isc = spm * m.isc * 1.25;
+    const powerPerMppt = spm * series * input.panelWatt;
+    const cand = { series, totalStrings: strings, panels, stringsPerMpptRaw: spm, stringVocCold: cv, stringVmpHot: vh, stringVmp: vn, inputCurrentPerMppt: current, iscPerMpptDesign: isc, powerPerMppt, waste: panels - target, module: m };
+    const reasons = failReasons(cand, spec, input);
+    cand.failCount = reasons.length;
+    if (reasons.length) rejected.push({ series, totalStrings: strings, panels, reasons });
+    if (!best || cand.failCount < best.failCount || (cand.failCount === best.failCount && cand.waste < best.waste) || (cand.failCount === best.failCount && cand.waste === best.waste && cand.series > best.series)) best = cand;
+  }
+
+  if (best) return { ...best, rejectedCandidates: rejected.slice(0, 8) };
+
+  const series = Math.max(1, Math.floor((spec.maxPvVocV * 0.98) / Math.max(m.vocCold, 1)));
+  const strings = Math.max(1, Math.ceil(target / series));
+  const fallback = { series, totalStrings: strings, panels: series * strings, stringsPerMpptRaw: Math.ceil(strings / spec.mpptCount), stringVocCold: m.vocCold * series, stringVmpHot: m.vmpHot * series, stringVmp: m.vmpNominal * series, inputCurrentPerMppt: Math.ceil(strings / spec.mpptCount) * m.imp, iscPerMpptDesign: Math.ceil(strings / spec.mpptCount) * m.isc * 1.25, powerPerMppt: Math.ceil(strings / spec.mpptCount) * series * input.panelWatt, failCount: 99, waste: series * strings - target, module: m, rejectedCandidates: rejected.slice(0, 8) };
+  return fallback;
+}
+
+function map(c, spec) {
+  const out = [];
+  let rem = c.totalStrings;
+  for (let i = 1; i <= spec.mpptCount && rem > 0; i++) {
+    const left = spec.mpptCount - i + 1;
+    const p = Math.ceil(rem / left);
+    rem -= p;
+    const cur = p * c.module.imp;
+    const isc = p * c.module.isc * 1.25;
+    out.push({
+      mpptIndex: i,
+      seriesModules: c.series,
+      parallelStrings: p,
+      modules: c.series * p,
+      stringVmpV: round(c.stringVmp),
+      stringVmpHotV: round(c.stringVmpHot),
+      stringVocColdV: round(c.stringVocCold),
+      inputCurrentA: round(cur, 1),
+      designIscA: round(isc, 1),
+      maxInputCurrentA: spec.maxInputCurrentPerMpptA,
+      maxIscA: spec.maxShortCircuitCurrentPerMpptA,
+      pvPowerOnMpptW: round(c.series * p * c.module.watt),
+      maxPvPowerPerMpptW: Number.isFinite(spec.maxPvPowerPerMpptW) ? spec.maxPvPowerPerMpptW : null,
+      status: c.stringVocCold < spec.maxPvVocV && c.stringVmpHot <= spec.mpptMaxVoltageV && cur <= spec.maxInputCurrentPerMpptA && isc <= spec.maxShortCircuitCurrentPerMpptA && p <= spec.maxStringsPerMppt && (c.series * p * c.module.watt) <= spec.maxPvPowerPerMpptW ? "pass" : "fail",
+    });
+  }
+  return out;
+}
+
+function checks(c, spec, power, ratio) {
+  const arr = [];
+  const add = (id, ok, sev, msg, metric, limit) => arr.push({ id, status: ok ? "pass" : "fail", severity: ok ? "info" : sev, message: msg, metric, limit });
+  add("voc-cold", c.stringVocCold < spec.maxPvVocV, "error", "Voc سرد رشته باید از سقف ولتاژ DC اینورتر/MPPT کمتر باشد.", round(c.stringVocCold) + "V", spec.maxPvVocV + "V");
+  add("vmp-hot", c.stringVmpHot >= spec.mpptMinVoltageV && c.stringVmpHot <= spec.mpptMaxVoltageV, "warning", "Vmp گرم باید داخل محدوده ردیابی MPPT بماند.", round(c.stringVmpHot) + "V", spec.mpptMinVoltageV + "-" + spec.mpptMaxVoltageV + "V");
+  const startupLimit = Math.max(spec.mpptMinVoltageV, spec.mpptStartupVoltageV - (spec.mpptStartupToleranceV || 0));
+  add("mppt-startup", c.stringVmpHot >= startupLimit, "warning", "ولتاژ رشته باید برای شروع به کار MPPT کافی باشد.", round(c.stringVmpHot) + "V", spec.mpptStartupVoltageV + (spec.mpptStartupToleranceV ? `±${spec.mpptStartupToleranceV}` : "") + "V");
+  add("mppt-current", c.inputCurrentPerMppt <= spec.maxInputCurrentPerMpptA, "error", "جریان کاری هر MPPT نباید از حد دیتاشیت بیشتر شود.", round(c.inputCurrentPerMppt, 1) + "A", spec.maxInputCurrentPerMpptA + "A");
+  add("mppt-isc", c.iscPerMpptDesign <= spec.maxShortCircuitCurrentPerMpptA, "error", "جریان اتصال کوتاه طراحی شده هر MPPT باید زیر حد دیتاشیت باشد.", round(c.iscPerMpptDesign, 1) + "A", spec.maxShortCircuitCurrentPerMpptA + "A");
+  add("strings-per-mppt", c.stringsPerMpptRaw <= spec.maxStringsPerMppt, "warning", "تعداد رشته موازی هر MPPT باید با ورودی فیزیکی/دیتاشیت سازگار باشد.", c.stringsPerMpptRaw + "", spec.maxStringsPerMppt + "");
+  add("max-pv-power", power <= spec.maxPvPowerW, "error", "توان نصب شده PV نباید از حداکثر توان مجاز PV اینورتر بیشتر شود.", round(power) + "W", Number.isFinite(spec.maxPvPowerW) ? round(spec.maxPvPowerW) + "W" : "بدون محدودیت ثبت شده");
+  if (Number.isFinite(spec.maxPvPowerPerMpptW)) add("max-pv-power-per-mppt", c.powerPerMppt <= spec.maxPvPowerPerMpptW, "error", "توان پنل روی هر MPPT نباید از ظرفیت مجاز همان MPPT بیشتر شود.", round(c.powerPerMppt) + "W", round(spec.maxPvPowerPerMpptW) + "W");
+  add("dc-ac-ratio", ratio <= spec.maxDcAcRatio, ratio > spec.maxDcAcRatio * 2 ? "error" : "warning", "نسبت DC/AC باید در محدوده پیشنهادی نوع سیستم باشد.", round(ratio, 2) + "", spec.maxDcAcRatio + "");
+  return arr;
+}
+
+function explainSelection(c, spec, target) {
+  return {
+    selected: `${c.series} سری × ${c.totalStrings} رشته موازی = ${c.panels} پنل`,
+    reason: c.failCount === 0 ? "این آرایش کمترین پنل اضافه را دارد و هم زمان محدودیت های Voc سرد، Vmp گرم، جریان MPPT، Isc و توان مجاز را پاس می کند." : "هیچ آرایش کاملا سالمی پیدا نشد؛ این گزینه کمترین تعداد خطا را بین گزینه های ممکن دارد.",
+    targetPanelCount: target,
+    extraPanels: c.waste,
+    maxSeriesByVoc: Math.floor((spec.maxPvVocV * 0.98) / Math.max(c.module.vocCold, 1)),
+    minSeriesForStartup: Math.ceil(spec.mpptStartupVoltageV / Math.max(c.module.vmpHot, 1)),
+    rejectedCandidates: c.rejectedCandidates || [],
+  };
+}
+
+export function calculatePv(input, loadResult, batteryResult, inverter) {
+  if (input.systemType === "backup" && !hasBackupSolar(input)) return null;
+
+  const powerCoeff = Number(input.panelPowerTempCoeffPercentPerC || input.panelTypeTemperatureFactor || 0.29);
+  const temp = getTemperatureLoss(input.averageTemperature, powerCoeff);
+  const altitude = getAltitudeFactor(input);
+  const pr = Math.max(0.45, Math.min(0.92, input.controllerEfficiency * input.cableLossFactor * input.panelLossFactor * input.shadingFactor * input.dustFactor * temp * altitude));
+  const et = targetFactor(input);
+  const targetWh = getTargetEnergyWh(input, loadResult);
+  const recharge = getBatteryRechargeReserveWh(input, loadResult, batteryResult);
+  const reqWh = (targetWh + recharge) / Math.max(pr, 0.1);
+  const reqW = reqWh / Math.max(input.sunHours, 1);
+  const reserve = input.pvDesignReserveFactor || (input.systemType === "offgrid" ? 1.1 : input.systemType === "hybrid" ? 1.08 : input.systemType === "backup" ? 1.05 : 1.03);
+  const designW = reqW * reserve;
+  const rough = Math.max(1, Math.ceil(designW / input.panelWatt));
+  const spec = mpptSpecs(input, inverter);
+  const c = candidate(input, spec, rough);
+  const power = c.panels * input.panelWatt;
+  const ratio = spec.acPowerW > 0 ? power / spec.acPowerW : 0;
+  const ch = checks(c, spec, power, ratio);
+  const daily = power * input.sunHours * pr;
+
+  return {
+    performanceRatio: round(pr, 3),
+    temperatureLossFactor: round(temp, 3),
+    altitudeFactor: round(altitude, 3),
+    panelPowerTempCoeffPercentPerC: round(powerCoeff, 3),
+    panelVmpTempCoeffPercentPerC: round(c.module.vmpCoeffPercentPerC, 3),
+    energyTargetFactor: round(et, 2),
+    targetEnergyWh: round(targetWh),
+    batteryRechargeReserveWh: round(recharge),
+    batteryRechargeDays: round(Math.max(Number(input.batteryRechargeDays) || (input.systemType === "offgrid" ? 2 : 1), 1), 2),
+    targetEnergyWithRechargeWh: round(targetWh + recharge),
+    requiredPvEnergyWh: round(reqWh),
+    requiredPvPowerW: round(reqW),
+    designPvPowerW: round(designW),
+    appliedDesignFactor: round(reserve, 2),
+    roughPanelCount: rough,
+    panelCount: c.panels,
+    panelSeriesCount: c.series,
+    panelParallelCount: c.totalStrings,
+    installedPvPowerW: round(power),
+    grossDailyProductionWh: round(power * input.sunHours),
+    estimatedDailyProductionWh: round(daily),
+    worstMonthDailyProductionWh: round(daily * Math.min(...MONTH_FACTORS)),
+    bestMonthDailyProductionWh: round(daily * Math.max(...MONTH_FACTORS)),
+    stringVmp: round(c.stringVmp),
+    stringVocCold: round(c.stringVocCold),
+    stringVmpHot: round(c.stringVmpHot),
+    stringCurrentA: round(c.inputCurrentPerMppt, 1),
+    designIscPerMpptA: round(c.iscPerMpptDesign, 1),
+    mpptWindowOk: c.stringVmp >= spec.mpptMinVoltageV && c.stringVmp <= spec.mpptMaxVoltageV,
+    mpptHotWindowOk: c.stringVmpHot >= spec.mpptMinVoltageV && c.stringVmpHot <= spec.mpptMaxVoltageV,
+    mpptStartupOk: c.stringVmpHot >= Math.max(spec.mpptMinVoltageV, spec.mpptStartupVoltageV - (spec.mpptStartupToleranceV || 0)),
+    mpptCurrentOk: c.inputCurrentPerMppt <= spec.maxInputCurrentPerMpptA,
+    mpptIscOk: c.iscPerMpptDesign <= spec.maxShortCircuitCurrentPerMpptA,
+    vocOk: c.stringVocCold < spec.maxPvVocV,
+    stringingWastePanels: c.waste,
+    dcAcRatio: round(ratio, 2),
+    mpptSpecs: spec,
+    mpptDesign: {
+      architecture: spec.architecture,
+      inverterModel: spec.inverterModel,
+      mpptCount: spec.mpptCount,
+      maxPvVocV: spec.maxPvVocV,
+      maxPvPowerPerMpptW: Number.isFinite(spec.maxPvPowerPerMpptW) ? spec.maxPvPowerPerMpptW : null,
+      inverterMpptProfileTitle: spec.inverterMpptProfileTitle,
+      offgridMpptProfileTitle: spec.offgridMpptProfileTitle,
+      hybridMpptProfileTitle: spec.hybridMpptProfileTitle,
+      mpptStartupVoltageV: spec.mpptStartupVoltageV,
+      mpptStartupToleranceV: spec.mpptStartupToleranceV,
+      mpptVoltageRange: `${spec.mpptMinVoltageV}-${spec.mpptMaxVoltageV}V`,
+      stringsPerMppt: map(c, spec),
+      selectionExplanation: explainSelection(c, spec, rough),
+      status: ch.some((x) => x.status === "fail" && x.severity === "error") ? "error" : ch.some((x) => x.status === "fail") ? "warning" : "pass",
+    },
+    lossesBreakdown: {
+      performanceRatio: round(pr, 3),
+      totalLossPercent: round((1 - pr) * 100, 1),
+      temperatureLossPercent: round((1 - temp) * 100, 1),
+      shadingLossPercent: round((1 - input.shadingFactor) * 100, 1),
+      dustLossPercent: round((1 - input.dustFactor) * 100, 1),
+      cableAssumptionLossPercent: round((1 - input.cableLossFactor) * 100, 1),
+      controllerInverterLossPercent: round((1 - input.controllerEfficiency) * 100, 1),
+    },
+    checks: ch,
+  };
+}

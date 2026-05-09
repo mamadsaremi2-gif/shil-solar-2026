@@ -181,22 +181,28 @@ export function AuthProvider({ children }) {
   }
 
   async function signOut() {
-    if (isSupabaseConfigured && !isOfflineMode) {
-      const supabase = await getSupabaseClient();
-      await supabase?.auth?.signOut();
+    try {
+      if (isSupabaseConfigured && !isOfflineMode) {
+        const supabase = await getSupabaseClient();
+        await supabase?.auth?.signOut();
+      }
+    } catch (error) {
+      console.error('Sign out failed', error);
+    } finally {
+      localStorage.removeItem(LOCAL_SESSION_KEY);
+      localStorage.removeItem(OFFLINE_SESSION_KEY);
+      localStorage.removeItem('shil_active_email');
+      localStorage.removeItem('shil_active_role');
+      setIsOfflineMode(false);
+      setSession(null);
+      setProfile(null);
+      setLoading(false);
     }
-    localStorage.removeItem(LOCAL_SESSION_KEY);
-    localStorage.removeItem(OFFLINE_SESSION_KEY);
-    localStorage.removeItem('shil_active_email');
-    localStorage.removeItem('shil_active_role');
-    setIsOfflineMode(false);
-    setSession(null);
-    setProfile(null);
   }
 
   const value = useMemo(() => ({
     session,
-    user: session?.user || (isSupabaseConfigured ? null : { id: DEV_PROFILE.id, email: DEV_PROFILE.email }),
+    user: session?.user || null,
     profile,
     loading,
     isConfigured: isSupabaseConfigured,

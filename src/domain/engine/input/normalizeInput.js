@@ -40,6 +40,7 @@ export function normalizeInput(form) {
     surgeFactor: positive(item.surgeFactor, 1),
     loadType: item.loadType || "mixed",
     inverterSupply: item.inverterSupply || "with_inverter",
+    backupPriority: item.backupPriority || item.priority || "critical",
   }));
 
   const loadProfile = (form.loadProfile || []).map((slot, index) => ({
@@ -50,6 +51,7 @@ export function normalizeInput(form) {
   }));
 
   const systemType = form.systemType || "offgrid";
+  const backupWithSolar = Boolean(form.backupWithSolar || form.backupSolarMode === "with_solar" || form.systemSubtype === "backup_with_solar");
   const safeBackupHours = nonNegative(form.backupHours, 0);
   const normalizedSystemVoltage = systemType === "backup"
     ? nearestAllowed(form.systemVoltage, BACKUP_SYSTEM_VOLTAGES, 24)
@@ -64,6 +66,11 @@ export function normalizeInput(form) {
   return {
     ...form,
     systemType,
+    backupWithSolar,
+    backupSolarMode: backupWithSolar ? "with_solar" : "battery_only",
+    systemSubtype: backupWithSolar ? "backup_with_solar" : form.systemSubtype || "",
+    batteryRechargeDays: positive(form.batteryRechargeDays, systemType === "offgrid" ? 2 : 1),
+    backupSolarDailySupportFactor: bounded(form.backupSolarDailySupportFactor, 0, 0, 1),
     hybridMode: form.hybridMode || "self_consumption",
     targetOffsetPercent: bounded(form.targetOffsetPercent, 85, 10, 150),
     gridAvailableHours: bounded(form.gridAvailableHours, 24, 1, 24),
@@ -101,6 +108,8 @@ export function normalizeInput(form) {
     panelVoc: positive(form.panelVoc, 53.1),
     panelVmp: positive(form.panelVmp, 44.8),
     panelTempCoeffVoc: positive(form.panelTempCoeffVoc, 0.0024),
+    panelPowerTempCoeffPercentPerC: positive(form.panelPowerTempCoeffPercentPerC, positive(form.panelTypeTemperatureFactor, 0.29)),
+    panelVmpTempCoeffPercentPerC: positive(form.panelVmpTempCoeffPercentPerC, positive(form.panelPowerTempCoeffPercentPerC, positive(form.panelTypeTemperatureFactor, 0.29))),
     panelTypeTemperatureFactor: positive(form.panelTypeTemperatureFactor, 0.29),
     averageTemperature: parseFaNumber(form.averageTemperature, 30),
     minTemperature: parseFaNumber(form.minTemperature, 0),

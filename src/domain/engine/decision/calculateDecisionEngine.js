@@ -1,6 +1,12 @@
 function round(value, digits = 2) { const f = 10 ** digits; return Math.round((Number(value) || 0) * f) / f; }
 function rank(s) { return { error: 4, warning: 3, info: 2, pass: 1 }[s] || 0; }
 function add(items, severity, title, message, recommendation, category = 'system') { items.push({ severity, title, message, recommendation, category }); }
+function oversizeThresholds(input) {
+  if (input.systemType === 'gridtie') return { info: 1.2, severe: 1.6 };
+  if (input.systemType === 'hybrid') return { info: 1.5, severe: 2.2 };
+  if (input.systemType === 'backup') return { info: 1.4, severe: 2.0 };
+  return { info: 2.5, severe: 3.0 };
+}
 export function calculateDecisionEngine(input, loads, battery, pv, inverter, controller, cabling, protection, simulation, industrial, installation, validation) {
   const decisions = [];
   const netPvWh = installation?.losses?.netDailyProductionWh ?? pv?.estimatedDailyProductionWh ?? 0;
@@ -10,8 +16,11 @@ export function calculateDecisionEngine(input, loads, battery, pv, inverter, con
   const inverterUtil = loads.demandPowerW / Math.max(inverter?.continuousPowerW || 1, 1);
   if (pv) {
     if (netCoverageRatio < 0.9 && input.systemType !== 'gridtie') add(decisions, 'error', 'PV کم‌طراحی شده است', `تولید خالص روزانه حدود ${round(netPvWh)}Wh است و فقط ${round(netCoverageRatio * 100, 0)}٪ مصرف روزانه را پوشش می‌دهد.`, 'توان پنل یا شرایط نصب را اصلاح کن.', 'pv');
-    else if (netCoverageRatio > 3 && dailyLoadWh > 0) add(decisions, 'warning', 'PV بیش‌طراحی شده است', `تولید خالص حدود ${round(netCoverageRatio, 1)} برابر مصرف روزانه است.`, 'تعداد پنل را کاهش بده یا ظرفیت ذخیره/مصرف قابل مدیریت را تعریف کن.', 'pv');
-    else if (netCoverageRatio > 1.8 && input.systemType !== 'gridtie') add(decisions, 'info', 'PV بزرگ‌تر از مصرف روزانه است', `تولید خالص حدود ${round(netCoverageRatio, 1)} برابر مصرف روزانه است.`, 'هدف طراحی را مشخص کن: شارژ سریع باتری، توسعه آینده، یا کاهش پنل.', 'pv');
+    else {
+      const thresholds = oversizeThresholds(input);
+      if (netCoverageRatio > thresholds.severe && dailyLoadWh > 0) add(decisions, 'warning', 'PV بیش‌طراحی شده است', `تولید خالص حدود ${round(netCoverageRatio, 1)} برابر مصرف روزانه است.`, 'برای این نوع سیستم هدف اضافه‌ظرفیت را مشخص کن: شارژ سریع باتری، توسعه آینده، یا کاهش تعداد پنل.', 'pv');
+      else if (netCoverageRatio > thresholds.info && input.systemType !== 'gridtie') add(decisions, 'info', 'PV بزرگ‌تر از مصرف روزانه است', `تولید خالص حدود ${round(netCoverageRatio, 1)} برابر مصرف روزانه است.`, 'در آفگرید این موضوع می‌تواند برای شارژ مجدد باتری و روزهای ضعیف قابل قبول باشد.', 'pv');
+    }
     const maxRatio = pv.mpptSpecs?.maxDcAcRatio || 1.4;
     if (dcAcRatio > maxRatio * 2.0) add(decisions, 'error', 'نسبت DC/AC غیرمجاز است', `نسبت DC/AC برابر ${round(dcAcRatio, 2)} است.`, 'توان PV را کم کن یا اینورتر با توان/ورودی PV بالاتر انتخاب کن.', 'pv');
     else if (dcAcRatio > maxRatio) add(decisions, 'warning', 'نسبت DC/AC مرزی است', `نسبت DC/AC برابر ${round(dcAcRatio, 2)} است و ممکن است clipping ایجاد کند.`, 'دیتاشیت اینورتر و سیاست oversizing سازنده کنترل شود.', 'pv');
@@ -33,7 +42,8 @@ export function calculateDecisionEngine(input, loads, battery, pv, inverter, con
   const hardErrors = decisions.filter(d => d.severity === 'error').length + (validation?.summary?.counts?.error || 0);
   const warnings = decisions.filter(d => d.severity === 'warning').length + (validation?.summary?.counts?.warning || 0);
   const overallStatus = hardErrors > 0 ? 'not_executable' : warnings > 0 ? 'executable_with_warnings' : 'executable';
-  const energySizing = !pv ? 'not_applicable' : netCoverageRatio < 0.9 ? 'undersized' : netCoverageRatio > 3 ? 'severely_oversized' : netCoverageRatio > 1.8 ? 'oversized' : 'balanced';
+  const thresholds = oversizeThresholds(input);
+  const energySizing = !pv ? 'not_applicable' : netCoverageRatio < 0.9 ? 'undersized' : netCoverageRatio > thresholds.severe ? 'severely_oversized' : netCoverageRatio > thresholds.info ? 'oversized' : 'balanced';
   const economicStatus = energySizing === 'severely_oversized' || inverterUtil < 0.35 ? 'needs_economic_review' : energySizing === 'oversized' ? 'oversized_but_possible' : 'reasonable';
   if (!decisions.length) add(decisions, 'pass', 'طراحی در کنترل تصمیم‌گیری قبول شد', 'کنترل‌های اصلی سایزینگ، MPPT، کابل، باتری و نصب خطای جدی نشان ندادند.', 'قبل از اجرا دیتاشیت، بازدید محل و استاندارد نصب کنترل شود.', 'system');
   return { overallStatus, economicStatus, energySizing, netCoverageRatio: round(netCoverageRatio, 2), dcAcRatio: round(dcAcRatio, 2), inverterUtilizationPercent: round(inverterUtil * 100, 0), hardErrors, warnings, decisions: decisions.sort((a,b)=>rank(b.severity)-rank(a.severity)) };

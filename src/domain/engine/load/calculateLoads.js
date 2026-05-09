@@ -22,6 +22,50 @@ function normalizeProfile(profile = [], targetDailyWh = 0) {
   }));
 }
 
+function buildBackupPriorityGroups(normalizedLoads = [], totalDailyEnergyWh = 0, demandPowerW = 0, backupHours = 0) {
+  const levels = ["critical", "important", "optional"];
+  const labels = { critical: "ضروری", important: "مهم", optional: "اختیاری" };
+  const itemsByLevel = Object.fromEntries(levels.map((level) => [level, normalizedLoads.filter((item) => (item.backupPriority || "critical") === level)]));
+  const cumulative = [];
+  let cumulativePowerW = 0;
+  let cumulativeDailyWh = 0;
+
+  for (const level of levels) {
+    const items = itemsByLevel[level];
+    const powerW = items.reduce((sum, item) => sum + item.demandPowerW, 0);
+    const dailyWh = items.reduce((sum, item) => sum + item.dailyEnergyWh, 0);
+    cumulativePowerW += powerW;
+    cumulativeDailyWh += dailyWh;
+    cumulative.push({
+      level,
+      label: labels[level],
+      powerW: round(powerW),
+      dailyEnergyWh: round(dailyWh),
+      backupEnergyWh: round(powerW * backupHours),
+      cumulativePowerW: round(cumulativePowerW),
+      cumulativeDailyEnergyWh: round(cumulativeDailyWh),
+      cumulativeBackupEnergyWh: round(cumulativePowerW * backupHours),
+      itemCount: items.length,
+    });
+  }
+
+  if (!normalizedLoads.length) {
+    return [{
+      level: "critical",
+      label: labels.critical,
+      powerW: round(demandPowerW),
+      dailyEnergyWh: round(totalDailyEnergyWh),
+      backupEnergyWh: round(demandPowerW * backupHours),
+      cumulativePowerW: round(demandPowerW),
+      cumulativeDailyEnergyWh: round(totalDailyEnergyWh),
+      cumulativeBackupEnergyWh: round(demandPowerW * backupHours),
+      itemCount: 1,
+    }];
+  }
+
+  return cumulative;
+}
+
 export function calculateLoads(input) {
   const mode = input.calculationMode;
   let loadPowerW = 0;
@@ -107,6 +151,7 @@ export function calculateLoads(input) {
         surgePowerW: round(surge),
         surgeVA: round(surgeVA),
         seasonalUseFactor: round(seasonal, 2),
+        backupPriority: item.backupPriority || "critical",
       };
     });
 
@@ -131,6 +176,7 @@ export function calculateLoads(input) {
   const averagePowerFactor = connectedApparentVA > 0 ? connectedPowerW / connectedApparentVA : input.powerFactor;
   const designPowerW = demandPowerW * input.designFactor;
   const backupEnergyWh = demandPowerW * input.backupHours;
+  const backupPriorityGroups = buildBackupPriorityGroups(normalizedLoads, totalDailyEnergyWh, demandPowerW, input.backupHours);
 
   return {
     mode,
@@ -148,6 +194,7 @@ export function calculateLoads(input) {
     surgeApparentVA: round(Math.max(surgeApparentVA, designPowerW / Math.max(averagePowerFactor, 0.1))),
     totalDailyEnergyWh: round(totalDailyEnergyWh),
     backupEnergyWh: round(backupEnergyWh),
+    backupPriorityGroups,
     normalizedLoads,
     normalizedProfile: normalizedProfile.map((slot) => ({
       ...slot,

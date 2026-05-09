@@ -13,6 +13,10 @@ function nextCableSize(size) {
   return sizes.find((item) => item > size) ?? Math.ceil(size / 50) * 50;
 }
 
+function hasBackupSolar(input) {
+  return input.systemType === "backup" && (input.backupWithSolar || input.backupSolarMode === "with_solar" || input.systemSubtype === "backup_with_solar");
+}
+
 function uniqueMessages(messages) {
   const seen = new Set();
   return messages.filter((item) => {
@@ -25,7 +29,7 @@ function uniqueMessages(messages) {
 
 function addEngineeringGateChecks(messages, input, loadResult, batteryResult, pvResult, inverterResult, controllerResult, cablingResult, protectionResult, simulationResult, industrialResult) {
   const systemIsBatteryBased = input.systemType !== "gridtie";
-  const hasPv = input.systemType !== "backup" && input.systemType !== "gridtie" && pvResult;
+  const hasPv = input.systemType !== "gridtie" && Boolean(pvResult) && (input.systemType !== "backup" || hasBackupSolar(input));
 
   if (systemIsBatteryBased) {
 
@@ -179,7 +183,7 @@ export function generateAdvisorMessages(input, loadResult, batteryResult, pvResu
     pushMessage(messages, "warning", "نرخ دشارژ باتری بالا است", `نرخ دشارژ تقریبی ${batteryResult.dischargeCRate}C از محدوده مناسب برای ${batteryResult.chemistry} بالاتر است.`, "system");
   }
 
-  if (input.systemType !== "backup" && input.systemType !== "gridtie" && batteryResult.chargeCRate > batteryResult.recommendedChargeC) {
+  if ((input.systemType !== "backup" || hasBackupSolar(input)) && input.systemType !== "gridtie" && batteryResult.chargeCRate > batteryResult.recommendedChargeC) {
     pushMessage(messages, "warning", "نرخ شارژ بالا است", `جریان شارژ تقریبی باتری ${batteryResult.chargeCRate}C است و بهتر است با ظرفیت بزرگ‌تر یا آرایه متعادل‌تر طراحی شود.`, "system");
   }
 
@@ -195,7 +199,7 @@ export function generateAdvisorMessages(input, loadResult, batteryResult, pvResu
     pushMessage(messages, "error", "پیک راه‌اندازی بیش از حد اینورتر", "توان لحظه‌ای موردنیاز بارها از توان surge پیشنهادی اینورتر بیشتر است.", "loads");
   }
 
-  if (input.systemType !== "backup" && pvResult) {
+  if ((input.systemType !== "backup" || hasBackupSolar(input)) && pvResult) {
     if (pvResult.performanceRatio < 0.72) {
       pushMessage(messages, "warning", "افت عملکرد آرایه", "شرایط دما، سایه، گردوغبار یا کابل باعث افت محسوس عملکرد آرایه شده است.", "site");
     }
@@ -244,7 +248,7 @@ export function generateAdvisorMessages(input, loadResult, batteryResult, pvResu
     if (cablingResult.batteryVoltageDropPercent > input.batteryVoltageDropLimit && input.systemType !== "gridtie") {
       pushMessage(messages, "warning", "افت ولتاژ مسیر باتری بالا است", `افت ولتاژ مسیر باتری ${cablingResult.batteryVoltageDropPercent}% است و بهتر است سطح مقطع کابل افزایش یابد.`, "system");
     }
-    if (input.systemType !== "backup" && cablingResult.dcVoltageDropPercent > input.dcVoltageDropLimit) {
+    if ((input.systemType !== "backup" || hasBackupSolar(input)) && cablingResult.dcVoltageDropPercent > input.dcVoltageDropLimit) {
       pushMessage(messages, "warning", "افت ولتاژ مسیر DC پنل بالا است", `افت ولتاژ مسیر DC حدود ${cablingResult.dcVoltageDropPercent}% است و باید کابل یا آرایش پنل بازبینی شود.`, "system");
     }
     if (cablingResult.acVoltageDropPercent > input.acVoltageDropLimit) {
