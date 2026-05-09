@@ -267,3 +267,463 @@ button{min-height:48px;}
   .summary-card,
   .smart-decision-card { grid-template-columns: 1fr !important; min-height: auto !important; padding: 16px !important; }
 }
+
+/* ==========================================================
+   SHIL Mobile Native Correction - 2026-05
+   Fixes: iPhone safe-area, compact mobile dashboard, two-column
+   project start cards, readable centered text, no horizontal overflow.
+   ========================================================== */
+html,
+body,
+#root {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden !important;
+}
+
+body {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (max-width: 760px) {
+  :root {
+    --mobile-pad: 12px;
+    --mobile-gap: 12px;
+  }
+
+  .shell,
+  .app-shell,
+  .workspace-shell,
+  .project-flow-shell,
+  .shil-dashboard,
+  .shil-dashboard-final,
+  .ready-scenarios-shell,
+  .neo-page {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: calc(env(safe-area-inset-top) + 10px) var(--mobile-pad) calc(env(safe-area-inset-bottom) + 12px) !important;
+    overflow-x: hidden !important;
+  }
+
+  /* Dashboard mobile: compact native card rhythm */
+  .shil-dashboard-final {
+    gap: 12px !important;
+  }
+
+  .shil-dashboard-final__visual {
+    min-height: min(56dvh, 520px) !important;
+    border-radius: 24px !important;
+    background-size: cover !important;
+    background-position: top center !important;
+  }
+
+  .shil-dashboard-final__logo {
+    width: clamp(76px, 20vw, 96px) !important;
+    height: clamp(76px, 20vw, 96px) !important;
+    top: 14px !important;
+  }
+
+  .shil-dashboard-final__info-card {
+    margin-top: 12px !important;
+    padding: 18px 12px !important;
+    border-radius: 24px !important;
+    width: 100% !important;
+  }
+
+  .shil-dashboard-final__copy h1 {
+    font-size: clamp(22px, 6.2vw, 30px) !important;
+    line-height: 1.55 !important;
+    text-align: center !important;
+  }
+
+  .shil-dashboard-final__copy p {
+    font-size: 13px !important;
+    line-height: 1.9 !important;
+    text-align: center !important;
+    max-width: 34ch !important;
+    margin-inline: auto !important;
+  }
+
+  .shil-dashboard__stats {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+    align-items: stretch !important;
+  }
+
+  .shil-dashboard__stat {
+    min-width: 0 !important;
+    min-height: 132px !important;
+    padding: 12px 8px !important;
+    display: grid !important;
+    place-items: center !important;
+    align-content: center !important;
+    text-align: center !important;
+    gap: 8px !important;
+    border-radius: 22px !important;
+  }
+
+  .shil-dashboard__stat-icon {
+    width: 42px !important;
+    height: 42px !important;
+    display: grid !important;
+    place-items: center !important;
+    margin: 0 auto !important;
+  }
+
+  .shil-dashboard__stat span,
+  .shil-dashboard__stat strong,
+  .shil-dashboard__stat small {
+    text-align: center !important;
+    margin-inline: auto !important;
+  }
+
+  .shil-dashboard__stat strong {
+    font-size: clamp(18px, 5.6vw, 25px) !important;
+    line-height: 1.35 !important;
+  }
+
+  .shil-dashboard__stat small {
+    font-size: 11px !important;
+    line-height: 1.7 !important;
+    max-width: 16ch !important;
+  }
+
+  .shil-dashboard__cards {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+    margin-top: 14px !important;
+  }
+
+  .shil-dashboard-card {
+    min-height: 118px !important;
+    padding: 14px !important;
+    border-radius: 24px !important;
+    display: grid !important;
+    grid-template-columns: 64px 1fr !important;
+    grid-template-areas: "icon text" !important;
+    align-items: center !important;
+    gap: 12px !important;
+    text-align: center !important;
+  }
+
+  .shil-dashboard-card__icon,
+  .shil-dashboard-card > span:first-child {
+    grid-area: icon !important;
+    width: 54px !important;
+    height: 54px !important;
+    display: grid !important;
+    place-items: center !important;
+  }
+
+  .shil-dashboard-card h3,
+  .shil-dashboard-card strong,
+  .shil-dashboard-card p,
+  .shil-dashboard-card small,
+  .shil-dashboard-card span {
+    text-align: center !important;
+  }
+
+  /* Project start header: reduce dead vertical space */
+  .flow-top-card,
+  .v15-flow-header {
+    width: 100% !important;
+    min-height: auto !important;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    justify-items: center !important;
+    gap: 10px !important;
+    padding: 14px 12px !important;
+    border-radius: 22px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .flow-header-actions {
+    order: 3 !important;
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+  }
+
+  .flow-header-actions .btn,
+  .flow-top-card .btn {
+    width: 100% !important;
+    min-height: 44px !important;
+    border-radius: 16px !important;
+  }
+
+  .header-brand-logo {
+    order: 2 !important;
+    width: 72px !important;
+    height: 72px !important;
+    margin: 0 auto !important;
+  }
+
+  .flow-top-title strong {
+    min-width: min(84vw, 280px) !important;
+    padding: 12px 24px !important;
+    font-size: clamp(30px, 9vw, 40px) !important;
+    line-height: 1.35 !important;
+  }
+
+  .flow-top-title small {
+    font-size: 12px !important;
+    margin-top: 6px !important;
+  }
+
+  /* Project start cards: two-column mobile grid, no text clipping */
+  .design-overview-card,
+  .pro-design-overview,
+  .project-start-overview {
+    width: 100% !important;
+    min-height: auto !important;
+    margin: 12px auto 0 !important;
+    padding: 18px 12px 20px !important;
+    border-radius: 24px !important;
+  }
+
+  .design-overview-card__title,
+  .project-start-overview__title {
+    margin-bottom: 16px !important;
+    display: grid !important;
+    justify-items: center !important;
+    gap: 8px !important;
+  }
+
+  .design-overview-card__title span,
+  .project-start-overview__title span {
+    font-size: clamp(28px, 8.2vw, 38px) !important;
+    line-height: 1.35 !important;
+    padding: 10px 28px !important;
+    text-align: center !important;
+  }
+
+  .design-overview-card__title small,
+  .project-start-overview__title small {
+    font-size: 12.5px !important;
+    line-height: 1.9 !important;
+    max-width: 36ch !important;
+    text-align: center !important;
+  }
+
+  .design-path-grid,
+  .project-start-overview__grid {
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+    align-items: stretch !important;
+  }
+
+  .design-path-grid::before,
+  .project-start-overview__grid::before {
+    display: none !important;
+  }
+
+  .project-start-step-card,
+  .design-path-item,
+  .pro-path-item,
+  .v15-path-item {
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 136px !important;
+    aspect-ratio: 1 / 1.06 !important;
+    border-radius: 28px !important;
+    padding: 12px 8px !important;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    grid-template-rows: auto 1fr auto !important;
+    place-items: center !important;
+    align-content: center !important;
+    gap: 6px !important;
+    text-align: center !important;
+    overflow: hidden !important;
+  }
+
+  .project-start-step-card::before,
+  .design-path-item::before {
+    border-radius: 28px !important;
+  }
+
+  .project-start-step-card::after,
+  .design-path-item::after {
+    border-radius: 25px !important;
+  }
+
+  .project-start-step-card__number,
+  .design-path-item > span:first-child {
+    position: static !important;
+    width: 34px !important;
+    height: 34px !important;
+    font-size: 15px !important;
+    margin: 0 auto !important;
+    transform: none !important;
+  }
+
+  .project-start-step-card__icon,
+  .project-start-step-card i,
+  .design-path-item i {
+    font-size: clamp(28px, 8vw, 38px) !important;
+    line-height: 1 !important;
+    margin: 0 !important;
+  }
+
+  .project-start-step-card strong,
+  .design-path-item strong {
+    display: block !important;
+    width: 100% !important;
+    max-width: 12ch !important;
+    font-size: clamp(14px, 4.2vw, 18px) !important;
+    line-height: 1.55 !important;
+    text-align: center !important;
+    white-space: normal !important;
+    overflow-wrap: break-word !important;
+    text-wrap: balance !important;
+    margin: 0 auto !important;
+  }
+
+  /* Inner workflow pages */
+  .focus-layout {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .focus-stepper,
+  .pro-stepper {
+    position: static !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    padding: 10px !important;
+    border-radius: 20px !important;
+    max-height: none !important;
+  }
+
+  .focus-step {
+    min-width: 0 !important;
+    min-height: 76px !important;
+    grid-template-columns: 32px 28px 1fr !important;
+    gap: 6px !important;
+    padding: 8px !important;
+    border-radius: 16px !important;
+  }
+
+  .focus-step span {
+    width: 30px !important;
+    height: 30px !important;
+    font-size: 12px !important;
+  }
+
+  .focus-step em {
+    font-size: 20px !important;
+  }
+
+  .focus-step strong {
+    font-size: 12px !important;
+    line-height: 1.45 !important;
+  }
+
+  .focus-step small {
+    display: none !important;
+  }
+
+  .pro-content-card,
+  .focus-content-card {
+    padding: 16px 12px !important;
+    border-radius: 24px !important;
+    min-height: auto !important;
+  }
+
+  .method-card-grid,
+  .method-card-grid.two,
+  .method-card-grid.three,
+  .method-card-grid.five,
+  .focus-form-table,
+  .site-conditions-grid,
+  .system-config-grid,
+  .route-image-card-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .method-choice {
+    min-height: 96px !important;
+    padding: 14px 12px !important;
+    border-radius: 22px !important;
+  }
+
+  .method-choice strong {
+    font-size: 18px !important;
+    line-height: 1.55 !important;
+  }
+
+  .route-image-card {
+    min-height: 250px !important;
+    border-radius: 26px !important;
+  }
+
+  .route-image-card__media {
+    inset: 10px 10px 78px !important;
+    border-radius: 22px !important;
+  }
+
+  .review-card,
+  .summary-card,
+  .smart-decision-card {
+    grid-template-columns: 1fr !important;
+    min-height: auto !important;
+    padding: 16px 12px !important;
+    gap: 10px !important;
+  }
+
+  .final-actions,
+  .focus-actions,
+  .pro-actions {
+    position: sticky !important;
+    bottom: calc(env(safe-area-inset-bottom) + 8px) !important;
+    z-index: 40 !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    padding: 8px !important;
+    border-radius: 18px !important;
+    background: rgba(2, 6, 23, 0.72) !important;
+    border: 1px solid rgba(148, 163, 184, 0.14) !important;
+    backdrop-filter: blur(16px) !important;
+  }
+
+  .final-actions .btn,
+  .focus-actions .btn,
+  .pro-actions .btn {
+    width: 100% !important;
+    min-height: 46px !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .design-path-grid,
+  .project-start-overview__grid,
+  .shil-dashboard__stats,
+  .focus-stepper,
+  .pro-stepper {
+    grid-template-columns: 1fr !important;
+  }
+
+  .project-start-step-card,
+  .design-path-item,
+  .pro-path-item,
+  .v15-path-item {
+    aspect-ratio: auto !important;
+    min-height: 112px !important;
+  }
+}

@@ -20,20 +20,14 @@ function AppShell() {
     const handleOnline = () => {
       if (user?.id) void syncCloudProjects(user.id);
     };
-
     window.addEventListener("online", handleOnline);
-
-    return () => {
-      window.removeEventListener("online", handleOnline);
-    };
+    return () => window.removeEventListener("online", handleOnline);
   }, [syncCloudProjects, user?.id]);
 
   if (loading) {
     return (
       <div className="shell">
-        <section className="panel">
-          <strong>در حال بارگذاری...</strong>
-        </section>
+        <section className="panel"><strong>در حال بارگذاری...</strong></section>
       </div>
     );
   }
@@ -46,9 +40,7 @@ function AppShell() {
         <section className="panel">
           <h2>دسترسی شما فعال نیست</h2>
           <p>برای بررسی وضعیت حساب با مدیر سامانه تماس بگیرید.</p>
-          <button className="btn btn--primary" type="button" onClick={signOut}>
-            خروج
-          </button>
+          <button className="btn btn--primary" type="button" onClick={signOut}>خروج</button>
         </section>
       </div>
     );
@@ -60,9 +52,7 @@ function AppShell() {
         <section className="panel">
           <h2>حساب شما در انتظار تأیید است</h2>
           <p>پس از تأیید مدیر، امکان ورود کامل به اپ فعال می‌شود.</p>
-          <button className="btn btn--primary" type="button" onClick={signOut}>
-            خروج
-          </button>
+          <button className="btn btn--primary" type="button" onClick={signOut}>خروج</button>
         </section>
       </div>
     );
@@ -71,25 +61,18 @@ function AppShell() {
   switch (route.name) {
     case "admin":
       return isAdmin ? <AdminPage /> : <DashboardPage />;
-
     case "ai":
       return <AIExpertSolar />;
-
     case "contact":
       return <ContactPage />;
-
     case "equipment":
       return <EquipmentLibraryPage />;
-
     case "output":
       return <OutputPage />;
-
     case "workspace":
       return <ProjectWorkspacePage />;
-
     case "scenarios":
       return <ReadyScenariosPage />;
-
     case "dashboard":
     default:
       return <DashboardPage />;

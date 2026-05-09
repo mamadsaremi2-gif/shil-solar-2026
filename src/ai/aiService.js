@@ -1,40 +1,36 @@
-const API_KEY = "";
+import { SHIL_AI_PROMPT } from "./aiPrompt";
+
+const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY || "YOUR_API_KEY";
 
 export async function askSolarAI(userQuestion) {
-  if (!API_KEY) {
-    return "هوش مصنوعی هنوز فعال نشده است. کلید API باید به‌صورت امن تنظیم شود.";
+  if (!userQuestion?.trim()) return "لطفاً سوال خود را وارد کنید.";
+
+  if (!OPENAI_API_KEY || OPENAI_API_KEY === "YOUR_API_KEY") {
+    return "کلید API هنوز تنظیم نشده است. برای تست، مقدار VITE_OPENAI_API_KEY را در فایل .env.local قرار دهید.";
   }
+
+  const fullPrompt = `${SHIL_AI_PROMPT}\n\nسوال کاربر: ${userQuestion}`;
 
   try {
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${API_KEY}`,
+        Authorization: `Bearer ${OPENAI_API_KEY}`,
       },
       body: JSON.stringify({
         model: "gpt-4o-mini",
-        messages: [
-          {
-            role: "system",
-            content:
-              "تو دستیار تخصصی SHIL برای سیستم‌های خورشیدی، UPS، باتری، اینورتر و برق اضطراری هستی و فقط درباره این موضوعات پاسخ می‌دهی.",
-          },
-          {
-            role: "user",
-            content: userQuestion,
-          },
-        ],
-        temperature: 0.4,
-        max_tokens: 1200,
+        messages: [{ role: "user", content: fullPrompt }],
       }),
     });
 
-    const data = await response.json();
+    if (!response.ok) {
+      return "ارتباط با سرویس هوش مصنوعی برقرار نشد. لطفاً تنظیمات API را بررسی کنید.";
+    }
 
-    return data?.choices?.[0]?.message?.content || "پاسخی دریافت نشد.";
+    const data = await response.json();
+    return data.choices?.[0]?.message?.content || "پاسخی دریافت نشد.";
   } catch (error) {
-    console.error(error);
-    return "خطا در ارتباط با هوش مصنوعی.";
+    return "خطا در پردازش سوال. اتصال اینترنت یا تنظیمات API را بررسی کنید.";
   }
 }
