@@ -12,8 +12,35 @@ function round(value, digits = 2) {
 }
 
 const BACKUP_SYSTEM_VOLTAGES = [12, 24, 48];
-const BACKUP_BATTERY_UNIT_VOLTAGES = [12, 12.6, 24, 25, 48, 51, 51.2, 52];
+const BACKUP_BATTERY_UNIT_VOLTAGES = [12, 12.6, 24, 25, 25.6, 26, 48, 51, 51.2, 52];
+const BACKUP_BATTERY_VOLTAGE_PRIORITY = {
+  12: [[12, 12.6]],
+  24: [[24, 25, 25.6, 26], [12, 12.6]],
+  48: [[48, 51, 51.2, 52], [24, 25, 25.6, 26], [12, 12.6]],
+};
 const BACKUP_BATTERY_CAPACITIES = [50, 75, 100, 120, 150, 180, 200, 250, 300, 400];
+
+
+function getBackupBatteryVoltagePriority(systemVoltage, batteryUnitVoltage) {
+  const groups = BACKUP_BATTERY_VOLTAGE_PRIORITY[Number(systemVoltage)] || [];
+  const voltage = Number(batteryUnitVoltage);
+  const groupIndex = groups.findIndex((group) => group.some((item) => Math.abs(item - voltage) < 0.001));
+  return groupIndex >= 0 ? groupIndex + 1 : 99;
+}
+
+function getBackupBatteryVoltagePolicy(systemVoltage) {
+  const groups = BACKUP_BATTERY_VOLTAGE_PRIORITY[Number(systemVoltage)] || [];
+  if (Number(systemVoltage) === 12) {
+    return "برای سانورتر 12V فقط باتری 12V/12.6V مجاز است و افزایش ظرفیت فقط با موازی‌سازی انجام می‌شود.";
+  }
+  if (Number(systemVoltage) === 24) {
+    return "برای سانورتر 24V اولویت با باتری 24 تا 26V است؛ در اولویت دوم دو باتری 12 تا 12.6V سری می‌شوند.";
+  }
+  if (Number(systemVoltage) === 48) {
+    return "برای سانورتر 48V اولویت با باتری 48 تا 52V است؛ سپس دو باتری 24 تا 26V سری و در اولویت سوم چهار باتری 12 تا 12.6V سری می‌شوند.";
+  }
+  return groups.length ? `اولویت ولتاژ باتری بر اساس بانک ${systemVoltage}V اعمال شده است.` : "ولتاژ باتری باید با ولتاژ بانک سانورتر همخوان باشد.";
+}
 
 function temperatureFactor(avgTemp) {
   if (avgTemp <= 0) return 1.25;
@@ -79,12 +106,14 @@ function buildBackupBatteryScenarios(input, loadResult, roundTripEfficiency, the
           bankNominalWh: round(bankNominalWh),
           usableBatteryWh: round(usableBatteryWh),
           realBackupHours: round(realBackupHours, 1),
+          voltagePriority: getBackupBatteryVoltagePriority(systemVoltage, batteryUnitVoltage),
+          voltagePolicy: getBackupBatteryVoltagePolicy(systemVoltage),
           isSelected: systemVoltage === input.systemVoltage && batteryUnitVoltage === input.batteryUnitVoltage && batteryUnitAh === input.batteryUnitAh,
         });
       }
     }
   }
-  return scenarios;
+  return scenarios.sort((a, b) => (a.systemVoltage - b.systemVoltage) || (a.voltagePriority - b.voltagePriority) || (a.totalCount - b.totalCount) || (b.batteryUnitVoltage - a.batteryUnitVoltage) || (b.batteryUnitAh - a.batteryUnitAh));
 }
 
 export function calculateBattery(input, loadResult) {
@@ -197,6 +226,8 @@ export function calculateBattery(input, loadResult) {
     recommendedChargeC: chemistry.recommendedChargeC,
     recommendedDischargeC: chemistry.recommendedDischargeC,
     estimatedCycleLife: chemistry.cycleLife,
+    voltagePriority: input.systemType === "backup" ? getBackupBatteryVoltagePriority(input.systemVoltage, input.batteryUnitVoltage) : null,
+    voltagePolicy: input.systemType === "backup" ? getBackupBatteryVoltagePolicy(input.systemVoltage) : "",
     scenarios,
   };
 }

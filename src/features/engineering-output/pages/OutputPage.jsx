@@ -462,6 +462,7 @@ export function OutputPage() {
                 <div><span>توان پیک / Surge</span><strong>{formatNumber(loads.peakLoadPowerW)} W / {formatNumber(loads.surgePowerW)} W</strong></div>
                 <div><span>تعداد کل باتری</span><strong>{formatNumber(displayBattery.totalCount)}</strong></div>
                 <div><span>آرایش باتری</span><strong>{displayBattery.seriesCount === 1 ? `${displayBattery.parallelCount} موازی` : `${displayBattery.seriesCount} سری / ${displayBattery.parallelCount} موازی`}</strong></div>
+                {isBackup && displayBattery.voltagePolicy ? <div><span>سیاست انتخاب باتری</span><strong>{displayBattery.voltagePolicy}</strong></div> : null}
                 {displayBattery.seriesCount > 1 ? <div><span>دلیل سری شدن باتری</span><strong>{`برای رسیدن از باتری ${formatNumber(activeProject.form.batteryUnitVoltage)}V به ولتاژ بانک ${formatNumber(activeProject.form.systemVoltage)}V، تعداد ${displayBattery.seriesCount} عدد در هر رشته سری می‌شود.`}</strong></div> : <div><span>منطق ولتاژ باتری</span><strong>{`ولتاژ باتری ${formatNumber(activeProject.form.batteryUnitVoltage)}V با ولتاژ سانورتر ${formatNumber(activeProject.form.systemVoltage)}V همخوان است؛ سری کردن لازم نیست.`}</strong></div>}
                 <div><span>دلیل موازی شدن باتری</span><strong>{`برای افزایش ظرفیت Ah و تأمین زمان/روز موردنیاز، ${displayBattery.parallelCount} رشته مشابه با هم موازی می‌شوند.`}</strong></div>
                 <div><span>ظرفیت نامی بانک</span><strong>{formatNumber(displayBattery.bankNominalAh)} Ah</strong></div>

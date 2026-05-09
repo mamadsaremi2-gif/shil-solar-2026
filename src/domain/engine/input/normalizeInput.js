@@ -19,11 +19,21 @@ function bounded(value, fallback, min, max) {
 
 const BACKUP_SYSTEM_VOLTAGES = [12, 24, 48, 96];
 const BATTERY_UNIT_VOLTAGES = [12, 12.6, 12.8, 24, 25, 25.6, 26, 48, 51, 51.2, 52];
+const BACKUP_BATTERY_PRIORITY_BY_BANK = {
+  12: [12, 12.6],
+  24: [24, 25, 25.6, 26, 12, 12.6],
+  48: [48, 51, 51.2, 52, 24, 25, 25.6, 26, 12, 12.6],
+  96: [48, 51, 51.2, 52, 24, 25, 25.6, 26, 12, 12.6],
+};
 
 function nearestAllowed(value, allowed, fallback) {
   const n = parseFaNumber(value, fallback);
   if (!Number.isFinite(n)) return fallback;
   return allowed.includes(n) ? n : fallback;
+}
+
+function allowedBackupBatteryVoltages(systemVoltage) {
+  return BACKUP_BATTERY_PRIORITY_BY_BANK[Number(systemVoltage)] || BATTERY_UNIT_VOLTAGES;
 }
 
 export function normalizeInput(form) {
@@ -56,8 +66,9 @@ export function normalizeInput(form) {
   const normalizedSystemVoltage = systemType === "backup"
     ? nearestAllowed(form.systemVoltage, BACKUP_SYSTEM_VOLTAGES, 24)
     : positive(form.systemVoltage, 48);
+  const backupBatteryVoltages = allowedBackupBatteryVoltages(normalizedSystemVoltage);
   const normalizedBatteryUnitVoltage = systemType === "backup"
-    ? nearestAllowed(form.batteryUnitVoltage, BATTERY_UNIT_VOLTAGES, 12)
+    ? nearestAllowed(form.batteryUnitVoltage, backupBatteryVoltages, backupBatteryVoltages[0] || 12)
     : positive(form.batteryUnitVoltage, 12);
   const seasonProfile = form.seasonProfile || "annual";
   const inverterRatedPowerW = positive(form.inverterRatedPowerW, positive(form.inverterAcPowerW, positive(form.ratedPowerW, 0)));
