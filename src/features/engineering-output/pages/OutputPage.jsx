@@ -509,7 +509,28 @@ export function OutputPage() {
           {summary.systemType === 'backup' ? <BackupScenarioTable scenarios={battery.scenarios} /> : null}
 
 
-          {installation ? (
+          {summary.systemType === 'backup' ? (
+            <section className="panel panel--full">
+              <div className="panel__header">
+                <h2>مهندسی نصب برق اضطراری</h2>
+                <span className="badge">UPS Backup Layer</span>
+              </div>
+              <div className="summary-list">
+                <div><span>مدت زمان برق اضطراری موردنیاز</span><strong>{formatNumber(activeProject.form.backupHours, 1)} h</strong></div>
+                <div><span>زمان پشتیبانی واقعی</span><strong>{formatNumber(displayBattery.realBackupHours, 1)} h</strong></div>
+                <div><span>توان UPS / سانورتر</span><strong>{formatNumber(inverter.continuousPowerW)} W / {formatNumber(inverter.continuousPowerVA)} VA</strong></div>
+                <div><span>ظرفیت بانک باتری</span><strong>{formatNumber(activeProject.form.systemVoltage)}V / {formatNumber(displayBattery.bankNominalAh || summary.batteryAh)}Ah</strong></div>
+                <div><span>آرایش باتری</span><strong>{batteryArrangementText}</strong></div>
+                <div><span>جریان DC طراحی</span><strong>{formatNumber(industrial?.dcCurrentAtDemandA || 0, 1)} A</strong></div>
+                <div><span>کابل باتری</span><strong>{formatNumber(cabling.batteryCableSizeMm2, 1)} mm²</strong></div>
+                <div><span>حفاظت باتری / AC</span><strong>{protection?.batteryFuseA ? formatNumber(protection.batteryFuseA) : '—'} A / {protection?.acFuseA ? formatNumber(protection.acFuseA) : '—'} A</strong></div>
+              </div>
+              <div className="advisor-list">
+                <div className="advisor-card advisor-card--info"><strong>قانون مسیر برق اضطراری</strong><span>در این گزارش هیچ آیتم پنل، MPPT، تابش یا کابل PV در محاسبات برق اضطراری دخالت داده نمی‌شود.</span></div>
+                <div className="advisor-card advisor-card--info"><strong>مبنای طراحی</strong><span>محاسبات بر اساس توان مصرف‌کننده، زمان بکاپ موردنیاز، راندمان، DoD و ظرفیت بانک باتری انجام شده است.</span></div>
+              </div>
+            </section>
+          ) : installation ? (
             <section className="panel panel--full">
               <div className="panel__header">
                 <h2>مهندسی نصب و اجرای آرایه خورشیدی</h2>

@@ -16,6 +16,11 @@ function AppShell() {
   const { route, syncCloudProjects } = useProjectStore();
   const { user, loading, isRejected, isPending, signOut, isAdmin } = useAuth();
 
+  const handleSignOut = async () => {
+    await signOut();
+    window.location.reload();
+  };
+
   useEffect(() => {
     const handleOnline = () => {
       if (user?.id) void syncCloudProjects(user.id);
@@ -40,7 +45,7 @@ function AppShell() {
         <section className="panel">
           <h2>دسترسی شما فعال نیست</h2>
           <p>برای بررسی وضعیت حساب با مدیر سامانه تماس بگیرید.</p>
-          <button className="btn btn--primary" type="button" onClick={signOut}>خروج</button>
+          <button className="btn btn--primary" type="button" onClick={handleSignOut}>خروج</button>
         </section>
       </div>
     );
@@ -52,7 +57,7 @@ function AppShell() {
         <section className="panel">
           <h2>حساب شما در انتظار تأیید است</h2>
           <p>پس از تأیید مدیر، امکان ورود کامل به اپ فعال می‌شود.</p>
-          <button className="btn btn--primary" type="button" onClick={signOut}>خروج</button>
+          <button className="btn btn--primary" type="button" onClick={handleSignOut}>خروج</button>
         </section>
       </div>
     );

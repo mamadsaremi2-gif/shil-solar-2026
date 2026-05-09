@@ -9,6 +9,11 @@ import { buildDashboardCards } from "./model/dashboardCards";
 export function DashboardPage() {
   const { projects, startNewProject, openScenarios, openContact, openAdmin } = useProjectStore();
   const { signOut, profile, isAdmin, isOfflineMode } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+    window.location.reload();
+  };
   const systemStatus = useSystemStatus(isOfflineMode);
 
   const dashboardCards = useMemo(
@@ -18,9 +23,9 @@ export function DashboardPage() {
       openContact,
       openScenarios,
       openAdmin,
-      signOut,
+      signOut: handleSignOut,
     }),
-    [isAdmin, openAdmin, openContact, openScenarios, signOut, startNewProject],
+    [isAdmin, openAdmin, openContact, openScenarios, handleSignOut, startNewProject],
   );
 
   return (
