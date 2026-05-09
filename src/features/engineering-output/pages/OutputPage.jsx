@@ -267,7 +267,11 @@ export function OutputPage() {
   }
 
   const { summary, battery, pv, inverter, controller, cabling, protection, installation, loads, simulation, industrial, advisor, validation } = output.result;
-  const displayBattery = summary.systemType === 'backup' ? buildBackupBatteryOutput(activeProject.form, loads, battery) : battery;
+  const isBackup = summary.systemType === 'backup';
+  const displayBattery = isBackup ? buildBackupBatteryOutput(activeProject.form, loads, battery) : battery;
+  const reportKindClass = isBackup ? 'report-export-root--backup' : 'report-export-root--solar';
+  const solarOnlyPattern = /(PV|MPPT|پنل|خورشیدی|تابش|استرینگ|رشته|Voc|Vmp|آرایه)/i;
+  const visibleAdvisor = isBackup ? (advisor || []).filter((item) => !solarOnlyPattern.test(`${item?.title || ''} ${item?.message || ''} ${item?.text || ''}`)) : advisor;
   const designStatusLabel = useMemo(() => summary.designStatus === 'error' ? 'نیازمند اصلاح' : summary.designStatus === 'warning' ? 'دارای هشدار' : 'معتبر', [summary.designStatus]);
   const projectTitle = activeProject.form.projectTitle || 'Solar Design Suite';
   const projectDate = new Date().toLocaleDateString('fa-IR');
@@ -288,7 +292,7 @@ export function OutputPage() {
     ['کارشناس طراحی', 'کارشناس فنی'],
     ['مجموعه', 'SHILIRAN GROUP'],
     ['وب سایت', 'SHIL.IR'],
-    ['نوع گزارش', summary.systemType === 'backup' ? 'تأمین برق اضطراری با باتری' : 'طراحی سیستم خورشیدی'],
+    ['نوع گزارش', isBackup ? 'تأمین برق اضطراری با باتری' : 'طراحی سیستم خورشیدی'],
     ['وضعیت طراحی', designStatusLabel],
   ];
 
@@ -297,8 +301,8 @@ export function OutputPage() {
     ['ضریب همزمانی میانگین', `${loads.connectedPowerW ? formatNumber((loads.demandPowerW / loads.connectedPowerW) * 100, 0) : 100} %`],
     ['نیاز واقعی اجرا', `${formatNumber(summary.demandPowerW)} W`],
     ['بار ظاهری طراحی', `${formatNumber(summary.demandApparentVA || loads.demandApparentVA)} VA`],
-    [summary.systemType === 'backup' ? 'انرژی مصرفی' : 'انرژی روزانه', `${formatNumber(summary.totalDailyEnergyWh)} Wh`],
-    [summary.systemType === 'backup' ? 'زمان مورد نیاز مشتری' : 'روزهای خودکفایی مورد نظر', summary.systemType === 'backup' ? `${formatNumber(activeProject.form.backupHours, 1)} h` : `${formatNumber(activeProject.form.daysAutonomy || 0, 1)} روز`],
+    [isBackup ? 'انرژی مصرفی' : 'انرژی روزانه', `${formatNumber(summary.totalDailyEnergyWh)} Wh`],
+    [isBackup ? 'زمان مورد نیاز مشتری' : 'روزهای خودکفایی مورد نظر', isBackup ? `${formatNumber(activeProject.form.backupHours, 1)} h` : `${formatNumber(activeProject.form.daysAutonomy || 0, 1)} روز`],
     [summary.systemType === 'offgrid' ? 'خودکفایی واقعی باتری' : 'زمان پشتیبانی واقعی', summary.systemType === 'offgrid' ? `${formatNumber(summary.batteryAutonomyDays, 2)} روز / ${formatNumber(summary.batteryBackupHours, 1)} h` : `${formatNumber(displayBattery.realBackupHours ?? summary.batteryBackupHours, 1)} h`],
     ['ولتاژ سیستم', `${formatNumber(activeProject.form.systemVoltage)} V`],
     ['ظرفیت نهایی بانک باتری', `${formatNumber(displayBattery.bankNominalAh || summary.batteryAh)} Ah`],
@@ -313,7 +317,7 @@ export function OutputPage() {
     : `برای کارکرد این سیستم، ${formatNumber(displayBattery.totalCount)} عدد باتری نیاز است. ابتدا در هر رشته ${displayBattery.seriesCount} عدد باتری به صورت سری وصل می‌شوند تا ولتاژ ${formatNumber(activeProject.form.systemVoltage)}V تامین شود. سپس ${displayBattery.parallelCount} رشته موازی می‌شود تا ظرفیت و زمان پشتیبانی افزایش پیدا کند. خروجی نهایی بانک برابر ${formatNumber(activeProject.form.systemVoltage)}V / ${formatNumber(displayBattery.bankNominalAh || displayBattery.parallelCount * Number(activeProject.form.batteryUnitAh || 0))}Ah است.`;
 
   const requiredEquipmentRows = [
-    [summary.systemType === 'backup' ? 'سانورتر پیشنهادی' : 'اینورتر پیشنهادی', `${formatNumber(summary.inverterPowerW)} W / ${formatNumber(summary.inverterPowerVA || inverter.continuousPowerVA)} VA`],
+    [isBackup ? 'سانورتر پیشنهادی' : 'اینورتر پیشنهادی', `${formatNumber(summary.inverterPowerW)} W / ${formatNumber(summary.inverterPowerVA || inverter.continuousPowerVA)} VA`],
     ['Surge پیشنهادی', `${formatNumber(summary.inverterSurgePowerW)} W / ${formatNumber(summary.inverterSurgePowerVA || inverter.surgePowerVA)} VA`],
     ['بانک باتری', batteryArrangementText],
     ['توضیح بانک باتری', batteryExplanationText],
@@ -324,7 +328,7 @@ export function OutputPage() {
     ['فیوز باتری / AC', `${protection?.batteryFuseA ? formatNumber(protection.batteryFuseA) : '—'} A / ${protection?.acFuseA ? formatNumber(protection.acFuseA) : '—'} A`],
   ];
 
-  if (summary.systemType !== 'backup') {
+  if (!isBackup) {
     requiredEquipmentRows.splice(1, 0, ['آرایه پنل', `${formatNumber(summary.panelCount)} عدد پنل ${formatNumber(activeProject.form.panelWatt)}W - آرایش ${pv?.panelSeriesCount || 0} سری × ${pv?.panelParallelCount || 0} موازی`]);
     requiredEquipmentRows.splice(2, 0, ['مشخصات پنل', `Vmp ${formatNumber(activeProject.form.panelVmp)}V / Voc ${formatNumber(activeProject.form.panelVoc)}V / ضریب افزایش پنل ${formatNumber(activeProject.form.panelFactor || 1, 2)}`]);
     requiredEquipmentRows.splice(3, 0, ['علت سری کردن پنل', `${pv?.panelSeriesCount || 0} پنل به صورت سری انتخاب شده تا ولتاژ کاری آرایه (${formatNumber(pv?.stringVmp || 0)}V) داخل محدوده MPPT سانورتر (${formatNumber(activeProject.form.mpptMinVoltage)} تا ${formatNumber(activeProject.form.mpptMaxVoltage)}V) قرار بگیرد.`]);
@@ -371,7 +375,7 @@ export function OutputPage() {
         </div>
       </header>
 
-      <div ref={reportRef} className="report-export-root">
+      <div ref={reportRef} className={`report-export-root ${reportKindClass}`}>
         <section className="pdf-page-section report-page executive-summary-page" style={{ backgroundImage: `linear-gradient(135deg, rgba(8,17,31,0.92), rgba(15,23,42,0.86)), url(${PUBLIC_ASSETS.backgrounds.report})` }}>
           <div className="executive-summary-header">
             <div className="executive-summary-brand">
@@ -390,7 +394,7 @@ export function OutputPage() {
           <div className="executive-summary-title">
             <span className="eyebrow">خلاصه مدیریتی</span>
             <h1>{projectTitle}</h1>
-            <p>{summary.systemType === 'backup' ? 'جمع بندی یک صفحه ای طراحی تأمین برق اضطراری با باتری، شامل معرفی مشتری، معرفی کارشناس، نتیجه خلاصه محاسبات و تجهیزات مورد نیاز مصرف کننده.' : 'جمع بندی یک صفحه ای طراحی سیستم خورشیدی، شامل مشخصات مشتری، کارشناس، خلاصه محاسبات و تجهیزات اصلی مورد نیاز.'}</p>
+            <p>{isBackup ? 'جمع بندی یک صفحه ای طراحی تأمین برق اضطراری با باتری، شامل معرفی مشتری، معرفی کارشناس، نتیجه خلاصه محاسبات و تجهیزات مورد نیاز مصرف کننده.' : 'جمع بندی یک صفحه ای طراحی سیستم خورشیدی، شامل مشخصات مشتری، کارشناس، خلاصه محاسبات و تجهیزات اصلی مورد نیاز.'}</p>
           </div>
 
           <div className="executive-summary-grid">
@@ -431,16 +435,16 @@ export function OutputPage() {
         <section className="pdf-page-section report-page">
           <section className="metric-grid metric-grid--tight">
             <MetricCard label="نیاز واقعی اجرا" value={`${formatNumber(summary.demandPowerW)} W`} accent="green" />
-            <MetricCard label={summary.systemType === 'backup' ? 'زمان موردنیاز مشتری' : 'روزهای خودکفایی'} value={summary.systemType === 'backup' ? `${formatNumber(activeProject.form.backupHours, 1)} h` : `${formatNumber(activeProject.form.daysAutonomy || 0, 1)} روز`} accent="purple" />
-            <MetricCard label={summary.systemType === 'backup' ? 'زمان برق اضطراری واقعی' : 'تولید روزانه پنل'} value={summary.systemType === 'backup' ? `${formatNumber(displayBattery.realBackupHours, 1)} h` : `${formatNumber(pv?.estimatedDailyProductionWh || 0)} Wh`} accent="purple" />
+            <MetricCard label={isBackup ? 'زمان موردنیاز مشتری' : 'روزهای خودکفایی'} value={isBackup ? `${formatNumber(activeProject.form.backupHours, 1)} h` : `${formatNumber(activeProject.form.daysAutonomy || 0, 1)} روز`} accent="purple" />
+            <MetricCard label={isBackup ? 'زمان برق اضطراری واقعی' : 'تولید روزانه پنل'} value={isBackup ? `${formatNumber(displayBattery.realBackupHours, 1)} h` : `${formatNumber(pv?.estimatedDailyProductionWh || 0)} Wh`} accent="purple" />
             <MetricCard label="بانک باتری" value={`${formatNumber(displayBattery.totalCount)} عدد / ${displayBattery.seriesCount === 1 ? `${displayBattery.parallelCount} موازی` : `${displayBattery.seriesCount} سری × ${displayBattery.parallelCount} موازی`}`} accent="green" />
-            {summary.systemType !== 'backup' ? <MetricCard label="آرایه پنل" value={`${formatNumber(summary.panelCount)} عدد / ${pv?.panelSeriesCount || 0}S × ${pv?.panelParallelCount || 0}P`} accent="blue" /> : null}
+            {!isBackup ? <MetricCard label="آرایه پنل" value={`${formatNumber(summary.panelCount)} عدد / ${pv?.panelSeriesCount || 0}S × ${pv?.panelParallelCount || 0}P`} accent="blue" /> : null}
             <MetricCard label="کابل باتری" value={`${formatNumber(summary.batteryCableSizeMm2, 1)} mm²`} accent="amber" />
             <MetricCard label="فیوز AC" value={summary.acFuseA ? `${formatNumber(summary.acFuseA)} A` : '—'} accent="amber" />
           </section>
         </section>
 
-        {summary.systemType !== 'backup' ? (
+        {!isBackup ? (
           <section className="pdf-page-section report-page">
             <ClimateOutputPanel form={activeProject.form} pv={pv} />
           </section>
@@ -464,16 +468,16 @@ export function OutputPage() {
                 <div><span>Charge / Discharge C-rate</span><strong>{formatNumber(displayBattery.chargeCRate, 2)} / {formatNumber(displayBattery.dischargeCRate, 2)} C</strong></div>
                 {summary.systemType === 'offgrid' ? <div><span>بکاپ در بار پیک</span><strong>{formatNumber(summary.batteryBackupHoursAtPeak, 1)} h</strong></div> : null}
                 {summary.systemType === 'offgrid' ? <div><span>خودکفایی بر اساس مصرف روزانه</span><strong>{formatNumber(summary.batteryAutonomyDays, 2)} روز</strong></div> : null}
-                <div><span>{summary.systemType === 'backup' ? 'توان سانورتر' : 'توان اینورتر'}</span><strong>{formatNumber(inverter.continuousPowerW)} W / {formatNumber(inverter.continuousPowerVA)} VA</strong></div>
+                <div><span>{isBackup ? 'توان سانورتر' : 'توان اینورتر'}</span><strong>{formatNumber(inverter.continuousPowerW)} W / {formatNumber(inverter.continuousPowerVA)} VA</strong></div>
                 <div><span>Surge خروجی</span><strong>{formatNumber(inverter.surgePowerW)} W / {formatNumber(inverter.surgePowerVA)} VA</strong></div>
-                {pv ? <div><span>PR طراحی</span><strong>{formatNumber(pv.performanceRatio, 2)}</strong></div> : null}
-                {pv ? <div><span>پنل انتخابی</span><strong>{`${formatNumber(activeProject.form.panelWatt)}W / Vmp ${formatNumber(activeProject.form.panelVmp)}V / Voc ${formatNumber(activeProject.form.panelVoc)}V`}</strong></div> : null}
-                {pv ? <div><span>رشته پنل (سری × موازی)</span><strong>{pv.panelSeriesCount} × {pv.panelParallelCount}</strong></div> : null}
-                {pv ? <div><span>علت سری / موازی پنل</span><strong>{`سری برای ساخت ولتاژ مناسب MPPT و موازی برای رسیدن به تعداد کل ${formatNumber(pv.panelCount)} پنل و توان ${formatNumber(pv.installedPvPowerW)}W است.`}</strong></div> : null}
-                {pv ? <div><span>String Vmp / Voc(cold)</span><strong>{formatNumber(pv.stringVmp)} / {formatNumber(pv.stringVocCold)} V</strong></div> : null}
-                {pv ? <div><span>تولید روزانه تخمینی</span><strong>{formatNumber(pv.estimatedDailyProductionWh)} Wh</strong></div> : null}
-                {installation ? <div><span>تولید خالص بعد از شرایط نصب</span><strong>{formatNumber(installation.losses.netDailyProductionWh)} Wh</strong></div> : null}
-                {installation ? <div><span>فضای نصب موردنیاز</span><strong>{formatNumber(installation.area.requiredAreaM2, 1)} m²</strong></div> : null}
+                {!isBackup && pv ? <div><span>PR طراحی</span><strong>{formatNumber(pv.performanceRatio, 2)}</strong></div> : null}
+                {!isBackup && pv ? <div><span>پنل انتخابی</span><strong>{`${formatNumber(activeProject.form.panelWatt)}W / Vmp ${formatNumber(activeProject.form.panelVmp)}V / Voc ${formatNumber(activeProject.form.panelVoc)}V`}</strong></div> : null}
+                {!isBackup && pv ? <div><span>رشته پنل (سری × موازی)</span><strong>{pv.panelSeriesCount} × {pv.panelParallelCount}</strong></div> : null}
+                {!isBackup && pv ? <div><span>علت سری / موازی پنل</span><strong>{`سری برای ساخت ولتاژ مناسب MPPT و موازی برای رسیدن به تعداد کل ${formatNumber(pv.panelCount)} پنل و توان ${formatNumber(pv.installedPvPowerW)}W است.`}</strong></div> : null}
+                {!isBackup && pv ? <div><span>String Vmp / Voc(cold)</span><strong>{formatNumber(pv.stringVmp)} / {formatNumber(pv.stringVocCold)} V</strong></div> : null}
+                {!isBackup && pv ? <div><span>تولید روزانه تخمینی</span><strong>{formatNumber(pv.estimatedDailyProductionWh)} Wh</strong></div> : null}
+                {!isBackup && installation ? <div><span>تولید خالص بعد از شرایط نصب</span><strong>{formatNumber(installation.losses.netDailyProductionWh)} Wh</strong></div> : null}
+                {!isBackup && installation ? <div><span>فضای نصب موردنیاز</span><strong>{formatNumber(installation.area.requiredAreaM2, 1)} m²</strong></div> : null}
                 {summary.systemType === 'gridtie' ? <div><span>واردات / صادرات شبکه</span><strong>{formatNumber(summary.gridImportWh)} / {formatNumber(summary.gridExportWh)} Wh</strong></div> : null}
               </div>
             </section>
@@ -481,18 +485,18 @@ export function OutputPage() {
             <section className="panel">
               <div className="panel__header"><h2>کنترلر، کابل و حفاظت</h2></div>
               <div className="summary-list">
-                {summary.systemType !== 'backup' ? <div><span>نوع MPPT داخلی</span><strong>{controller?.controllerType ?? '—'}</strong></div> : null}
-                {summary.systemType !== 'backup' ? <div><span>جریان MPPT داخلی / انتخابی</span><strong>{controller ? `${formatNumber(controller.requiredCurrentA, 1)} / ${controller.controllerCount > 1 ? `${controller.controllerCount} × ${formatNumber(controller.perControllerA)}` : formatNumber(controller.selectedCurrentA)} A` : '—'}</strong></div> : null}
-                {summary.systemType !== 'backup' ? <div><span>کابل DC پنل</span><strong>{pv ? `${formatNumber(cabling.dcCableSizeMm2, 1)} mm² | افت ${formatNumber(cabling.dcVoltageDropPercent, 2)}%` : '—'}</strong></div> : null}
+                {!isBackup ? <div><span>نوع MPPT داخلی</span><strong>{controller?.controllerType ?? '—'}</strong></div> : null}
+                {!isBackup ? <div><span>جریان MPPT داخلی / انتخابی</span><strong>{controller ? `${formatNumber(controller.requiredCurrentA, 1)} / ${controller.controllerCount > 1 ? `${controller.controllerCount} × ${formatNumber(controller.perControllerA)}` : formatNumber(controller.selectedCurrentA)} A` : '—'}</strong></div> : null}
+                {!isBackup ? <div><span>کابل DC پنل</span><strong>{pv ? `${formatNumber(cabling.dcCableSizeMm2, 1)} mm² | افت ${formatNumber(cabling.dcVoltageDropPercent, 2)}%` : '—'}</strong></div> : null}
                 <div><span>کابل باتری</span><strong>{`${formatNumber(cabling.batteryCableSizeMm2, 1)} mm² | افت ${formatNumber(cabling.batteryVoltageDropPercent, 2)}%`}</strong></div>
                 <div><span>کابل AC خروجی</span><strong>{`${formatNumber(cabling.acCableSizeMm2, 1)} mm² | افت ${formatNumber(cabling.acVoltageDropPercent, 2)}%`}</strong></div>
-                {summary.systemType !== 'backup' ? <div><span>فیوز DC پنل</span><strong>{protection?.dcFuseA ? `${formatNumber(protection.dcFuseA)} A` : '—'}</strong></div> : null}
+                {!isBackup ? <div><span>فیوز DC پنل</span><strong>{protection?.dcFuseA ? `${formatNumber(protection.dcFuseA)} A` : '—'}</strong></div> : null}
                 <div><span>فیوز باتری</span><strong>{protection?.batteryFuseA ? `${formatNumber(protection.batteryFuseA)} A` : '—'}</strong></div>
                 <div><span>فیوز AC</span><strong>{protection?.acFuseA ? `${formatNumber(protection.acFuseA)} A` : '—'}</strong></div>
                 <div><span>کلید DC Disconnect</span><strong>{protection?.dcDisconnectRating || '—'}</strong></div>
                 <div><span>SPD</span><strong>{protection?.dcSpdType || (protection?.spdRequired ? 'Type II DC پیشنهاد می‌شود' : 'ضروری نیست')}</strong></div>
-                {summary.systemType !== 'backup' ? <div><span>IP تابلو DC</span><strong>{protection?.enclosureIpRating || installation?.protection?.ipRating || '—'}</strong></div> : null}
-                {summary.systemType !== 'backup' ? <div><span>فیوز رشته</span><strong>{protection?.stringFuseRequired ? `${formatNumber(protection.stringFuseA)} A gPV` : 'معمولاً لازم نیست'}</strong></div> : null}
+                {!isBackup ? <div><span>IP تابلو DC</span><strong>{protection?.enclosureIpRating || installation?.protection?.ipRating || '—'}</strong></div> : null}
+                {!isBackup ? <div><span>فیوز رشته</span><strong>{protection?.stringFuseRequired ? `${formatNumber(protection.stringFuseA)} A gPV` : 'معمولاً لازم نیست'}</strong></div> : null}
               </div>
             </section>
           </div>
@@ -500,16 +504,16 @@ export function OutputPage() {
           <section className="panel panel--full">
             <div className="panel__header"><h2>تجهیزات انتخاب‌شده</h2></div>
             <div className="equipment-output-grid">
-              {summary.systemType !== 'backup' ? <EquipmentCard title="پنل خورشیدی" item={panelItem} /> : null}
+              {!isBackup ? <EquipmentCard title="پنل خورشیدی" item={panelItem} /> : null}
               <EquipmentCard title="باتری" item={batteryItem} />
-              <EquipmentCard title={summary.systemType === 'backup' ? 'سانورتر' : 'اینورتر'} item={inverterItem} />
+              <EquipmentCard title={isBackup ? 'سانورتر' : 'اینورتر'} item={inverterItem} />
             </div>
           </section>
 
-          {summary.systemType === 'backup' ? <BackupScenarioTable scenarios={battery.scenarios} /> : null}
+          {isBackup ? <BackupScenarioTable scenarios={battery.scenarios} /> : null}
 
 
-          {summary.systemType === 'backup' ? (
+          {isBackup ? (
             <section className="panel panel--full">
               <div className="panel__header">
                 <h2>مهندسی نصب برق اضطراری</h2>
@@ -566,8 +570,8 @@ export function OutputPage() {
               <div><span>زمان پشتیبانی هدف / واقعی</span><strong>{formatNumber(industrial?.requiredBackupHours || 0, 1)} h / {formatNumber(industrial?.realBackupHours || 0, 1)} h</strong></div>
               <div><span>جریان DC دائم / لحظه‌ای</span><strong>{formatNumber(industrial?.dcCurrentAtDemandA || 0, 1)} A / {formatNumber(industrial?.dcCurrentAtSurgeA || 0, 1)} A</strong></div>
               <div><span>ولتاژ DC پیشنهادی</span><strong>{formatNumber(industrial?.recommendedDcVoltage || activeProject.form.systemVoltage)} V</strong></div>
-              {summary.systemType !== 'backup' ? <div><span>پوشش انرژی PV</span><strong>{formatNumber((industrial?.pvCoverageRatio || 0) * 100, 0)} %</strong></div> : null}
-              {summary.systemType !== 'backup' ? <div><span>کمبود / مازاد انرژی PV</span><strong>{formatNumber(industrial?.pvShortageWh || 0)} / {formatNumber(industrial?.pvSurplusWh || 0)} Wh</strong></div> : null}
+              {!isBackup ? <div><span>پوشش انرژی PV</span><strong>{formatNumber((industrial?.pvCoverageRatio || 0) * 100, 0)} %</strong></div> : null}
+              {!isBackup ? <div><span>کمبود / مازاد انرژی PV</span><strong>{formatNumber(industrial?.pvShortageWh || 0)} / {formatNumber(industrial?.pvSurplusWh || 0)} Wh</strong></div> : null}
               <div><span>استفاده از ظرفیت اینورتر</span><strong>{formatNumber(industrial?.inverterUtilizationPercent || 0, 0)} %</strong></div>
             </div>
             {industrial?.actionItems?.length ? (
@@ -600,7 +604,7 @@ export function OutputPage() {
 
           <section className="panel panel--full">
             <div className="panel__header"><h2>تحلیل Advisor</h2></div>
-            <AdvisorList messages={advisor} />
+            <AdvisorList messages={visibleAdvisor} />
           </section>
         </section>
 
@@ -618,10 +622,10 @@ export function OutputPage() {
             </section>
             <div className="simulation-grid">
               {summary.systemType !== 'gridtie' ? <SimpleLineChart title="SOC باتری در طول شبانه روز" labels={simulation.series.labels} values={simulation.series.socPercent} suffix="%" /> : null}
-              <SimpleLineChart title={summary.systemType === 'backup' ? 'مصرف بار در برابر دشارژ باتری' : 'تولید پنل در برابر مصرف بار'} labels={simulation.series.labels} values={simulation.series.loadWh} secondaryValues={summary.systemType === 'backup' ? simulation.series.deficitWh.map((v, i) => Math.max((simulation.series.loadWh[i] || 0) - v, 0)) : simulation.series.pvWh} suffix="Wh" />
-              <SimpleLineChart title={summary.systemType === 'backup' ? 'کمبود انرژی ساعتی' : 'کمبود و اضافه تولید ساعتی'} labels={simulation.series.labels} values={simulation.series.deficitWh} secondaryValues={summary.systemType === 'backup' ? undefined : simulation.series.surplusWh} suffix="Wh" />
+              <SimpleLineChart title={isBackup ? 'مصرف بار در برابر دشارژ باتری' : 'تولید پنل در برابر مصرف بار'} labels={simulation.series.labels} values={simulation.series.loadWh} secondaryValues={isBackup ? simulation.series.deficitWh.map((v, i) => Math.max((simulation.series.loadWh[i] || 0) - v, 0)) : simulation.series.pvWh} suffix="Wh" />
+              <SimpleLineChart title={isBackup ? 'کمبود انرژی ساعتی' : 'کمبود و اضافه تولید ساعتی'} labels={simulation.series.labels} values={simulation.series.deficitWh} secondaryValues={isBackup ? undefined : simulation.series.surplusWh} suffix="Wh" />
               {(summary.systemType === 'gridtie' || summary.systemType === 'hybrid') ? <SimpleLineChart title="واردات و صادرات شبکه" labels={simulation.series.labels} values={simulation.series.gridImportWh} secondaryValues={simulation.series.gridExportWh} suffix="Wh" /> : null}
-              {summary.systemType !== 'backup' ? <SimpleBarChart title="تخمین تولید ماهانه آرایه" items={simulation.series.monthlyProduction} suffix="Wh" /> : null}
+              {!isBackup ? <SimpleBarChart title="تخمین تولید ماهانه آرایه" items={simulation.series.monthlyProduction} suffix="Wh" /> : null}
             </div>
           </section>
         ) : null}

@@ -727,3 +727,55 @@ textarea {
     min-height: 112px !important;
   }
 }
+
+/* Final engineering report rule: mobile must keep report/page structure like desktop.
+   It can be zoomed/read like a book instead of breaking into long ugly cards. */
+@media (max-width: 768px) {
+  .topbar--report {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 60 !important;
+  }
+
+  .report-export-root {
+    width: 1040px !important;
+    max-width: none !important;
+    transform: scale(calc((100vw - 28px) / 1040));
+    transform-origin: top right;
+    margin-right: 14px !important;
+    margin-left: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  .shell:has(.report-export-root) {
+    overflow-x: hidden !important;
+    min-height: calc(100dvh + 920px) !important;
+  }
+
+  .report-export-root .pdf-page-section,
+  .report-export-root .report-page,
+  .report-export-root .panel,
+  .report-export-root .metric-grid,
+  .report-export-root .output-grid--single-export,
+  .report-export-root .summary-list,
+  .report-export-root .equipment-output-grid,
+  .report-export-root .simulation-grid {
+    max-width: none !important;
+  }
+
+  .report-export-root .output-grid--single-export {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .report-export-root .metric-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+
+  .report-export-root .summary-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .report-export-root .equipment-output-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
