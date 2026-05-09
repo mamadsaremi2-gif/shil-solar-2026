@@ -170,11 +170,16 @@ export function EquipmentLoadBank({ form, updateLoadItem, addLoadItem, removeLoa
   const [advanced, setAdvanced] = useState(false);
   const [query, setQuery] = useState("");
   const [custom, setCustom] = useState({ name: "", power: 100, hours: 1, qty: 1, loadType: "mixed" });
+  const isBackup = form.systemType === "backup";
   const options = EquipmentRepository.search({ category: "load", query }).slice(0, 40);
   const totalPower = (form.loadItems || []).reduce((sum, item) => sum + n(item.qty, 1) * n(item.power, 0) * n(item.coincidenceFactor, 1), 0);
-  const totalEnergy = (form.loadItems || []).reduce((sum, item) => sum + n(item.qty, 1) * n(item.power, 0) * n(item.hours, 1) * n(item.coincidenceFactor, 1) * n(item.seasonalUseFactor, 1), 0) / 1000;
+  const totalEnergy = (form.loadItems || []).reduce((sum, item) => {
+    const runtime = isBackup ? n(item.backupHours, n(form.backupHours, 0)) : n(item.hours, 1);
+    const seasonal = isBackup ? 1 : n(item.seasonalUseFactor, 1);
+    return sum + n(item.qty, 1) * n(item.power, 0) * runtime * n(item.coincidenceFactor, 1) * seasonal;
+  }, 0) / 1000;
   const addFromBank = (item) => {
-    addLoadItem({ ...(item.specs || {}), name: item.specs?.name || item.title, powerFactor: item.specs?.powerFactor || 0.95, coincidenceFactor: item.specs?.coincidenceFactor || 1, seasonalUseFactor: item.specs?.seasonalUseFactor ?? 1, surgeFactor: item.specs?.surgeFactor || 1, source: item.isCustom ? "user" : "bank" });
+    addLoadItem({ ...(item.specs || {}), name: item.specs?.name || item.title, backupHours: isBackup ? (form.backupHours || 2) : undefined, powerFactor: item.specs?.powerFactor || 0.95, coincidenceFactor: item.specs?.coincidenceFactor || 1, seasonalUseFactor: isBackup ? 1 : item.specs?.seasonalUseFactor ?? 1, surgeFactor: item.specs?.surgeFactor || 1, source: item.isCustom ? "user" : "bank" });
   };
   const addCustom = () => {
     if (!String(custom.name || "").trim()) return;
@@ -184,7 +189,7 @@ export function EquipmentLoadBank({ form, updateLoadItem, addLoadItem, removeLoa
       category: "load",
       title: custom.name.trim(),
       summary: "تجهیز وارد شده توسط کاربر؛ در انتظار بررسی ادمین",
-      specs: { name: custom.name.trim(), qty: n(custom.qty, 1), power: n(custom.power, 100), hours: n(custom.hours, 1), powerFactor: 0.95, coincidenceFactor: 1, seasonalUseFactor: 1, surgeFactor, loadType },
+      specs: { name: custom.name.trim(), qty: n(custom.qty, 1), power: n(custom.power, 100), hours: n(custom.hours, 1), backupHours: isBackup ? n(custom.hours, n(form.backupHours, 2)) : undefined, powerFactor: 0.95, coincidenceFactor: 1, seasonalUseFactor: 1, surgeFactor, loadType },
       source: "user",
       approvalStatus: "pending_admin_review",
     };
@@ -195,8 +200,8 @@ export function EquipmentLoadBank({ form, updateLoadItem, addLoadItem, removeLoa
   const updateType = (item, loadType) => updateLoadItem(item.id, { loadType, surgeFactor: loadType === "soft_start" ? 1.2 : loadType === "motor" ? 3 : 1 });
   return (
     <div className="load-bank-stage final-load-ui">
-      <div className="smart-bank-summary mini"><div><span>توان همزمان</span><strong>{totalPower.toFixed(0)} W</strong></div><div><span>مصرف روزانه</span><strong>{totalEnergy.toFixed(2)} kWh</strong></div><div><span>تعداد تجهیزات</span><strong>{(form.loadItems || []).length}</strong></div></div>
-      <div className="smart-note">برای تجهیزات دارای اینورتر داخلی، سافت‌استارتر یا راه‌اندازی نرم، ضریب راه‌اندازی به‌صورت پیشنهادی روی 1.2 قرار می‌گیرد.</div>
+      <div className="smart-bank-summary mini"><div><span>توان همزمان</span><strong>{totalPower.toFixed(0)} W</strong></div><div><span>{isBackup ? "انرژی بکاپ" : "مصرف روزانه"}</span><strong>{totalEnergy.toFixed(2)} kWh</strong></div><div><span>تعداد تجهیزات</span><strong>{(form.loadItems || []).length}</strong></div></div>
+      <div className="smart-note">{isBackup ? "در برق اضطراری، فقط مدت زمان برق اضطراری موردنیاز و توان بارها در محاسبه باتری اثر دارد؛ زمان مصرف روزانه، فصل کارکرد و ضریب فصل حذف شده‌اند." : "برای تجهیزات دارای اینورتر داخلی، سافت‌استارتر یا راه‌اندازی نرم، ضریب راه‌اندازی به‌صورت پیشنهادی روی 1.2 قرار می‌گیرد."}</div>
       <div className="load-toolbar"><button className="expand-bank-button" type="button" onClick={() => setOpen((value) => !value)}>بانک تجهیزات مصرفی ({EquipmentRepository.list("load").length} مورد)</button><button className="btn btn--ghost" type="button" onClick={() => setAdvanced((v) => !v)}>{advanced ? "حالت ساده" : "تنظیمات پیشرفته"}</button></div>
       {open ? (
         <div className="load-bank-box">
@@ -207,7 +212,7 @@ export function EquipmentLoadBank({ form, updateLoadItem, addLoadItem, removeLoa
           <div className="custom-load-row extended">
             <input value={custom.name} onChange={(event) => setCustom({ ...custom, name: event.target.value })} placeholder="نام تجهیز جدید خارج از بانک" />
             <input inputMode="decimal" value={custom.power} onChange={(event) => setCustom({ ...custom, power: event.target.value })} placeholder="توان W" />
-            <input inputMode="decimal" value={custom.hours} onChange={(event) => setCustom({ ...custom, hours: event.target.value })} placeholder="ساعت" />
+            <input inputMode="decimal" value={custom.hours} onChange={(event) => setCustom({ ...custom, hours: event.target.value })} placeholder={isBackup ? "ساعت بکاپ" : "ساعت"} />
             <select value={custom.loadType} onChange={(event) => setCustom({ ...custom, loadType: event.target.value })}><option value="mixed">عمومی</option><option value="motor">موتوری معمولی</option><option value="soft_start">موتوری سافت‌استارت/اینورتر داخلی</option><option value="resistive">مقاومتی</option></select>
             <button className="btn btn--secondary" type="button" onClick={addCustom}>افزودن و ذخیره</button>
           </div>
@@ -220,12 +225,12 @@ export function EquipmentLoadBank({ form, updateLoadItem, addLoadItem, removeLoa
             <label className="load-field load-name"><span>نام کامل تجهیز</span><input value={item.name || ""} onChange={(event) => updateLoadItem(item.id, { name: event.target.value })} /></label>
             <label className="load-field"><span>تعداد</span><input inputMode="decimal" value={item.qty ?? 1} onChange={(event) => updateLoadItem(item.id, { qty: event.target.value })} /></label>
             <label className="load-field"><span>توان هر عدد (W)</span><input inputMode="decimal" value={item.power ?? ""} onChange={(event) => updateLoadItem(item.id, { power: event.target.value })} /></label>
-            <label className="load-field"><span>ساعت کارکرد روزانه</span><input inputMode="decimal" value={item.hours ?? ""} onChange={(event) => updateLoadItem(item.id, { hours: event.target.value })} /></label>
+            {isBackup ? <label className="load-field"><span>ساعت برق اضطراری</span><input inputMode="decimal" value={item.backupHours ?? form.backupHours ?? ""} onChange={(event) => updateLoadItem(item.id, { backupHours: event.target.value, hours: event.target.value })} /></label> : <label className="load-field"><span>ساعت کارکرد روزانه</span><input inputMode="decimal" value={item.hours ?? ""} onChange={(event) => updateLoadItem(item.id, { hours: event.target.value })} /></label>}
             <label className="load-field"><span>نوع تجهیز</span><select value={item.loadType || "mixed"} onChange={(event) => updateType(item, event.target.value)}><option value="mixed">عمومی</option><option value="resistive">روشنایی/مقاومتی</option><option value="motor">موتوری معمولی</option><option value="soft_start">سافت‌استارت/اینورتر داخلی</option></select></label>
             {advanced ? <>
               <label className="load-field"><span>ضریب توان</span><input inputMode="decimal" value={item.powerFactor ?? 0.95} onChange={(event) => updateLoadItem(item.id, { powerFactor: event.target.value })} /></label>
               <label className="load-field"><span>ضریب همزمانی</span><input inputMode="decimal" value={item.coincidenceFactor ?? 1} onChange={(event) => updateLoadItem(item.id, { coincidenceFactor: event.target.value })} /></label>
-              <label className="load-field"><span>ضریب فصل کارکرد</span><input inputMode="decimal" value={item.seasonalUseFactor ?? 1} onChange={(event) => updateLoadItem(item.id, { seasonalUseFactor: event.target.value })} /></label>
+              {!isBackup ? <label className="load-field"><span>ضریب فصل کارکرد</span><input inputMode="decimal" value={item.seasonalUseFactor ?? 1} onChange={(event) => updateLoadItem(item.id, { seasonalUseFactor: event.target.value })} /></label> : null}
               <label className="load-field"><span>ضریب راه‌اندازی</span><input inputMode="decimal" value={item.surgeFactor ?? 1} onChange={(event) => updateLoadItem(item.id, { surgeFactor: event.target.value })} /></label>
             </> : null}
             <button className="btn btn--ghost danger" type="button" onClick={() => { if (confirm('این تجهیز حذف شود؟')) removeLoadItem(item.id); }}>حذف</button>
@@ -248,7 +253,7 @@ export function CalculationInputs({ form, updateForm, updateLoadItem, addLoadIte
     <div className="focus-form-table">
       {form.calculationMode === "current" ? <Field label="جریان کل"><input inputMode="decimal" value={form.current ?? ""} onChange={(event) => updateForm({ current: event.target.value })} /></Field> : null}
       {form.calculationMode === "power" ? <Field label="توان کل"><input inputMode="decimal" value={form.loadPower ?? ""} onChange={(event) => updateForm({ loadPower: event.target.value })} /></Field> : null}
-      {form.calculationMode === "daily_energy" ? <Field label="انرژی موردنیاز / روزانه (kWh)"><input inputMode="decimal" value={form.dailyEnergyKwh ?? ""} onChange={(event) => updateForm({ dailyEnergyKwh: event.target.value })} /></Field> : null}
+      {form.calculationMode === "daily_energy" ? <Field label={form.systemType === "backup" ? "انرژی اضطراری موردنیاز (kWh)" : "انرژی موردنیاز / روزانه (kWh)"}><input inputMode="decimal" value={form.dailyEnergyKwh ?? ""} onChange={(event) => updateForm({ dailyEnergyKwh: event.target.value })} /></Field> : null}
       {form.calculationMode === "load_profile" ? <>
         <Field label="مصرف صبح (kWh)"><input inputMode="decimal" value={form.profileMorningKwh ?? ""} onChange={(event) => updateProfilePart("profileMorningKwh", event.target.value)} /></Field>
         <Field label="مصرف ظهر (kWh)"><input inputMode="decimal" value={form.profileNoonKwh ?? ""} onChange={(event) => updateProfilePart("profileNoonKwh", event.target.value)} /></Field>
@@ -258,11 +263,11 @@ export function CalculationInputs({ form, updateForm, updateLoadItem, addLoadIte
       </> : null}
       {["current", "power"].includes(form.calculationMode) ? <Field label="ولتاژ مصرف‌کننده"><input inputMode="decimal" value={form.loadVoltage ?? 220} onChange={(event) => updateForm({ loadVoltage: event.target.value })} /></Field> : null}
       {["current", "power"].includes(form.calculationMode) ? <Field label="ضریب توان"><input inputMode="decimal" value={form.powerFactor ?? 0.95} onChange={(event) => updateForm({ powerFactor: event.target.value })} /></Field> : null}
-      {["current", "power"].includes(form.calculationMode) ? <Field label="زمان مصرف روزانه برای محاسبه کل پروژه (ساعت)"><input inputMode="decimal" value={form.dailyUsageHours ?? 3} onChange={(event) => updateForm({ dailyUsageHours: event.target.value })} /></Field> : null}
+      {form.systemType !== "backup" && ["current", "power"].includes(form.calculationMode) ? <Field label="زمان مصرف روزانه برای محاسبه کل پروژه (ساعت)"><input inputMode="decimal" value={form.dailyUsageHours ?? 3} onChange={(event) => updateForm({ dailyUsageHours: event.target.value })} /></Field> : null}
       {backupField ? <Field label="مدت زمان برق اضطراری موردنیاز (ساعت)"><input inputMode="decimal" value={form.backupHours ?? ""} onChange={(event) => updateForm({ backupHours: event.target.value })} /></Field> : null}
       {['current', 'power'].includes(form.calculationMode) ? <Field label="ضریب همزمانی کل"><input inputMode="decimal" value={form.coincidenceFactor ?? 1} onChange={(event) => updateForm({ coincidenceFactor: event.target.value })} /></Field> : null}
-      <Field label="فصل کارکرد غالب"><select value={form.seasonProfile || "annual"} onChange={(event) => { const selected = SEASON_OPTIONS.find((item) => item.value === event.target.value); updateForm({ seasonProfile: event.target.value, seasonUsageFactor: selected?.factor ?? 1 }); }}>{SEASON_OPTIONS.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select></Field>
-      <Field label="ضریب فصل کارکرد"><input inputMode="decimal" value={form.seasonUsageFactor ?? 1} onChange={(event) => updateForm({ seasonUsageFactor: event.target.value })} /></Field>
+      {form.systemType !== "backup" ? <Field label="فصل کارکرد غالب"><select value={form.seasonProfile || "annual"} onChange={(event) => { const selected = SEASON_OPTIONS.find((item) => item.value === event.target.value); updateForm({ seasonProfile: event.target.value, seasonUsageFactor: selected?.factor ?? 1 }); }}>{SEASON_OPTIONS.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select></Field> : null}
+      {form.systemType !== "backup" ? <Field label="ضریب فصل کارکرد"><input inputMode="decimal" value={form.seasonUsageFactor ?? 1} onChange={(event) => updateForm({ seasonUsageFactor: event.target.value })} /></Field> : null}
       <Field label="ضریب راه‌اندازی / پیک"><input inputMode="decimal" value={form.surgeFactor ?? 1.7} onChange={(event) => updateForm({ surgeFactor: event.target.value })} /></Field>
     </div>
   );
@@ -412,7 +417,7 @@ export function Review({ form, goToStep }) {
       <div className="smart-decision-card"><h3>تصمیم هوشمند اپ</h3><p>پیشنهاد زیر بر اساس روش محاسبات، ضرایب واقعی مصرف، شرایط محیطی شهر، بانک تجهیزات، جریان راه‌اندازی و محدودیت‌های اینورتر انتخاب شده است.</p></div>
       <div className="review-grid final-summary-grid">
         <section className="review-card"><h3>مشخصات پروژه</h3><p><b>پروژه:</b> {form.projectTitle}</p><p><b>کارفرما:</b> {form.clientName}</p><p><b>شهر:</b> {form.city}</p><p><b>نوع سیستم:</b> {system}</p><p><b>روش محاسبات:</b> {method}</p><p><b>مسیر ورود:</b> {form.selectedScenarioId ? 'سناریوی آماده' : 'طراحی دستی'}</p></section>
-        <section className="review-card"><h3>نیاز مصرف</h3><p><b>توان طراحی:</b> {(summary.demandPowerW || rec.requiredW || 0).toFixed(0)} W</p><p><b>مصرف روزانه:</b> {demandKwh} kWh</p><p><b>زمان مصرف روزانه:</b> {form.dailyUsageHours || 3} ساعت</p><p><b>میانگین ضریب همزمانی:</b> {avgKs}</p><p><b>میانگین ضریب راه‌اندازی:</b> {avgSurge}</p></section>
+        <section className="review-card"><h3>نیاز مصرف</h3><p><b>توان طراحی:</b> {(summary.demandPowerW || rec.requiredW || 0).toFixed(0)} W</p><p><b>{isBackup ? "انرژی اضطراری" : "مصرف روزانه"}:</b> {demandKwh} kWh</p>{isBackup ? <p><b>مدت زمان برق اضطراری:</b> {form.backupHours || 0} ساعت</p> : <p><b>زمان مصرف روزانه:</b> {form.dailyUsageHours || 3} ساعت</p>}<p><b>میانگین ضریب همزمانی:</b> {avgKs}</p><p><b>میانگین ضریب راه‌اندازی:</b> {avgSurge}</p></section>
         {!isBackup ? <section className="review-card"><h3>پنل خورشیدی</h3><p><b>پنل پیشنهادی:</b> {selectedPanel?.title || '—'}</p><p><b>توان پنل:</b> {selectedPanel?.specs?.panelWatt || form.panelWatt || '—'} W</p><p><b>تعداد پنل:</b> {summary.panelCount ?? rec.pvCount} عدد</p><p><b>آرایش:</b> {pv.panelSeriesCount || '—'} سری × {pv.panelParallelCount || '—'} موازی</p><p><b>Voc سرد:</b> {pv.stringVocCold || '—'} V</p></section> : null}
         {!isBackup ? <section className="review-card"><h3>اینورتر و MPPT</h3><p><b>مدل پیشنهادی:</b> {selectedInverter?.title || '—'}</p><p><b>توان نامی:</b> {((summary.inverterPowerW || selectedInverter?.specs?.ratedPowerW || rec.requiredW || 0) / 1000).toFixed(1)} kW</p><p><b>ولتاژ بانک:</b> {form.systemVoltage || 48} V</p><p><b>تعداد MPPT:</b> {form.mpptCount || selectedInverter?.specs?.mpptCount || 1}</p><p><b>بازه MPPT:</b> {form.mpptMinVoltage || selectedInverter?.specs?.mpptMinVoltage || '—'} تا {form.mpptMaxVoltage || selectedInverter?.specs?.mpptMaxVoltage || '—'} V</p><p><b>حداکثر Voc:</b> {form.maxPvVocV || 500} VDC</p></section> : null}
         <section className="review-card"><h3>باتری</h3><p><b>باتری پیشنهادی:</b> {selectedBattery?.title || '—'}</p><p><b>تعداد کل:</b> {battery.totalCount ?? rec.batteryCount} عدد</p><p><b>توضیح سری/موازی:</b> {batteryText}</p></section>
@@ -423,6 +428,70 @@ export function Review({ form, goToStep }) {
   );
 }
 
+async function captureFinalReport(reportElement, { fileType = "pdf" } = {}) {
+  if (!reportElement) throw new Error("REPORT_ELEMENT_MISSING");
+  const [{ default: html2canvas }, jsPdfModule] = await Promise.all([
+    import("html2canvas"),
+    fileType === "pdf" ? import("jspdf") : Promise.resolve(null),
+  ]);
+
+  const sandbox = document.createElement("div");
+  sandbox.style.position = "fixed";
+  sandbox.style.left = "-20000px";
+  sandbox.style.top = "0";
+  sandbox.style.width = "794px";
+  sandbox.style.pointerEvents = "none";
+  sandbox.style.opacity = "1";
+  sandbox.style.zIndex = "-1";
+
+  const clone = reportElement.cloneNode(true);
+  clone.classList.add("a4-export-capture", "mobile-export-table-mode");
+  sandbox.appendChild(clone);
+  document.body.appendChild(sandbox);
+
+  try {
+    const images = Array.from(clone.querySelectorAll("img"));
+    await Promise.all(images.map((img) => {
+      if (img.complete) return Promise.resolve();
+      return new Promise((resolve) => {
+        img.addEventListener("load", resolve, { once: true });
+        img.addEventListener("error", resolve, { once: true });
+      });
+    }));
+
+    const canvas = await html2canvas(clone, {
+      scale: 2,
+      backgroundColor: "#ffffff",
+      useCORS: true,
+      logging: false,
+      windowWidth: 794,
+      windowHeight: Math.max(1123, clone.scrollHeight),
+    });
+
+    if (fileType === "png") {
+      const a = document.createElement("a");
+      a.href = canvas.toDataURL("image/png");
+      a.download = "shil-executive-a4-report.png";
+      a.click();
+      return;
+    }
+
+    const jsPDF = jsPdfModule.default;
+    const pdf = new jsPDF("p", "mm", "a4");
+    const pdfWidth = 210;
+    const pdfHeight = 297;
+    const ratio = Math.min(pdfWidth / canvas.width, pdfHeight / canvas.height);
+    const imageWidth = canvas.width * ratio;
+    const imageHeight = canvas.height * ratio;
+    const x = (pdfWidth - imageWidth) / 2;
+    const y = (pdfHeight - imageHeight) / 2;
+    pdf.addImage(canvas.toDataURL("image/png"), "PNG", x, y, imageWidth, imageHeight, undefined, "FAST");
+    pdf.save("shil-executive-a4-report.pdf");
+  } finally {
+    sandbox.remove();
+  }
+}
+
 export function FinalResult({ form, locked = false }) {
   const reportRef = useRef(null);
   const rec = recommendation(form);
@@ -431,19 +500,10 @@ export function FinalResult({ form, locked = false }) {
     try { return runEngineeringDesign(form); } catch (error) { return { ok: false, advisor: [{ severity: "error", title: "خطا", message: error.message }] }; }
   }, [form, locked]);
   async function exportPdf() {
-    const [{ default: html2canvas }, { default: jsPDF }] = await Promise.all([import("html2canvas"), import("jspdf")]);
-    const canvas = await html2canvas(reportRef.current, { scale: 2.8, backgroundColor: "#ffffff", useCORS: true });
-    const pdf = new jsPDF("p", "mm", "a4");
-    pdf.addImage(canvas.toDataURL("image/png"), "PNG", 0, 0, 210, 297);
-    pdf.save("shil-executive-a4-report.pdf");
+    await captureFinalReport(reportRef.current, { fileType: "pdf" });
   }
   async function exportPng() {
-    const { default: html2canvas } = await import("html2canvas");
-    const canvas = await html2canvas(reportRef.current, { scale: 2.8, backgroundColor: "#ffffff", useCORS: true });
-    const a = document.createElement("a");
-    a.href = canvas.toDataURL("image/png");
-    a.download = "shil-executive-a4-report.png";
-    a.click();
+    await captureFinalReport(reportRef.current, { fileType: "png" });
   }
   const summary = result.result?.summary || {};
   const advisor = result.result?.advisor || result.advisor || [];

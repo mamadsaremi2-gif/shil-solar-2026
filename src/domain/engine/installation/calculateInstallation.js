@@ -86,12 +86,8 @@ function availabilityLossPercent(level) {
   return 1;
 }
 
-function hasBackupSolar(input) {
-  return input.systemType === 'backup' && (input.backupWithSolar || input.backupSolarMode === 'with_solar' || input.systemSubtype === 'backup_with_solar');
-}
-
 export function calculateInstallation(input, pv, inverter, cabling) {
-  if (!pv || (input.systemType === 'backup' && !hasBackupSolar(input))) return null;
+  if (!pv || input.systemType === 'backup') return null;
 
   const siteType = input.installationSiteType || 'flat_roof';
   const panelLengthM = input.panelLengthM || 2.28;

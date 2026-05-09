@@ -1,5 +1,5 @@
 import { isBatteryVoltageCompatible } from "../rules/engineeringRules.js";
-const BACKUP_SYSTEM_VOLTAGES = [12, 24, 48];
+const BACKUP_SYSTEM_VOLTAGES = [12, 24, 48, 96];
 
 export function validateInput(form) {
   const errors = {};
@@ -8,7 +8,7 @@ export function validateInput(form) {
   if (!form.calculationMode) errors.calculationMode = "روش محاسبه را انتخاب کنید.";
   if (!(Number(form.systemVoltage) > 0)) errors.systemVoltage = "ولتاژ سیستم نامعتبر است.";
   if (form.systemType === "backup" && !BACKUP_SYSTEM_VOLTAGES.includes(Number(form.systemVoltage))) {
-    errors.systemVoltage = "در حالت اینورتر و باتری فقط 12، 24 یا 48 ولت مجاز است.";
+    errors.systemVoltage = "در حالت برق اضطراری فقط 12، 24، 48 یا 96 ولت مجاز است.";
   }
   if (form.systemType !== "gridtie" && !isBatteryVoltageCompatible(Number(form.systemVoltage), Number(form.batteryUnitVoltage))) {
     errors.batteryUnitVoltage = "ولتاژ باتری با کلاس ولتاژ اینورتر/سیستم همخوانی اجرایی ندارد.";

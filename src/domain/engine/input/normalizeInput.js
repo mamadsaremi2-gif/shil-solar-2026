@@ -17,7 +17,7 @@ function bounded(value, fallback, min, max) {
   return Math.min(Math.max(n, min), max);
 }
 
-const BACKUP_SYSTEM_VOLTAGES = [12, 24, 48];
+const BACKUP_SYSTEM_VOLTAGES = [12, 24, 48, 96];
 const BATTERY_UNIT_VOLTAGES = [12, 12.6, 12.8, 24, 25, 25.6, 26, 48, 51, 51.2, 52];
 
 function nearestAllowed(value, allowed, fallback) {
@@ -27,6 +27,8 @@ function nearestAllowed(value, allowed, fallback) {
 }
 
 export function normalizeInput(form) {
+  const systemType = form.systemType || "offgrid";
+  const safeBackupHours = nonNegative(form.backupHours, 0);
   const loadItems = (form.loadItems || []).map((item, index) => ({
     id: item.id ?? `${index + 1}`,
     name: item.name || `بار ${index + 1}`,
@@ -35,12 +37,13 @@ export function normalizeInput(form) {
     hours: positive(item.hours, 1),
     powerFactor: bounded(item.powerFactor, 0.95, 0.5, 1),
     coincidenceFactor: bounded(item.coincidenceFactor, 1, 0.1, 1),
-    seasonalUseFactor: bounded(item.seasonalUseFactor, 1, 0, 1),
+    backupHours: nonNegative(item.backupHours, safeBackupHours),
+    seasonalUseFactor: systemType === "backup" ? 1 : bounded(item.seasonalUseFactor, 1, 0, 1),
     seasons: Array.isArray(item.seasons) ? item.seasons : (item.seasons ? String(item.seasons).split(",") : ["annual"]),
     surgeFactor: positive(item.surgeFactor, 1),
     loadType: item.loadType || "mixed",
+    loadPriority: item.loadPriority || "important",
     inverterSupply: item.inverterSupply || "with_inverter",
-    backupPriority: item.backupPriority || item.priority || "critical",
   }));
 
   const loadProfile = (form.loadProfile || []).map((slot, index) => ({
@@ -50,9 +53,6 @@ export function normalizeInput(form) {
     factor: bounded(slot.factor, 0.5, 0, 3),
   }));
 
-  const systemType = form.systemType || "offgrid";
-  const backupWithSolar = Boolean(form.backupWithSolar || form.backupSolarMode === "with_solar" || form.systemSubtype === "backup_with_solar");
-  const safeBackupHours = nonNegative(form.backupHours, 0);
   const normalizedSystemVoltage = systemType === "backup"
     ? nearestAllowed(form.systemVoltage, BACKUP_SYSTEM_VOLTAGES, 24)
     : positive(form.systemVoltage, 48);
@@ -66,11 +66,6 @@ export function normalizeInput(form) {
   return {
     ...form,
     systemType,
-    backupWithSolar,
-    backupSolarMode: backupWithSolar ? "with_solar" : "battery_only",
-    systemSubtype: backupWithSolar ? "backup_with_solar" : form.systemSubtype || "",
-    batteryRechargeDays: positive(form.batteryRechargeDays, systemType === "offgrid" ? 2 : 1),
-    backupSolarDailySupportFactor: bounded(form.backupSolarDailySupportFactor, 0, 0, 1),
     hybridMode: form.hybridMode || "self_consumption",
     targetOffsetPercent: bounded(form.targetOffsetPercent, 85, 10, 150),
     gridAvailableHours: bounded(form.gridAvailableHours, 24, 1, 24),
@@ -79,15 +74,15 @@ export function normalizeInput(form) {
     loadPower: positive(form.loadPower),
     powerFactor: bounded(form.powerFactor, 0.95, 0.5, 1),
     coincidenceFactor: bounded(form.coincidenceFactor, 1, 0.1, 1),
-    seasonProfile,
-    seasonUsageFactor: bounded(form.seasonUsageFactor, seasonFactor(seasonProfile), 0, 1),
+    seasonProfile: systemType === "backup" ? "annual" : seasonProfile,
+    seasonUsageFactor: systemType === "backup" ? 1 : bounded(form.seasonUsageFactor, seasonFactor(seasonProfile), 0, 1),
     backupHours: safeBackupHours,
-    dailyUsageHours: positive(form.dailyUsageHours, 3),
+    dailyUsageHours: systemType === "backup" ? safeBackupHours : positive(form.dailyUsageHours, 3),
     dailyEnergyKwh: positive(form.dailyEnergyKwh),
     peakFactor: positive(form.peakFactor, 2),
     loadProfileSource: form.loadProfileSource || "template",
     loadProfile,
-    sunHours: positive(form.sunHours, 5),
+    sunHours: systemType === "backup" ? 0 : positive(form.sunHours, 5),
     systemVoltage: normalizedSystemVoltage,
     batteryUnitVoltage: normalizedBatteryUnitVoltage,
     batteryUnitAh: positive(form.batteryUnitAh, 100),
@@ -108,8 +103,6 @@ export function normalizeInput(form) {
     panelVoc: positive(form.panelVoc, 53.1),
     panelVmp: positive(form.panelVmp, 44.8),
     panelTempCoeffVoc: positive(form.panelTempCoeffVoc, 0.0024),
-    panelPowerTempCoeffPercentPerC: positive(form.panelPowerTempCoeffPercentPerC, positive(form.panelTypeTemperatureFactor, 0.29)),
-    panelVmpTempCoeffPercentPerC: positive(form.panelVmpTempCoeffPercentPerC, positive(form.panelPowerTempCoeffPercentPerC, positive(form.panelTypeTemperatureFactor, 0.29))),
     panelTypeTemperatureFactor: positive(form.panelTypeTemperatureFactor, 0.29),
     averageTemperature: parseFaNumber(form.averageTemperature, 30),
     minTemperature: parseFaNumber(form.minTemperature, 0),

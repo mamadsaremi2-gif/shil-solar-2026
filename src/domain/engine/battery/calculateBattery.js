@@ -87,18 +87,6 @@ function buildBackupBatteryScenarios(input, loadResult, roundTripEfficiency, the
   return scenarios;
 }
 
-function buildBackupPriorityCoverage(loadResult, usableBatteryWh) {
-  return (loadResult.backupPriorityGroups || []).map((group) => {
-    const peakHours = usableBatteryWh / Math.max(group.cumulativePowerW || group.powerW || 1, 1);
-    return {
-      ...group,
-      estimatedBackupHours: round(peakHours, 2),
-      coverageRatio: group.cumulativeBackupEnergyWh > 0 ? round(usableBatteryWh / group.cumulativeBackupEnergyWh, 2) : 0,
-      status: group.cumulativeBackupEnergyWh > 0 && usableBatteryWh >= group.cumulativeBackupEnergyWh ? "pass" : "warning",
-    };
-  });
-}
-
 export function calculateBattery(input, loadResult) {
   if (input.systemType === "gridtie") {
     return {
@@ -176,7 +164,6 @@ export function calculateBattery(input, loadResult) {
   const scenarios = input.systemType === "backup"
     ? buildBackupBatteryScenarios(input, loadResult, roundTripEfficiency, thermalFactor, reserveFactor)
     : [];
-  const backupPriorityCoverage = input.systemType === "backup" ? buildBackupPriorityCoverage(loadResult, usableBatteryWh) : [];
 
   return {
     chemistry: input.batteryType,
@@ -210,7 +197,6 @@ export function calculateBattery(input, loadResult) {
     recommendedChargeC: chemistry.recommendedChargeC,
     recommendedDischargeC: chemistry.recommendedDischargeC,
     estimatedCycleLife: chemistry.cycleLife,
-    backupPriorityCoverage,
     scenarios,
   };
 }

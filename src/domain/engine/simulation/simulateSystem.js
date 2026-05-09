@@ -40,12 +40,8 @@ function buildHourlyLoadProfile(input, loads) {
   return normalizeSeries(fallback, loads.totalDailyEnergyWh);
 }
 
-function hasBackupSolar(input) {
-  return input.systemType === "backup" && (input.backupWithSolar || input.backupSolarMode === "with_solar" || input.systemSubtype === "backup_with_solar");
-}
-
 function buildHourlyPvProfile(pv, input) {
-  if (!pv || (input.systemType === "backup" && !hasBackupSolar(input))) return Array(24).fill(0);
+  if (!pv || input.systemType === "backup") return Array(24).fill(0);
   const sunrise = 6;
   const sunset = 18;
   const span = sunset - sunrise;

@@ -22,50 +22,6 @@ function normalizeProfile(profile = [], targetDailyWh = 0) {
   }));
 }
 
-function buildBackupPriorityGroups(normalizedLoads = [], totalDailyEnergyWh = 0, demandPowerW = 0, backupHours = 0) {
-  const levels = ["critical", "important", "optional"];
-  const labels = { critical: "ضروری", important: "مهم", optional: "اختیاری" };
-  const itemsByLevel = Object.fromEntries(levels.map((level) => [level, normalizedLoads.filter((item) => (item.backupPriority || "critical") === level)]));
-  const cumulative = [];
-  let cumulativePowerW = 0;
-  let cumulativeDailyWh = 0;
-
-  for (const level of levels) {
-    const items = itemsByLevel[level];
-    const powerW = items.reduce((sum, item) => sum + item.demandPowerW, 0);
-    const dailyWh = items.reduce((sum, item) => sum + item.dailyEnergyWh, 0);
-    cumulativePowerW += powerW;
-    cumulativeDailyWh += dailyWh;
-    cumulative.push({
-      level,
-      label: labels[level],
-      powerW: round(powerW),
-      dailyEnergyWh: round(dailyWh),
-      backupEnergyWh: round(powerW * backupHours),
-      cumulativePowerW: round(cumulativePowerW),
-      cumulativeDailyEnergyWh: round(cumulativeDailyWh),
-      cumulativeBackupEnergyWh: round(cumulativePowerW * backupHours),
-      itemCount: items.length,
-    });
-  }
-
-  if (!normalizedLoads.length) {
-    return [{
-      level: "critical",
-      label: labels.critical,
-      powerW: round(demandPowerW),
-      dailyEnergyWh: round(totalDailyEnergyWh),
-      backupEnergyWh: round(demandPowerW * backupHours),
-      cumulativePowerW: round(demandPowerW),
-      cumulativeDailyEnergyWh: round(totalDailyEnergyWh),
-      cumulativeBackupEnergyWh: round(demandPowerW * backupHours),
-      itemCount: 1,
-    }];
-  }
-
-  return cumulative;
-}
-
 export function calculateLoads(input) {
   const mode = input.calculationMode;
   let loadPowerW = 0;
@@ -82,7 +38,10 @@ export function calculateLoads(input) {
   let normalizedProfile = [];
 
   const globalCoincidenceFactor = Math.min(Math.max(input.coincidenceFactor ?? 1, 0.1), 1);
-  const seasonUsageFactor = Math.min(Math.max(input.seasonUsageFactor ?? 1, 0), 1);
+  const isBackup = input.systemType === "backup";
+  const backupHours = Math.max(Number(input.backupHours) || 0, 0);
+  const seasonUsageFactor = isBackup ? 1 : Math.min(Math.max(input.seasonUsageFactor ?? 1, 0), 1);
+  const dailyUsageHours = isBackup ? Math.max(backupHours, 0.1) : Math.max(input.dailyUsageHours || 3, 0.1);
 
   if (mode === "current") {
     currentA = input.current;
@@ -92,7 +51,7 @@ export function calculateLoads(input) {
     connectedPowerW = connectedRawW;
     connectedApparentVA = input.loadVoltage * currentA;
     demandApparentVA = connectedApparentVA * globalCoincidenceFactor;
-    totalDailyEnergyWh = demandPowerW * Math.max(input.dailyUsageHours || 3, 0.1) * seasonUsageFactor;
+    totalDailyEnergyWh = demandPowerW * dailyUsageHours * seasonUsageFactor;
     surgePowerW = Math.max(demandPowerW, connectedRawW * input.surgeFactor * globalCoincidenceFactor);
     surgeApparentVA = surgePowerW / Math.max(input.powerFactor, 0.1);
   } else if (mode === "power") {
@@ -102,7 +61,7 @@ export function calculateLoads(input) {
     connectedApparentVA = loadPowerW / Math.max(input.powerFactor, 0.1);
     demandApparentVA = connectedApparentVA * globalCoincidenceFactor;
     currentA = loadPowerW / Math.max(input.loadVoltage * input.powerFactor, 1);
-    totalDailyEnergyWh = demandPowerW * Math.max(input.dailyUsageHours || 3, 0.1) * seasonUsageFactor;
+    totalDailyEnergyWh = demandPowerW * dailyUsageHours * seasonUsageFactor;
     surgePowerW = Math.max(demandPowerW, loadPowerW * input.surgeFactor * globalCoincidenceFactor);
     surgeApparentVA = surgePowerW / Math.max(input.powerFactor, 0.1);
   } else if (mode === "daily_energy") {
@@ -135,10 +94,11 @@ export function calculateLoads(input) {
       const totalConnected = item.qty * item.power;
       const isDirectDcLoad = item.inverterSupply === "without_inverter";
       const totalConnectedVA = isDirectDcLoad ? 0 : totalConnected / pf;
-      const seasonal = Math.min(Math.max(item.seasonalUseFactor ?? 1, 0), 1);
+      const seasonal = isBackup ? 1 : Math.min(Math.max(item.seasonalUseFactor ?? 1, 0), 1);
+      const runtimeHours = isBackup ? Math.max(Number(item.backupHours ?? input.backupHours) || 0, 0) : Math.max(Number(item.hours) || 0, 0);
       const demand = totalConnected * item.coincidenceFactor * seasonal;
       const demandVA = isDirectDcLoad ? 0 : demand / pf;
-      const energy = demand * item.hours;
+      const energy = demand * runtimeHours;
       const surge = totalConnected * getSurgeFactor(item, input.surgeFactor) * item.coincidenceFactor * Math.max(seasonal, 0.15);
       const surgeVA = isDirectDcLoad ? 0 : surge / pf;
       return {
@@ -148,10 +108,10 @@ export function calculateLoads(input) {
         demandPowerW: round(demand),
         demandVA: round(demandVA),
         dailyEnergyWh: round(energy),
+        runtimeHours: round(runtimeHours, 2),
         surgePowerW: round(surge),
         surgeVA: round(surgeVA),
         seasonalUseFactor: round(seasonal, 2),
-        backupPriority: item.backupPriority || "critical",
       };
     });
 
@@ -176,7 +136,6 @@ export function calculateLoads(input) {
   const averagePowerFactor = connectedApparentVA > 0 ? connectedPowerW / connectedApparentVA : input.powerFactor;
   const designPowerW = demandPowerW * input.designFactor;
   const backupEnergyWh = demandPowerW * input.backupHours;
-  const backupPriorityGroups = buildBackupPriorityGroups(normalizedLoads, totalDailyEnergyWh, demandPowerW, input.backupHours);
 
   return {
     mode,
@@ -194,7 +153,6 @@ export function calculateLoads(input) {
     surgeApparentVA: round(Math.max(surgeApparentVA, designPowerW / Math.max(averagePowerFactor, 0.1))),
     totalDailyEnergyWh: round(totalDailyEnergyWh),
     backupEnergyWh: round(backupEnergyWh),
-    backupPriorityGroups,
     normalizedLoads,
     normalizedProfile: normalizedProfile.map((slot) => ({
       ...slot,

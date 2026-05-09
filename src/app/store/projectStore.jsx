@@ -230,15 +230,23 @@ export function ProjectStoreProvider({ children }) {
       form.calculationMode = "loads";
       form.scenarioId = preset?.id || null;
       form.scenarioTitle = preset?.title || "سناریوی آماده";
-      form.scenarioFlowStage = "environment-first";
-      form.workflowCompletedSteps = [0, 1, 2, 3];
-      if (form.systemType !== "backup") {
+      form.scenarioFamily = preset?.scenarioFamily || form.scenarioFamily || (form.systemType === "backup" ? "backup" : "solar");
+      form.workflowCompletedSteps = form.systemType === "backup" ? [0, 1, 2] : [0, 1, 2, 3];
+      if (form.systemType === "backup") {
+        form.scenarioFlowStage = "backup-loads-first";
+        form.daysAutonomy = 0;
+        form.dailyUsageHours = "";
+        form.seasonProfile = "annual";
+        form.seasonUsageFactor = 1;
+        form.sunHours = 0;
+      } else {
+        form.scenarioFlowStage = "environment-first";
         form.daysAutonomy = form.daysAutonomy ?? "0";
         form.batteryType = "LFP";
       }
       setActiveProject(createProjectSession({ form }));
-      // سناریوی آماده ابتدا وارد شرایط محیطی می‌شود تا کاربر شهر و داده‌های اقلیمی را انتخاب کند.
-      setStepIndex(4);
+      // سناریوی خورشیدی از شرایط محیطی شروع می‌شود؛ سناریوی برق اضطراری از ورودی بار و ساعت بکاپ.
+      setStepIndex(form.systemType === "backup" ? 3 : 4);
       setRoute({ name: "workspace" });
       trackEventSafe("start_project_from_scenario", { scenarioId: preset?.id, systemType: form.systemType });
     },

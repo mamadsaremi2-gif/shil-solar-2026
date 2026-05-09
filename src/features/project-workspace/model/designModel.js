@@ -113,24 +113,30 @@ export function profileEnergyKwh(form) {
 }
 
 export function demandFromForm(form) {
+  const isBackup = form.systemType === "backup";
+  const energyFactor = isBackup ? 1 : effectiveSeasonEnergyFactor(form);
   if (form.calculationMode === "current") {
     const rawPowerW = n(form.current) * n(form.loadVoltage, 220) * n(form.powerFactor, 0.95);
     const powerW = rawPowerW * effectiveGlobalCoincidence(form);
-    const hours = Math.max(n(form.dailyUsageHours, 3), 0.1);
-    return { powerW, dailyWh: powerW * hours * effectiveSeasonEnergyFactor(form), surgeW: rawPowerW * n(form.surgeFactor, 1.7) };
+    const hours = Math.max(isBackup ? n(form.backupHours, 0) : n(form.dailyUsageHours, 3), 0.1);
+    return { powerW, dailyWh: powerW * hours * energyFactor, surgeW: rawPowerW * n(form.surgeFactor, 1.7) };
   }
 
   if (form.calculationMode === "power") {
     const rawPowerW = n(form.loadPower);
     const powerW = rawPowerW * effectiveGlobalCoincidence(form);
-    const hours = Math.max(n(form.dailyUsageHours, 3), 0.1);
-    return { powerW, dailyWh: powerW * hours * effectiveSeasonEnergyFactor(form), surgeW: rawPowerW * n(form.surgeFactor, 1.7) };
+    const hours = Math.max(isBackup ? n(form.backupHours, 0) : n(form.dailyUsageHours, 3), 0.1);
+    return { powerW, dailyWh: powerW * hours * energyFactor, surgeW: rawPowerW * n(form.surgeFactor, 1.7) };
   }
 
   if (form.calculationMode === "loads") {
     const items = form.loadItems || [];
     const powerW = items.reduce((sum, item) => sum + n(item.qty, 1) * n(item.power) * n(item.coincidenceFactor, 1), 0);
-    const dailyWh = items.reduce((sum, item) => sum + n(item.qty, 1) * n(item.power) * n(item.hours, 1) * n(item.coincidenceFactor, 1) * n(item.seasonalUseFactor, 1), 0);
+    const dailyWh = items.reduce((sum, item) => {
+      const runtime = isBackup ? n(item.backupHours, n(form.backupHours, 0)) : n(item.hours, 1);
+      const seasonal = isBackup ? 1 : n(item.seasonalUseFactor, 1);
+      return sum + n(item.qty, 1) * n(item.power) * runtime * n(item.coincidenceFactor, 1) * seasonal;
+    }, 0);
     const surgeW = items.reduce((sum, item) => sum + n(item.qty, 1) * n(item.power) * n(item.surgeFactor, 1) * n(item.coincidenceFactor, 1), 0);
     return { powerW, dailyWh, surgeW: Math.max(powerW, surgeW) };
   }
@@ -138,11 +144,11 @@ export function demandFromForm(form) {
   if (form.calculationMode === "load_profile") {
     const baseKw = profileEnergyKwh(form);
     const peak = (form.loadProfile || []).reduce((max, item) => Math.max(max, n(item.factor, 0)), 0);
-    const dailyWh = baseKw * 1000 * effectiveSeasonEnergyFactor(form);
+    const dailyWh = baseKw * 1000 * energyFactor;
     return { powerW: Math.max(dailyWh / 8, 1), dailyWh, surgeW: Math.max(dailyWh / 8, 1) * Math.max(peak, n(form.peakFactor, 2)) };
   }
 
-  const dailyWh = n(form.dailyEnergyKwh, 0) * 1000 * effectiveSeasonEnergyFactor(form);
+  const dailyWh = n(form.dailyEnergyKwh, 0) * 1000 * energyFactor;
   const hours = Math.max(n(form.dailyUsageHours, n(form.backupHours, 3)), 1);
   const powerW = Math.max(dailyWh / hours, dailyWh / 24, 1);
   return { powerW, dailyWh, surgeW: powerW * n(form.peakFactor, 2) };
@@ -215,8 +221,8 @@ export function validate(form, step) {
     if (form.calculationMode === "loads" && !(form.loadItems || []).length) errors.push("حداقل یک تجهیز انتخاب کنید.");
     if (["current", "power"].includes(form.calculationMode) && n(form.loadVoltage) <= 0) errors.push("ولتاژ مصرف‌کننده را وارد کنید.");
     if (["current", "power"].includes(form.calculationMode) && n(form.powerFactor) <= 0) errors.push("ضریب توان را وارد کنید.");
-    if (["current", "power"].includes(form.calculationMode) && n(form.dailyUsageHours) <= 0) errors.push("زمان مصرف روزانه برای محاسبه کل پروژه را وارد کنید.");
-    if (form.systemType === "backup" && ["current", "power", "daily_energy", "load_profile"].includes(form.calculationMode) && n(form.backupHours) <= 0) errors.push("مدت زمان برق اضطراری موردنیاز را وارد کنید.");
+    if (form.systemType !== "backup" && ["current", "power"].includes(form.calculationMode) && n(form.dailyUsageHours) <= 0) errors.push("زمان مصرف روزانه برای محاسبه کل پروژه را وارد کنید.");
+    if (form.systemType === "backup" && ["current", "power", "daily_energy", "load_profile", "loads"].includes(form.calculationMode) && n(form.backupHours) <= 0) errors.push("مدت زمان برق اضطراری موردنیاز را وارد کنید.");
   }
   if (step === 1 && form.systemType !== "backup") {
     ["sunHours", "shadingFactor", "dustFactor", "tiltAngle", "altitude"].forEach((key) => {

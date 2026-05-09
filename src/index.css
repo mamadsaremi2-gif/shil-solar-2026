@@ -645,7 +645,7 @@ p, span, strong, small, em, label, h1, h2, h3, h4, h5, h6 {
   overflow: hidden;
 }
 .environment-map-panel { position: relative; }
-.environment-map-panel img { width: 100%; height: 100%; object-fit: cover; display: block; filter: saturate(1.08) contrast(1.04); }
+.environment-map-panel img { width: 100%; height: 100%; object-fit: contain; background:#07142a; display: block; filter: saturate(1.08) contrast(1.04); }
 .environment-map-panel::after { content:""; position:absolute; inset:0; background: radial-gradient(circle at 60% 42%, transparent 0 36%, rgba(2,8,23,.12) 70%); pointer-events:none; }
 .environment-map-panel__overlay { position:absolute; right:18px; bottom:18px; display:grid; gap:4px; padding:14px 18px; border-radius:20px; background:rgba(2,8,23,.64); border:1px solid rgba(103,232,249,.28); backdrop-filter:blur(14px); color:white; z-index:2; }
 .environment-map-panel__overlay strong { font-size: 22px; }
