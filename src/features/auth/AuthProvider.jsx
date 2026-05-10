@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { getSupabaseClient, isSupabaseConfigured } from '../../shared/lib/supabaseLazy';
 
 const AuthContext = createContext(null);
@@ -45,6 +45,7 @@ export function AuthProvider({ children }) {
   const [profile, setProfile] = useState(() => (!isSupabaseConfigured ? getStoredLocalProfile() : getStoredLocalProfile()));
   const [loading, setLoading] = useState(isSupabaseConfigured && !getStoredLocalSession());
   const [isOfflineMode, setIsOfflineMode] = useState(() => typeof window !== 'undefined' && localStorage.getItem(OFFLINE_SESSION_KEY) === '1');
+  const authInitSettledRef = useRef(false);
 
   async function loadProfile(userId) {
     if (!isSupabaseConfigured || !userId || isOfflineMode) {
@@ -85,6 +86,12 @@ export function AuthProvider({ children }) {
 
     let mounted = true;
     let subscriptionRef = null;
+    authInitSettledRef.current = false;
+    const authGuard = window.setTimeout(() => {
+      if (!mounted || authInitSettledRef.current) return;
+      console.warn('Supabase auth init timeout; releasing app loading state.');
+      setLoading(false);
+    }, 4500);
 
     getSupabaseClient()
       .then((supabase) => {
@@ -92,13 +99,24 @@ export function AuthProvider({ children }) {
 
         supabase.auth.getSession().then(async ({ data }) => {
           if (!mounted) return;
+          authInitSettledRef.current = true;
+          window.clearTimeout(authGuard);
           setSession(data.session);
           if (data.session?.user?.id) await loadProfile(data.session.user.id);
           setLoading(false);
+        }).catch((error) => {
+          console.error('Supabase getSession failed', error);
+          if (mounted) {
+            authInitSettledRef.current = true;
+            window.clearTimeout(authGuard);
+            setLoading(false);
+          }
         });
 
         const { data: subscription } = supabase.auth.onAuthStateChange(async (_event, nextSession) => {
           if (!mounted) return;
+          authInitSettledRef.current = true;
+          window.clearTimeout(authGuard);
           setSession(nextSession);
           if (nextSession?.user?.id) {
             await loadProfile(nextSession.user.id);
@@ -112,11 +130,16 @@ export function AuthProvider({ children }) {
       })
       .catch((error) => {
         console.error('Supabase auth init failed', error);
-        if (mounted) setLoading(false);
+        if (mounted) {
+          authInitSettledRef.current = true;
+          window.clearTimeout(authGuard);
+          setLoading(false);
+        }
       });
 
     return () => {
       mounted = false;
+      window.clearTimeout(authGuard);
       subscriptionRef?.subscription?.unsubscribe();
     };
   }, [isOfflineMode]);

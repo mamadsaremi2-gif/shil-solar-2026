@@ -4,6 +4,7 @@ import App from "./app/App";
 import "./styles/globals.css";
 import "./index.css";
 import "./styles/final-production-overrides.css";
+import "./styles/mobile-standalone-v1.css";
 
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.getRegistrations?.().then((registrations) => {

@@ -1,6 +1,5 @@
 export function buildDashboardCards({
   isAdmin,
-  startNewProject,
   openContact,
   openScenarios,
   openEducation,
@@ -10,27 +9,9 @@ export function buildDashboardCards({
 }) {
   const cards = [
     {
-      key: "new-project",
-      title: "پروژه جدید",
-      caption: "شروع طراحی هوشمند سیستم خورشیدی",
-      meta: "Design Workspace",
-      icon: "",
-      action: startNewProject,
-      tone: "cyan",
-    },
-    {
-      key: "contact",
-      title: "ارتباط با ما",
-      caption: "پشتیبانی، مشاوره فنی و ارتباط مستقیم",
-      meta: "Support Center",
-      icon: "",
-      action: openContact,
-      tone: "blue",
-    },
-    {
       key: "scenarios",
       title: "سناریوهای آماده",
-      caption: "انتخاب سریع الگوهای مهندسی آماده",
+      caption: "الگوهای مهندسی آماده",
       meta: "Ready Presets",
       icon: "",
       action: openScenarios,
@@ -39,7 +20,7 @@ export function buildDashboardCards({
     {
       key: "education",
       title: "آموزش",
-      caption: "مشاهده راهنمای آموزشی اختصاصی اپ",
+      caption: "راهنمای آموزشی اپ",
       meta: "Learning Center",
       icon: "",
       action: openEducation,
@@ -48,16 +29,25 @@ export function buildDashboardCards({
     {
       key: "feedback",
       title: "اعلام نظر کاربران اپ",
-      caption: "ارسال پیشنهاد برای توسعه اپ، تجهیزات و محصولات",
+      caption: "پیشنهاد توسعه و تجهیزات",
       meta: "Private Feedback",
       icon: "",
       action: openFeedback,
       tone: "amber",
     },
     {
+      key: "contact",
+      title: "ارتباط با ما",
+      caption: "پشتیبانی و مشاوره فنی",
+      meta: "Support Center",
+      icon: "",
+      action: openContact,
+      tone: "blue",
+    },
+    {
       key: "logout",
-      title: "خروج کاربران",
-      caption: "خروج امن از سامانه طراحی SHIL",
+      title: "خروج",
+      caption: "خروج امن از سامانه",
       meta: "Secure Sign Out",
       icon: "",
       action: signOut,
@@ -66,10 +56,10 @@ export function buildDashboardCards({
   ];
 
   if (isAdmin) {
-    cards.splice(2, 0, {
+    cards.unshift({
       key: "admin",
       title: "پنل مدیریت",
-      caption: "مدیریت کاربران، تجهیزات و سناریوها",
+      caption: "مدیریت کاربران و گزارش‌ها",
       meta: "Admin Only",
       icon: "",
       action: openAdmin,

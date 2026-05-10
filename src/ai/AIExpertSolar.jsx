@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useProjectStore } from "../app/store/projectStore";
 import { askSolarAI } from "./aiService";
 
 const allowedKeywords = [
@@ -26,6 +27,7 @@ function isRelated(text) {
 }
 
 export default function AIExpertSolar() {
+  const { goDashboard } = useProjectStore();
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
   const [loading, setLoading] = useState(false);
@@ -45,30 +47,43 @@ export default function AIExpertSolar() {
   }
 
   return (
-    <section className="shil-ai-panel" dir="rtl" aria-label="هوش مصنوعی SHIL">
-      <div className="shil-ai-panel__header">
-        <span>✦</span>
-        <h2>هوش مصنوعی SHIL</h2>
-        <p>پرسش تخصصی درباره سیستم‌های خورشیدی، UPS، باتری، اینورتر، کابل‌کشی و برق اضطراری.</p>
-      </div>
+    <main className="project-flow-shell ai-page-v15" dir="rtl">
+      <section className="flow-top-card compact-page-header">
+        <button className="btn btn--ghost" type="button" onClick={goDashboard}>بازگشت به داشبورد</button>
+        <div className="flow-top-title">
+          <strong>هوش مصنوعی SHIL</strong>
+          <small>دستیار تخصصی سیستم‌های خورشیدی و برق اضطراری</small>
+        </div>
+        <span />
+      </section>
+      <section className="shil-ai-panel" aria-label="هوش مصنوعی SHIL">
+        <div className="shil-ai-panel__header">
+          <span>✦</span>
+          <h2>هوش مصنوعی SHIL</h2>
+          <p>پرسش تخصصی درباره سیستم‌های خورشیدی، UPS، باتری، اینورتر، کابل‌کشی و برق اضطراری.</p>
+        </div>
 
-      <textarea
-        className="shil-ai-panel__textarea"
-        placeholder="سوال خود را درباره سیستم‌های خورشیدی یا برق اضطراری وارد کنید..."
-        value={question}
-        onChange={(event) => setQuestion(event.target.value)}
-      />
+        <textarea
+          className="shil-ai-panel__textarea"
+          placeholder="سوال خود را درباره سیستم‌های خورشیدی یا برق اضطراری وارد کنید..."
+          value={question}
+          onChange={(event) => setQuestion(event.target.value)}
+        />
 
-      <button className="shil-ai-panel__button" type="button" onClick={sendQuestion} disabled={loading}>
-        {loading ? "در حال پردازش..." : "ارسال سوال"}
-      </button>
+        <div className="ai-actions-v15">
+          <button className="shil-ai-panel__button" type="button" onClick={sendQuestion} disabled={loading}>
+            {loading ? "در حال پردازش..." : "ارسال سوال"}
+          </button>
+          <button className="btn btn--ghost" type="button" onClick={goDashboard}>بازگشت به داشبورد</button>
+        </div>
 
-      {answer ? (
-        <article className="shil-ai-panel__answer">
-          <strong>پاسخ:</strong>
-          <p>{answer}</p>
-        </article>
-      ) : null}
-    </section>
+        {answer ? (
+          <article className="shil-ai-panel__answer">
+            <strong>پاسخ:</strong>
+            <p>{answer}</p>
+          </article>
+        ) : null}
+      </section>
+    </main>
   );
 }
