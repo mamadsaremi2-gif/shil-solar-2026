@@ -1,6 +1,8 @@
-const EVENT_QUEUE_KEY = 'shil-offline-usage-event-queue-v1';
+import { safeJsonStringify, sanitizeForJson } from './safeJson.js';
+
+const EVENT_QUEUE_KEY = 'shil-offline-usage-event-queue-v2';
 const VISITOR_ID_KEY = 'shil-anonymous-visitor-id-v1';
-const MAX_QUEUE_SIZE = 500;
+const MAX_QUEUE_SIZE = 250;
 
 function canUseStorage() {
   return typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
@@ -14,7 +16,7 @@ export function getVisitorId() {
   if (!canUseStorage()) return 'server-render';
   let visitorId = window.localStorage.getItem(VISITOR_ID_KEY);
   if (!visitorId) {
-    visitorId = crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`;
+    visitorId = globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`;
     window.localStorage.setItem(VISITOR_ID_KEY, visitorId);
   }
   return visitorId;
@@ -33,21 +35,24 @@ export function loadQueuedUsageEvents() {
 
 export function saveQueuedUsageEvents(events) {
   if (!canUseStorage()) return;
-  const safeEvents = Array.isArray(events) ? events.slice(-MAX_QUEUE_SIZE) : [];
-  window.localStorage.setItem(EVENT_QUEUE_KEY, JSON.stringify(safeEvents));
+  const safeEvents = Array.isArray(events)
+    ? events.slice(-MAX_QUEUE_SIZE).map((item) => sanitizeForJson(item)).filter(Boolean)
+    : [];
+  window.localStorage.setItem(EVENT_QUEUE_KEY, safeJsonStringify(safeEvents, '[]'));
 }
 
 export function queueUsageEvent(eventName, payload = {}) {
   if (!eventName) return;
+  const safePayload = sanitizeForJson(payload) ?? {};
   const events = loadQueuedUsageEvents();
   events.push({
-    id: crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`,
-    eventName,
-    payload,
+    id: globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`,
+    eventName: String(eventName),
+    payload: safePayload,
     visitorId: getVisitorId(),
     queuedAt: new Date().toISOString(),
-    url: typeof window !== 'undefined' ? window.location.href : '',
-    userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : '',
+    sourceUrl: typeof window !== 'undefined' ? String(window.location.href) : '',
+    userAgent: typeof navigator !== 'undefined' ? String(navigator.userAgent) : '',
   });
   saveQueuedUsageEvents(events);
 }
@@ -63,15 +68,15 @@ export async function flushQueuedUsageEvents(sendEvent) {
   for (const item of events) {
     try {
       await sendEvent(item.eventName, {
-        ...(item.payload ?? {}),
+        ...(sanitizeForJson(item.payload) ?? {}),
         visitorId: item.visitorId ?? getVisitorId(),
         offlineQueued: true,
         queuedAt: item.queuedAt,
-        sourceUrl: item.url,
+        sourceUrl: item.sourceUrl || item.url || '',
       });
       sent += 1;
     } catch {
-      remaining.push(item);
+      remaining.push(sanitizeForJson(item));
     }
   }
 
