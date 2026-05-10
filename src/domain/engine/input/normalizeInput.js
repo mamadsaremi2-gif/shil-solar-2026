@@ -74,8 +74,30 @@ export function normalizeInput(form) {
   const inverterRatedPowerW = positive(form.inverterRatedPowerW, positive(form.inverterAcPowerW, positive(form.ratedPowerW, 0)));
   const inverterMpptDefaults = ["offgrid", "hybrid"].includes(systemType) ? buildMpptDefaultsFromRatedPower(inverterRatedPowerW, systemType) : {};
 
+  const userComplexityMode = form.userComplexityMode || form.inputMode || form.calculationMode || 'simple';
+  const engineeringMode = userComplexityMode === 'professional' ? 'professional' : 'simple_assisted';
+  const siteSurvey = {
+    gps: { latitude: parseFaNumber(form.latitude, 32), longitude: parseFaNumber(form.longitude, 53), accuracyM: nonNegative(form.gpsAccuracyM, 0) },
+    compassAzimuthDeg: parseFaNumber(form.compassAzimuthDeg, parseFaNumber(form.azimuthDeg, 0)),
+    tiltAngleDeg: positive(form.tiltAngle, 30),
+    sitePhotoUrl: form.sitePhotoUrl || '',
+    compassScreenshotUrl: form.compassScreenshotUrl || '',
+  };
+  const shadowObjects = Array.isArray(form.shadowObjects) ? form.shadowObjects.map((item, index) => ({
+    id: item.id || `shadow-${index + 1}`,
+    title: item.title || `مانع ${index + 1}`,
+    heightM: nonNegative(item.heightM, 0),
+    distanceM: positive(item.distanceM, 1),
+    directionDeg: parseFaNumber(item.directionDeg, 180),
+    criticalHours: item.criticalHours || '',
+  })) : [];
+
   return {
     ...form,
+    userComplexityMode,
+    engineeringMode,
+    siteSurvey,
+    shadowObjects,
     systemType,
     hybridMode: form.hybridMode || "self_consumption",
     targetOffsetPercent: bounded(form.targetOffsetPercent, 85, 10, 150),
@@ -113,8 +135,10 @@ export function normalizeInput(form) {
     panelWatt: positive(form.panelWatt, 585),
     panelVoc: positive(form.panelVoc, 53.1),
     panelVmp: positive(form.panelVmp, 44.8),
-    panelTempCoeffVoc: positive(form.panelTempCoeffVoc, 0.0024),
-    panelTypeTemperatureFactor: positive(form.panelTypeTemperatureFactor, 0.29),
+    panelTempCoeffVoc: positive(form.panelTempCoeffVoc, positive(form.vocTemperatureCoeff, 0.0024)),
+    panelTempCoeffVmp: positive(form.panelTempCoeffVmp, positive(form.vmpTemperatureCoeff, 0.0029)),
+    panelTempCoeffIsc: positive(form.panelTempCoeffIsc, positive(form.iscTemperatureCoeff, 0.0005)),
+    panelTypeTemperatureFactor: positive(form.panelTypeTemperatureFactor, positive(form.powerTemperatureCoeff, 0.29)),
     averageTemperature: parseFaNumber(form.averageTemperature, 30),
     minTemperature: parseFaNumber(form.minTemperature, 0),
     maxTemperature: parseFaNumber(form.maxTemperature, 40),
@@ -144,6 +168,9 @@ export function normalizeInput(form) {
     inverterModel: form.inverterModel || form.selectedInverterName || '',
     inverterRatedPowerW,
     inverterAcPowerW: positive(form.inverterAcPowerW, inverterRatedPowerW),
+    inverterUnitSurgeW: positive(form.inverterUnitSurgeW, positive(form.inverterSurgePowerW, 0)),
+    inverterParallelCapable: form.inverterParallelCapable === false ? false : form.inverterParallelCapable === true ? true : undefined,
+    maxParallelInverters: positive(form.maxParallelInverters, 0),
     offgridMpptProfileId: form.offgridMpptProfileId || inverterMpptDefaults.offgridMpptProfileId || "",
     offgridMpptProfileTitle: form.offgridMpptProfileTitle || inverterMpptDefaults.offgridMpptProfileTitle || "",
     hybridMpptProfileId: form.hybridMpptProfileId || inverterMpptDefaults.hybridMpptProfileId || "",

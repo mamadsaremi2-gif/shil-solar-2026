@@ -16,6 +16,7 @@ import {
   averageLoadFactor,
   effectiveGlobalCoincidence,
   batteryArrangementText,
+  buildRecoveryPlan,
   getCity,
   n,
   recommendation,
@@ -342,53 +343,185 @@ export function BankSelector({ label, category, selectedId, onSelect }) {
   );
 }
 
+
 export function SystemConfig({ form, updateForm }) {
   const rec = recommendation(form);
   const selectedInverter = form.selectedEquipment?.inverter ? EquipmentRepository.getById(form.selectedEquipment.inverter) : rec.inverter;
-  const bankLimit = Math.max(...rec.inverters.map((item) => n(item.specs?.ratedPowerW, 0)), 0);
-  const heavyOffgrid = form.systemType === "offgrid" && rec.requiredW > bankLimit;
+  const selectedPanel = form.selectedEquipment?.panel ? EquipmentRepository.getById(form.selectedEquipment.panel) : rec.panel;
+  const selectedBattery = form.selectedEquipment?.battery ? EquipmentRepository.getById(form.selectedEquipment.battery) : rec.battery;
   const isBackup = form.systemType === "backup";
+  const recovery = buildRecoveryPlan(form);
+  const selectedRecoveryId = form.engineeringRecoveryChoice || "";
+  const selectedRecovery = recovery.options.find((item) => item.id === selectedRecoveryId) || null;
+  const pendingDecision = selectedRecovery || recovery.suggested || null;
+  const inverterCount = Math.max(1, n(form.requestedParallelInverters, n(form.inverterParallelDesignCount, 1)));
+  const unitInvW = n(selectedInverter?.specs?.ratedPowerW, n(form.inverterRatedPowerW, rec.requiredW));
+  const unitSurgeW = n(selectedInverter?.specs?.surgePowerW, n(form.inverterUnitSurgeW, unitInvW * 2));
+  const unitMppt = n(selectedInverter?.specs?.mpptCount, n(form.mpptUnitCount, n(form.mpptCount, 1) / Math.max(inverterCount, 1)));
+  const unitMaxPv = n(selectedInverter?.specs?.maxPvPowerW, n(form.maxPvPowerW, 0) / Math.max(inverterCount, 1));
+  const unitMaxPvPerMppt = n(selectedInverter?.specs?.maxPvPowerPerMpptW, n(form.maxPvPowerPerMpptW, 0));
+  const designSource = form.scenarioId ? "سناریوی آماده" : form.calculationMode ? `طراحی از مسیر ${METHOD_LABELS[form.calculationMode] || form.calculationMode}` : "مسیر طراحی هنوز کامل نشده";
+  const decisionLabel = form.engineeringDecisionSource === 'user_recovery_option'
+    ? `انتخاب کاربر از پیشنهادات اپ: ${form.engineeringDecisionTitle || '—'}`
+    : form.engineeringDecisionSource === 'app_auto_recovery'
+      ? `پیشنهاد هوشمند اپ اعمال شده: ${form.engineeringDecisionTitle || '—'}`
+      : form.engineeringRecoveryApplied
+        ? `تصمیم اعمال‌شده: ${form.engineeringDecisionTitle || '—'}`
+        : "تصمیم اصلاحی هنوز اعمال نشده";
+
   function select(role, item) {
     const specs = item.specs || {};
     const patch = { selectedEquipment: { ...(form.selectedEquipment || {}), [role]: item.id } };
     if (role === "panel") Object.assign(patch, { panelWatt: specs.panelWatt, panelVoc: specs.panelVoc, panelVmp: specs.panelVmp });
     if (role === "battery") Object.assign(patch, { batteryUnitAh: specs.batteryUnitAh, batteryUnitVoltage: specs.batteryUnitVoltage, batteryType: specs.batteryType || form.batteryType, dod: specs.dod || form.dod });
-    if (role === "inverter") Object.assign(patch, { inverterEfficiency: specs.inverterEfficiency, systemVoltage: specs.systemVoltage || form.systemVoltage, inverterRatedPowerW: specs.inverterRatedPowerW || specs.ratedPowerW || form.inverterRatedPowerW, inverterAcPowerW: specs.inverterAcPowerW || specs.ratedPowerW || form.inverterAcPowerW, maxPvVocV: specs.maxPvVocV || form.maxPvVocV, controllerMaxVoc: specs.controllerMaxVoc || specs.maxPvVocV || form.controllerMaxVoc, mpptMinVoltage: specs.mpptMinVoltage || form.mpptMinVoltage, mpptMaxVoltage: specs.mpptMaxVoltage || form.mpptMaxVoltage, mpptStartupVoltage: specs.mpptStartupVoltage || specs.mpptMinVoltage || form.mpptStartupVoltage, mpptCount: specs.mpptCount || form.mpptCount, maxPvPowerPerMpptW: specs.maxPvPowerPerMpptW || form.maxPvPowerPerMpptW, maxPvPowerW: specs.maxPvPowerW || form.maxPvPowerW, offgridMpptProfileId: specs.offgridMpptProfileId || form.offgridMpptProfileId, offgridMpptProfileTitle: specs.offgridMpptProfileTitle || form.offgridMpptProfileTitle });
+    if (role === "inverter") {
+      const count = Math.max(1, n(form.requestedParallelInverters, 1));
+      const mpptUnit = n(specs.mpptCount, 1);
+      Object.assign(patch, {
+        inverterEfficiency: specs.inverterEfficiency,
+        systemVoltage: specs.systemVoltage || form.systemVoltage,
+        inverterRatedPowerW: specs.inverterRatedPowerW || specs.ratedPowerW || form.inverterRatedPowerW,
+        inverterAcPowerW: specs.inverterAcPowerW || specs.ratedPowerW || form.inverterAcPowerW,
+        inverterUnitSurgeW: specs.surgePowerW || (specs.ratedPowerW || form.inverterRatedPowerW) * 2,
+        maxPvVocV: specs.maxPvVocV || form.maxPvVocV,
+        controllerMaxVoc: specs.controllerMaxVoc || specs.maxPvVocV || form.controllerMaxVoc,
+        mpptMinVoltage: specs.mpptMinVoltage || form.mpptMinVoltage,
+        mpptMaxVoltage: specs.mpptMaxVoltage || form.mpptMaxVoltage,
+        mpptStartupVoltage: specs.mpptStartupVoltage || specs.mpptMinVoltage || form.mpptStartupVoltage,
+        mpptUnitCount: mpptUnit,
+        mpptCount: mpptUnit * count,
+        maxPvPowerPerMpptW: specs.maxPvPowerPerMpptW || form.maxPvPowerPerMpptW,
+        maxPvPowerW: n(specs.maxPvPowerW, n(form.maxPvPowerW, 0)) * count,
+        offgridMpptProfileId: specs.offgridMpptProfileId || form.offgridMpptProfileId,
+        offgridMpptProfileTitle: specs.offgridMpptProfileTitle || form.offgridMpptProfileTitle,
+      });
+    }
     updateForm(patch);
   }
+
+  function changeInverterCount(value) {
+    const count = Math.max(1, n(value, 1));
+    const mpptUnit = n(selectedInverter?.specs?.mpptCount, unitMppt || 1);
+    const maxPvUnit = n(selectedInverter?.specs?.maxPvPowerW, unitMaxPv || 0);
+    updateForm({
+      requestedParallelInverters: count,
+      inverterParallelDesignCount: count,
+      inverterParallelCapable: count > 1,
+      mpptUnitCount: mpptUnit,
+      mpptCount: mpptUnit * count,
+      maxPvPowerW: maxPvUnit ? maxPvUnit * count : form.maxPvPowerW,
+      engineeringRecoveryApplied: count > 1 || form.engineeringRecoveryApplied,
+      engineeringDecisionSource: count > 1 ? 'manual_parallel_count' : form.engineeringDecisionSource,
+      engineeringDecisionTitle: count > 1 ? `${count} عدد اینورتر موازی توسط کاربر تنظیم شد` : form.engineeringDecisionTitle,
+    });
+  }
+
+  function chooseRecovery(option) {
+    updateForm({
+      engineeringRecoveryChoice: option.id,
+      engineeringRecoverySelectedTitle: option.title,
+      engineeringRecoverySelectedBadge: option.badge,
+      engineeringRecoverySelectedDescription: option.description,
+    });
+  }
+
+  function applyDecision() {
+    const option = selectedRecovery || recovery.suggested;
+    if (!option) return;
+    updateForm({
+      ...option.patch,
+      engineeringRecoveryChoice: option.id,
+      engineeringRecoveryApplied: true,
+      engineeringDecisionSource: selectedRecovery ? 'user_recovery_option' : 'app_auto_recovery',
+      engineeringDecisionTitle: option.title,
+      engineeringDecisionDescription: option.description,
+      designEvolution: [
+        ...(form.designEvolution || []),
+        {
+          step: 'systemConfig',
+          source: selectedRecovery ? 'user' : 'app',
+          title: option.title,
+          at: new Date().toISOString(),
+        },
+      ],
+    });
+  }
+
+  const canPassCurrentChoice = (unitInvW * inverterCount) >= rec.demand.powerW && (unitSurgeW * inverterCount) >= rec.demand.surgeW;
+
   return (
-    <div className="config-stage">
-      {heavyOffgrid ? <section className="warning-card">توان موردنیاز از بانک آفگرید موجود بیشتر است. اینورتر آفگرید مناسب در بانک موجود نیست. توان پیشنهادی اینورتر جدید حدود {Math.ceil(rec.requiredW / 1000)} کیلووات است؛ گزینه جایگزین: {rec.bestHybrid?.title || "اینورتر هیبرید"} به تعداد {rec.hybridParallelCount || 2} عدد به صورت پارالل.</section> : null}
-      <div className="smart-bank-summary"><div><span>توان طراحی</span><strong>{rec.requiredW.toFixed(0)} W</strong></div><div><span>مصرف روزانه</span><strong>{(rec.demand.dailyWh / 1000).toFixed(1)} kWh</strong></div><div><span>مبنای مصرف روزانه</span><strong>{["current", "power"].includes(form.calculationMode) ? `${form.dailyUsageHours || 3} ساعت در روز` : form.systemType === "backup" ? `${form.backupHours || 0} ساعت بکاپ` : "براساس ورودی انرژی/تجهیزات"}</strong></div><div><span>آرایش پیشنهادی پنل</span><strong>{form.systemType !== "backup" ? `${Math.max(1, Math.ceil(rec.pvCount / 2))} سری × 2 موازی` : "ندارد"}</strong></div><div><span>انتخاب باتری</span><strong>{form.systemType === "backup" ? (result.result?.battery?.voltagePolicy || "انتخاب باتری بر اساس ولتاژ بانک سانورتر انجام می‌شود.") : `اولویت با باتری هم‌ولتاژ ${form.systemVoltage || 48}V؛ سپس سری‌سازی`}</strong></div></div>
-      <section className="smart-decision-card"><h3>تصمیم هوشمند اپ</h3><p>پیشنهاد تجهیزات بر اساس توان لحظه‌ای، انرژی روزانه، ضریب همزمانی، جریان راه‌اندازی موتور، مصرف شب و ضرایب محیطی شهر محاسبه شده است. کاربر می‌تواند ظرفیت را بیشتر کند، اما انتخاب کمتر از حد استاندارد با هشدار و توقف مرحله بعد کنترل می‌شود.</p></section>
-      <div className="smart-bank-grid">
-        {form.systemType !== "backup" ? <BankSelector label="بانک پنل خورشیدی" category="panel" selectedId={form.selectedEquipment?.panel || rec.panel?.id} onSelect={(item) => select("panel", item)} /> : null}
-        <BankSelector label={isBackup ? "بانک UPS / سانورتر" : "بانک اینورتر خورشیدی"} category="inverter" selectedId={form.selectedEquipment?.inverter || rec.inverter?.id} onSelect={(item) => select("inverter", item)} />
-        <BankSelector label="بانک باتری" category="battery" selectedId={form.selectedEquipment?.battery || rec.battery?.id} onSelect={(item) => select("battery", item)} />
-      </div>
-      <div className="focus-form-table">
-        {!isBackup ? <>
-          <Field label="حداکثر ولتاژ مدار باز PV"><input inputMode="decimal" value={form.maxPvVocV ?? selectedInverter?.specs?.maxPvVocV ?? 500} onChange={(event) => updateForm({ maxPvVocV: event.target.value, controllerMaxVoc: event.target.value })} /></Field>
-          <Field label="حداقل ولتاژ MPPT"><input inputMode="decimal" value={form.mpptMinVoltage ?? selectedInverter?.specs?.mpptMinVoltage ?? 30} onChange={(event) => updateForm({ mpptMinVoltage: event.target.value, mpptStartupVoltage: event.target.value })} /></Field>
-          <Field label="حداکثر ولتاژ MPPT"><input inputMode="decimal" value={form.mpptMaxVoltage ?? selectedInverter?.specs?.mpptMaxVoltage ?? 450} onChange={(event) => updateForm({ mpptMaxVoltage: event.target.value })} /></Field>
-          <Field label="تعداد MPPT"><input inputMode="decimal" value={form.mpptCount ?? selectedInverter?.specs?.mpptCount ?? 1} onChange={(event) => updateForm({ mpptCount: event.target.value })} /></Field>
-          <Field label="حداکثر توان PV هر MPPT"><input inputMode="decimal" value={form.maxPvPowerPerMpptW ?? selectedInverter?.specs?.maxPvPowerPerMpptW ?? 0} onChange={(event) => updateForm({ maxPvPowerPerMpptW: event.target.value })} /></Field>
-          <Field label="حداکثر جریان ورودی MPPT"><input inputMode="decimal" value={form.mpptMaxInputCurrent ?? selectedInverter?.specs?.mpptMaxInputCurrent ?? 100} onChange={(event) => updateForm({ mpptMaxInputCurrent: event.target.value })} /></Field>
-        </> : <>
-          <Field label="مدت زمان برق اضطراری موردنیاز (ساعت)"><input inputMode="decimal" value={form.backupHours ?? 2} onChange={(event) => updateForm({ backupHours: event.target.value })} /></Field>
-          <Field label="ظرفیت موازی پیشنهادی باتری"><input inputMode="decimal" value={form.backupParallelCount ?? ''} placeholder="خودکار" onChange={(event) => updateForm({ backupParallelCount: event.target.value })} /></Field>
-        </>}
-        <Field label="ولتاژ بانک اینورتر / باتری"><input inputMode="decimal" value={form.systemVoltage ?? 48} onChange={(event) => updateForm({ systemVoltage: event.target.value })} /></Field>
-        <Field label="ولتاژ هر باتری انتخابی"><input inputMode="decimal" value={form.batteryUnitVoltage ?? 51.2} onChange={(event) => updateForm({ batteryUnitVoltage: event.target.value })} /></Field>
-        <Field label="جریان‌ساعت باتری"><input inputMode="decimal" value={form.batteryUnitAh ?? 100} onChange={(event) => updateForm({ batteryUnitAh: event.target.value })} /></Field>
-        <Field label="ضریب افزایش باتری"><input inputMode="decimal" value={form.batteryFactor ?? 1} onChange={(event) => updateForm({ batteryFactor: event.target.value })} /></Field>
-        {!isBackup ? <Field label="روز خودکفایی"><input inputMode="decimal" value={form.daysAutonomy ?? 0} onChange={(event) => updateForm({ daysAutonomy: event.target.value })} /></Field> : null}
-        <Field label="نوع باتری"><select value={form.batteryType || "LFP"} onChange={(event) => updateForm({ batteryType: event.target.value, dod: BATTERY_DOD[event.target.value] || 0.8 })}>{BATTERY_TYPES.map((type) => <option key={type} value={type}>{type}</option>)}</select></Field>
-        <Field label="عمق دشارژ"><input inputMode="decimal" value={form.dod ?? 0.8} onChange={(event) => updateForm({ dod: event.target.value })} /></Field>
-        <Field label="راندمان اینورتر"><input inputMode="decimal" value={form.inverterEfficiency ?? 0.93} onChange={(event) => updateForm({ inverterEfficiency: event.target.value })} /></Field>
-        <Field label="ضریب تلفات کابل"><input inputMode="decimal" value={form.cableLossFactor ?? 0.97} onChange={(event) => updateForm({ cableLossFactor: event.target.value })} /></Field>
-        <Field label="ضریب اطمینان طراحی"><input inputMode="decimal" value={form.designFactor ?? 1.2} onChange={(event) => updateForm({ designFactor: event.target.value })} /></Field>
-      </div>
+    <div className="config-stage engineering-config-vnext">
+      <section className="engineering-overview-header">
+        <div className="engineering-overview-header__title">
+          <span>خلاصه مهندسی سیستم</span>
+          <strong>{systemLabel(form.systemType)} / {METHOD_LABELS[form.calculationMode] || "روش نامشخص"}</strong>
+        </div>
+        <div className="engineering-overview-grid">
+          <div><span>مبنای طراحی</span><strong>{designSource}</strong></div>
+          <div><span>مسیر تصمیم</span><strong>{decisionLabel}</strong></div>
+          <div><span>توان موردنیاز</span><strong>{(rec.requiredW / 1000).toFixed(1)} kW</strong></div>
+          <div><span>توان اینورتر کل</span><strong>{((unitInvW * inverterCount) / 1000).toFixed(1)} kW</strong></div>
+          <div><span>تعداد اینورتر</span><strong>{inverterCount} عدد</strong></div>
+          <div><span>وضعیت</span><strong>{canPassCurrentChoice ? "قابل ادامه" : "نیازمند اصلاح"}</strong></div>
+        </div>
+      </section>
+
+      <section className="selected-equipment-strip">
+        {!isBackup ? <BankSelector label="بانک پنل خورشیدی" category="panel" selectedId={form.selectedEquipment?.panel || selectedPanel?.id} onSelect={(item) => select("panel", item)} /> : null}
+        <BankSelector label={isBackup ? "بانک UPS / سانورتر" : "بانک اینورتر"} category="inverter" selectedId={form.selectedEquipment?.inverter || selectedInverter?.id} onSelect={(item) => select("inverter", item)} />
+        <BankSelector label="بانک باتری" category="battery" selectedId={form.selectedEquipment?.battery || selectedBattery?.id} onSelect={(item) => select("battery", item)} />
+      </section>
+
+      <section className="distributed-field-panel">
+        <div className="distributed-field-panel__head"><strong>فیلدهای فنی تجهیزات</strong><span>مقادیر پایه برای یک اینورتر هستند؛ مقدار کل با ضریب تعداد اینورتر محاسبه می‌شود.</span></div>
+        <div className="focus-form-table">
+          <Field label="تعداد اینورتر موازی"><input inputMode="decimal" value={inverterCount} onChange={(event) => changeInverterCount(event.target.value)} /></Field>
+          <Field label="توان هر اینورتر"><input inputMode="decimal" value={unitInvW} onChange={(event) => updateForm({ inverterRatedPowerW: event.target.value, inverterAcPowerW: event.target.value })} /></Field>
+          <Field label="توان کل با ضریب تعداد"><input readOnly value={`${((unitInvW * inverterCount) / 1000).toFixed(1)} kW = ${(unitInvW / 1000).toFixed(1)} × ${inverterCount}`} /></Field>
+          <Field label="Surge هر اینورتر"><input inputMode="decimal" value={unitSurgeW} onChange={(event) => updateForm({ inverterUnitSurgeW: event.target.value })} /></Field>
+          <Field label="Surge کل با ضریب تعداد"><input readOnly value={`${((unitSurgeW * inverterCount) / 1000).toFixed(1)} kW`} /></Field>
+          {!isBackup ? <>
+            <Field label="MPPT هر اینورتر"><input inputMode="decimal" value={unitMppt} onChange={(event) => updateForm({ mpptUnitCount: event.target.value, mpptCount: n(event.target.value, 1) * inverterCount })} /></Field>
+            <Field label="MPPT کل سیستم"><input readOnly value={`${unitMppt * inverterCount} = ${unitMppt} × ${inverterCount}`} /></Field>
+            <Field label="حداکثر Voc PV"><input inputMode="decimal" value={form.maxPvVocV ?? selectedInverter?.specs?.maxPvVocV ?? 500} onChange={(event) => updateForm({ maxPvVocV: event.target.value, controllerMaxVoc: event.target.value })} /></Field>
+            <Field label="بازه MPPT"><input readOnly value={`${form.mpptMinVoltage ?? selectedInverter?.specs?.mpptMinVoltage ?? 30} تا ${form.mpptMaxVoltage ?? selectedInverter?.specs?.mpptMaxVoltage ?? 450} V`} /></Field>
+            <Field label="توان PV هر اینورتر"><input inputMode="decimal" value={unitMaxPv || 0} onChange={(event) => updateForm({ maxPvPowerW: n(event.target.value, 0) * inverterCount })} /></Field>
+            <Field label="توان PV کل"><input readOnly value={unitMaxPv ? `${(unitMaxPv * inverterCount / 1000).toFixed(1)} kWp` : "خودکار"} /></Field>
+          </> : null}
+          <Field label="ولتاژ بانک اینورتر/باتری"><input inputMode="decimal" value={form.systemVoltage ?? 48} onChange={(event) => updateForm({ systemVoltage: event.target.value })} /></Field>
+          <Field label="ولتاژ هر باتری"><input inputMode="decimal" value={form.batteryUnitVoltage ?? selectedBattery?.specs?.batteryUnitVoltage ?? 51.2} onChange={(event) => updateForm({ batteryUnitVoltage: event.target.value })} /></Field>
+          <Field label="ظرفیت هر باتری Ah"><input inputMode="decimal" value={form.batteryUnitAh ?? selectedBattery?.specs?.batteryUnitAh ?? 100} onChange={(event) => updateForm({ batteryUnitAh: event.target.value })} /></Field>
+          <Field label="ضریب افزایش باتری"><input inputMode="decimal" value={form.batteryFactor ?? 1} onChange={(event) => updateForm({ batteryFactor: event.target.value })} /></Field>
+          {isBackup ? <Field label="ساعت برق اضطراری"><input inputMode="decimal" value={form.backupHours ?? 2} onChange={(event) => updateForm({ backupHours: event.target.value })} /></Field> : <Field label="روز خودکفایی"><input inputMode="decimal" value={form.daysAutonomy ?? 0} onChange={(event) => updateForm({ daysAutonomy: event.target.value })} /></Field>}
+          <Field label="نوع باتری"><select value={form.batteryType || "LFP"} onChange={(event) => updateForm({ batteryType: event.target.value, dod: BATTERY_DOD[event.target.value] || 0.8 })}>{BATTERY_TYPES.map((type) => <option key={type} value={type}>{type}</option>)}</select></Field>
+          <Field label="DoD"><input inputMode="decimal" value={form.dod ?? 0.8} onChange={(event) => updateForm({ dod: event.target.value })} /></Field>
+          <Field label="راندمان اینورتر"><input inputMode="decimal" value={form.inverterEfficiency ?? 0.93} onChange={(event) => updateForm({ inverterEfficiency: event.target.value })} /></Field>
+          <Field label="ضریب تلفات کابل"><input inputMode="decimal" value={form.cableLossFactor ?? 0.97} onChange={(event) => updateForm({ cableLossFactor: event.target.value })} /></Field>
+          <Field label="ضریب اطمینان طراحی"><input inputMode="decimal" value={form.designFactor ?? 1.2} onChange={(event) => updateForm({ designFactor: event.target.value })} /></Field>
+        </div>
+      </section>
+
+      {recovery.needsRecovery ? <section className="engineering-recovery-card">
+        <div className="engineering-recovery-card__head"><span>پیشنهادات اپ برای ادامه مسیر</span><strong>Multi Architecture Recovery</strong></div>
+        <p>{recovery.decisionText}</p>
+        <p className="engineering-recovery-note">توان پیشنهادی اینورتر جدید حدود {recovery.requiredKw} کیلووات است. یکی از معماری‌های زیر را انتخاب کنید؛ اگر انتخابی انجام نشود، تصمیم هوشمند اپ بهترین گزینه را اعمال می‌کند.</p>
+        <div className="engineering-recovery-options">
+          {recovery.options.map((option) => (
+            <button key={option.id} type="button" className={selectedRecoveryId === option.id ? "is-active" : ""} onClick={() => chooseRecovery(option)}>
+              <em>{option.badge}</em><strong>{option.title}</strong><span>{option.description}</span>
+            </button>
+          ))}
+        </div>
+      </section> : null}
+
+      <section className="smart-decision-card decision-commit-card">
+        <h3>تصمیم هوشمند اپ</h3>
+        {recovery.needsRecovery ? <>
+          <p><b>وضعیت انتخاب:</b> {selectedRecovery ? `کاربر انتخاب کرده: ${selectedRecovery.title}` : `انتخابی انجام نشده؛ اپ این پیشنهاد را اعمال می‌کند: ${recovery.suggested?.title || '—'}`}</p>
+          <p>{selectedRecovery?.description || recovery.suggested?.description}</p>
+          <button className="btn btn--primary smart-apply-button" type="button" onClick={applyDecision}>اعمال تصمیم هوشمند اپ</button>
+        </> : <p>طراحی فعلی از نظر توان پیوسته و لحظه‌ای قابل ادامه است. در صورت تغییر تعداد اینورتر یا تجهیزات، تمام فیلدهای بالا و موتور محاسبات دوباره به‌روزرسانی می‌شوند.</p>}
+      </section>
     </div>
   );
 }
@@ -401,33 +534,46 @@ export function Review({ form, goToStep }) {
   const pv = result.result?.pv || {};
   const protection = result.result?.protection || {};
   const cabling = result.result?.cabling || {};
-  const installation = result.result?.installation || {};
   const method = METHOD_LABELS[form.calculationMode] || "انتخاب نشده";
   const system = systemLabel(form.systemType);
-  const demandKwh = ((summary.totalDailyEnergyWh || rec.demand.dailyWh || 0) / 1000).toFixed(2);
-  const selectedPanel = form.selectedEquipment?.panel ? EquipmentRepository.getById(form.selectedEquipment.panel) : rec.panel;
-  const selectedInverter = form.selectedEquipment?.inverter ? EquipmentRepository.getById(form.selectedEquipment.inverter) : rec.inverter;
-  const selectedBattery = form.selectedEquipment?.battery ? EquipmentRepository.getById(form.selectedEquipment.battery) : rec.battery;
-  const avgKs = form.calculationMode === 'loads' ? averageLoadFactor(form.loadItems, 'coincidenceFactor', 1).toFixed(2) : effectiveGlobalCoincidence(form).toFixed(2);
-  const avgSurge = form.calculationMode === 'loads' ? averageLoadFactor(form.loadItems, 'surgeFactor', 1).toFixed(2) : n(form.surgeFactor, 1.7).toFixed(2);
-  const batteryText = batteryArrangementText(battery, form);
   const isBackup = form.systemType === "backup";
+  const inverterCount = Math.max(1, n(form.requestedParallelInverters, n(form.inverterParallelDesignCount, 1)));
+  const unitInvW = n(form.inverterRatedPowerW, n(rec.inverter?.specs?.ratedPowerW, rec.requiredW));
+  const unitSurgeW = n(form.inverterUnitSurgeW, unitInvW * 2);
+  const tabs = [
+    { id: 0, title: "مشخصات", body: [["پروژه", form.projectTitle || "—"], ["کارفرما", form.clientName || "—"], ["شهر", form.city || "—"], ["مسیر طراحی", form.scenarioId ? "سناریوی آماده" : "طراحی دستی/مرحله‌ای"]] },
+    { id: 4, title: "نیاز مصرف", body: [["روش", method], ["توان طراحی", `${(rec.requiredW / 1000).toFixed(1)} kW`], ["مصرف/بکاپ", isBackup ? `${form.backupHours || 0} ساعت` : `${((rec.demand.dailyWh || 0) / 1000).toFixed(1)} kWh/day`], ["Surge", `${(rec.demand.surgeW / 1000).toFixed(1)} kW`]] },
+    { id: 5, title: "اینورتر و تصمیم", body: [["نوع سیستم", system], ["تصمیم", form.engineeringDecisionTitle || "بدون Recovery"], ["تعداد اینورتر", `${inverterCount} عدد`], ["توان کل", `${((unitInvW * inverterCount) / 1000).toFixed(1)} kW`], ["Surge کل", `${((unitSurgeW * inverterCount) / 1000).toFixed(1)} kW`]] },
+    { id: 5, title: "پنل / باتری", body: [["پنل", isBackup ? "ندارد" : `${summary.panelCount ?? rec.pvCount} عدد`], ["توان PV", isBackup ? "ندارد" : `${(((summary.pvInstalledPowerW || ((summary.panelCount ?? rec.pvCount) * n(form.panelWatt, 585))) || 0) / 1000).toFixed(2)} kWp`], ["باتری", `${summary.batteryCount ?? rec.batteryCount} عدد`], ["آرایش باتری", batteryArrangementText(battery, form)]] },
+    { id: 5, title: "کابل و حفاظت", body: [["کابل DC", isBackup ? "ندارد" : `${cabling.dcCableSizeMm2 || '—'} mm²`], ["کابل باتری", `${cabling.batteryCableSizeMm2 || '—'} mm²`], ["کابل AC", `${cabling.acCableSizeMm2 || '—'} mm²`], ["حفاظت", protection.combinerBoxRequired ? "Combiner لازم" : "طبق محاسبات"]] },
+    { id: 6, title: "ضرایب و تاریخچه", body: [["ضریب طراحی", form.designFactor || 1.2], ["ضریب کابل", form.cableLossFactor || 0.97], ["ضریب باتری", form.batteryFactor || 1], ["منبع تصمیم", form.engineeringDecisionSource || "مسیر عادی"], ["آخرین Recovery", form.engineeringDecisionDescription || "ثبت نشده"]] },
+  ];
   return (
-    <div className="review-stage v15-review-stage">
-      <div className="smart-decision-card"><h3>تصمیم هوشمند اپ</h3><p>پیشنهاد زیر بر اساس روش محاسبات، ضرایب واقعی مصرف، شرایط محیطی شهر، بانک تجهیزات، جریان راه‌اندازی و محدودیت‌های اینورتر انتخاب شده است.</p></div>
-      <div className="review-grid final-summary-grid">
-        <section className="review-card"><h3>مشخصات پروژه</h3><p><b>پروژه:</b> {form.projectTitle}</p><p><b>کارفرما:</b> {form.clientName}</p><p><b>شهر:</b> {form.city}</p><p><b>نوع سیستم:</b> {system}</p><p><b>روش محاسبات:</b> {method}</p><p><b>مسیر ورود:</b> {form.selectedScenarioId ? 'سناریوی آماده' : 'طراحی دستی'}</p></section>
-        <section className="review-card"><h3>نیاز مصرف</h3><p><b>توان طراحی:</b> {(summary.demandPowerW || rec.requiredW || 0).toFixed(0)} W</p><p><b>{isBackup ? "انرژی اضطراری" : "مصرف روزانه"}:</b> {demandKwh} kWh</p>{isBackup ? <p><b>مدت زمان برق اضطراری:</b> {form.backupHours || 0} ساعت</p> : <p><b>زمان مصرف روزانه:</b> {form.dailyUsageHours || 3} ساعت</p>}<p><b>میانگین ضریب همزمانی:</b> {avgKs}</p><p><b>میانگین ضریب راه‌اندازی:</b> {avgSurge}</p></section>
-        {!isBackup ? <section className="review-card"><h3>پنل خورشیدی</h3><p><b>پنل پیشنهادی:</b> {selectedPanel?.title || '—'}</p><p><b>توان پنل:</b> {selectedPanel?.specs?.panelWatt || form.panelWatt || '—'} W</p><p><b>تعداد پنل:</b> {summary.panelCount ?? rec.pvCount} عدد</p><p><b>آرایش:</b> {pv.panelSeriesCount || '—'} سری × {pv.panelParallelCount || '—'} موازی</p><p><b>Voc سرد:</b> {pv.stringVocCold || '—'} V</p></section> : null}
-        {!isBackup ? <section className="review-card"><h3>اینورتر و MPPT</h3><p><b>مدل پیشنهادی:</b> {selectedInverter?.title || '—'}</p><p><b>توان نامی:</b> {((summary.inverterPowerW || selectedInverter?.specs?.ratedPowerW || rec.requiredW || 0) / 1000).toFixed(1)} kW</p><p><b>ولتاژ بانک:</b> {form.systemVoltage || 48} V</p><p><b>تعداد MPPT:</b> {form.mpptCount || selectedInverter?.specs?.mpptCount || 1}</p><p><b>بازه MPPT:</b> {form.mpptMinVoltage || selectedInverter?.specs?.mpptMinVoltage || '—'} تا {form.mpptMaxVoltage || selectedInverter?.specs?.mpptMaxVoltage || '—'} V</p><p><b>حداکثر Voc:</b> {form.maxPvVocV || 500} VDC</p></section> : null}
-        <section className="review-card"><h3>باتری</h3><p><b>باتری پیشنهادی:</b> {selectedBattery?.title || '—'}</p><p><b>تعداد کل:</b> {battery.totalCount ?? rec.batteryCount} عدد</p><p><b>توضیح سری/موازی:</b> {batteryText}</p></section>
-        {!isBackup ? <section className="review-card"><h3>نصب و فضا</h3><p><b>فضای نصب پیشنهادی:</b> {installation.area?.requiredAreaM2 || '—'} m²</p><p><b>زاویه نصب:</b> {form.tiltAngle || '—'} درجه</p><p><b>جهت پیشنهادی:</b> جنوب / رو به تابش غالب</p></section> : null}
-        <section className="review-card"><h3>حفاظت و ایمنی</h3>{isBackup ? <><p><b>فیوز باتری:</b> {protection.batteryFuseA || '—'} A</p><p><b>کلید AC خروجی:</b> {protection.acFuseA || '—'} A</p><p><b>کابل باتری:</b> {cabling.batteryCableSizeMm2 || '—'} mm²</p><p><b>کابل AC:</b> {cabling.acCableSizeMm2 || '—'} mm²</p></> : <><p><b>DC Isolator:</b> {protection.dcIsolatorRating || '≥ Voc_max آرایه'}</p><p><b>SPD DC:</b> {protection.dcSpdType || 'Type II DC، یا Type I+II در صورت صاعقه‌گیر'}</p><p><b>فیوز/MCB استرینگ:</b> {protection.stringFuseRating || '1.25 تا 1.5 × Isc'}</p><p><b>کابل DC:</b> {cabling.dcCableSizeMm2 || '—'} mm²</p><p><b>AC/SPD/Earthing:</b> کلید AC، سرج AC و ارتینگ مناسب در گزارش نهایی درج می‌شود.</p></>}</section>
+    <div className="review-stage v15-review-stage engineering-review-center">
+      <section className="engineering-overview-header review-overview">
+        <div className="engineering-overview-header__title"><span>چکیده اطلاعات مهندسی</span><strong>{system} / {method}</strong></div>
+        <div className="engineering-overview-grid">
+          <div><span>مسیر ورود</span><strong>{form.scenarioId ? "سناریوی آماده" : "مسیر انتخاب کاربر"}</strong></div>
+          <div><span>تصمیم اعمال‌شده</span><strong>{form.engineeringDecisionTitle || "مسیر عادی بدون Recovery"}</strong></div>
+          <div><span>تعداد اینورتر</span><strong>{inverterCount}</strong></div>
+          <div><span>وضعیت</span><strong>{result.ok ? "قابل اجرا" : "نیازمند بررسی"}</strong></div>
+        </div>
+      </section>
+      <div className="summary-tab-grid">
+        {tabs.map((tab) => (
+          <section key={tab.title} className="summary-tab-card">
+            <button type="button" className="summary-tab-edit" onClick={() => goToStep(tab.id)}>ویرایش/مرور</button>
+            <h3>{tab.title}</h3>
+            <div className="summary-table-like">
+              {tab.body.map(([k, v]) => <p key={k}><span>{k}</span><strong>{v}</strong></p>)}
+            </div>
+          </section>
+        ))}
       </div>
+      <section className="smart-decision-card"><h3>تصمیم هوشمند اپ</h3><p>این چکیده فقط از داده‌های مراحل قبلی و Unified Engineering State ساخته شده است. برای اصلاح هر قسمت، دکمه «ویرایش/مرور» همان تب را بزنید؛ بعد از تغییر، موتور کامل دوباره محاسبه می‌کند و به همین صفحه برمی‌گردید.</p></section>
     </div>
   );
 }
-
 async function captureFinalReport(reportElement, { fileType = "pdf" } = {}) {
   if (!reportElement) throw new Error("REPORT_ELEMENT_MISSING");
   const [{ default: html2canvas }, jsPdfModule] = await Promise.all([

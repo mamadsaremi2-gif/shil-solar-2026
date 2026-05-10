@@ -63,6 +63,14 @@ export function evaluateDesignValidation(input, loads, battery, pv, inverter, co
     }
   }
 
+
+  if (inverter?.parallelShortfall) {
+    pushCheck(checks, { id: 'inverter-parallel-shortfall', category: 'inverter', severity: 'error', status: 'fail', title: 'توان اینورتر با تعداد مجاز پارالل کافی نیست', message: `برای این بار حداقل ${inverter.requiredParallelUnits} واحد لازم است اما سقف مجاز/ثبت‌شده ${inverter.maxParallelUnits} واحد است.`, metric: `${inverter.parallelCount}/${inverter.requiredParallelUnits}`, limit: `${inverter.maxParallelUnits} واحد`, recommendation: 'مدل اینورتر بزرگ‌تر انتخاب کن، بارها را تفکیک کن یا سیستم را به چند زیرسیستم مستقل تقسیم کن.', scoreImpact: 30 });
+  }
+  if (inverter?.parallelCount > 1) {
+    pushCheck(checks, { id: 'inverter-parallel-design', category: 'inverter', severity: 'warning', status: 'borderline', title: 'طراحی با چند اینورتر انجام شده است', message: `${inverter.parallelCount} واحد اینورتر برای تأمین توان/Surge لازم است. تقسیم بار، باتری، MPPT و کابل هر واحد باید در اجرا کنترل شود.`, metric: `${inverter.parallelCount} واحد`, limit: inverter.parallelPolicy || 'طبق دیتاشیت', recommendation: 'فقط از مدل‌های دارای قابلیت پارالل/سنکرون استفاده شود و تقسیم آرایه PV برای هر واحد جداگانه کنترل شود.', scoreImpact: 6 });
+  }
+
   if (hasPv) {
     const pvTarget = input.systemType === 'gridtie' ? (input.targetOffsetPercent || 100) / 100 : 1;
     const actualCoverage = loads.totalDailyEnergyWh > 0 ? pv.estimatedDailyProductionWh / loads.totalDailyEnergyWh : 1;

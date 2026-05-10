@@ -201,6 +201,154 @@ export function recommendation(form) {
   return { demand, requiredW, inverter, panel, battery, pvCount, batteryCount, inverters, panels, batteries, inverterLimitW, bestHybrid, hybridParallelCount };
 }
 
+export function buildRecoveryPlan(form) {
+  const rec = recommendation(form);
+  const requiredKw = Math.ceil(rec.requiredW / 1000);
+  const selectedInverterW = n(rec.inverter?.specs?.ratedPowerW, 0);
+  const selectedSurgeW = n(rec.inverter?.specs?.surgePowerW, selectedInverterW * 2);
+  const hasPowerShortfall = selectedInverterW > 0 && selectedInverterW < rec.demand.powerW;
+  const hasSurgeShortfall = selectedSurgeW > 0 && selectedSurgeW < rec.demand.surgeW;
+  const needsRecovery = hasPowerShortfall || hasSurgeShortfall || (selectedInverterW > 0 && rec.requiredW > selectedInverterW);
+  const hybrid = rec.bestHybrid || rec.inverter;
+  const unitW = n(hybrid?.specs?.ratedPowerW, 0) || selectedInverterW || 1;
+  const unitSurgeW = n(hybrid?.specs?.surgePowerW, unitW * 2);
+  const countByPower = Math.ceil(rec.requiredW / Math.max(unitW, 1));
+  const countBySurge = Math.ceil(rec.demand.surgeW / Math.max(unitSurgeW, 1));
+  const parallelCount = Math.max(1, countByPower, countBySurge);
+  const maxParallel = Math.max(parallelCount, n(hybrid?.specs?.maxParallelUnits, parallelCount));
+  const systemVoltage = n(hybrid?.specs?.systemVoltage, n(form.systemVoltage, 48));
+  const mpptCount = n(hybrid?.specs?.mpptCount, n(form.mpptCount, 1)) * parallelCount;
+  const maxPvPowerW = n(hybrid?.specs?.maxPvPowerW, n(form.maxPvPowerW, 0)) * parallelCount;
+  const maxPvPowerPerMpptW = n(hybrid?.specs?.maxPvPowerPerMpptW, n(form.maxPvPowerPerMpptW, 0));
+  const options = [];
+  if (hybrid) {
+    options.push({
+      id: 'parallel-hybrid',
+      title: `پارالل ${parallelCount} عدد ${hybrid.title}`,
+      badge: 'پیشنهاد اصلی اپ',
+      description: `توان موردنیاز از بانک فعلی بیشتر است. توان پیشنهادی اینورتر جدید حدود ${requiredKw} کیلووات است؛ گزینه جایگزین مهندسی: ${hybrid.title} به تعداد ${parallelCount} عدد به صورت پارالل.`,
+      patch: {
+        selectedEquipment: { ...(form.selectedEquipment || {}), inverter: hybrid.id },
+        inverterRatedPowerW: unitW,
+        inverterAcPowerW: unitW,
+        inverterUnitSurgeW: unitSurgeW,
+        inverterParallelCapable: true,
+        maxParallelInverters: maxParallel,
+        requestedParallelInverters: parallelCount,
+        inverterParallelDesignCount: parallelCount,
+        systemVoltage,
+        inverterEfficiency: hybrid.specs?.inverterEfficiency || form.inverterEfficiency || 0.95,
+        maxPvVocV: hybrid.specs?.maxPvVocV || form.maxPvVocV,
+        controllerMaxVoc: hybrid.specs?.controllerMaxVoc || hybrid.specs?.maxPvVocV || form.controllerMaxVoc,
+        mpptMinVoltage: hybrid.specs?.mpptMinVoltage || form.mpptMinVoltage,
+        mpptMaxVoltage: hybrid.specs?.mpptMaxVoltage || form.mpptMaxVoltage,
+        mpptStartupVoltage: hybrid.specs?.mpptStartupVoltage || hybrid.specs?.mpptMinVoltage || form.mpptStartupVoltage,
+        mpptCount,
+        maxPvPowerPerMpptW,
+        maxPvPowerW,
+        engineeringRecoveryChoice: 'parallel-hybrid',
+        engineeringRecoveryApplied: true,
+      },
+    });
+  }
+
+  const industrialCandidates = EquipmentRepository.search({ category: "inverter", query: "" })
+    .filter((item) => n(item.specs?.ratedPowerW, 0) >= 20000 || item.specs?.inverterGrade === "industrial")
+    .sort((a, b) => n(a.specs?.ratedPowerW, 0) - n(b.specs?.ratedPowerW, 0));
+  const industrial = industrialCandidates.find((item) => n(item.specs?.ratedPowerW, 0) >= rec.requiredW / 4) || industrialCandidates.at(-1);
+  if (industrial && industrial.id !== hybrid?.id) {
+    const indW = n(industrial.specs?.ratedPowerW, unitW);
+    const indSurge = n(industrial.specs?.surgePowerW, indW * 1.8);
+    const indCount = Math.max(1, Math.ceil(rec.requiredW / Math.max(indW, 1)), Math.ceil(rec.demand.surgeW / Math.max(indSurge, 1)));
+    options.push({
+      id: 'industrial-bank',
+      title: `${indCount} عدد ${industrial.title}`,
+      badge: 'پیشنهاد صنعتی',
+      description: `گزینه صنعتی بر اساس بانک تجهیزات: ${industrial.title} به تعداد ${indCount} عدد. این مسیر برای کاهش تعداد واحدها، کابل‌کشی منظم‌تر و تابلو صنعتی مناسب‌تر است.`,
+      patch: {
+        selectedEquipment: { ...(form.selectedEquipment || {}), inverter: industrial.id },
+        inverterRatedPowerW: indW,
+        inverterAcPowerW: indW,
+        inverterUnitSurgeW: indSurge,
+        inverterParallelCapable: indCount > 1,
+        maxParallelInverters: Math.max(indCount, n(industrial.specs?.maxParallelUnits, indCount)),
+        requestedParallelInverters: indCount,
+        inverterParallelDesignCount: indCount,
+        systemVoltage: n(industrial.specs?.systemVoltage, systemVoltage),
+        inverterEfficiency: industrial.specs?.inverterEfficiency || form.inverterEfficiency || 0.95,
+        maxPvVocV: industrial.specs?.maxPvVocV || form.maxPvVocV,
+        controllerMaxVoc: industrial.specs?.controllerMaxVoc || industrial.specs?.maxPvVocV || form.controllerMaxVoc,
+        mpptMinVoltage: industrial.specs?.mpptMinVoltage || form.mpptMinVoltage,
+        mpptMaxVoltage: industrial.specs?.mpptMaxVoltage || form.mpptMaxVoltage,
+        mpptStartupVoltage: industrial.specs?.mpptStartupVoltage || industrial.specs?.mpptMinVoltage || form.mpptStartupVoltage,
+        mpptUnitCount: n(industrial.specs?.mpptCount, 1),
+        mpptCount: n(industrial.specs?.mpptCount, 1) * indCount,
+        maxPvPowerPerMpptW: industrial.specs?.maxPvPowerPerMpptW || form.maxPvPowerPerMpptW,
+        maxPvPowerW: n(industrial.specs?.maxPvPowerW, 0) * indCount,
+        engineeringRecoveryChoice: 'industrial-bank',
+        engineeringRecoveryApplied: true,
+      },
+    });
+  }
+  if (parallelCount >= 4) {
+    const half = Math.ceil(parallelCount / 2);
+    options.push({
+      id: 'distributed-two-clusters',
+      title: `دو خوشه مستقل ${half} تایی`,
+      badge: 'معماری توزیع‌شده',
+      description: `بار بین دو خوشه مستقل تقسیم می‌شود تا نگهداری، عیب‌یابی، کابل‌کشی و افزونگی بهتر شود. هر خوشه حدود ${Math.ceil(requiredKw / 2)} کیلووات را پوشش می‌دهد.`,
+      patch: {
+        selectedEquipment: { ...(form.selectedEquipment || {}), inverter: hybrid?.id || form.selectedEquipment?.inverter },
+        inverterRatedPowerW: unitW,
+        inverterAcPowerW: unitW,
+        inverterUnitSurgeW: unitSurgeW,
+        inverterParallelCapable: true,
+        requestedParallelInverters: parallelCount,
+        inverterParallelDesignCount: parallelCount,
+        distributedClusterCount: 2,
+        invertersPerCluster: half,
+        systemVoltage,
+        mpptUnitCount: n(hybrid?.specs?.mpptCount, 1),
+        mpptCount,
+        maxPvPowerPerMpptW,
+        maxPvPowerW,
+        engineeringRecoveryChoice: 'distributed-two-clusters',
+        engineeringRecoveryApplied: true,
+      },
+    });
+  }
+  options.push({
+    id: 'custom-industrial',
+    title: `تعریف اینورتر صنعتی حدود ${requiredKw}kW`,
+    badge: 'برای کاربر حرفه‌ای',
+    description: `اگر در اجرا اینورتر صنعتی یا چند سیستم مستقل دارید، توان نامی را روی حدود ${requiredKw} کیلووات تنظیم کنید و سپس کابل، حفاظت، باتری و پنل با همین مبنا دوباره محاسبه می‌شود.`,
+    patch: {
+      inverterRatedPowerW: rec.requiredW,
+      inverterAcPowerW: rec.requiredW,
+      inverterUnitSurgeW: Math.max(rec.demand.surgeW, rec.requiredW * 1.5),
+      inverterParallelCapable: true,
+      maxParallelInverters: 1,
+      requestedParallelInverters: 1,
+      inverterParallelDesignCount: 1,
+      engineeringRecoveryChoice: 'custom-industrial',
+      engineeringRecoveryApplied: true,
+    },
+  });
+  return {
+    needsRecovery,
+    hasPowerShortfall,
+    hasSurgeShortfall,
+    requiredKw,
+    selectedInverterW,
+    selectedSurgeW,
+    suggested: options[0],
+    options,
+    decisionText: needsRecovery
+      ? 'بار پروژه از ظرفیت ایمن یک واحد عبور کرده است. قبل از ادامه، بار باید بین چند اینورتر/بانک باتری تقسیم شود یا اینورتر صنعتی مناسب تعریف گردد.'
+      : 'طراحی فعلی از نظر توان پیوسته و لحظه‌ای قابل ادامه است.',
+  };
+}
+
 export function validate(form, step) {
   const errors = [];
   if (step === 0) {
@@ -233,8 +381,10 @@ export function validate(form, step) {
     const rec = recommendation(form);
     const invW = n(rec.inverter?.specs?.ratedPowerW, 0);
     const invSurge = n(rec.inverter?.specs?.surgePowerW, invW * 2);
-    if (invW && invW < rec.demand.powerW) errors.push("توان پیوسته اینورتر انتخاب‌شده کمتر از نیاز پروژه است. اینورتر قوی‌تر انتخاب کنید.");
-    if (invSurge && invSurge < rec.demand.surgeW) errors.push("توان لحظه‌ای/راه‌اندازی اینورتر برای تجهیزات موتوری کافی نیست.");
+    if (!form.engineeringRecoveryApplied) {
+      if (invW && invW < rec.demand.powerW) errors.push("توان پیوسته اینورتر انتخاب‌شده کمتر از نیاز پروژه است. اینورتر قوی‌تر انتخاب کنید.");
+      if (invSurge && invSurge < rec.demand.surgeW) errors.push("توان لحظه‌ای/راه‌اندازی اینورتر برای تجهیزات موتوری کافی نیست.");
+    }
     if (["offgrid", "backup", "hybrid"].includes(form.systemType)) {
       const invV = n(rec.inverter?.specs?.systemVoltage, n(form.systemVoltage, 48));
       const batV = n(rec.battery?.specs?.batteryUnitVoltage, n(form.batteryUnitVoltage, invV));

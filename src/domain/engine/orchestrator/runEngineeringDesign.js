@@ -13,6 +13,8 @@ import { simulateSystem } from "../simulation/simulateSystem.js";
 import { calculateIndustrialMetrics } from "../industrial/calculateIndustrialMetrics.js";
 import { evaluateDesignValidation } from "../validation/evaluateDesignValidation.js";
 import { calculateDecisionEngine } from "../decision/calculateDecisionEngine.js";
+import { buildEngineeringAudit } from "../audit/buildEngineeringAudit.js";
+import { getEngineeringEquipmentBank } from "../catalog/shilEquipmentBank.js";
 
 export function runEngineeringDesign(rawForm) {
   const input = normalizeInput(rawForm);
@@ -39,6 +41,9 @@ export function runEngineeringDesign(rawForm) {
   }
   const hasError = advisor.some((item) => item.severity === "error") || validation.summary.status === "error" || decision.overallStatus === "not_executable";
   const hasWarning = advisor.some((item) => item.severity === "warning") || validation.summary.status === "warning" || decision.overallStatus === "executable_with_warnings";
+  const equipmentBank = getEngineeringEquipmentBank();
+  const draftResult = { loads, battery, pv, inverter, controller, cabling, protection, installation, simulation, industrial, advisor, validation, decision };
+  const engineeringAudit = buildEngineeringAudit({ input, result: draftResult });
 
   return {
     ok: true,
@@ -49,6 +54,8 @@ export function runEngineeringDesign(rawForm) {
         projectTitle: input.projectTitle,
         systemType: input.systemType,
         calculationMode: input.calculationMode,
+        userComplexityMode: input.userComplexityMode,
+        engineeringMode: input.engineeringMode,
         hybridMode: input.hybridMode,
         targetOffsetPercent: input.targetOffsetPercent,
         connectedPowerW: loads.connectedPowerW,
@@ -68,6 +75,10 @@ export function runEngineeringDesign(rawForm) {
         inverterPowerVA: inverter.continuousPowerVA,
         inverterSurgePowerW: inverter.surgePowerW,
         inverterSurgePowerVA: inverter.surgePowerVA,
+        inverterArchitecture: inverter.architecture,
+        inverterParallelCount: inverter.parallelCount,
+        inverterUnitPowerW: inverter.unitPowerW,
+        inverterParallelPolicy: inverter.parallelPolicy,
         panelCount: pv?.panelCount ?? 0,
         pvInstalledPowerW: pv?.installedPvPowerW ?? 0,
         pvDailyProductionWh: pv?.estimatedDailyProductionWh ?? 0,
@@ -124,6 +135,15 @@ export function runEngineeringDesign(rawForm) {
       advisor,
       validation,
       decision,
+      engineeringAudit,
+      equipmentBank,
+      engineMeta: {
+        engineName: "Unified SHIL Engineering Engine",
+        engineMode: input.engineeringMode,
+        offlineFirst: true,
+        cloudEnhancement: "optional",
+        simpleAndProfessionalUseSameEngine: true,
+      },
     },
   };
 }

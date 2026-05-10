@@ -5,10 +5,10 @@ export const PUBLIC_ASSETS = {
     productsFullCard: '/images/branding/shil-products-full-card-final.png',
   },
   backgrounds: {
-    home: '/images/backgrounds/shil-final-dashboard.png',
-    workspace: '/images/backgrounds/shil-final-dashboard.png',
-    report: '/images/backgrounds/shil-final-dashboard.png',
-    method: '/images/backgrounds/shil-final-dashboard.png',
+    home: '/images/branding/dashboard-bg-desktop.jpg',
+    workspace: '/images/branding/dashboard-bg-desktop.jpg',
+    report: '/images/branding/dashboard-bg-desktop.jpg',
+    method: '/images/branding/dashboard-bg-desktop.jpg',
     shilProductsHero: '/images/backgrounds/shil-products-hero-source.png',
   },
   qr: {
