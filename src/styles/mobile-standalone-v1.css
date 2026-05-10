@@ -210,3 +210,184 @@
   .focus-step{flex-basis:96px!important;width:96px!important;}
   .project-start-overview__grid,.design-path-grid{grid-template-columns:1fr!important;}
 }
+
+/* SHIL SOLAR MOBILE WEB RESPONSIVE SIZING V2
+   Global sizing rules requested for mobile/tablet/desktop web.
+   Shared core/data remains unchanged. */
+:root{
+  --shil-space-card-mobile:12px;
+  --shil-space-card-desktop:20px;
+  --shil-gap-card-mobile:8px;
+  --shil-gap-card-desktop:12px;
+  --shil-section-gap-mobile:24px;
+  --shil-section-gap-desktop:32px;
+  --shil-radius-card:16px;
+  --shil-radius-panel:20px;
+  --shil-text-mobile:14px;
+  --shil-text-tablet:16px;
+  --shil-text-desktop:18px;
+}
+
+html,body,#root{overflow-x:hidden!important;width:100%!important;max-width:100%!important;}
+*{box-sizing:border-box;}
+img,svg,canvas,video{max-width:100%;height:auto;}
+
+/* universal auto-height card rule */
+.card,.panel,.field,.review-card,.method-choice,.dashboard-action-card,.shil-dashboard-card,
+.focus-content-card,.pro-content-card,.bank-selector-card,.env-table-card,.smart-decision-card,
+.warning-card,.form-instruction-top,.focus-form-table label,.project-mini-row-v15,
+.dashboard-project-bucket-v15,.dashboard-projects-master-card-v15,.a4-section,.a4-report-card,
+.education-card,.feedback-card,.admin-card,.contact-card,.scenario-card,.load-card,
+.selected-load-card,.custom-load-row,.custom-bank-form,.project-start-step-card,.design-path-item{
+  height:auto!important;
+  min-height:unset!important;
+  max-height:none!important;
+  overflow-wrap:anywhere;
+}
+
+/* only vertical scrolling is allowed */
+body,.shell,.project-flow-shell,.ready-scenarios-shell,.neo-page,.shil-dashboard,
+.education-shell,.feedback-shell,.contact-shell,.admin-shell,.focus-content-card,.pro-content-card{
+  overflow-x:hidden!important;
+}
+
+/* tables become safe blocks instead of forcing horizontal page scroll */
+table{width:100%!important;max-width:100%!important;border-collapse:collapse;}
+.table-wrapper,.report-table-wrapper,.engineering-table-wrapper{width:100%!important;overflow-x:hidden!important;}
+
+/* common responsive grids */
+.shil-dashboard__cards,.dashboard-action-grid,.dashboard-action-grid-v15,.project-start-overview__grid,
+.design-path-grid,.method-card-grid,.scenario-category-grid,.smart-bank-grid,.env-table-grid,
+.final-summary-grid,.review-stage,.final-block-grid,.field-grid,.form-grid,.site-survey-grid,
+.site-stage-grid,.site-capture-grid,.environmental-intelligence-layout,.a4-section-grid.two,
+.a4-metric-strip,.a4-equipment-list{
+  display:grid!important;
+  gap:var(--shil-gap-card-mobile)!important;
+  grid-template-columns:1fr!important;
+}
+
+/* MOBILE: <=600px */
+@media (max-width:600px){
+  body{font-size:var(--shil-text-mobile)!important;line-height:1.55!important;}
+  h1{font-size:22px!important;line-height:1.25!important;}
+  h2{font-size:18px!important;line-height:1.32!important;}
+  h3,.card-title,.section-title{font-size:16px!important;line-height:1.38!important;}
+  p,li,label,input,select,textarea,button,small,span{font-size:14px!important;}
+  small,.helper,.muted,.caption{font-size:12px!important;}
+
+  .shell,.project-flow-shell,.ready-scenarios-shell,.neo-page,.shil-dashboard,
+  .education-shell,.feedback-shell,.contact-shell,.admin-shell{
+    padding:8px 8px calc(78px + env(safe-area-inset-bottom,0px))!important;
+    gap:var(--shil-section-gap-mobile)!important;
+  }
+
+  .card,.panel,.field,.review-card,.method-choice,.dashboard-action-card,.shil-dashboard-card,
+  .focus-content-card,.pro-content-card,.bank-selector-card,.env-table-card,.smart-decision-card,
+  .warning-card,.form-instruction-top,.focus-form-table label,.project-mini-row-v15,
+  .dashboard-project-bucket-v15,.dashboard-projects-master-card-v15,.a4-section,.a4-report-card,
+  .education-card,.feedback-card,.admin-card,.contact-card,.scenario-card,.load-card,
+  .selected-load-card,.custom-load-row,.custom-bank-form,.project-start-step-card,.design-path-item{
+    padding:var(--shil-space-card-mobile)!important;
+    margin:0!important;
+    border-radius:var(--shil-radius-card)!important;
+  }
+
+  /* priority content: compact summaries first */
+  .advanced-data,.engineering-details,.loss-details,.coefficient-details,.climate-details,
+  .panel-advanced,.inverter-advanced,.battery-advanced,.pv-advanced,.mppt-advanced,
+  .extra-specs,.secondary-specs{
+    display:none!important;
+  }
+  details .advanced-data,details .engineering-details,details .loss-details,
+  details .coefficient-details,details .climate-details,details .extra-specs,
+  details .secondary-specs{display:block!important;}
+
+  /* desktop-like tables become stacked cards on mobile */
+  table,thead,tbody,tr,th,td{display:block!important;width:100%!important;}
+  thead{display:none!important;}
+  tr{padding:10px!important;margin:0 0 8px!important;border-radius:14px!important;background:rgba(255,255,255,.88)!important;box-shadow:0 6px 18px rgba(7,23,37,.10)!important;}
+  td{padding:5px 0!important;border:0!important;white-space:normal!important;text-align:right!important;}
+  td::before{content:attr(data-label);display:block;font-size:12px;color:#607d8f;margin-bottom:2px;}
+
+  /* mobile bottom navigation remains primary */
+  .desktop-sidebar,.desktop-navigation,.sidebar-navigation{display:none!important;}
+  .bottom-navigation,.mobile-bottom-nav,.focus-actions{display:grid!important;}
+}
+
+/* TABLET: 600px to 900px */
+@media (min-width:601px) and (max-width:900px){
+  body{font-size:var(--shil-text-tablet)!important;}
+  h1{font-size:26px!important;} h2{font-size:21px!important;} h3{font-size:18px!important;}
+  p,li,label,input,select,textarea,button,span{font-size:16px!important;}
+
+  .shell,.project-flow-shell,.ready-scenarios-shell,.neo-page,.shil-dashboard,
+  .education-shell,.feedback-shell,.contact-shell,.admin-shell{
+    padding:12px 12px calc(84px + env(safe-area-inset-bottom,0px))!important;
+  }
+  .card,.panel,.field,.review-card,.method-choice,.dashboard-action-card,.shil-dashboard-card,
+  .focus-content-card,.pro-content-card,.bank-selector-card,.env-table-card,.smart-decision-card,
+  .warning-card,.form-instruction-top,.focus-form-table label,.project-mini-row-v15,
+  .dashboard-project-bucket-v15,.dashboard-projects-master-card-v15,.a4-section,.a4-report-card,
+  .education-card,.feedback-card,.admin-card,.contact-card,.scenario-card,.load-card,
+  .selected-load-card,.custom-load-row,.custom-bank-form,.project-start-step-card,.design-path-item{
+    padding:16px!important;
+  }
+
+  .shil-dashboard__cards,.dashboard-action-grid,.dashboard-action-grid-v15,.project-start-overview__grid,
+  .design-path-grid,.method-card-grid,.scenario-category-grid,.smart-bank-grid,.env-table-grid,
+  .final-summary-grid,.review-stage,.final-block-grid,.field-grid,.form-grid,.site-survey-grid,
+  .site-stage-grid,.site-capture-grid,.a4-section-grid.two,.a4-metric-strip,.a4-equipment-list{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:10px!important;
+  }
+  .environmental-intelligence-layout{grid-template-columns:1fr 1fr!important;gap:10px!important;}
+
+  .advanced-data,.engineering-details,.loss-details,.coefficient-details,.climate-details,
+  .panel-advanced,.inverter-advanced,.battery-advanced,.pv-advanced,.mppt-advanced,
+  .extra-specs,.secondary-specs{display:block!important;}
+}
+
+/* DESKTOP WEB: >=900px */
+@media (min-width:901px){
+  body{font-size:var(--shil-text-desktop)!important;}
+  h1{font-size:32px!important;} h2{font-size:26px!important;} h3{font-size:20px!important;}
+  p,li,label,input,select,textarea,button,span{font-size:18px!important;}
+
+  .shell,.project-flow-shell,.ready-scenarios-shell,.neo-page,.shil-dashboard,
+  .education-shell,.feedback-shell,.contact-shell,.admin-shell{
+    padding:18px!important;
+    gap:var(--shil-section-gap-desktop)!important;
+  }
+  .card,.panel,.field,.review-card,.method-choice,.dashboard-action-card,.shil-dashboard-card,
+  .focus-content-card,.pro-content-card,.bank-selector-card,.env-table-card,.smart-decision-card,
+  .warning-card,.form-instruction-top,.focus-form-table label,.project-mini-row-v15,
+  .dashboard-project-bucket-v15,.dashboard-projects-master-card-v15,.a4-section,.a4-report-card,
+  .education-card,.feedback-card,.admin-card,.contact-card,.scenario-card,.load-card,
+  .selected-load-card,.custom-load-row,.custom-bank-form,.project-start-step-card,.design-path-item{
+    padding:var(--shil-space-card-desktop)!important;
+  }
+  .shil-dashboard__cards,.dashboard-action-grid,.dashboard-action-grid-v15,.project-start-overview__grid,
+  .design-path-grid,.method-card-grid,.scenario-category-grid,.smart-bank-grid,.env-table-grid,
+  .final-summary-grid,.review-stage,.final-block-grid,.field-grid,.form-grid,.site-survey-grid,
+  .site-stage-grid,.site-capture-grid,.a4-section-grid.two,.a4-metric-strip,.a4-equipment-list{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:var(--shil-gap-card-desktop)!important;
+  }
+  .environmental-intelligence-layout{grid-template-columns:minmax(360px,.85fr) minmax(0,1.15fr)!important;gap:var(--shil-gap-card-desktop)!important;}
+
+  .bottom-navigation,.mobile-bottom-nav{display:none!important;}
+  .desktop-sidebar,.desktop-navigation,.sidebar-navigation{display:block!important;}
+
+  .advanced-data,.engineering-details,.loss-details,.coefficient-details,.climate-details,
+  .panel-advanced,.inverter-advanced,.battery-advanced,.pv-advanced,.mppt-advanced,
+  .extra-specs,.secondary-specs{display:block!important;}
+}
+
+@media (min-width:1200px){
+  .shil-dashboard__cards,.dashboard-action-grid,.dashboard-action-grid-v15,.project-start-overview__grid,
+  .design-path-grid,.method-card-grid,.scenario-category-grid,.smart-bank-grid,.env-table-grid,
+  .final-summary-grid,.review-stage,.final-block-grid,.field-grid,.form-grid,.site-survey-grid,
+  .site-stage-grid,.site-capture-grid,.a4-section-grid.two,.a4-metric-strip,.a4-equipment-list{
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  }
+}
