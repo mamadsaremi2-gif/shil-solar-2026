@@ -728,3 +728,849 @@ p, span, strong, small, em, label, h1, h2, h3, h4, h5, h6 {
 
 /* vNEXT confirmed engineering flow fixes */
 .engineering-config-vnext{display:grid!important;gap:18px!important}.engineering-overview-header{border:1px solid rgba(34,211,238,.32);background:linear-gradient(135deg,rgba(8,31,55,.92),rgba(2,10,23,.82));border-radius:28px;padding:20px;box-shadow:0 18px 60px rgba(0,0,0,.25)}.engineering-overview-header__title{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:14px}.engineering-overview-header__title span{color:#67e8f9;font-weight:1000}.engineering-overview-header__title strong{color:#fff;font-size:20px}.engineering-overview-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}.engineering-overview-grid div,.summary-table-like p{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:12px;display:grid;gap:5px;text-align:center}.engineering-overview-grid span,.summary-table-like span{color:#b6c8de;font-size:12px;font-weight:900}.engineering-overview-grid strong,.summary-table-like strong{color:#fff;font-size:15px}.selected-equipment-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}.distributed-field-panel{border:1px solid rgba(255,255,255,.12);background:rgba(3,10,24,.46);border-radius:28px;padding:18px}.distributed-field-panel__head{display:flex;justify-content:space-between;gap:12px;margin-bottom:14px;color:#dbeafe}.distributed-field-panel__head strong{color:#67e8f9}.distributed-field-panel__head span{font-size:13px;color:#b6c8de}.decision-commit-card{align-items:stretch!important;place-items:initial!important;text-align:right!important}.decision-commit-card b{color:#fff}.engineering-recovery-options button{min-height:145px}.engineering-recovery-options button.is-active{outline:2px solid #22d3ee;background:linear-gradient(135deg,rgba(34,211,238,.22),rgba(16,185,129,.12))!important}.engineering-review-center{display:grid!important;grid-template-columns:1fr!important}.summary-tab-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}.summary-tab-card{position:relative;border:1px solid rgba(34,211,238,.24);background:linear-gradient(180deg,rgba(8,31,55,.82),rgba(2,10,23,.72));border-radius:24px;padding:16px;display:grid;gap:12px}.summary-tab-card h3{margin:0;color:#67e8f9;text-align:center}.summary-tab-edit{position:absolute;left:12px;top:12px;border:1px solid rgba(34,211,238,.4);background:rgba(34,211,238,.08);color:#e0f2fe;border-radius:999px;padding:6px 10px;cursor:pointer}.summary-table-like{display:grid;gap:8px}.summary-table-like p{margin:0;grid-template-columns:1fr 1.4fr;align-items:center}.summary-table-like strong{overflow-wrap:anywhere}@media(max-width:720px){.engineering-overview-header__title,.distributed-field-panel__head{display:grid;text-align:center}.summary-tab-grid{grid-template-columns:1fr}.summary-tab-card{padding-top:48px}.summary-table-like p{grid-template-columns:1fr}.selected-equipment-strip{grid-template-columns:1fr}}
+
+/* Phase V6 - Site Survey Capture Board */
+.site-survey-capture-board {
+  border: 1px solid rgba(125, 211, 252, 0.25);
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.92), rgba(8, 47, 73, 0.62));
+  border-radius: 24px;
+  padding: 18px;
+  margin: 14px 0 18px;
+  box-shadow: 0 18px 45px rgba(2, 6, 23, 0.28);
+}
+.site-survey-capture-board__head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+.site-survey-capture-board__head strong {
+  color: #e0f2fe;
+  font-size: 1.05rem;
+}
+.site-survey-capture-board__head span {
+  color: #bae6fd;
+  font-size: 0.82rem;
+  line-height: 1.8;
+  max-width: 720px;
+}
+.site-survey-capture-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(150px, 1fr));
+  gap: 10px;
+}
+.site-survey-capture-item {
+  min-height: 138px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.07);
+  border-radius: 18px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.site-survey-capture-item span {
+  color: #7dd3fc;
+  font-size: 0.75rem;
+}
+.site-survey-capture-item strong {
+  color: #fff;
+  font-size: 0.95rem;
+  overflow-wrap: anywhere;
+}
+.site-survey-capture-item small {
+  color: #cbd5e1;
+  line-height: 1.6;
+}
+.site-survey-capture-item .btn {
+  margin-top: auto;
+  width: 100%;
+}
+.site-survey-capture-item.media img,
+.site-survey-report-media img {
+  width: 100%;
+  height: 74px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.18);
+}
+.site-survey-report-media {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+.site-survey-report-media figure {
+  margin: 0;
+  border: 1px solid rgba(15,23,42,0.12);
+  border-radius: 12px;
+  padding: 8px;
+  background: #f8fafc;
+}
+.site-survey-report-media figcaption {
+  color: #334155;
+  font-size: 0.72rem;
+  margin-top: 5px;
+}
+@media (max-width: 960px) {
+  .site-survey-capture-board__head { flex-direction: column; }
+  .site-survey-capture-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+  .site-survey-capture-grid { grid-template-columns: 1fr; }
+  .site-survey-capture-item { min-height: auto; }
+  .site-survey-report-media { grid-template-columns: 1fr; }
+}
+
+/* Phase V7 - Climate Intelligence Online Layer */
+.climate-online-error {
+  margin: 12px 0;
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 179, 71, 0.35);
+  background: rgba(255, 179, 71, 0.1);
+  color: #ffd79a;
+  border-radius: 16px;
+  font-size: 0.9rem;
+}
+.environment-fields-grid .btn--primary[disabled] {
+  opacity: 0.65;
+  cursor: progress;
+}
+
+/* V8 - Shadow and temperature voltage dedicated engineering blocks */
+.engineering-subsection-title {
+  grid-column: 1 / -1;
+  margin: 12px 0 2px;
+  padding: 10px 12px;
+  border: 1px solid rgba(125, 211, 252, 0.22);
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.13), rgba(30, 41, 59, 0.42));
+  color: #e0f2fe;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+/* Phase V9 - Camera/String/Cable/Loss engineering additions */
+.camera-orientation-board,
+.loss-model-board {
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 22px;
+  padding: 18px;
+  margin: 18px 0;
+  background: rgba(15, 23, 42, 0.58);
+  box-shadow: 0 18px 45px rgba(2, 6, 23, 0.22);
+}
+.camera-orientation-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 14px;
+}
+.summary-tab-card .summary-table-like p strong {
+  text-align: left;
+  direction: ltr;
+}
+@media (max-width: 980px) {
+  .camera-orientation-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .camera-orientation-grid { grid-template-columns: 1fr; }
+}
+
+
+/* V10 Professional Report + Project Management */
+.project-management-center-v10{margin:24px auto 0;max-width:1180px;padding:18px;border:1px solid rgba(148,163,184,.22);border-radius:24px;background:linear-gradient(135deg,rgba(15,23,42,.82),rgba(8,17,31,.72));box-shadow:0 18px 50px rgba(0,0,0,.25)}
+.project-management-center-v10__head{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:14px}.project-management-center-v10 h2{margin:0;color:#f8fafc}.project-management-center-v10 p{margin:.35rem 0;color:#cbd5e1}.project-management-grid-v10{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}.project-management-card-v10{padding:14px;border:1px solid rgba(148,163,184,.18);border-radius:18px;background:rgba(15,23,42,.72)}.project-management-card-v10__title{display:flex;justify-content:space-between;gap:12px;align-items:center;color:#f8fafc}.project-management-card-v10__title span{padding:4px 8px;border-radius:999px;background:rgba(34,197,94,.12);color:#86efac;font-size:.78rem}.project-management-card-v10__meta{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:12px 0;color:#cbd5e1;font-size:.86rem}.project-management-card-v10__actions{display:flex;flex-wrap:wrap;gap:8px}.project-management-empty-v10{padding:14px;border:1px dashed rgba(148,163,184,.28);border-radius:16px}.industrial-report-charts-v10{break-inside:avoid}.industrial-chart-grid-v10{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.industrial-chart-card-v10{padding:12px;border:1px solid rgba(15,23,42,.12);border-radius:14px;background:rgba(248,250,252,.86)}.industrial-chart-card-v10 strong{display:block;margin-bottom:8px}.bar-line-v10{height:12px;border-radius:999px;background:rgba(15,23,42,.12);overflow:hidden}.bar-line-v10 span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#22c55e,#38bdf8)}.bar-line-v10.warning span{background:linear-gradient(90deg,#f59e0b,#ef4444)}.loss-stack-v10{display:flex;height:22px;overflow:hidden;border-radius:999px;background:rgba(15,23,42,.1)}.loss-stack-v10 span{display:flex;align-items:center;justify-content:center;min-width:24px;padding:0 5px;font-size:.64rem;color:#0f172a;background:rgba(56,189,248,.3);border-inline-end:1px solid rgba(15,23,42,.08)}
+@media (max-width:720px){.project-management-center-v10__head{flex-direction:column;align-items:stretch}.project-management-card-v10__meta{grid-template-columns:1fr}.industrial-chart-grid-v10{grid-template-columns:1fr}}
+
+/* V11 Dashboard Education + Private Feedback */
+.shil-dashboard-card.is-emerald {
+  --card-accent: #37f3a5;
+}
+.shil-dashboard-card.is-amber {
+  --card-accent: #f6b84a;
+}
+.education-content-card-v11,
+.feedback-card-v11,
+.admin-feedback-v11 {
+  border: 1px solid rgba(125, 211, 252, 0.18);
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.92), rgba(2, 6, 23, 0.94));
+}
+.education-content-card-v11__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: 18px;
+  background: rgba(14, 165, 233, 0.08);
+  border: 1px solid rgba(125, 211, 252, 0.16);
+  margin-bottom: 1rem;
+}
+.education-content-card-v11__head code {
+  direction: ltr;
+  color: #bae6fd;
+  font-size: 0.85rem;
+}
+.education-markdown-v11 {
+  line-height: 2;
+  color: #dbeafe;
+}
+.education-markdown-v11 h1,
+.education-markdown-v11 h2,
+.education-markdown-v11 h3 {
+  color: #f8fafc;
+  margin: 1rem 0 0.5rem;
+}
+.education-bullet-v11 {
+  margin: 0.2rem 0;
+  padding: 0.45rem 0.75rem;
+  border-radius: 12px;
+  background: rgba(148, 163, 184, 0.08);
+}
+.feedback-card-v11 h2 {
+  margin-top: 0;
+  color: #f8fafc;
+}
+.feedback-card-v11 p {
+  color: #cbd5e1;
+}
+.feedback-form-v11 {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.feedback-form-v11 label {
+  display: grid;
+  gap: 0.45rem;
+  color: #e2e8f0;
+}
+.feedback-form-v11 textarea,
+.feedback-form-v11 select {
+  width: 100%;
+  border-radius: 16px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  background: rgba(15, 23, 42, 0.82);
+  color: #f8fafc;
+  padding: 0.85rem 1rem;
+  outline: none;
+}
+.feedback-actions-v11 {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+.admin-feedback-grid-v11 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+}
+.admin-feedback-card-v11 {
+  border-radius: 20px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  background: rgba(15, 23, 42, 0.78);
+  padding: 1rem;
+  display: grid;
+  gap: 0.75rem;
+}
+.admin-feedback-card-v11.is-new {
+  border-color: rgba(250, 204, 21, 0.42);
+}
+.admin-feedback-card-v11__head,
+.admin-feedback-card-v11__meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  color: #cbd5e1;
+}
+.admin-feedback-card-v11 p {
+  margin: 0;
+  color: #f8fafc;
+  line-height: 1.9;
+}
+@media (max-width: 640px) {
+  .education-content-card-v11__head,
+  .admin-feedback-card-v11__head,
+  .admin-feedback-card-v11__meta {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* ==========================================================
+   SHIL SOLAR V12 - Compact Modern Light UI System
+   Global density + brighter installable-app look
+   ========================================================== */
+:root{
+  --shil-bg:#eaf1f8 !important;
+  --shil-bg2:#f7fbff !important;
+  --shil-panel:rgba(255,255,255,.88) !important;
+  --shil-panel2:rgba(248,252,255,.94) !important;
+  --shil-line:rgba(27,89,140,.16) !important;
+  --shil-cyan:#0891b2 !important;
+  --shil-blue:#2563eb !important;
+  --shil-purple:#6d28d9 !important;
+  --shil-gold:#b7791f !important;
+  --shil-green:#16803a !important;
+  --shil-text:#0f1f33 !important;
+  --shil-muted:#5b6f86 !important;
+  --radius:16px !important;
+}
+html{background:#eaf1f8 !important;}
+body{
+  background:
+    radial-gradient(circle at 12% 8%, rgba(37,99,235,.14), transparent 26%),
+    radial-gradient(circle at 86% 12%, rgba(8,145,178,.12), transparent 24%),
+    linear-gradient(135deg,#edf4fb 0%,#f8fbff 42%,#e8f0f8 100%) !important;
+  color:#0f1f33 !important;
+}
+body:before{
+  background-image:linear-gradient(rgba(37,99,235,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(8,145,178,.035) 1px,transparent 1px) !important;
+  background-size:54px 54px !important;
+  opacity:.75 !important;
+}
+body:after{height:120px !important;background:radial-gradient(ellipse at center,rgba(37,99,235,.12),transparent 70%) !important;filter:blur(22px) !important;}
+.shell,.project-flow-shell,.ready-scenarios-shell,.neo-page,.smart-content,.workspace-shell,.app-shell{
+  padding:16px !important;
+}
+.app-container{max-width:1120px !important;padding:18px 12px !important;}
+.card,.neo-panel,.smart-card,.smart-glass,.review-card,.flow-top-card,.project-start-overview,
+.a4-report-card:not(.print-mode),.method-choice,.scenario-card,.summary-card,.report-card,
+.management-card,.education-card,.feedback-card,.workspace-card,.step-card,.warning-card,
+.focus-form-table label,.field,.smart-recovery-panel,.engineering-overview-card,
+.engineering-summary-card,.project-management-card,.admin-panel-card{
+  background:rgba(255,255,255,.86) !important;
+  color:#102033 !important;
+  border:1px solid rgba(30,78,121,.12) !important;
+  border-radius:14px !important;
+  box-shadow:0 8px 24px rgba(15,37,64,.10),0 1px 0 rgba(255,255,255,.82) inset !important;
+  backdrop-filter:blur(10px) !important;
+}
+.card,.review-card,.smart-card,.smart-glass,.neo-panel,.flow-top-card,.method-choice,.scenario-card,
+.summary-card,.report-card,.management-card,.education-card,.feedback-card,.workspace-card,.step-card,
+.warning-card,.engineering-overview-card,.engineering-summary-card,.project-management-card,.admin-panel-card{
+  padding:12px 14px !important;
+  margin-bottom:10px !important;
+}
+.card + .card,.neo-panel + .neo-panel,.review-card + .review-card,.summary-card + .summary-card,
+.report-card + .report-card,.workspace-card + .workspace-card{margin-top:8px !important;}
+/* Compact typography */
+h1{font-size:clamp(22px,2.4vw,34px) !important;line-height:1.35 !important;margin:0 0 10px !important;color:#0b1f36 !important;}
+h2{font-size:clamp(18px,1.8vw,25px) !important;line-height:1.4 !important;margin:0 0 8px !important;color:#102a43 !important;}
+h3{font-size:clamp(15px,1.35vw,20px) !important;line-height:1.45 !important;margin:0 0 7px !important;color:#123452 !important;}
+p,li,small,span,label,em{line-height:1.65 !important;}
+p{margin:0 0 8px !important;color:#445d75 !important;}
+small,.muted,.hint,.subtitle,.smart-hero-row p,.neo-brand span,.neo-hero-copy p{color:#5b6f86 !important;}
+/* Grids become denser */
+.neo-dashboard-grid,.smart-kpis,.smart-main-grid,.smart-lower-grid,.final-summary-grid,.focus-form-table,
+.project-start-overview__grid,.smart-feature-strip,.summary-grid,.report-grid,.management-grid,
+.scenario-grid,.dashboard-grid,.form-grid,.metrics-grid{
+  gap:10px !important;
+}
+/* Buttons and fields compact and bright */
+button,.btn,.neo-btn,button.btn,.smart-btn,.neo-chip,.smart-card-title button{
+  min-height:36px !important;
+  padding:7px 13px !important;
+  border-radius:10px !important;
+  background:linear-gradient(135deg,#ffffff,#eef6ff) !important;
+  color:#123452 !important;
+  border:1px solid rgba(37,99,235,.18) !important;
+  box-shadow:0 5px 14px rgba(37,99,235,.10) !important;
+}
+.btn--primary,.neo-btn:not(.neo-btn--ghost),.neo-main-cta,.smart-btn:not(.smart-btn--ghost){
+  background:linear-gradient(135deg,#2563eb,#0891b2) !important;
+  color:#fff !important;
+  border-color:rgba(37,99,235,.34) !important;
+  box-shadow:0 9px 22px rgba(37,99,235,.22) !important;
+}
+button:hover,.btn:hover,.neo-btn:hover,.smart-btn:hover{transform:translateY(-1px) !important;box-shadow:0 9px 24px rgba(37,99,235,.16) !important;}
+input,select,textarea,.focus-form-table input,.focus-form-table select,.focus-form-table textarea,
+.load-field input,.load-field select,.custom-load-row input,.custom-load-row select,.custom-bank-form input{
+  min-height:38px !important;
+  padding:7px 10px !important;
+  margin:3px !important;
+  border-radius:10px !important;
+  background:#fff !important;
+  color:#102033 !important;
+  border:1px solid rgba(30,78,121,.18) !important;
+  box-shadow:0 1px 0 rgba(255,255,255,.85) inset !important;
+}
+textarea{min-height:86px !important;}
+label{font-size:.92rem !important;color:#263f58 !important;}
+/* Make sections visually close but distinguishable */
+.flow-top-card,.engineering-overview-card,.smart-recovery-panel,.engineering-summary-card,
+.review-card,.a4-section,.smart-map-card,.smart-chart-card,.smart-alerts,.smart-ai{
+  margin-top:8px !important;
+  margin-bottom:8px !important;
+}
+/* Brighten dashboard hero without losing depth */
+.neo-dashboard{padding:12px !important;}
+.neo-dashboard-hero{
+  min-height:430px !important;
+  border-radius:18px !important;
+  background:#f8fbff !important;
+  box-shadow:0 14px 36px rgba(15,37,64,.14) !important;
+}
+.neo-dashboard-hero:after{
+  background:linear-gradient(90deg,rgba(248,251,255,.94) 0%,rgba(248,251,255,.78) 45%,rgba(248,251,255,.22) 100%),linear-gradient(0deg,rgba(255,255,255,.55),transparent 50%) !important;
+}
+.neo-brand{padding:18px 24px !important;}
+.neo-brand img{width:74px !important;height:74px !important;box-shadow:0 6px 24px rgba(37,99,235,.22) !important;}
+.neo-brand strong{font-size:34px !important;color:#0b1f36 !important;}
+.neo-hero-copy{margin:42px 28px 0 auto !important;max-width:650px !important;}
+.neo-hero-copy h1{font-size:36px !important;text-shadow:none !important;}
+.neo-hero-copy p{font-size:16px !important;line-height:1.85 !important;}
+.neo-main-cta{min-width:300px !important;font-size:18px !important;}
+.neo-main-cta b{font-size:28px !important;}
+.neo-dashboard-grid{margin-top:-48px !important;padding:0 14px !important;}
+/* Smart dashboard lighter */
+.smart-shell{background:transparent !important;color:#102033 !important;}
+.smart-content{background:transparent !important;}
+.smart-kpi{min-height:128px !important;padding:14px !important;}
+.smart-kpi-value strong{font-size:25px !important;color:#102033 !important;}
+.smart-kpi-head{color:#102033 !important;}
+.smart-map-card,.smart-chart-card{min-height:250px !important;padding:14px !important;}
+.smart-map{height:180px !important;background:linear-gradient(135deg,#eef6ff,#ffffff) !important;border:1px solid rgba(30,78,121,.12) !important;}
+.smart-digital-twin{min-height:235px !important;}
+.smart-alerts,.smart-ai{padding:14px !important;}
+.alert-line{padding:9px !important;margin-bottom:7px !important;background:#f5f9ff !important;}
+/* Compact start cards */
+.project-start-overview{margin:18px auto 0 !important;padding:20px !important;}
+.project-start-overview__title{gap:6px !important;margin-bottom:18px !important;}
+.project-start-overview__grid{gap:12px !important;}
+.project-start-step-card{--card-size:clamp(112px,11vw,148px) !important;box-shadow:0 8px 24px rgba(37,99,235,.12) !important;}
+/* Tables and report sections */
+table{border-collapse:separate !important;border-spacing:0 6px !important;width:100% !important;}
+th,td{padding:8px 10px !important;background:rgba(255,255,255,.88) !important;color:#102033 !important;border-top:1px solid rgba(30,78,121,.10) !important;border-bottom:1px solid rgba(30,78,121,.10) !important;}
+th:first-child,td:first-child{border-radius:10px 0 0 10px !important;}th:last-child,td:last-child{border-radius:0 10px 10px 0 !important;}
+/* Keep print report white and clean */
+.a4-report-card,.a4-report-card *{color:#111827 !important;}
+.a4-report-card{background:#fff !important;}
+/* Mobile: very compact app-like layout */
+@media(max-width:900px){
+  .shell,.project-flow-shell,.ready-scenarios-shell,.neo-page,.smart-content,.workspace-shell,.app-shell{padding:10px !important;}
+  .card,.review-card,.smart-card,.smart-glass,.neo-panel,.flow-top-card,.method-choice,.scenario-card,.summary-card,.report-card,
+  .management-card,.education-card,.feedback-card,.workspace-card,.step-card,.warning-card,.engineering-overview-card,.engineering-summary-card{
+    padding:10px 11px !important;border-radius:13px !important;margin-bottom:7px !important;
+  }
+  .neo-dashboard{padding:8px !important;}
+  .neo-dashboard-hero{min-height:330px !important;border-radius:16px !important;}
+  .neo-brand{padding:12px !important;gap:10px !important;}.neo-brand img{width:56px !important;height:56px !important;}.neo-brand strong{font-size:24px !important;}
+  .neo-hero-copy{margin:24px 14px 0 !important;text-align:right !important;}.neo-hero-copy h1{font-size:25px !important;}.neo-hero-copy p{font-size:14px !important;}
+  .neo-main-cta{min-width:0 !important;width:100% !important;font-size:16px !important;}
+  .neo-dashboard-grid{grid-template-columns:1fr !important;margin-top:10px !important;padding:0 !important;gap:8px !important;}
+  .smart-kpis,.smart-main-grid,.smart-lower-grid,.final-summary-grid,.focus-form-table,.summary-grid,.report-grid,.management-grid,.scenario-grid,.dashboard-grid,.form-grid,.metrics-grid{grid-template-columns:1fr !important;gap:7px !important;}
+  h1{font-size:22px !important;} h2{font-size:18px !important;} h3{font-size:15px !important;}
+  button,.btn,.neo-btn,.smart-btn{min-height:34px !important;padding:7px 10px !important;}
+  input,select,textarea{min-height:36px !important;}
+  .smart-kpi{min-height:112px !important;}.smart-map,.area-chart{height:170px !important;}
+}
+
+/* =========================================================
+   V13 Mobile App-like Engineering UX
+   Goal: every mobile route behaves like a compact installed app screen.
+   - no horizontal overflow
+   - viewport-sized screens
+   - sticky header and bottom actions
+   - compact dashboard and project flow
+   - progressive disclosure friendly blocks
+   ========================================================= */
+html, body, #root { min-height: 100%; max-width: 100%; overflow-x: hidden !important; }
+* { box-sizing: border-box; }
+img, video, canvas, svg { max-width: 100%; }
+
+.mobile-app-ux-v13-marker { display:none; }
+
+@media (max-width: 760px) {
+  :root {
+    --mobile-page-pad: 8px;
+    --mobile-radius: 16px;
+    --mobile-header-h: 56px;
+    --mobile-bottom-h: 76px;
+  }
+
+  body {
+    overscroll-behavior-y: contain;
+    background: #f4f8fd !important;
+  }
+
+  .shil-dashboard,
+  .project-flow-shell,
+  .ready-scenarios-shell,
+  .neo-page,
+  .workspace-shell,
+  .app-shell,
+  .shell {
+    min-height: 100dvh !important;
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+    padding: var(--mobile-page-pad) !important;
+    background: linear-gradient(180deg,#f8fbff,#eef5fb) !important;
+  }
+
+  /* Dashboard: compact one-screen style */
+  .shil-dashboard {
+    display: grid !important;
+    grid-template-rows: auto 1fr auto !important;
+    gap: 8px !important;
+  }
+
+  .shil-dashboard-final {
+    min-height: auto !important;
+    display: grid !important;
+    gap: 8px !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .shil-dashboard-final__visual {
+    min-height: 24dvh !important;
+    max-height: 24dvh !important;
+    border-radius: 18px !important;
+    box-shadow: 0 10px 24px rgba(15,37,64,.14) !important;
+    background-size: cover !important;
+  }
+
+  .shil-dashboard-final__logo {
+    width: 64px !important;
+    height: 64px !important;
+    top: 10px !important;
+    right: 10px !important;
+    border-radius: 18px !important;
+  }
+
+  .shil-dashboard-final__info-card {
+    padding: 9px 10px !important;
+    border-radius: 16px !important;
+    gap: 8px !important;
+    box-shadow: 0 8px 20px rgba(15,37,64,.10) !important;
+  }
+
+  .shil-dashboard-final__copy h1 {
+    font-size: 17px !important;
+    line-height: 1.45 !important;
+    margin-bottom: 3px !important;
+  }
+
+  .shil-dashboard-final__copy p {
+    display: none !important;
+  }
+
+  .shil-dashboard__stats {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 6px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .shil-dashboard__stat {
+    min-height: 76px !important;
+    padding: 7px 5px !important;
+    border-radius: 13px !important;
+    gap: 2px !important;
+    text-align: center !important;
+    overflow: hidden !important;
+  }
+
+  .shil-dashboard__stat-icon {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 15px !important;
+    margin: 0 auto 2px !important;
+  }
+
+  .shil-dashboard__stat span {
+    font-size: 10px !important;
+    white-space: nowrap !important;
+  }
+
+  .shil-dashboard__stat strong {
+    font-size: 13px !important;
+    line-height: 1.25 !important;
+    white-space: nowrap !important;
+  }
+
+  .shil-dashboard__stat small {
+    display: none !important;
+  }
+
+  .shil-dashboard__cards {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 7px !important;
+    margin: 0 !important;
+  }
+
+  .shil-dashboard-card {
+    min-height: 88px !important;
+    padding: 9px 8px !important;
+    border-radius: 15px !important;
+    box-shadow: 0 8px 18px rgba(15,37,64,.10) !important;
+  }
+
+  .shil-dashboard-card__icon {
+    width: 30px !important;
+    height: 30px !important;
+    font-size: 16px !important;
+    margin-bottom: 2px !important;
+  }
+
+  .shil-dashboard-card__meta,
+  .shil-dashboard-card small,
+  .shil-dashboard-card em {
+    display: none !important;
+  }
+
+  .shil-dashboard-card strong {
+    font-size: 12px !important;
+    line-height: 1.45 !important;
+  }
+
+  .project-management-center-v10 {
+    margin: 0 !important;
+    padding: 8px !important;
+    border-radius: 15px !important;
+    max-height: 24dvh !important;
+    overflow: auto !important;
+    box-shadow: 0 8px 18px rgba(15,37,64,.08) !important;
+  }
+
+  .project-management-center-v10__head {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    margin-bottom: 6px !important;
+  }
+
+  .project-management-center-v10__head h2 { font-size: 14px !important; margin: 0 !important; }
+  .project-management-center-v10__head p { display: none !important; }
+  .project-management-grid-v10 { grid-template-columns: 1fr !important; gap: 6px !important; }
+  .project-management-card-v10 { padding: 8px !important; border-radius: 13px !important; }
+  .project-management-card-v10__meta { display: none !important; }
+  .project-management-card-v10__actions { display: grid !important; grid-template-columns: repeat(2,1fr) !important; gap: 5px !important; }
+
+  /* Project flow: each step becomes a screen */
+  .project-flow-shell {
+    height: 100dvh !important;
+    display: grid !important;
+    grid-template-rows: auto 1fr !important;
+    gap: 8px !important;
+    overflow: hidden !important;
+  }
+
+  .flow-top-card,
+  .project-flow-shell > header,
+  .project-flow-shell .flow-header {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 40 !important;
+    min-height: var(--mobile-header-h) !important;
+    padding: 8px 10px !important;
+    border-radius: 15px !important;
+    background: rgba(255,255,255,.94) !important;
+    color: #102033 !important;
+    box-shadow: 0 8px 20px rgba(15,37,64,.10) !important;
+    backdrop-filter: blur(16px) !important;
+  }
+
+  .focus-layout {
+    height: calc(100dvh - var(--mobile-header-h) - 22px) !important;
+    display: block !important;
+    overflow: hidden !important;
+  }
+
+  .focus-content-card,
+  .pro-content-card {
+    height: 100% !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding: 10px 10px calc(var(--mobile-bottom-h) + 10px) !important;
+    border-radius: 18px !important;
+    scroll-behavior: smooth !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  .focus-content-card > * + * { margin-top: 8px !important; }
+
+  .focus-actions.pro-actions,
+  .focus-actions {
+    position: fixed !important;
+    left: 8px !important;
+    right: 8px !important;
+    bottom: calc(8px + env(safe-area-inset-bottom)) !important;
+    z-index: 80 !important;
+    display: grid !important;
+    grid-template-columns: .8fr .8fr 1.4fr !important;
+    gap: 6px !important;
+    padding: 7px !important;
+    border-radius: 18px !important;
+    background: rgba(255,255,255,.92) !important;
+    border: 1px solid rgba(30,78,121,.12) !important;
+    box-shadow: 0 10px 30px rgba(15,37,64,.18) !important;
+    backdrop-filter: blur(18px) !important;
+  }
+
+  .focus-actions .btn,
+  .focus-actions button {
+    min-height: 38px !important;
+    padding: 7px 8px !important;
+    font-size: 12px !important;
+    white-space: nowrap !important;
+  }
+
+  .focus-actions .btn--primary { grid-column: auto !important; }
+
+  /* Mobile cards and forms: concise and touch friendly */
+  .method-card-grid,
+  .method-card-grid.five,
+  .design-path-grid,
+  .summary-tab-grid,
+  .selected-equipment-strip,
+  .engineering-overview-grid,
+  .review-grid,
+  .final-summary-grid,
+  .site-capture-grid-v6,
+  .climate-grid-v7,
+  .shadow-grid-v8,
+  .string-grid-v9,
+  .cable-grid-v9,
+  .loss-grid-v9 {
+    grid-template-columns: repeat(2, minmax(0,1fr)) !important;
+    gap: 7px !important;
+  }
+
+  .method-choice,
+  .route-image-card,
+  .review-card,
+  .summary-tab-card,
+  .engineering-overview-header,
+  .distributed-field-panel,
+  .smart-recovery-panel,
+  .decision-commit-card,
+  .warning-card,
+  .smart-note,
+  .field,
+  .load-field,
+  .selected-load-card,
+  .environment-fields-panel,
+  .environment-summary-card {
+    padding: 8px !important;
+    border-radius: 14px !important;
+    margin: 0 0 7px !important;
+    box-shadow: 0 7px 16px rgba(15,37,64,.08) !important;
+  }
+
+  .method-choice strong,
+  .route-image-card strong,
+  .summary-tab-card h3,
+  .review-card h3 {
+    font-size: 13px !important;
+    line-height: 1.45 !important;
+  }
+
+  .method-choice span,
+  .route-image-card span,
+  .review-card p,
+  .summary-table-like span,
+  .summary-table-like strong {
+    font-size: 11px !important;
+    line-height: 1.55 !important;
+  }
+
+  .route-image-card__media { max-height: 62px !important; border-radius: 12px !important; overflow: hidden !important; }
+
+  .focus-form-table,
+  .load-bank-list,
+  .selected-load-list,
+  .custom-load-row,
+  .custom-load-row.extended {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 7px !important;
+  }
+
+  .selected-load-card,
+  .labeled-load-card {
+    grid-template-columns: 1fr !important;
+    gap: 6px !important;
+  }
+
+  input,
+  select,
+  textarea,
+  .load-field input,
+  .load-field select {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 36px !important;
+    font-size: 13px !important;
+  }
+
+  textarea { min-height: 72px !important; }
+
+  /* Big visual panels should not dominate mobile screen */
+  .environmental-intelligence-layout { height: auto !important; overflow: visible !important; }
+  .environment-map-panel { min-height: 24dvh !important; max-height: 24dvh !important; border-radius: 16px !important; }
+  .environment-fields-panel { padding: 8px !important; border-radius: 16px !important; }
+
+  /* Review: compact accordions/tabs without long scroll */
+  .engineering-review-center,
+  .review-stage,
+  .review-stage.v15-review-stage {
+    gap: 7px !important;
+  }
+
+  .summary-tab-card {
+    min-height: 104px !important;
+    overflow: hidden !important;
+  }
+
+  .summary-table-like {
+    gap: 5px !important;
+  }
+
+  .summary-table-like p {
+    padding: 7px !important;
+    border-radius: 11px !important;
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Floating warnings stay visible but compact */
+  .form-error-panel,
+  .step-lock-banner {
+    position: sticky !important;
+    bottom: calc(var(--mobile-bottom-h) + 14px) !important;
+    z-index: 60 !important;
+    margin: 8px 0 !important;
+    padding: 8px !important;
+    border-radius: 14px !important;
+    max-height: 22dvh !important;
+    overflow: auto !important;
+    box-shadow: 0 10px 24px rgba(180,65,20,.14) !important;
+  }
+
+  .form-error-panel p { font-size: 12px !important; margin: 0 0 4px !important; }
+
+  /* Final report mobile: sections become compact cards */
+  .a4-report-card,
+  .output-page,
+  .report-preview,
+  .engineering-output-shell {
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+  }
+
+  .a4-section,
+  .report-section,
+  .a4-report-card section {
+    padding: 9px !important;
+    border-radius: 14px !important;
+    margin-bottom: 7px !important;
+  }
+
+  table { display: block !important; overflow-x: auto !important; max-width: 100% !important; }
+}

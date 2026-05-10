@@ -5849,6 +5849,17 @@ export const DEFAULT_SYSTEM_EQUIPMENT_LIBRARY = [
     summary: 'اینورتر هیبرید SHIL برای کارکرد ترکیبی خورشیدی، باتری و شبکه.',
     specs: { inverterMode: 'hybrid', systemVoltage: 48, inverterEfficiency: 0.965, ratedPowerW: 11000, surgePowerW: 22000, inverterAcPowerW: 11000, inverterRatedPowerW: 11000, maxPvVocV: 500, controllerMaxVoc: 500, mpptMinVoltage: 60, mpptMaxVoltage: 450, mpptStartupVoltage: 60, mpptCount: 2, maxPvPowerW: 11000, hybridMpptProfileId: 'hybrid-8-to-11kw', hybridMpptProfileTitle: 'هیبرید 8 تا 11 کیلووات' },
   },
+  {
+    id: 'inverter-shil-industrial-25kw-96v', category: 'inverter', brand: 'SHIL', model: 'IND-25KW-96V', title: 'اینورتر صنعتی SHIL 25kW 96V',
+    summary: 'اینورتر صنعتی SHIL برای پروژه‌های سنگین، چنداینورتری و بارهای موتوری.',
+    specs: { inverterMode: 'hybrid', inverterGrade: 'industrial', systemVoltage: 96, inverterEfficiency: 0.97, ratedPowerW: 25000, surgePowerW: 50000, inverterAcPowerW: 25000, inverterRatedPowerW: 25000, maxPvVocV: 600, controllerMaxVoc: 600, mpptMinVoltage: 150, mpptMaxVoltage: 520, mpptStartupVoltage: 150, mpptCount: 4, maxPvPowerPerMpptW: 8000, maxPvPowerW: 32000, parallelCapable: true, maxParallelUnits: 8 },
+  },
+  {
+    id: 'inverter-shil-industrial-50kw-192v', category: 'inverter', brand: 'SHIL', model: 'IND-50KW-192V', title: 'اینورتر صنعتی SHIL 50kW 192V',
+    summary: 'اینورتر صنعتی SHIL برای پروژه‌های تجاری و صنعتی با تابلو حفاظتی مستقل.',
+    specs: { inverterMode: 'hybrid', inverterGrade: 'industrial', systemVoltage: 192, inverterEfficiency: 0.975, ratedPowerW: 50000, surgePowerW: 90000, inverterAcPowerW: 50000, inverterRatedPowerW: 50000, maxPvVocV: 1000, controllerMaxVoc: 1000, mpptMinVoltage: 250, mpptMaxVoltage: 850, mpptStartupVoltage: 250, mpptCount: 6, maxPvPowerPerMpptW: 12000, maxPvPowerW: 72000, parallelCapable: true, maxParallelUnits: 6 },
+  },
+
 ];
 
 export const DEFAULT_EQUIPMENT_LIBRARY = [

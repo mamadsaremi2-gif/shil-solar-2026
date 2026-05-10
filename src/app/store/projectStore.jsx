@@ -90,6 +90,32 @@ function buildVersionSnapshot(session, versionNumber) {
   };
 }
 
+
+function pushManagementAudit(session, output) {
+  try {
+    const audit = output?.result?.engineeringAudit;
+    if (!audit?.shouldSendToManagement) return;
+    const queue = JSON.parse(localStorage.getItem("shil_management_cartable") || "[]");
+    queue.unshift({
+      id: crypto.randomUUID(),
+      createdAt: new Date().toISOString(),
+      projectId: session.projectId || null,
+      projectTitle: session.form?.projectTitle || audit.projectTitle,
+      clientName: session.form?.clientName || "",
+      city: session.form?.city || "",
+      systemType: session.form?.systemType || audit.systemType,
+      status: audit.status,
+      eventCount: audit.eventCount,
+      decisionTitle: session.form?.engineeringDecisionTitle || "مسیر عادی",
+      reportProjectCode: output?.result?.reportSnapshot?.projectCode || null,
+      events: audit.events || [],
+    });
+    localStorage.setItem("shil_management_cartable", JSON.stringify(queue.slice(0, 200)));
+  } catch (error) {
+    console.warn("Management cartable write failed", error);
+  }
+}
+
 function buildProjectRecordFromSession(session) {
   const now = new Date().toISOString();
   const version = buildVersionSnapshot(session, 1);
@@ -107,6 +133,47 @@ function buildProjectRecordFromSession(session) {
     currentVersionId: version.id,
     versions: [version],
   };
+}
+
+
+function cloneProjectRecordForDuplicate(project) {
+  const now = new Date().toISOString();
+  const duplicateId = crypto.randomUUID();
+  const clonedVersions = (project.versions || []).map((version, index) => ({
+    ...cloneForm(version),
+    id: crypto.randomUUID(),
+    versionNumber: index + 1,
+    label: `${version.label || `نسخه ${index + 1}`} - کپی`,
+    createdAt: now,
+  }));
+  return {
+    ...cloneForm(project),
+    id: duplicateId,
+    title: `${project.title || 'پروژه'} - کپی`,
+    status: project.status || 'draft',
+    createdAt: now,
+    updatedAt: now,
+    draftForm: { ...(project.draftForm || {}), projectTitle: `${project.title || project.draftForm?.projectTitle || 'پروژه'} - کپی` },
+    versions: clonedVersions,
+    currentVersionId: clonedVersions.at(-1)?.id || null,
+  };
+}
+
+function downloadProjectJson(project) {
+  const payload = {
+    exportType: 'SHIL_SOLAR_PROJECT_EXPORT',
+    exportVersion: 'Project Workspace v10',
+    exportedAt: new Date().toISOString(),
+    project,
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const safeTitle = String(project.title || 'shil-project').replace(/[^a-zA-Z0-9\u0600-\u06FF_-]+/g, '-').slice(0, 70);
+  a.href = url;
+  a.download = `${safeTitle || 'shil-project'}-engineering-export.json`;
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 function hydrateSessionFromProject(project, versionId) {
@@ -216,6 +283,14 @@ export function ProjectStoreProvider({ children }) {
     openAIPage() {
       setRoute({ name: "ai" });
       trackEventSafe("open_ai_assistant");
+    },
+    openEducation(origin = null) {
+      setRoute({ name: "education", origin: origin ?? route.name });
+      trackEventSafe("open_education", { origin: origin ?? route.name });
+    },
+    openFeedback(origin = null) {
+      setRoute({ name: "feedback", origin: origin ?? route.name });
+      trackEventSafe("open_feedback", { origin: origin ?? route.name });
     },
     openScenarios(origin = null) {
       setRoute({ name: "scenarios", origin: origin ?? route.name });
@@ -363,6 +438,7 @@ export function ProjectStoreProvider({ children }) {
     },
     runCalculation() {
       const output = runEngineeringDesign(activeProject.form);
+      pushManagementAudit(activeProject, output);
       setActiveProject((prev) => {
         const next = { ...prev, updatedAt: new Date().toISOString(), result: output };
         syncDraft(next);
@@ -511,6 +587,23 @@ export function ProjectStoreProvider({ children }) {
         return { ok: false, message: error.message };
       }
     },
+    duplicateProject(projectId) {
+      const found = ProjectRepository.getById(projectId);
+      if (!found) return null;
+      const duplicated = cloneProjectRecordForDuplicate(found);
+      ProjectRepository.upsert(duplicated);
+      refreshProjects();
+      void persistProjectToCloud(duplicated);
+      trackEventSafe("duplicate_project", { sourceProjectId: projectId, newProjectId: duplicated.id });
+      return duplicated;
+    },
+    exportProject(projectId) {
+      const found = ProjectRepository.getById(projectId);
+      if (!found) return false;
+      downloadProjectJson(found);
+      trackEventSafe("export_project_json", { projectId });
+      return true;
+    },
     copyProjectToScenario(projectId) {
       const found = ProjectRepository.getById(projectId);
       if (!found) return false;
@@ -540,7 +633,10 @@ export function ProjectStoreProvider({ children }) {
   const activeRecord = activeProject.projectId ? projects.find((item) => item.id === activeProject.projectId) ?? null : null;
   const projectVersions = activeRecord?.versions ?? [];
 
-  const visibleProjects = isAdmin ? projects : projects.filter((project) => !project.ownerId || project.ownerId === (user?.id || "local-dev"));
+  const currentOwnerId = user?.id || "local-dev";
+  const visibleProjects = isAdmin
+    ? projects
+    : projects.filter((project) => project.ownerId === currentOwnerId || (!project.ownerId && currentOwnerId === "local-dev"));
 
   const value = {
     route,

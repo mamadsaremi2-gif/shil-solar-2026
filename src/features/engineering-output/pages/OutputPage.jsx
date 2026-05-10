@@ -266,7 +266,7 @@ export function OutputPage() {
     return <div className="shell"><div className="panel empty-state">محاسبات معتبر موجود نیست.</div></div>;
   }
 
-  const { summary, battery, pv, inverter, controller, cabling, protection, installation, loads, simulation, industrial, advisor, validation } = output.result;
+  const { summary, battery, pv, inverter, controller, cabling, protection, installation, loads, simulation, industrial, advisor, validation, maintenancePlan, riskRegister } = output.result;
   const isBackup = summary.systemType === 'backup';
   const displayBattery = isBackup ? buildBackupBatteryOutput(activeProject.form, loads, battery) : battery;
   const reportKindClass = isBackup ? 'report-export-root--backup' : 'report-export-root--solar';
@@ -374,6 +374,20 @@ export function OutputPage() {
           <button className="btn btn--primary" onClick={handleExportPdf} disabled={isExporting}>{isExporting ? 'در حال ساخت PDF...' : 'گزارش PDF'}</button>
         </div>
       </header>
+
+      <section className="panel panel--full operations-control-panel-v5">
+        <div className="panel__header"><h2>Operations & Risk Center v5</h2><span className="badge">فقط خواندن از Unified State</span></div>
+        <div className="summary-list">
+          <div><span>Risk Register</span><strong>{riskRegister?.status || 'clear'}</strong></div>
+          <div><span>ریسک بحرانی / High</span><strong>{formatNumber(riskRegister?.criticalCount || 0)} / {formatNumber(riskRegister?.highCount || 0)}</strong></div>
+          <div><span>برنامه نگهداری</span><strong>{maintenancePlan?.status || 'normal'}</strong></div>
+          <div><span>سرویس بعدی</span><strong>{maintenancePlan?.nextServiceLabel || 'ثبت نشده'}</strong></div>
+        </div>
+        <div className="advisor-list">
+          {(riskRegister?.risks || []).slice(0, 4).map((risk) => <div key={risk.id} className={`advisor-card advisor-card--${risk.level === 'critical' ? 'error' : risk.level === 'high' ? 'warning' : 'info'}`}><strong>{risk.title}</strong><span>{risk.action}</span></div>)}
+          {(maintenancePlan?.tasks || []).slice(0, 4).map((task) => <div key={task.id} className={`advisor-card advisor-card--${task.priority === 'high' ? 'warning' : 'info'}`}><strong>{task.title}</strong><span>هر {task.intervalDays} روز - {task.reason}</span></div>)}
+        </div>
+      </section>
 
       <div ref={reportRef} className={`report-export-root ${reportKindClass}`}>
         <section className="pdf-page-section report-page executive-summary-page" style={{ backgroundImage: `linear-gradient(135deg, rgba(8,17,31,0.92), rgba(15,23,42,0.86)), url(${PUBLIC_ASSETS.backgrounds.report})` }}>
@@ -580,6 +594,22 @@ export function OutputPage() {
                 {industrial.actionItems.map((item) => <div key={item} className="advisor-card advisor-card--warning"><strong>اقدام پیشنهادی</strong><span>{item}</span></div>)}
               </div>
             ) : <p className="section-note">در این مرحله اقدام بحرانی برای اصلاح طراحی تشخیص داده نشد.</p>}
+          </section>
+
+          <section className="panel panel--full operations-report-page-v5">
+            <div className="panel__header"><h2>ریسک، نگهداری و عملیات پس از اجرا</h2><span className="badge">Professional Report v5</span></div>
+            <div className="summary-list">
+              <div><span>وضعیت Risk Register</span><strong>{riskRegister?.status || 'clear'}</strong></div>
+              <div><span>ریسک بحرانی</span><strong>{formatNumber(riskRegister?.criticalCount || 0)}</strong></div>
+              <div><span>ریسک High</span><strong>{formatNumber(riskRegister?.highCount || 0)}</strong></div>
+              <div><span>برنامه سرویس</span><strong>{maintenancePlan?.nextServiceLabel || 'ثبت نشده'}</strong></div>
+            </div>
+            <div className="advisor-list">
+              {(riskRegister?.risks || []).map((risk) => <div key={risk.id} className={`advisor-card advisor-card--${risk.level === 'critical' ? 'error' : risk.level === 'high' ? 'warning' : 'info'}`}><strong>{risk.title}</strong><span>{risk.action}</span></div>)}
+            </div>
+            <div className="backup-scenario-table-wrap">
+              <table className="backup-scenario-table"><thead><tr><th>فعالیت نگهداری</th><th>دوره</th><th>اولویت</th><th>علت</th></tr></thead><tbody>{(maintenancePlan?.tasks || []).map((task) => <tr key={task.id}><td>{task.title}</td><td>هر {task.intervalDays} روز</td><td>{task.priority}</td><td>{task.reason}</td></tr>)}</tbody></table>
+            </div>
           </section>
 
           <section className="panel panel--full">

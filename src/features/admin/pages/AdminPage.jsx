@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "../../../features/auth/AuthProvider";
 import { useProjectStore } from "../../../app/store/projectStore";
 
@@ -25,6 +25,21 @@ export function AdminPage() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [message, setMessage] = useState("");
   const [query, setQuery] = useState("");
+  const [userFeedback, setUserFeedback] = useState([]);
+
+  useEffect(() => {
+    try {
+      setUserFeedback(JSON.parse(localStorage.getItem("shil_admin_user_feedback") || "[]"));
+    } catch {
+      setUserFeedback([]);
+    }
+  }, []);
+
+  function clearFeedbackItem(id) {
+    const next = userFeedback.map((item) => item.id === id ? { ...item, status: "reviewed", reviewedAt: new Date().toISOString() } : item);
+    setUserFeedback(next);
+    localStorage.setItem("shil_admin_user_feedback", JSON.stringify(next));
+  }
 
   const filtered = useMemo(() => {
     const q = query.trim();
@@ -99,6 +114,34 @@ export function AdminPage() {
         </div>
         {!filtered.length ? <p className="empty-state">پروژه‌ای پیدا نشد.</p> : null}
         {message ? <p className="section-note">{message}</p> : null}
+      </section>
+
+      <section className="focus-content-card admin-modern-card admin-feedback-v11">
+        <div className="admin-dashboard-head">
+          <div>
+            <h2>نظرات و پیشنهادات کاربران</h2>
+            <p>این بخش مستقل از کارتابل کاربر و مسیر طراحی است و فقط برای مدیریت نمایش داده می‌شود.</p>
+          </div>
+          <strong>{userFeedback.filter((item) => item.status !== "reviewed").length} مورد جدید</strong>
+        </div>
+        {userFeedback.length ? (
+          <div className="admin-feedback-grid-v11">
+            {userFeedback.slice(0, 20).map((item) => (
+              <article key={item.id} className={`admin-feedback-card-v11 is-${item.status || "new"}`}>
+                <div className="admin-feedback-card-v11__head">
+                  <strong>{item.category || "نظر کاربر"}</strong>
+                  <span>{item.createdAt ? new Date(item.createdAt).toLocaleString("fa-IR") : "—"}</span>
+                </div>
+                <p>{item.message}</p>
+                <div className="admin-feedback-card-v11__meta">
+                  <span>{item.visibility === "admin-only" ? "فقط مدیریت" : "عمومی"}</span>
+                  <span>{item.status === "reviewed" ? "بررسی‌شده" : "جدید"}</span>
+                </div>
+                {item.status !== "reviewed" ? <button className="btn btn--secondary btn--sm" type="button" onClick={() => clearFeedbackItem(item.id)}>علامت بررسی شد</button> : null}
+              </article>
+            ))}
+          </div>
+        ) : <p className="empty-state">هنوز نظری ثبت نشده است.</p>}
       </section>
     </main>
   );

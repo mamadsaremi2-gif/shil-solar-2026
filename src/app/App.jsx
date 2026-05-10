@@ -7,6 +7,8 @@ import { AdminPage } from "../pages/AdminPage";
 import { ContactPage } from "../pages/ContactPage";
 import { DashboardPage } from "../pages/DashboardPage";
 import { EquipmentLibraryPage } from "../pages/EquipmentLibraryPage";
+import { EducationPage } from "../features/education/EducationPage";
+import { FeedbackPage } from "../features/feedback/FeedbackPage";
 import { OutputPage } from "../pages/OutputPage";
 import { ProjectWorkspacePage } from "../pages/ProjectWorkspacePage";
 import { ReadyScenariosPage } from "../pages/ReadyScenariosPage";
@@ -72,6 +74,10 @@ function AppShell() {
       return <ContactPage />;
     case "equipment":
       return <EquipmentLibraryPage />;
+    case "education":
+      return <EducationPage />;
+    case "feedback":
+      return <FeedbackPage />;
     case "output":
       return <OutputPage />;
     case "workspace":

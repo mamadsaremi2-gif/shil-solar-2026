@@ -27,6 +27,7 @@ export default function AdminPanel() {
   const [users, setUsers] = useState([]);
   const [projects, setProjects] = useState([]);
   const [events, setEvents] = useState([]);
+  const [managementQueue, setManagementQueue] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const loadAdminData = async () => {
@@ -64,6 +65,12 @@ export default function AdminPanel() {
       console.error("خطا در دریافت لاگ‌ها:", eventsResult.error);
     } else {
       setEvents(eventsResult.data || []);
+    }
+
+    try {
+      setManagementQueue(JSON.parse(localStorage.getItem("shil_management_cartable") || "[]"));
+    } catch {
+      setManagementQueue([]);
     }
 
     setLoading(false);
@@ -189,8 +196,10 @@ export default function AdminPanel() {
       calculationEvents: calculationEvents.length,
       activeUsers: uniqueUsers.size,
       averageSystemPower,
+      managementQueue: managementQueue.length,
+      blockedEngineeringItems: managementQueue.filter((item) => item.status === "blocked").length,
     };
-  }, [events, projects, quickCalculations, realProjects, users]);
+  }, [events, projects, quickCalculations, realProjects, users, managementQueue]);
 
   useEffect(() => {
     loadAdminData();
@@ -239,7 +248,37 @@ export default function AdminPanel() {
           <strong>{analytics.averageSystemPower} kW</strong>
           <div>میانگین توان سیستم</div>
         </div>
+      <div className="project-item">
+          <strong>{analytics.managementQueue}</strong>
+          <div>کارتابل مهندسی</div>
+        </div>
+
+        <div className="project-item">
+          <strong>{analytics.blockedEngineeringItems}</strong>
+          <div>موارد مسدود طراحی</div>
+        </div>
       </div>
+
+      <hr />
+
+      <h3>کارتابل مدیریت مهندسی</h3>
+      {managementQueue.length === 0 && <p>مورد بحرانی یا نیازمند بازبینی ثبت نشده است.</p>}
+      {managementQueue.slice(0, 20).map((item) => (
+        <div className="project-item management-cartable-item" key={item.id}>
+          <strong>{item.projectTitle || "پروژه بدون عنوان"}</strong>
+          <div>کارفرما: {item.clientName || "—"} | شهر: {item.city || "—"}</div>
+          <div>وضعیت: {item.status === "blocked" ? "مسدود/نیازمند اصلاح" : "نیازمند بازبینی"} | تعداد رخداد: {item.eventCount}</div>
+          <div>تصمیم: {item.decisionTitle || "—"}</div>
+          <small>کد گزارش: {item.reportProjectCode || "—"} | {formatDate(item.createdAt)}</small>
+          {item.events?.length ? (
+            <ul className="management-cartable-events">
+              {item.events.slice(0, 4).map((event, index) => (
+                <li key={index}><b>{event.severity}</b> — {event.title}: {event.recommendation || event.message}</li>
+              ))}
+            </ul>
+          ) : null}
+        </div>
+      ))}
 
       <hr />
 
