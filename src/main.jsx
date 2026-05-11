@@ -9,6 +9,7 @@ import "./styles/mobile-refinement-patch-v4.css";
 import "./styles/shil-final-ui-v5.css";
 import "./styles/shil-final-ui-v6-fixes.css";
 import "./styles/shil-final-ui-v7-last-polish.css";
+import "./styles/shil-final-ui-v8-mobile-master.css";
 
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.getRegistrations?.().then((registrations) => {
