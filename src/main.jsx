@@ -7,6 +7,7 @@ import "./styles/final-production-overrides.css";
 import "./styles/mobile-standalone-v1.css";
 import "./styles/mobile-refinement-patch-v4.css";
 import "./styles/shil-final-ui-v5.css";
+import "./styles/shil-final-ui-v6-fixes.css";
 
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.getRegistrations?.().then((registrations) => {
