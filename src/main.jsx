@@ -11,6 +11,7 @@ import "./styles/shil-final-ui-v6-fixes.css";
 import "./styles/shil-final-ui-v7-last-polish.css";
 import "./styles/shil-final-ui-v8-mobile-master.css";
 import "./styles/shil-final-ui-v9-mobile-safe.css";
+import "./styles/shil-final-ui-v10-real-mobile-lock.css";
 
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.getRegistrations?.().then((registrations) => {
