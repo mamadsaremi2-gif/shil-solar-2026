@@ -76,22 +76,27 @@ export function ProjectWorkspacePage() {
 
   return (
     <main className="project-flow-shell" dir="rtl">
-      <FlowHeader title={headerTitle} onBack={() => (started && activeIndex > 0 ? jumpToStep(activeIndex - 1) : goDashboard())} onDashboard={goDashboard} />
-      {!started ? <DesignOverview onStart={(index = 0) => jumpToStep(index)} /> : (
-        <div className="focus-layout">
+      <FlowHeader title={headerTitle} onDashboard={goDashboard} />
+      {!started ? (
+        <>
+          <section className="mobile-scroll-content no-stepbar project-start-scroll"><DesignOverview onStart={(index = 0) => jumpToStep(index)} /></section>
+          <footer className="mobile-fixed-footer unified-shil-footer"><button className="btn btn--ghost" type="button" onClick={goDashboard}>برگشت</button></footer>
+        </>
+      ) : (
+        <div className="focus-layout workspace-fixed-shell">
           <FlowStepper activeIndex={activeIndex} form={form} completedSteps={completedSteps} goToStep={jumpToStep} />
-          <section className={`focus-content-card pro-content-card ${previousConfirmed ? "is-confirmable" : "is-readonly-step"}`}>
-            {!previousConfirmed ? <div className="step-lock-banner">این صفحه قابل مشاهده و تکمیل آزمایشی است؛ اما تایید آن تا تایید مرحله قبل غیرفعال می‌ماند.</div> : null}
+          <section className={`focus-content-card pro-content-card workspace-scroll-frame ${previousConfirmed ? "is-confirmable" : "is-readonly-step"}`}>
+            {!previousConfirmed ? <div className="step-lock-banner shil-warning-top">این صفحه قابل مشاهده و تکمیل آزمایشی است؛ اما تایید آن تا تایید مرحله قبل غیرفعال می‌ماند.</div> : null}
             {content()}
-            {activeIndex < 7 ? (
-              <div className="focus-actions pro-actions">
-                <button className="btn btn--ghost" type="button" onClick={() => activeIndex > 0 ? jumpToStep(activeIndex - 1) : setStarted(false)}>مرحله قبل</button>
-                <button className="btn btn--secondary" type="button" onClick={saveProject}>ذخیره پیش‌نویس</button>
-                <button className="btn btn--primary" type="button" disabled={!canConfirm} onClick={next}>{activeIndex === 6 ? "تایید و اجرای محاسبات" : "تایید مرحله"}</button>
-              </div>
-            ) : null}
-            {(touchedConfirm || blockingMessages.length > 0) && !canConfirm && activeIndex < 7 ? <div className="form-error-panel">{blockingMessages.map((item, index) => <p key={index}>⚠️ {item}</p>)}</div> : null}
+            {(touchedConfirm || blockingMessages.length > 0) && !canConfirm && activeIndex < 7 ? <div className="form-error-panel shil-warning-top">{blockingMessages.map((item, index) => <p key={index}>⚠️ {item}</p>)}</div> : null}
           </section>
+          {activeIndex < 7 ? (
+            <footer className="mobile-fixed-footer unified-shil-footer workspace-action-footer">
+              <button className="btn btn--ghost" type="button" onClick={() => activeIndex > 0 ? jumpToStep(activeIndex - 1) : setStarted(false)}>مرحله قبل</button>
+              <button className="btn btn--secondary" type="button" onClick={saveProject}>ذخیره پیش‌نویس</button>
+              <button className="btn btn--primary" type="button" disabled={!canConfirm} onClick={next}>{activeIndex === 6 ? "تایید و اجرای محاسبات" : "تایید مرحله"}</button>
+            </footer>
+          ) : null}
         </div>
       )}
     </main>

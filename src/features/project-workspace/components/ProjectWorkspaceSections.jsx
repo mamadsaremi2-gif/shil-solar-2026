@@ -30,11 +30,11 @@ import {
 import { runEngineeringDesign } from "../../../domain/engine/orchestrator/runEngineeringDesign";
 import { fetchOnlineClimateIntelligence } from "../../../services/climateIntelligenceService";
 
-export function FlowHeader({ title, onBack }) {
+export function FlowHeader({ title, onDashboard }) {
   return (
-    <header className="mobile-fixed-header workspace-fixed-header">
-      <button className="mobile-back-btn" type="button" onClick={onBack}>‹</button>
-      <img className="mobile-header-logo" src="/images/branding/shil-logo.png" alt="SHIL IRAN" />
+    <header className="mobile-fixed-header workspace-fixed-header unified-shil-header">
+      <button className="mobile-back-btn mobile-dashboard-btn" type="button" onClick={onDashboard} aria-label="بازگشت به داشبورد">⌂</button>
+      <img className="mobile-header-logo" src="/images/branding/header-center-logo.webp" alt="SHIL IRAN" />
       <span className="mobile-title-pill">{title}</span>
     </header>
   );
@@ -60,25 +60,26 @@ export function FlowStepper({ activeIndex, goToStep, completedSteps = [] }) {
 
 export function DesignOverview({ onStart }) {
   return (
-    <section className="design-overview-card pro-design-overview v15-design-overview project-start-overview" aria-label="مسیر شروع پروژه">
-      <div className="design-overview-card__title project-start-overview__title">
-        <span>مسیر طراحی</span>
-        <small>همه مراحل قبل از شروع پروژه جدید قابل بررسی هستند؛ برای شروع رسمی پروژه از مرحله اول اقدام نمایید.</small>
-      </div>
-      <div className="design-path-grid project-start-overview__grid">
+    <section className="design-overview-card pro-design-overview v15-design-overview project-start-overview new-project-launcher" aria-label="مسیر شروع پروژه">
+      <div className="design-path-grid project-start-overview__grid new-project-grid-3x3">
         {DESIGN_STEPS.map((step, index) => (
           <button
             key={step}
             type="button"
-            className="design-path-item pro-path-item v15-path-item project-start-step-card"
+            className="design-path-item pro-path-item v15-path-item project-start-step-card banking-step-icon"
             style={{ "--delay": `${index * 95}ms`, "--spin-delay": `${index * -220}ms` }}
             onClick={() => onStart(index)}
           >
-            <span className="project-start-step-card__number">{index + 1}</span>
+            <span className="project-start-step-card__number">{String(index + 1).padStart(2, "0")}</span>
             <i className="project-start-step-card__icon">{STEP_META[index].icon}</i>
             <strong>{step}</strong>
           </button>
         ))}
+        <button type="button" className="design-path-item pro-path-item v15-path-item project-start-step-card banking-step-icon is-future" disabled>
+          <span className="project-start-step-card__number">09</span>
+          <i className="project-start-step-card__icon">＋</i>
+          <strong>توسعه آینده</strong>
+        </button>
       </div>
     </section>
   );
@@ -115,12 +116,12 @@ export function PathSelect({ form, updateForm }) {
     <div className="center-choice-stack">
       <div className="method-card-grid two route-image-card-grid">
         <button type="button" className="method-choice big route-image-card route-image-card--solar" onClick={() => setSolarOpen(true)}>
-          <span className="route-image-card__media"><img src="/images/cards/solar-project-card.png" alt="پروژه برق خورشیدی با پنل" /></span>
+          <span className="route-image-card__media"><img src="/images/routes/solar-project-route-card.webp" alt="پروژه برق خورشیدی با پنل" /></span>
           <strong>پروژه برق خورشیدی با پنل</strong>
           <span>آفگرید، آنگرید یا هیبرید</span>
         </button>
         <button type="button" className="method-choice big route-image-card route-image-card--backup" onClick={() => { updateForm({ systemType: "backup", backupHours: form.backupHours || "2" }); }}>
-          <span className="route-image-card__media"><img src="/images/cards/backup-power-card.png" alt="برق اضطراری" /></span>
+          <span className="route-image-card__media"><img src="/images/routes/backup-power-route-card.webp" alt="برق اضطراری" /></span>
           <strong>برق اضطراری</strong>
           <span>اینورتر، UPS و بانک باتری</span>
         </button>
@@ -431,7 +432,7 @@ export function SiteConditions({ form, updateForm }) {
   }
   return (
     <div className="site-stage environmental-intelligence-stage phase-v3-site-survey">
-      <div className="form-instruction-top">فاز Site Survey فعال است: GPS، عکس محل، قطب‌نما، سایه و Climate Cache همگی در موتور واحد ذخیره و وارد گزارش نهایی می‌شوند.</div>
+      <section className="environment-map-panel environment-map-panel--top" aria-label="نقشه تابش ایران"><img src="/images/branding/environment-map.jpg" alt="نقشه تابش و شرایط اقلیمی ایران" /><div className="environment-map-panel__overlay"><strong>{form.city || "انتخاب شهر"}</strong><span>{city.province || "استان"}</span></div></section><div className="form-instruction-top shil-warning-top">فاز Site Survey فعال است: GPS، عکس محل، قطب‌نما، سایه و Climate Cache همگی در موتور واحد ذخیره و وارد گزارش نهایی می‌شوند.</div>
       <section className="site-survey-capture-board" aria-label="ثبت اطلاعات محل نصب">
         <div className="site-survey-capture-board__head">
           <strong>ثبت اطلاعات محل نصب</strong>
@@ -480,7 +481,7 @@ export function SiteConditions({ form, updateForm }) {
         </div>
       </section>
       <div className="environmental-intelligence-layout">
-        <section className="environment-map-panel" aria-label="نقشه تابش ایران">
+        <section className="environment-map-panel environment-map-panel--legacy" aria-label="نقشه تابش ایران">
           <img src="/images/branding/environment-map.jpg" alt="نقشه تابش و شرایط اقلیمی ایران" />
           <div className="environment-map-panel__overlay">
             <strong>{form.city || "انتخاب شهر"}</strong>
