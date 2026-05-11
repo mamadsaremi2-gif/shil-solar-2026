@@ -258,6 +258,10 @@ export function ProjectStoreProvider({ children }) {
       setRoute({ name: "admin" });
       trackEventSafe("open_admin");
     },
+    openProjectsHub() {
+      setRoute({ name: "projects" });
+      trackEventSafe("open_projects_hub");
+    },
     openEquipmentLibrary(origin = null) {
       setRoute({ name: "equipment", origin: origin ?? route.name });
       trackEventSafe("open_equipment_library", { origin: origin ?? route.name });

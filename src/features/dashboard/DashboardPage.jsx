@@ -43,7 +43,7 @@ function ProjectBucket({ title, projects, emptyText, actions }) {
 }
 
 export function DashboardPage() {
-  const { projects, startNewProject, openScenarios, openEducation, openFeedback, openContact, openAdmin, openProject, openWorkspace, duplicateProject, exportProject, deleteProject } = useProjectStore();
+  const { projects, startNewProject, openScenarios, openEducation, openFeedback, openContact, openAdmin, openProjectsHub, openAIPage, openProject, openWorkspace, duplicateProject, exportProject, deleteProject } = useProjectStore();
   const { signOut, profile, isAdmin, isOfflineMode } = useAuth();
 
   const handleSignOut = async () => {
@@ -56,6 +56,8 @@ export function DashboardPage() {
     () => buildDashboardCards({
       isAdmin,
       startNewProject,
+      openProjectsHub,
+      openAIPage,
       openContact,
       openScenarios,
       openEducation,
@@ -63,7 +65,7 @@ export function DashboardPage() {
       openAdmin,
       signOut: handleSignOut,
     }),
-    [isAdmin, openAdmin, openContact, openEducation, openFeedback, openScenarios, handleSignOut, startNewProject],
+    [isAdmin, openAdmin, openProjectsHub, openAIPage, openContact, openEducation, openFeedback, openScenarios, handleSignOut, startNewProject],
   );
 
   const activeProjects = projects.filter((p) => p.status !== "calculated");
@@ -78,6 +80,10 @@ export function DashboardPage() {
         projectCount={projects.length}
         systemStatus={systemStatus}
       />
+      <div className={`network-status-pill is-${systemStatus?.tone === "success" ? "online" : "offline"}`} title={systemStatus?.detail || ""}>
+        <i aria-hidden="true" />
+        <span>{systemStatus?.tone === "success" ? "آنلاین" : "آفلاین"}</span>
+      </div>
       <DashboardActionGrid cards={dashboardCards} />
       <section className="dashboard-projects-master-card-v15" aria-label="پروژه‌ها">
         <div className="dashboard-projects-master-card-v15__head">

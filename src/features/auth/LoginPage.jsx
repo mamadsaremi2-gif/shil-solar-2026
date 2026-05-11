@@ -43,12 +43,12 @@ export default function LoginPage() {
         <div className="auth-brand">
           <img src={PUBLIC_ASSETS.branding.logo} alt="SHIL" />
           <div>
-            <strong>SHIL SOLAR</strong>
+            <strong>SMART SHIL SOLAR</strong>
             <span>{isConfigured ? "ورود به اپلیکیشن تحت وب" : "حالت محلی / تست فعال است"}</span>
           </div>
         </div>
 
-        <h1>{isSignup ? "ثبت‌نام" : "ورود"}</h1>
+        <h1>{isSignup ? "ثبت‌نام" : "ورود به SMART SHIL SOLAR"}</h1>
 
         {isSignup ? (
           <label>
@@ -74,7 +74,7 @@ export default function LoginPage() {
         </button>
 
         <button className="btn btn--ghost" type="button" onClick={enterOfflineMode}>
-          ورود آفلاین به اپ
+          ورود مهمان
         </button>
 
         <button className="auth-link" type="button" onClick={() => setIsSignup((prev) => !prev)}>

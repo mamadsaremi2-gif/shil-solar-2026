@@ -6,6 +6,7 @@ import LoginPage from "../features/auth/LoginPage";
 import { AdminPage } from "../pages/AdminPage";
 import { ContactPage } from "../pages/ContactPage";
 import { DashboardPage } from "../pages/DashboardPage";
+import { ProjectsHubPage } from "../features/projects/ProjectsHubPage";
 import { EquipmentLibraryPage } from "../pages/EquipmentLibraryPage";
 import { EducationPage } from "../features/education/EducationPage";
 import { FeedbackPage } from "../features/feedback/FeedbackPage";
@@ -68,6 +69,8 @@ function AppShell() {
   switch (route.name) {
     case "admin":
       return isAdmin ? <AdminPage /> : <DashboardPage />;
+    case "projects":
+      return <ProjectsHubPage />;
     case "ai":
       return <AIExpertSolar />;
     case "contact":

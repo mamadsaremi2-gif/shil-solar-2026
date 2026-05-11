@@ -1,4 +1,7 @@
-
-node_modules/
-dist/
+node_modules
+dist
 .env
+.vercel
+.cache
+coverage
+.DS_Store

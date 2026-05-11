@@ -30,44 +30,32 @@ import {
 import { runEngineeringDesign } from "../../../domain/engine/orchestrator/runEngineeringDesign";
 import { fetchOnlineClimateIntelligence } from "../../../services/climateIntelligenceService";
 
-export function FlowHeader({ title, onBack, onDashboard }) {
+export function FlowHeader({ title, onBack }) {
   return (
-    <section className="flow-top-card pro-flow-header v15-flow-header">
-      <div className="flow-header-actions">
-        <button className="btn btn--ghost dashboard-button" type="button" onClick={onDashboard}>داشبورد</button>
-        <button className="btn btn--ghost back-button-inline" type="button" onClick={onBack}>مرحله قبل</button>
-      </div>
-      <div className="page-brand-lockup">
-        <div className="flow-top-title"><strong>{title}</strong><small>SHIL Smart Solar Design</small></div>
-      </div>
-      <img className="header-brand-logo" src={PAGE_LOGO} alt="SHIL IRAN" />
-    </section>
+    <header className="mobile-fixed-header workspace-fixed-header">
+      <button className="mobile-back-btn" type="button" onClick={onBack}>‹</button>
+      <img className="mobile-header-logo" src="/images/branding/shil-logo.png" alt="SHIL IRAN" />
+      <span className="mobile-title-pill">{title}</span>
+    </header>
   );
 }
 
-export function FlowStepper({ activeIndex, form, goToStep, completedSteps = [] }) {
-  const chips = [form.systemType ? systemLabel(form.systemType) : null, form.calculationMode ? METHOD_LABELS[form.calculationMode] : null].filter(Boolean);
+export function FlowStepper({ activeIndex, goToStep, completedSteps = [] }) {
   const completedSet = new Set(completedSteps || []);
   return (
-    <aside className="focus-stepper pro-stepper">
-      <div className="focus-stepper__badges">
-        {chips.length ? chips.map((chip) => <span key={chip}>{chip}</span>) : <span>مسیر و روش هنوز انتخاب نشده</span>}
-      </div>
+    <aside className="focus-stepper pro-stepper mobile-design-stepbar" aria-label="مسیر طراحی">
       {DESIGN_STEPS.map((step, index) => {
         const done = completedSet.has(index);
-        const waiting = index > 0 && !completedSet.has(index - 1);
         return (
-          <button key={step} type="button" onClick={() => goToStep(index)} className={`focus-step ${activeIndex === index ? "is-active" : ""} ${done ? "is-done" : ""} ${waiting && !done ? "is-waiting" : ""}`}>
-            <span>{done ? "✓" : index + 1}</span>
-            <em>{STEP_META[index].icon}</em>
-            <strong>{step}</strong>
-            {waiting && !done ? <small>نیازمند تایید مرحله قبل</small> : done ? <small>تکمیل شده</small> : <small>قابل بازدید</small>}
+          <button key={step} type="button" onClick={() => goToStep(index)} className={`focus-step ${activeIndex === index ? "is-active" : ""} ${done ? "is-done" : ""}`}>
+            <span>{index + 1}</span><em>{STEP_META[index].icon}</em><strong>{step}</strong>
           </button>
         );
       })}
     </aside>
   );
 }
+
 
 
 export function DesignOverview({ onStart }) {
