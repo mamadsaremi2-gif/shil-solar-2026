@@ -1,5 +1,2 @@
-@echo off
-cd /d %~dp0
 npm install
-npm run dev
-pause
+npm run dev -- --host

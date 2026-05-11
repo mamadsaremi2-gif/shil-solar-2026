@@ -1,0 +1,233 @@
+/* SHIL V7 final polish: unified large dark-violet banking icons, compact header, darker scroll blocks */
+:root{
+  --shil-v7-deep:#2a0f47;
+  --shil-v7-deep-2:#3f146d;
+  --shil-v7-violet:#7b22d6;
+  --shil-v7-neon:#c66bff;
+  --shil-v7-panel:#2d2140;
+  --shil-v7-panel-2:#382650;
+  --shil-v7-white:#fff;
+}
+
+/* Header refinement: actual centered logo, compact pill hugging title, solid purple home/back icon. */
+.mobile-fixed-header,.unified-shil-header,.workspace-fixed-header{
+  grid-template-columns:46px 1fr auto!important;
+  padding-inline:10px!important;
+  background:linear-gradient(180deg,rgba(242,244,249,.98),rgba(224,229,240,.96))!important;
+}
+.mobile-header-logo{
+  position:absolute!important;
+  left:50%!important;
+  top:calc(50% + env(safe-area-inset-top)/2)!important;
+  transform:translate(-50%,-50%)!important;
+  width:46px!important;
+  height:46px!important;
+  z-index:2!important;
+}
+.mobile-title-pill{
+  width:auto!important;
+  max-width:42vw!important;
+  min-width:0!important;
+  justify-self:end!important;
+  padding:0 9px!important;
+  height:34px!important;
+  font-size:clamp(9px,2.75vw,12px)!important;
+  background:linear-gradient(135deg,#8f2cf4,#c963ff)!important;
+  box-shadow:0 7px 16px rgba(123,34,214,.22)!important;
+}
+.mobile-back-btn,.mobile-dashboard-btn{
+  background:var(--shil-v7-violet)!important;
+  color:#fff!important;
+  border-color:rgba(255,255,255,.32)!important;
+  box-shadow:0 8px 18px rgba(80,22,145,.24)!important;
+}
+.mobile-back-btn svg,.mobile-dashboard-btn svg,.mobile-back-btn i,.mobile-dashboard-btn i{
+  color:#fff!important;
+  fill:#fff!important;
+  stroke:#fff!important;
+}
+
+/* Dashboard icons must match new-project banking icons. */
+.shil-dashboard__cards{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:12px!important;
+  padding:10px!important;
+  width:100%!important;
+}
+.shil-dashboard-card,
+.banking-step-icon{
+  min-height:138px!important;
+  border-radius:24px!important;
+  background:linear-gradient(180deg,var(--shil-v7-panel-2),var(--shil-v7-panel))!important;
+  color:#fff!important;
+  border:1px solid rgba(198,107,255,.32)!important;
+  box-shadow:0 14px 30px rgba(36,16,64,.28), inset 0 1px 0 rgba(255,255,255,.12)!important;
+  display:grid!important;
+  place-items:center!important;
+  align-content:center!important;
+  gap:7px!important;
+  padding:10px 8px!important;
+  overflow:hidden!important;
+}
+.shil-dashboard-card__icon,
+.banking-step-icon .project-start-step-card__icon{
+  width:64px!important;
+  height:64px!important;
+  min-width:64px!important;
+  min-height:64px!important;
+  border-radius:22px!important;
+  display:grid!important;
+  place-items:center!important;
+  font-size:34px!important;
+  background:linear-gradient(145deg,#1f0b37,#49157d)!important;
+  color:#fff!important;
+  border:1px solid rgba(214,139,255,.42)!important;
+  box-shadow:0 10px 22px rgba(0,0,0,.24),0 0 24px rgba(198,107,255,.24)!important;
+}
+.shil-dashboard-card strong,
+.banking-step-icon strong{
+  color:#fff!important;
+  font-size:clamp(12px,3.5vw,15px)!important;
+  font-weight:950!important;
+  line-height:1.25!important;
+  text-align:center!important;
+  text-shadow:0 1px 1px rgba(0,0,0,.25)!important;
+}
+.shil-dashboard-card small,
+.shil-dashboard-card__meta,
+.shil-dashboard-card em{display:none!important;}
+.shil-dashboard-card__shine{opacity:.35!important;}
+
+/* Project-new launcher: full-screen grid inside a dark stage between header/footer. */
+.project-start-scroll.no-stepbar,
+.mobile-scroll-content.no-stepbar.project-start-scroll{
+  position:fixed!important;
+  top:calc(var(--shil-header-h) + env(safe-area-inset-top))!important;
+  right:0!important;
+  bottom:calc(var(--shil-footer-h) + env(safe-area-inset-bottom))!important;
+  left:0!important;
+  overflow:hidden!important;
+  padding:8px!important;
+  background:transparent!important;
+}
+.new-project-launcher{
+  height:100%!important;
+  width:100%!important;
+  border-radius:28px!important;
+  background:linear-gradient(180deg,rgba(54,39,78,.96),rgba(39,29,58,.98))!important;
+  border:1px solid rgba(198,107,255,.28)!important;
+  padding:10px!important;
+  box-shadow:0 18px 40px rgba(35,20,60,.24)!important;
+  display:grid!important;
+  align-content:stretch!important;
+}
+.new-project-grid-3x3{
+  height:100%!important;
+  max-height:none!important;
+  width:100%!important;
+  max-width:none!important;
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  grid-template-rows:repeat(3,minmax(0,1fr))!important;
+  gap:8px!important;
+  align-content:stretch!important;
+}
+.new-project-grid-3x3 .banking-step-icon{
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  border-radius:22px!important;
+  padding:8px 5px!important;
+}
+.banking-step-icon .project-start-step-card__number{
+  color:#d9a4ff!important;
+  font-size:11px!important;
+  font-weight:950!important;
+  justify-self:start!important;
+  align-self:start!important;
+}
+.banking-step-icon.is-future{
+  opacity:.74!important;
+  background:linear-gradient(180deg,#362847,#2b2038)!important;
+}
+
+/* Darker scrollable blocks with violet inner content and white text. */
+.workspace-scroll-frame .field,
+.workspace-scroll-frame .focus-form-table label,
+.workspace-scroll-frame .environment-fields-grid label,
+.workspace-scroll-frame .site-survey-capture-board,
+.workspace-scroll-frame .camera-orientation-board,
+.workspace-scroll-frame .environment-fields-panel,
+.workspace-scroll-frame .env-table-card,
+.workspace-scroll-frame .environment-summary-card,
+.workspace-scroll-frame .site-survey-capture-item,
+.workspace-scroll-frame .method-card,
+.workspace-scroll-frame .calculation-card,
+.workspace-scroll-frame .review-card,
+.workspace-scroll-frame .metric-card,
+.workspace-scroll-frame .form-section,
+.workspace-scroll-frame .pro-content-block,
+.workspace-scroll-frame .contact-compact-block,
+.workspace-scroll-frame .contact-qr-block,
+.mobile-scroll-content .contact-compact-block,
+.mobile-scroll-content .contact-qr-block,
+.mobile-scroll-content .mobile-project-list-card{
+  background:linear-gradient(180deg,var(--shil-v7-panel-2),var(--shil-v7-panel))!important;
+  color:#fff!important;
+  border:1px solid rgba(198,107,255,.28)!important;
+  box-shadow:0 12px 24px rgba(36,16,64,.20)!important;
+}
+.workspace-scroll-frame .field *,
+.workspace-scroll-frame .focus-form-table label *,
+.workspace-scroll-frame .environment-fields-grid label *,
+.workspace-scroll-frame .site-survey-capture-board *,
+.workspace-scroll-frame .camera-orientation-board *,
+.workspace-scroll-frame .environment-fields-panel *,
+.workspace-scroll-frame .env-table-card *,
+.workspace-scroll-frame .environment-summary-card *,
+.workspace-scroll-frame .site-survey-capture-item *,
+.workspace-scroll-frame .method-card *,
+.workspace-scroll-frame .calculation-card *,
+.workspace-scroll-frame .review-card *,
+.workspace-scroll-frame .metric-card *,
+.workspace-scroll-frame .form-section *,
+.workspace-scroll-frame .pro-content-block *,
+.mobile-scroll-content .contact-compact-block *,
+.mobile-scroll-content .contact-qr-block *,
+.mobile-scroll-content .mobile-project-list-card *{
+  color:#fff!important;
+}
+.workspace-scroll-frame input,
+.workspace-scroll-frame select,
+.workspace-scroll-frame textarea{
+  background:#efe7ff!important;
+  color:#35105f!important;
+  border-color:rgba(198,107,255,.38)!important;
+}
+.workspace-scroll-frame input::placeholder,
+.workspace-scroll-frame textarea::placeholder{color:#6f538f!important;}
+.workspace-scroll-frame .btn--secondary,
+.workspace-scroll-frame .btn--ghost{
+  background:#ede1ff!important;
+  color:#4a1677!important;
+  border-color:rgba(198,107,255,.38)!important;
+}
+
+/* Route cards stay large and image-led. */
+.route-image-card{
+  background:linear-gradient(180deg,var(--shil-v7-panel-2),var(--shil-v7-panel))!important;
+  color:#fff!important;
+}
+.route-image-card strong,.route-image-card span{color:#fff!important;}
+.route-image-card__media{min-height:190px!important;}
+
+@media (max-width:380px){
+  .shil-dashboard-card__icon,
+  .banking-step-icon .project-start-step-card__icon{width:58px!important;height:58px!important;min-width:58px!important;min-height:58px!important;font-size:30px!important;}
+  .shil-dashboard-card,.banking-step-icon{min-height:126px!important;}
+  .new-project-grid-3x3{gap:6px!important;}
+}
+@media (min-width:480px){
+  .shil-dashboard__cards{grid-template-columns:repeat(4,minmax(0,1fr))!important;}
+}
