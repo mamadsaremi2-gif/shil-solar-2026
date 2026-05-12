@@ -4,6 +4,7 @@ import App from "./app/App";
 import "./styles/modular-appearance.css";
 import './styles/v23-enterprise-polish.css';
 import './styles/v24-production-lock.css';
+import './styles/v26-layout-engine-v2.css';
 
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.getRegistrations?.().then((registrations) => {
