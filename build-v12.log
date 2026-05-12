@@ -1,0 +1,35 @@
+
+> shil-solar@1.0.0 build
+> vite build
+
+[36mvite v5.4.21 [32mbuilding for production...[36m[39m
+transforming...
+[32m✓[39m 520 modules transformed.
+rendering chunks...
+computing gzip size...
+[2mdist/[22m[32mindex.html                                 [39m[1m[2m  1.27 kB[22m[1m[22m[2m │ gzip:   0.66 kB[22m
+[2mdist/[22m[2massets/[22m[35mindex-K7Vz48Un.css                  [39m[1m[2m467.67 kB[22m[1m[22m[2m │ gzip:  78.35 kB[22m
+[2mdist/[22m[2massets/[22m[36mCloudProjectRepository-DcUILe-l.js  [39m[1m[2m  1.68 kB[22m[1m[22m[2m │ gzip:   0.71 kB[22m
+[2mdist/[22m[2massets/[22m[36mEducationPage-CjAhi98V.js           [39m[1m[2m  1.81 kB[22m[1m[22m[2m │ gzip:   0.93 kB[22m
+[2mdist/[22m[2massets/[22m[36mexportEngineeringPdf-Buf7pYcw.js    [39m[1m[2m  1.83 kB[22m[1m[22m[2m │ gzip:   1.06 kB[22m
+[2mdist/[22m[2massets/[22m[36mEquipmentRepository-CXCliqNJ.js     [39m[1m[2m  2.58 kB[22m[1m[22m[2m │ gzip:   1.13 kB[22m
+[2mdist/[22m[2massets/[22m[36mProjectsHubPage-BJFDFyXa.js         [39m[1m[2m  2.86 kB[22m[1m[22m[2m │ gzip:   1.19 kB[22m
+[2mdist/[22m[2massets/[22m[36mContactPage-rAqn_5v_.js             [39m[1m[2m  3.33 kB[22m[1m[22m[2m │ gzip:   1.37 kB[22m
+[2mdist/[22m[2massets/[22m[36mai-assistant-JpSZYiPa.js            [39m[1m[2m  3.98 kB[22m[1m[22m[2m │ gzip:   1.89 kB[22m
+[2mdist/[22m[2massets/[22m[36musageTracker-DUKg6Qad.js            [39m[1m[2m  4.74 kB[22m[1m[22m[2m │ gzip:   2.10 kB[22m
+[2mdist/[22m[2massets/[22m[36mFeedbackPage-mzCG5UoW.js            [39m[1m[2m  4.75 kB[22m[1m[22m[2m │ gzip:   2.27 kB[22m
+[2mdist/[22m[2massets/[22m[36mEquipmentLibraryPage-CI-KeR78.js    [39m[1m[2m  5.84 kB[22m[1m[22m[2m │ gzip:   2.41 kB[22m
+[2mdist/[22m[2massets/[22m[36mReadyScenariosPage-Chrd7RvY.js      [39m[1m[2m  6.75 kB[22m[1m[22m[2m │ gzip:   2.67 kB[22m
+[2mdist/[22m[2massets/[22m[36mindex-CxRcFnNW.js                   [39m[1m[2m 18.48 kB[22m[1m[22m[2m │ gzip:   6.72 kB[22m
+[2mdist/[22m[2massets/[22m[36mpurify.es-BwoZCkIS.js               [39m[1m[2m 22.03 kB[22m[1m[22m[2m │ gzip:   8.77 kB[22m
+[2mdist/[22m[2massets/[22m[36madmin-panel-CtRrADaK.js             [39m[1m[2m 27.55 kB[22m[1m[22m[2m │ gzip:   9.07 kB[22m
+[2mdist/[22m[2massets/[22m[36mOutputPage-FYjqe5ZB.js              [39m[1m[2m 42.55 kB[22m[1m[22m[2m │ gzip:  11.41 kB[22m
+[2mdist/[22m[2massets/[22m[36mProjectWorkspacePage-8M4Ng7_I.js    [39m[1m[2m102.80 kB[22m[1m[22m[2m │ gzip:  28.71 kB[22m
+[2mdist/[22m[2massets/[22m[36mengineering-core--i46_btl.js        [39m[1m[2m129.82 kB[22m[1m[22m[2m │ gzip:  41.39 kB[22m
+[2mdist/[22m[2massets/[22m[36mengineering-seeds-CQ8MD5Lv.js       [39m[1m[2m133.56 kB[22m[1m[22m[2m │ gzip:  22.29 kB[22m
+[2mdist/[22m[2massets/[22m[36mreact-vendor-DAXJ19zV.js            [39m[1m[2m141.96 kB[22m[1m[22m[2m │ gzip:  45.48 kB[22m
+[2mdist/[22m[2massets/[22m[36mindex.es-B2Ps-_Y6.js                [39m[1m[2m150.81 kB[22m[1m[22m[2m │ gzip:  51.61 kB[22m
+[2mdist/[22m[2massets/[22m[36mpdf-html2canvas-CBrSDip1.js         [39m[1m[2m201.42 kB[22m[1m[22m[2m │ gzip:  48.03 kB[22m
+[2mdist/[22m[2massets/[22m[36msupabase-B0jNjBNl.js                [39m[1m[2m207.05 kB[22m[1m[22m[2m │ gzip:  53.64 kB[22m
+[2mdist/[22m[2massets/[22m[36mpdf-jspdf-Bl7Zz5f2.js               [39m[1m[2m357.77 kB[22m[1m[22m[2m │ gzip: 118.05 kB[22m
+[32m✓ built in 11.96s[39m

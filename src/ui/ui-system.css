@@ -1,0 +1,16 @@
+/* UI system: icons, buttons, cards, forms */
+.banking-step-icon,
+.landing-card__icon,
+.dashboard-card__icon {
+  transform-style: preserve-3d;
+}
+.btn,
+.method-choice,
+.landing-card,
+.focus-step {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+input, select, textarea, button {
+  font-family: inherit;
+}

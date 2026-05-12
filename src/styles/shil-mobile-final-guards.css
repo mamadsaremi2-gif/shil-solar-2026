@@ -1,0 +1,156 @@
+/*
+  SHIL Mobile Final Guards
+  آخرین لایه محافظ UI برای نسخه نهایی موبایل.
+  این فایل عمداً کم حجم نگه داشته شده و فقط قوانین مشترک، پایدار و سراسری را نگه می دارد.
+*/
+
+:root {
+  --shil-header-height: clamp(58px, 9vh, 72px);
+  --shil-footer-height: clamp(68px, 10vh, 86px);
+  --shil-safe-top: env(safe-area-inset-top, 0px);
+  --shil-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --shil-page-x: clamp(12px, 4vw, 22px);
+  --shil-card-gap: clamp(8px, 2.2vw, 14px);
+  --shil-touch: 44px;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  max-width: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
+  overscroll-behavior-x: none;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button,
+.btn,
+[role="button"] {
+  min-height: var(--shil-touch);
+  touch-action: manipulation;
+}
+
+img,
+svg,
+canvas,
+video {
+  max-width: 100%;
+}
+
+.route-loading-shell {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: calc(var(--shil-header-height) + var(--shil-safe-top)) var(--shil-page-x) calc(var(--shil-footer-height) + var(--shil-safe-bottom));
+}
+
+.route-loading-card {
+  width: min(100%, 420px);
+  display: grid;
+  gap: 8px;
+  text-align: center;
+}
+
+.route-loading-card span {
+  font-size: 0.82rem;
+  opacity: 0.72;
+}
+
+.project-flow-shell,
+.mobile-page,
+.shil-mobile-page,
+.app-shell,
+.shell {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+.mobile-stage-rail,
+.design-path-rail,
+.flow-steps-rail,
+.steps-horizontal,
+.project-path-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-inline: contain;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+}
+
+.mobile-stage-rail > *,
+.design-path-rail > *,
+.flow-steps-rail > *,
+.steps-horizontal > *,
+.project-path-scroll > * {
+  scroll-snap-align: start;
+}
+
+.iran-map,
+.iran-map-wrap,
+.environment-map,
+.map-panel,
+.map-card {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.iran-map svg,
+.iran-map img,
+.iran-map-wrap svg,
+.iran-map-wrap img,
+.environment-map svg,
+.environment-map img,
+.map-panel svg,
+.map-panel img,
+.map-card svg,
+.map-card img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+}
+
+.focus-content-card,
+.panel,
+.summary-card,
+.project-card,
+.option-card,
+.admin-modern-card {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 680px) {
+  body {
+    min-width: 0;
+  }
+
+  .project-flow-shell,
+  .mobile-page,
+  .shil-mobile-page {
+    padding-inline: var(--shil-page-x);
+  }
+
+  .focus-form-table,
+  .summary-list,
+  .admin-project-grid,
+  .projects-grid,
+  .scenario-grid,
+  .equipment-grid {
+    gap: var(--shil-card-gap);
+  }
+
+  input,
+  select,
+  textarea {
+    min-width: 0;
+    max-width: 100%;
+    font-size: 16px;
+  }
+}

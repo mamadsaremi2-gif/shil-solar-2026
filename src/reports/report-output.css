@@ -1,0 +1,11 @@
+/* Report/PDF/Image output visual rules */
+.a4-report-card {
+  direction: rtl;
+}
+@media print {
+  .mobile-fixed-header,
+  .mobile-fixed-footer,
+  .focus-stepper {
+    display: none !important;
+  }
+}

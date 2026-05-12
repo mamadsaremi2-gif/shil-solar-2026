@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useProjectStore } from "../../app/store/projectStore";
 import { useAuth } from "../auth/AuthProvider";
 import { getSupabaseClient, isSupabaseConfigured } from "../../shared/lib/supabaseLazy";
+import { SHIL_IMAGE_MANIFEST } from "../../design/assetManifest";
 
 const ADMIN_FEEDBACK_STORAGE_KEY = "shil_admin_user_feedback";
 const USER_FEEDBACK_STORAGE_PREFIX = "shil_user_feedback_";
@@ -103,7 +104,7 @@ export function FeedbackPage() {
 
   return (
     <main className="mobile-page-shell feedback-page-v11" dir="rtl">
-      <header className="mobile-fixed-header"><button className="mobile-back-btn" type="button" onClick={goDashboard}>‹</button><img className="mobile-header-logo" src="/images/branding/shil-logo.png" alt="SHIL" /><span className="mobile-title-pill">اعلام نظر کاربران</span></header>
+      <header className="mobile-fixed-header"><button className="mobile-back-btn" type="button" onClick={goDashboard}>‹</button><img className="mobile-header-logo" src={SHIL_IMAGE_MANIFEST.branding.headerLogo.path} alt="SHIL" /><span className="mobile-title-pill">اعلام نظر کاربران</span></header>
       <section className="mobile-scroll-content no-footer-space">
         <section className="focus-content-card feedback-card-v11 feedback-card-final">
           <h2>نظرات و پیشنهادات شما موجب توسعه اپ و کیفیت محصولات و اضافه کردن تجهیزات جدید مطابق با نیازهای شما می‌گردد. لطفاً نظرات خود را برای ما ارسال کنید.</h2>

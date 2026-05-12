@@ -1,17 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./app/App";
-import "./styles/globals.css";
-import "./index.css";
-import "./styles/final-production-overrides.css";
-import "./styles/mobile-standalone-v1.css";
-import "./styles/mobile-refinement-patch-v4.css";
-import "./styles/shil-final-ui-v5.css";
-import "./styles/shil-final-ui-v6-fixes.css";
-import "./styles/shil-final-ui-v7-last-polish.css";
-import "./styles/shil-final-ui-v8-mobile-master.css";
-import "./styles/shil-final-ui-v9-mobile-safe.css";
-import "./styles/shil-final-ui-v10-real-mobile-lock.css";
+import "./styles/modular-appearance.css";
+import { applyIOS26ThemeToRoot } from "./design/ios26Theme.tokens";
+
+applyIOS26ThemeToRoot();
 
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.getRegistrations?.().then((registrations) => {

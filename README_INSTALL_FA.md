@@ -28,3 +28,20 @@ npm run preview
 ```text
 http://localhost:4173/
 ```
+
+## نسخه ماژولار
+
+در این خروجی، فایل‌های ظاهری، Layout، تصاویر، موتور محاسبات، خروجی PDF/عکس و تنظیمات ادمین تفکیک شده‌اند. راهنمای کامل در فایل `MODULAR_ARCHITECTURE_FA.md` قرار دارد.
+
+### نصب و اجرا
+
+```bash
+npm install
+npm run dev
+```
+
+### گرفتن خروجی نهایی
+
+```bash
+npm run build
+```

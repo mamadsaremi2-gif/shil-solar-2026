@@ -1,5 +1,6 @@
 import { useProjectStore } from "../../app/store/projectStore";
 import { PUBLIC_ASSETS } from "../../shared/constants/publicAssets";
+import { SHIL_IMAGE_MANIFEST } from "../../design/assetManifest";
 import { CONTACT_LINKS } from "../../shared/constants/contactLinks";
 
 const QR_ITEMS = [
@@ -28,13 +29,13 @@ export function ContactPage() {
     <main className="mobile-page-shell contact-mobile-page shil-contact-final" dir="rtl">
       <header className="mobile-fixed-header unified-shil-header">
         <button className="mobile-back-btn" type="button" onClick={goDashboard} aria-label="بازگشت">‹</button>
-        <img className="mobile-header-logo" src="/images/branding/header-center-logo.webp" alt="SHIL" />
+        <img className="mobile-header-logo" src={SHIL_IMAGE_MANIFEST.branding.headerLogo.path} alt="SHIL" />
         <span className="mobile-title-pill">ارتباط با ما</span>
       </header>
 
       <section className="mobile-scroll-content contact-scroll-content final-contact-scroll">
         <section className="contact-brand-frame" aria-label="تجهیزات برند SHIL">
-          <img src="/images/contact/contact-brand-equipment.webp" alt="تجهیزات برند SHIL" />
+          <img src={SHIL_IMAGE_MANIFEST.contact.heroEquipment.path} alt="تجهیزات برند SHIL" />
         </section>
 
         <a className="contact-site-link" href={CONTACT_LINKS.website || "https://shil.ir"} target="_blank" rel="noreferrer">

@@ -4,6 +4,7 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   plugins: [react()],
   build: {
+    cssCodeSplit: true,
     rollupOptions: {
       output: {
         manualChunks(id) {
@@ -12,7 +13,9 @@ export default defineConfig({
           if (id.includes("node_modules/html2canvas")) return "pdf-html2canvas";
           if (id.includes("node_modules/@supabase")) return "supabase";
           if (id.includes("src/data/seed")) return "engineering-seeds";
-          if (id.includes("src/domain/engine")) return "engineering-engine";
+          if (id.includes("src/engine") || id.includes("src/domain")) return "engineering-core";
+          if (id.includes("src/features/admin") || id.includes("src/pages/AdminPage")) return "admin-panel";
+          if (id.includes("src/ai")) return "ai-assistant";
           return undefined;
         },
       },

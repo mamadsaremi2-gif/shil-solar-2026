@@ -1,0 +1,22 @@
+/*
+  SHIL Modular Appearance Entry
+  تمام فایل های ظاهری برنامه از این نقطه مرکزی وارد می شوند.
+  برای تغییرات آینده، به جای ویرایش main.jsx فقط فایل های زیر را مدیریت کنید.
+*/
+@import './globals.css';
+@import '../index.css';
+@import './final-production-overrides.css';
+@import './mobile-standalone-v1.css';
+@import './mobile-refinement-patch-v4.css';
+@import './shil-final-ui-v5.css';
+@import './shil-final-ui-v6-fixes.css';
+@import './shil-final-ui-v7-last-polish.css';
+@import './shil-final-ui-v8-mobile-master.css';
+@import './shil-final-ui-v9-mobile-safe.css';
+@import './shil-final-ui-v10-real-mobile-lock.css';
+@import '../layout/layout-system.css';
+@import '../ui/ui-system.css';
+@import '../reports/report-output.css';
+@import '../admin/admin-system.css';
+@import './shil-mobile-final-guards.css';
+@import '../design/ios26-liquid-glass.css';
