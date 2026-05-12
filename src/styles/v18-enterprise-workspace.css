@@ -1,0 +1,691 @@
+/* =========================================================
+   SHIL V18 - Enterprise Workspace UI
+   Goal: stable mobile shell + clean iOS26-inspired surfaces.
+   Notes:
+   - Dashboard keeps its independent entrance experience.
+   - Internal pages use V17 Header/Footer and this V18 normalization layer.
+   - Vertical scroll lives on .shil-v17-scroll.
+   - Horizontal scroll is allowed only inside local data blocks.
+========================================================= */
+
+:root {
+  --shil-v18-max-w: 430px;
+  --shil-v18-bg: #f7f8fc;
+  --shil-v18-surface: rgba(255, 255, 255, 0.94);
+  --shil-v18-surface-solid: #ffffff;
+  --shil-v18-muted: #f2f3f8;
+  --shil-v18-border: rgba(22, 28, 45, 0.1);
+  --shil-v18-text: #14141b;
+  --shil-v18-text-2: #666979;
+  --shil-v18-purple: #6a4dff;
+  --shil-v18-purple-neon: #c155ff;
+  --shil-v18-blue: #4da6ff;
+  --shil-v18-orange: #ff9f1a;
+  --shil-v18-radius-xl: 24px;
+  --shil-v18-radius-lg: 20px;
+  --shil-v18-radius-md: 16px;
+  --shil-v18-gap: 12px;
+  --shil-v18-edge: 10px;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  max-width: 100%;
+  min-height: 100%;
+  overflow-x: hidden !important;
+  background: var(--shil-v18-bg) !important;
+}
+
+body {
+  margin: 0;
+  touch-action: pan-y;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* ---------- Global mobile frame ---------- */
+.shil-v17-shell {
+  max-width: var(--shil-v18-max-w) !important;
+  height: 100dvh !important;
+  min-height: 100dvh !important;
+  margin-inline: auto !important;
+  overflow: hidden !important;
+  background:
+    radial-gradient(circle at 50% -10%, rgba(193, 85, 255, 0.12), transparent 34%),
+    linear-gradient(180deg, #ffffff 0%, #f6f7fb 100%) !important;
+  border-inline: 1px solid rgba(22, 28, 45, 0.04);
+}
+
+.shil-v17-header,
+.shil-v17-footer {
+  width: min(100%, var(--shil-v18-max-w)) !important;
+}
+
+.shil-v17-header__frame {
+  height: 64px !important;
+  border-radius: 22px !important;
+  background: rgba(246, 247, 250, 0.96) !important;
+  border: 1px solid rgba(229, 229, 234, 0.96) !important;
+  box-shadow: 0 10px 26px rgba(22, 28, 45, 0.06) !important;
+  backdrop-filter: blur(16px) saturate(135%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(135%) !important;
+  grid-template-columns: minmax(52px, auto) 1fr 42px !important;
+}
+
+.shil-v17-header__title-pill {
+  width: fit-content !important;
+  min-width: 52px !important;
+  max-width: min(41vw, 190px) !important;
+  height: 34px !important;
+  padding-inline: 10px !important;
+  background: linear-gradient(135deg, var(--shil-v18-purple-neon), var(--shil-v18-purple)) !important;
+  box-shadow: none !important;
+}
+
+.shil-v17-header__title-pill span {
+  font-size: clamp(9.5px, 2.75vw, 14px) !important;
+  color: #fff !important;
+}
+
+.shil-v17-header__logo-slot {
+  width: 44px !important;
+  height: 44px !important;
+}
+
+.shil-v17-header__home {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 14px !important;
+  background: #10223d !important;
+  color: var(--shil-v18-orange) !important;
+}
+
+.shil-v17-footer__frame {
+  min-height: 58px !important;
+  border-radius: 22px !important;
+  background: rgba(255, 255, 255, 0.96) !important;
+  border: 1px solid var(--shil-v18-border) !important;
+  box-shadow: 0 -10px 26px rgba(22, 28, 45, 0.06) !important;
+}
+
+.shil-v17-footer__btn {
+  height: 44px !important;
+  border-radius: 15px !important;
+  font-size: 12.5px !important;
+}
+
+.shil-v17-scroll {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  padding: 8px var(--shil-v18-edge) 14px !important;
+  scrollbar-gutter: stable both-edges;
+}
+
+.shil-v17-page-host {
+  width: 100% !important;
+  min-width: 0 !important;
+  padding-bottom: 4px;
+}
+
+/* ---------- Legacy header/footer cleanup inside internal shell ---------- */
+.shil-v17-page-host .mobile-fixed-header,
+.shil-v17-page-host .unified-shil-header,
+.shil-v17-page-host .workspace-fixed-header,
+.shil-v17-page-host .scenario-flow-header,
+.shil-v17-page-host .topbar,
+.shil-v17-page-host .topbar--report,
+.shil-v17-page-host .flow-top-card.v15-flow-header,
+.shil-v17-page-host .v15-flow-header.compact-page-header,
+.shil-v17-page-host .mobile-fixed-footer,
+.shil-v17-page-host .unified-shil-footer,
+.shil-v17-page-host .workspace-action-footer {
+  display: none !important;
+}
+
+/* ---------- Internal pages: stable content area ---------- */
+.shil-v17-page-host .mobile-page-shell,
+.shil-v17-page-host .project-flow-shell,
+.shil-v17-page-host .ready-scenarios-shell,
+.shil-v17-page-host .shil-contact-final,
+.shil-v17-page-host .equipment-library,
+.shil-v17-page-host .output-page,
+.shil-v17-page-host .workspace-fixed-shell,
+.shil-v17-page-host .project-start-overview,
+.shil-v17-page-host .neo-page,
+.shil-v17-page-host .admin-shell,
+.shil-v17-page-host main,
+.shil-v17-page-host .shell {
+  position: static !important;
+  inset: auto !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  height: auto !important;
+  min-height: auto !important;
+  max-height: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: visible !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.shil-v17-page-host .mobile-scroll-content,
+.shil-v17-page-host .workspace-scroll-frame,
+.shil-v17-page-host .focus-layout,
+.shil-v17-page-host .report-layout,
+.shil-v17-page-host .output-content,
+.shil-v17-page-host .scenario-flow-body {
+  position: static !important;
+  inset: auto !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+  padding: 10px 0 14px !important;
+  margin: 0 !important;
+  background: transparent !important;
+}
+
+/* ---------- iOS26 inspired component engine ---------- */
+.shil-v17-page-host .panel,
+.shil-v17-page-host .card,
+.shil-v17-page-host .focus-content-card,
+.shil-v17-page-host .workspace-card,
+.shil-v17-page-host .scenario-card,
+.shil-v17-page-host .summary-card,
+.shil-v17-page-host .metric-card,
+.shil-v17-page-host .glass-card,
+.shil-v17-page-host .report-card,
+.shil-v17-page-host .review-card,
+.shil-v17-page-host .method-choice,
+.shil-v17-page-host .smart-decision-card,
+.shil-v17-page-host .warning-card,
+.shil-v17-page-host .field,
+.shil-v17-page-host article,
+.shil-v17-page-host fieldset {
+  max-width: 100% !important;
+  min-width: 0 !important;
+  border-radius: var(--shil-v18-radius-lg) !important;
+  background: var(--shil-v18-surface) !important;
+  border: 1px solid var(--shil-v18-border) !important;
+  color: var(--shil-v18-text) !important;
+  box-shadow: 0 8px 22px rgba(22, 28, 45, 0.055) !important;
+  backdrop-filter: blur(10px) saturate(120%) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(120%) !important;
+}
+
+.shil-v17-page-host h1,
+.shil-v17-page-host h2,
+.shil-v17-page-host h3,
+.shil-v17-page-host h4,
+.shil-v17-page-host strong,
+.shil-v17-page-host label {
+  color: var(--shil-v18-text) !important;
+}
+
+.shil-v17-page-host p,
+.shil-v17-page-host small,
+.shil-v17-page-host li,
+.shil-v17-page-host td,
+.shil-v17-page-host th,
+.shil-v17-page-host span {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.shil-v17-page-host input,
+.shil-v17-page-host select,
+.shil-v17-page-host textarea {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-height: 46px !important;
+  border-radius: 15px !important;
+  background: #fff !important;
+  border: 1px solid rgba(22, 28, 45, 0.12) !important;
+  color: var(--shil-v18-text) !important;
+  box-shadow: none !important;
+  font-size: 14px !important;
+}
+
+.shil-v17-page-host button,
+.shil-v17-page-host .btn {
+  min-height: 42px;
+  border-radius: 15px !important;
+  box-shadow: none !important;
+  touch-action: manipulation;
+}
+
+.shil-v17-page-host .btn--primary,
+.shil-v17-page-host button.btn--primary {
+  background: linear-gradient(135deg, var(--shil-v18-purple-neon), var(--shil-v18-purple)) !important;
+  color: #fff !important;
+  border-color: transparent !important;
+}
+
+/* ---------- Horizontal scroll blocks only ---------- */
+.shil-v17-page-host table,
+.shil-v17-page-host .table,
+.shil-v17-page-host .data-table,
+.shil-v17-page-host .stepper,
+.shil-v17-page-host .focus-stepper,
+.shil-v17-page-host .pro-stepper,
+.shil-v17-page-host .tabs,
+.shil-v17-page-host .chip-row,
+.shil-v17-page-host .route-cards,
+.shil-v17-page-host .scenario-grid,
+.shil-v17-page-host .horizontal-scroll,
+.shil-v17-page-host .chart-wrap,
+.shil-v17-page-host .design-path-grid,
+.shil-v17-page-host .projects-choice-grid,
+.shil-v17-page-host .final-projects-choice-grid,
+.shil-v17-page-host .dashboard-project-bucket-v15__list,
+.shil-v17-page-host .project-mini-row-v15__actions {
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior-x: contain !important;
+}
+
+.shil-v17-page-host table {
+  min-width: 620px !important;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.shil-v17-page-host th {
+  position: sticky;
+  top: 0;
+  background: #f8f8fb !important;
+  z-index: 2;
+}
+
+/* ---------- New project / 9-icon banking grid ---------- */
+.shil-v17-page-host .new-project-grid-3x3,
+.shil-v17-page-host .design-path-grid.project-start-overview__grid,
+.shil-v17-page-host .projects-choice-grid.final-projects-choice-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  align-content: center !important;
+  justify-content: center !important;
+  overflow: visible !important;
+}
+
+.shil-v17-page-host .project-start-step-card,
+.shil-v17-page-host .project-choice-card,
+.shil-v17-page-host .route-image-card {
+  min-width: 0 !important;
+  aspect-ratio: 1 / 1 !important;
+  border-radius: 20px !important;
+  background: rgba(255, 255, 255, 0.96) !important;
+  border: 1px solid var(--shil-v18-border) !important;
+  box-shadow: 0 8px 20px rgba(22, 28, 45, 0.055) !important;
+  display: grid !important;
+  place-items: center !important;
+  text-align: center !important;
+  padding: 10px 8px !important;
+}
+
+.shil-v17-page-host .project-start-step-card__number {
+  background: linear-gradient(135deg, var(--shil-v18-purple-neon), var(--shil-v18-purple)) !important;
+  color: #fff !important;
+  border-radius: 999px !important;
+  min-width: 28px !important;
+  height: 28px !important;
+  display: inline-grid !important;
+  place-items: center !important;
+  font-size: 11px !important;
+}
+
+/* ---------- Image placement zones ---------- */
+.shil-v17-page-host img,
+.shil-v17-page-host svg,
+.shil-v17-page-host canvas {
+  max-width: 100% !important;
+}
+
+.shil-v17-page-host .dashboard-hero,
+.shil-v17-page-host .hero-image,
+.shil-v17-page-host .contact-hero,
+.shil-v17-page-host .route-card-image,
+.shil-v17-page-host .route-image-card__media,
+.shil-v17-page-host .environment-map,
+.shil-v17-page-host .iran-map {
+  width: 100% !important;
+  overflow: hidden !important;
+  border-radius: 20px !important;
+  background: var(--shil-v18-muted) !important;
+}
+
+.shil-v17-page-host .dashboard-hero,
+.shil-v17-page-host .hero-image {
+  aspect-ratio: 16 / 9 !important;
+}
+
+.shil-v17-page-host .contact-hero {
+  aspect-ratio: 4 / 5 !important;
+}
+
+.shil-v17-page-host .route-card-image,
+.shil-v17-page-host .route-image-card__media {
+  aspect-ratio: 4 / 3 !important;
+}
+
+.shil-v17-page-host .environment-map,
+.shil-v17-page-host .iran-map {
+  aspect-ratio: 16 / 10 !important;
+}
+
+/* ---------- Dashboard V18: independent, simpler entrance screen ---------- */
+.shil-dashboard {
+  width: 100% !important;
+  max-width: var(--shil-v18-max-w) !important;
+  height: 100dvh !important;
+  min-height: 100dvh !important;
+  margin: 0 auto !important;
+  padding: max(10px, env(safe-area-inset-top, 0px)) 10px max(12px, env(safe-area-inset-bottom, 0px)) !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  background:
+    radial-gradient(circle at 50% -8%, rgba(193, 85, 255, 0.18), transparent 30%),
+    linear-gradient(180deg, #ffffff 0%, #f5f6fb 100%) !important;
+  color: var(--shil-v18-text) !important;
+  overscroll-behavior: contain !important;
+}
+
+.shil-dashboard-final {
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: grid !important;
+  gap: 10px !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+.shil-dashboard-final__visual {
+  width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  aspect-ratio: 9 / 16 !important;
+  max-height: min(64dvh, 620px) !important;
+  border-radius: 28px !important;
+  overflow: hidden !important;
+  background-image:
+    linear-gradient(180deg, rgba(255,255,255,0.03), rgba(20,18,36,0.18)),
+    var(--dashboard-bg-mobile) !important;
+  background-size: cover !important;
+  background-position: center top !important;
+  background-color: #e9edf7 !important;
+  border: 1px solid rgba(22, 28, 45, 0.08) !important;
+  box-shadow: 0 14px 34px rgba(22, 28, 45, 0.12) !important;
+}
+
+.shil-dashboard-final__visual::before,
+.shil-dashboard-final__visual::after {
+  display: none !important;
+}
+
+.shil-dashboard-final__logo {
+  top: 18px !important;
+  width: 86px !important;
+  height: 86px !important;
+  object-fit: contain !important;
+  filter: none !important;
+  box-shadow: none !important;
+}
+
+.shil-dashboard-final__info-card {
+  width: 100% !important;
+  margin: 0 !important;
+  transform: none !important;
+  padding: 14px !important;
+  border-radius: 24px !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid var(--shil-v18-border) !important;
+  box-shadow: 0 10px 26px rgba(22, 28, 45, 0.06) !important;
+  color: var(--shil-v18-text) !important;
+}
+
+.shil-dashboard-final__info-card::before,
+.shil-dashboard-final__info-card::after {
+  display: none !important;
+}
+
+.shil-dashboard-final__copy h1 {
+  color: var(--shil-v18-text) !important;
+  text-shadow: none !important;
+  font-size: clamp(18px, 5.2vw, 24px) !important;
+  line-height: 1.55 !important;
+  margin: 0 0 6px !important;
+}
+
+.shil-dashboard-final__copy p {
+  color: var(--shil-v18-text-2) !important;
+  font-size: 12.5px !important;
+  line-height: 1.8 !important;
+  margin: 0 !important;
+}
+
+.shil-dashboard__stats--minimal {
+  display: grid !important;
+  grid-template-columns: 1fr 92px !important;
+  gap: 8px !important;
+  margin-top: 12px !important;
+}
+
+.shil-dashboard__stat,
+.shil-dashboard__stat--ai,
+.shil-dashboard__stat--projects {
+  min-height: 74px !important;
+  padding: 10px !important;
+  border-radius: 18px !important;
+  background: #f5f5f7 !important;
+  border: 1px solid var(--shil-v18-border) !important;
+  color: var(--shil-v18-text) !important;
+  box-shadow: none !important;
+  display: grid !important;
+  place-items: center !important;
+  text-align: center !important;
+}
+
+.shil-dashboard__stat span,
+.shil-dashboard__stat small {
+  color: var(--shil-v18-text-2) !important;
+  font-size: 10.5px !important;
+}
+
+.shil-dashboard__stat strong {
+  color: var(--shil-v18-text) !important;
+  font-size: 18px !important;
+}
+
+.shil-dashboard__stats--minimal .network-status-pill,
+.shil-dashboard > .network-status-pill {
+  min-height: 40px !important;
+  border-radius: 999px !important;
+  background: #fff !important;
+  color: var(--shil-v18-text) !important;
+  border: 1px solid var(--shil-v18-border) !important;
+  box-shadow: none !important;
+  padding-inline: 12px !important;
+}
+
+.shil-dashboard__cards {
+  width: 100% !important;
+  margin: 10px 0 !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+}
+
+.shil-dashboard-card {
+  aspect-ratio: 1 / 1 !important;
+  min-height: 0 !important;
+  width: 100% !important;
+  padding: 10px 6px !important;
+  border-radius: 20px !important;
+  background: rgba(255, 255, 255, 0.96) !important;
+  border: 1px solid var(--shil-v18-border) !important;
+  color: var(--shil-v18-text) !important;
+  box-shadow: 0 8px 18px rgba(22, 28, 45, 0.055) !important;
+  display: grid !important;
+  grid-template-rows: 1fr auto !important;
+  place-items: center !important;
+  text-align: center !important;
+  overflow: hidden !important;
+}
+
+.shil-dashboard-card__shine,
+.shil-dashboard-card__meta,
+.shil-dashboard-card small,
+.shil-dashboard-card em {
+  display: none !important;
+}
+
+.shil-dashboard-card__icon {
+  display: grid !important;
+  place-items: center !important;
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 14px !important;
+  background: #f0edff !important;
+  color: var(--shil-v18-purple) !important;
+  font-size: 24px !important;
+  filter: none !important;
+  box-shadow: none !important;
+}
+
+.shil-dashboard-card strong {
+  color: var(--shil-v18-text) !important;
+  font-size: clamp(10.5px, 3vw, 13px) !important;
+  line-height: 1.45 !important;
+  font-weight: 800 !important;
+  margin: 0 !important;
+}
+
+.dashboard-projects-master-card-v15 {
+  margin-top: 10px !important;
+  padding: 14px !important;
+  border-radius: 24px !important;
+  background: rgba(255, 255, 255, 0.96) !important;
+  border: 1px solid var(--shil-v18-border) !important;
+  box-shadow: 0 10px 26px rgba(22, 28, 45, 0.06) !important;
+  color: var(--shil-v18-text) !important;
+}
+
+.dashboard-projects-master-card-v15__head {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 10px !important;
+}
+
+.dashboard-projects-master-card-v15__head h2 {
+  margin: 0 !important;
+  color: var(--shil-v18-text) !important;
+  font-size: 18px !important;
+}
+
+.dashboard-projects-master-card-v15__head p {
+  margin: 4px 0 0 !important;
+  color: var(--shil-v18-text-2) !important;
+  font-size: 12px !important;
+  line-height: 1.7 !important;
+}
+
+.dashboard-projects-master-card-v15__summary {
+  display: flex !important;
+  gap: 8px !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  margin: 12px 0 !important;
+}
+
+.dashboard-projects-master-card-v15__summary span {
+  flex: 0 0 auto !important;
+  padding: 8px 10px !important;
+  border-radius: 999px !important;
+  background: #f5f5f7 !important;
+  color: var(--shil-v18-text-2) !important;
+  font-size: 11px !important;
+}
+
+.dashboard-project-bucket-v15 {
+  border-radius: 18px !important;
+  background: #f7f8fb !important;
+  border: 1px solid var(--shil-v18-border) !important;
+  padding: 10px !important;
+  margin-top: 8px !important;
+}
+
+.project-mini-row-v15 {
+  border-radius: 16px !important;
+  background: #fff !important;
+  border: 1px solid var(--shil-v18-border) !important;
+  box-shadow: none !important;
+  padding: 10px !important;
+}
+
+.project-mini-row-v15__actions {
+  display: flex !important;
+  gap: 6px !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+.project-mini-row-v15__actions .btn {
+  flex: 0 0 auto !important;
+  min-width: 74px !important;
+  min-height: 36px !important;
+  font-size: 11px !important;
+}
+
+/* ---------- Small phones ---------- */
+@media (max-width: 390px) {
+  :root {
+    --shil-v18-edge: 8px;
+  }
+
+  .shil-v17-header__title-pill {
+    max-width: 38vw !important;
+    height: 32px !important;
+    padding-inline: 9px !important;
+  }
+
+  .shil-v17-header__logo-slot {
+    width: 40px !important;
+    height: 40px !important;
+  }
+
+  .shil-v17-header__home {
+    width: 38px !important;
+    height: 38px !important;
+  }
+
+  .shil-dashboard__cards {
+    gap: 8px !important;
+  }
+
+  .shil-dashboard-card__icon {
+    width: 36px !important;
+    height: 36px !important;
+    font-size: 21px !important;
+  }
+}
+
+@media (min-width: 431px) {
+  .shil-dashboard,
+  .shil-v17-shell {
+    border-radius: 0;
+  }
+}

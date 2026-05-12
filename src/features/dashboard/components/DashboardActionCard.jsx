@@ -1,5 +1,6 @@
-function SmartIcon({ children }) {
-  return <span className="shil-dashboard-card__icon" aria-hidden="true">{children}</span>;
+import ShilIcon from "../../../ui/ShilIcon";
+function SmartIcon({ name }) {
+  return <span className="shil-dashboard-card__icon" aria-hidden="true"><ShilIcon name={name} /></span>;
 }
 
 export function DashboardActionCard({ card }) {
@@ -10,7 +11,7 @@ export function DashboardActionCard({ card }) {
       onClick={card.action}
     >
       <span className="shil-dashboard-card__shine" />
-      <SmartIcon>{card.icon}</SmartIcon>
+      <SmartIcon name={card.iconKey} />
       <span className="shil-dashboard-card__meta">{card.meta}</span>
       <strong>{card.title}</strong>
       <small>{card.caption}</small>

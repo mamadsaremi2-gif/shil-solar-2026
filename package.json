@@ -1,7 +1,7 @@
 {
   "name": "shil-solar",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.24",
   "description": "SHIL SOLAR - professional engineering PWA for solar and battery system design",
   "type": "module",
   "scripts": {

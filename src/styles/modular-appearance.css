@@ -20,3 +20,11 @@
 @import '../admin/admin-system.css';
 
 @import './v16-ui-rebuild.css';
+
+@import './v17-ios26-mobile-shell.css';
+
+@import './v18-enterprise-workspace.css';
+
+@import './v19-intelligent-workspace.css';
+
+@import './v22-infrastructure-pwa-accessibility.css';

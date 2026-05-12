@@ -14,6 +14,46 @@ import { OutputPage } from "../pages/OutputPage";
 import { ProjectWorkspacePage } from "../pages/ProjectWorkspacePage";
 import { ReadyScenariosPage } from "../pages/ReadyScenariosPage";
 import AIExpertSolar from "../ai/AIExpertSolar";
+import { AppHeader } from "../layout/AppHeader";
+import { AppFooter } from "../layout/AppFooter";
+import { OfflineStatus } from "../shared/components/OfflineStatus";
+import { PwaInstallPrompt } from "../ui/PwaInstallPrompt";
+
+const INTERNAL_PAGE_TITLES = {
+  admin: "مدیریت سامانه",
+  projects: "پروژه‌ها",
+  ai: "هوش مصنوعی SHIL",
+  contact: "ارتباط با ما",
+  equipment: "بانک تجهیزات",
+  education: "آموزش",
+  feedback: "اعلام نظر کاربران",
+  output: "خروجی مهندسی",
+  workspace: "مسیر طراحی پروژه",
+  scenarios: "سناریوهای آماده",
+};
+
+function InternalMobileFrame({ title, routeName, children }) {
+  const { goDashboard, prevStep, nextStep, saveDraftProject } = useProjectStore();
+
+  return (
+    <main className={`shil-v17-shell shil-v22-shell route-${routeName}`} dir="rtl">
+      <a className="shil-v22-skip-link" href="#shil-main-content">رفتن به محتوای اصلی</a>
+      <AppHeader title={title} onHome={goDashboard} />
+      <section id="shil-main-content" className="shil-v17-scroll" aria-label={title} tabIndex={-1}>
+        <div className="shil-v17-page-host">{children}</div>
+      </section>
+      <div className="shil-v22-system-status"><OfflineStatus /></div>
+      <PwaInstallPrompt />
+      <AppFooter
+        routeName={routeName}
+        onHome={goDashboard}
+        onPrev={prevStep}
+        onNext={nextStep}
+        onSave={saveDraftProject}
+      />
+    </main>
+  );
+}
 
 function AppShell() {
   const { route, syncCloudProjects } = useProjectStore();
@@ -66,31 +106,48 @@ function AppShell() {
     );
   }
 
+  let page;
   switch (route.name) {
     case "admin":
-      return isAdmin ? <AdminPage /> : <DashboardPage />;
+      page = isAdmin ? <AdminPage /> : <DashboardPage />;
+      break;
     case "projects":
-      return <ProjectsHubPage />;
+      page = <ProjectsHubPage />;
+      break;
     case "ai":
-      return <AIExpertSolar />;
+      page = <AIExpertSolar />;
+      break;
     case "contact":
-      return <ContactPage />;
+      page = <ContactPage />;
+      break;
     case "equipment":
-      return <EquipmentLibraryPage />;
+      page = <EquipmentLibraryPage />;
+      break;
     case "education":
-      return <EducationPage />;
+      page = <EducationPage />;
+      break;
     case "feedback":
-      return <FeedbackPage />;
+      page = <FeedbackPage />;
+      break;
     case "output":
-      return <OutputPage />;
+      page = <OutputPage />;
+      break;
     case "workspace":
-      return <ProjectWorkspacePage />;
+      page = <ProjectWorkspacePage />;
+      break;
     case "scenarios":
-      return <ReadyScenariosPage />;
+      page = <ReadyScenariosPage />;
+      break;
     case "dashboard":
     default:
       return <DashboardPage />;
   }
+
+  return (
+    <InternalMobileFrame title={INTERNAL_PAGE_TITLES[route.name] ?? "SHIL"} routeName={route.name}>
+      {page}
+    </InternalMobileFrame>
+  );
 }
 
 export default function App() {

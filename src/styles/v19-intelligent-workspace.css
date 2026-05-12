@@ -1,0 +1,303 @@
+/* =========================================================
+   SHIL V19 - Intelligent Workspace + Final Icon Engine
+   Focus: unified outline icons, AI workspace polish, charts/tables readiness.
+========================================================= */
+:root {
+  --shil-v19-primary: #6a4dff;
+  --shil-v19-primary-soft: #f0edff;
+  --shil-v19-primary-2: #8c6cff;
+  --shil-v19-accent: #4da6ff;
+  --shil-v19-warning: #ff9f1a;
+  --shil-v19-bg: #f7f8fb;
+  --shil-v19-surface: rgba(255,255,255,.94);
+  --shil-v19-card: #ffffff;
+  --shil-v19-card-soft: #f5f5f7;
+  --shil-v19-border: rgba(17,24,39,.10);
+  --shil-v19-text: #151821;
+  --shil-v19-muted: #687385;
+  --shil-v19-radius: 18px;
+  --shil-v19-radius-lg: 24px;
+  --shil-v19-shadow: 0 14px 34px rgba(20,24,38,.08);
+  --shil-v19-font: Vazirmatn, IRANSansX, "Yekan Bakh", Tahoma, Arial, sans-serif;
+}
+
+/* ---------- Final Icon Engine ---------- */
+.shil-icon {
+  width: 1em;
+  height: 1em;
+  display: block;
+  color: currentColor;
+  flex: none;
+}
+
+.shil-dashboard-card__icon,
+.project-hub-icon i,
+.final-hub-card i,
+.scenario-category-card__icon,
+.v15-path-item i,
+.mobile-menu-card i,
+.mobile-action-card i,
+[class*="icon"]:where(span, i):not(.shil-dashboard-card__icon):not(.mobile-header-logo) {
+  font-style: normal !important;
+}
+
+.shil-dashboard-card__icon,
+.scenario-category-card__icon,
+.final-hub-card i,
+.project-hub-icon i,
+.mobile-menu-card i,
+.mobile-action-card i {
+  width: 54px !important;
+  height: 54px !important;
+  min-width: 54px !important;
+  border-radius: 18px !important;
+  background: var(--shil-v19-primary-soft) !important;
+  color: var(--shil-v19-primary) !important;
+  border: 1px solid rgba(106,77,255,.16) !important;
+  box-shadow: none !important;
+  display: grid !important;
+  place-items: center !important;
+  font-size: 25px !important;
+  line-height: 1 !important;
+  filter: none !important;
+}
+
+.shil-dashboard-card__icon .shil-icon { font-size: 29px !important; }
+
+.shil-dashboard-card,
+.project-hub-icon,
+.final-hub-card,
+.scenario-category-card,
+.mobile-menu-card,
+.mobile-action-card {
+  background: var(--shil-v19-card) !important;
+  border: 1px solid var(--shil-v19-border) !important;
+  border-radius: var(--shil-v19-radius-lg) !important;
+  box-shadow: var(--shil-v19-shadow) !important;
+  color: var(--shil-v19-text) !important;
+  overflow: hidden !important;
+  transform: translateZ(0) !important;
+}
+
+.shil-dashboard-card strong,
+.project-hub-icon strong,
+.final-hub-card strong,
+.scenario-category-card strong,
+.mobile-menu-card strong,
+.mobile-action-card strong {
+  color: var(--shil-v19-text) !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  letter-spacing: -.2px !important;
+}
+
+.shil-dashboard-card small,
+.scenario-category-card small,
+.mobile-menu-card small,
+.mobile-action-card small {
+  color: var(--shil-v19-muted) !important;
+  font-size: 11.5px !important;
+  line-height: 1.7 !important;
+}
+
+.shil-dashboard-card__shine,
+.shil-dashboard-card::before,
+.shil-dashboard-card::after,
+.scenario-category-card::before,
+.final-hub-card::before {
+  display: none !important;
+}
+
+.shil-dashboard__cards,
+.project-hub-grid,
+.scenario-category-grid,
+.mobile-menu-grid {
+  gap: 12px !important;
+}
+
+/* Dashboard final soft banking grid */
+.shil-dashboard-card {
+  min-height: 132px !important;
+  padding: 14px 10px !important;
+  justify-content: center !important;
+  align-items: center !important;
+  text-align: center !important;
+}
+
+.shil-dashboard-card:active,
+.project-hub-icon:active,
+.scenario-category-card:active {
+  transform: scale(.985) !important;
+}
+
+/* ---------- AI Workspace Redesign ---------- */
+.ai-page-v15 {
+  background: radial-gradient(circle at top, rgba(106,77,255,.10), transparent 30%), var(--shil-v19-bg) !important;
+}
+
+.shil-ai-panel {
+  border-radius: 28px !important;
+  background: var(--shil-v19-card) !important;
+  border: 1px solid var(--shil-v19-border) !important;
+  box-shadow: var(--shil-v19-shadow) !important;
+  padding: 16px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 14px !important;
+}
+
+.shil-ai-panel__header {
+  border-radius: 22px !important;
+  background: linear-gradient(180deg, #ffffff, #f6f4ff) !important;
+  border: 1px solid rgba(106,77,255,.14) !important;
+  padding: 16px !important;
+  display: grid !important;
+  gap: 8px !important;
+  text-align: right !important;
+}
+
+.shil-ai-panel__header span {
+  width: 42px !important;
+  height: 42px !important;
+  border-radius: 15px !important;
+  background: var(--shil-v19-primary) !important;
+  color: #fff !important;
+  display: grid !important;
+  place-items: center !important;
+  box-shadow: none !important;
+}
+
+.shil-ai-panel__header h2 {
+  margin: 0 !important;
+  color: var(--shil-v19-text) !important;
+  font-size: 18px !important;
+  font-weight: 900 !important;
+}
+
+.shil-ai-panel__header p {
+  margin: 0 !important;
+  color: var(--shil-v19-muted) !important;
+  font-size: 12.5px !important;
+  line-height: 1.8 !important;
+}
+
+.shil-ai-panel__textarea {
+  min-height: 154px !important;
+  resize: vertical !important;
+  border-radius: 22px !important;
+  background: #fbfcff !important;
+  border: 1px solid var(--shil-v19-border) !important;
+  color: var(--shil-v19-text) !important;
+  padding: 14px !important;
+  font-family: var(--shil-v19-font) !important;
+  font-size: 14px !important;
+  line-height: 1.9 !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.shil-ai-panel__textarea:focus {
+  border-color: rgba(106,77,255,.42) !important;
+  background: #fff !important;
+}
+
+.shil-ai-panel__button {
+  width: 100% !important;
+  height: 50px !important;
+  border-radius: 16px !important;
+  border: 0 !important;
+  background: var(--shil-v19-primary) !important;
+  color: #fff !important;
+  font-weight: 900 !important;
+  box-shadow: none !important;
+}
+
+.shil-ai-panel__answer {
+  border-radius: 22px !important;
+  background: #f7f8fb !important;
+  border: 1px solid var(--shil-v19-border) !important;
+  padding: 14px !important;
+  color: var(--shil-v19-text) !important;
+  max-height: 42vh !important;
+  overflow-y: auto !important;
+}
+
+.shil-ai-panel__answer strong { color: var(--shil-v19-primary) !important; }
+.shil-ai-panel__answer p { margin: 8px 0 0 !important; color: var(--shil-v19-text) !important; line-height: 2 !important; }
+
+/* ---------- Smart Engineering Panels ---------- */
+.metric-card,
+.summary-card,
+.engineering-card,
+.report-card,
+.analysis-card,
+.dashboard-projects-master-card-v15,
+.shil-dashboard-final__info-card {
+  border-radius: 24px !important;
+  border: 1px solid var(--shil-v19-border) !important;
+  background: var(--shil-v19-card) !important;
+  box-shadow: var(--shil-v19-shadow) !important;
+}
+
+/* ---------- Tables and charts readiness ---------- */
+table,
+.engineering-table,
+.report-table,
+.summary-table {
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  min-width: 640px !important;
+}
+
+.table-wrap,
+.engineering-table-wrap,
+.report-table-wrap,
+.summary-table-wrap,
+.scroll-x,
+.horizontal-scroll {
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior-x: contain !important;
+}
+
+th,
+td {
+  border-color: rgba(17,24,39,.08) !important;
+}
+
+th {
+  background: #f5f5f7 !important;
+  color: var(--shil-v19-text) !important;
+  font-weight: 900 !important;
+}
+
+/* ---------- Motion: safe micro interactions ---------- */
+button,
+.shil-dashboard-card,
+.scenario-category-card,
+.project-hub-icon,
+.final-hub-card {
+  transition: transform .18s ease, border-color .18s ease, background .18s ease !important;
+  touch-action: manipulation !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+}
+
+@media (max-width: 390px) {
+  .shil-dashboard-card__icon,
+  .scenario-category-card__icon,
+  .final-hub-card i,
+  .project-hub-icon i,
+  .mobile-menu-card i,
+  .mobile-action-card i {
+    width: 48px !important;
+    height: 48px !important;
+    min-width: 48px !important;
+    border-radius: 16px !important;
+    font-size: 22px !important;
+  }
+  .shil-dashboard-card { min-height: 122px !important; }
+  .shil-dashboard-card strong { font-size: 13px !important; }
+}
