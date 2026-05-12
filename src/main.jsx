@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 
-import App from './App'
+import App from './app/App.jsx'
 
 import './styles/shil-mobile-standard-v29.css'
 
