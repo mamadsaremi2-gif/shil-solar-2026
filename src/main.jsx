@@ -1,12 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./app/App";
-import "./styles/modular-appearance.css";
-import './styles/v23-enterprise-polish.css';
-import './styles/v24-production-lock.css';
-import './styles/v26-layout-engine-v2.css';
-import './styles/v27-dashboard-reconstruction.css';
-import './styles/mobile-sizing-data-icon-fix.css';
+import "./styles/shil-mobile-standard-v28.css";
 
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.getRegistrations?.().then((registrations) => {
