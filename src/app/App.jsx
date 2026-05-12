@@ -143,11 +143,7 @@ function AppShell() {
       return <DashboardPage />;
   }
 
-  return (
-    <InternalMobileFrame title={INTERNAL_PAGE_TITLES[route.name] ?? "SHIL"} routeName={route.name}>
-      {page}
-    </InternalMobileFrame>
-  );
+  return page;
 }
 
 export default function App() {

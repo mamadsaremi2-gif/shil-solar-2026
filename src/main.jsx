@@ -6,6 +6,7 @@ import './styles/v23-enterprise-polish.css';
 import './styles/v24-production-lock.css';
 import './styles/v26-layout-engine-v2.css';
 import './styles/v27-dashboard-reconstruction.css';
+import './styles/mobile-sizing-data-icon-fix.css';
 
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.getRegistrations?.().then((registrations) => {
