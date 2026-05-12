@@ -1,576 +1,506 @@
 /* =========================================================
-   SHIL MOBILE STANDARD V28
-   Single active responsive layer for mobile-first app layout.
-   Goals:
-   - mobile viewport law: fluid width, no global horizontal scroll
-   - vertical scroll always available on content areas
-   - centered content, cards, icons, tables and data
-   - one source of truth for sizing tokens
+   SHIL SOLAR — MOBILE STANDARD GRID SYSTEM V29
+   جامع‌ترین نسخه استاندارد موبایل
+   3x3 GRID + CENTERED UI + NO HORIZONTAL OVERFLOW
 ========================================================= */
 
-:root {
-  color-scheme: light;
-  --shil-bg: #f5f7fb;
-  --shil-surface: rgba(255, 255, 255, .96);
-  --shil-surface-2: rgba(248, 250, 252, .98);
-  --shil-text: #111827;
-  --shil-muted: #667085;
-  --shil-line: rgba(15, 23, 42, .11);
-  --shil-primary: #6a4dff;
-  --shil-primary-2: #8b5cf6;
-  --shil-accent: #ff9f0a;
-  --shil-danger: #ef4444;
-  --shil-success: #16a34a;
-  --shil-radius: 20px;
-  --shil-radius-sm: 14px;
-  --shil-shadow: 0 12px 34px rgba(15, 23, 42, .10);
-  --shil-header-h: 64px;
-  --shil-footer-h: 68px;
-  --shil-stepbar-h: 72px;
-  --shil-edge: clamp(10px, 3.3vw, 16px);
-  --shil-gap: clamp(8px, 2.6vw, 14px);
-  --shil-card-pad: clamp(12px, 3.4vw, 18px);
-  --shil-font-xs: clamp(10px, 2.6vw, 12px);
-  --shil-font-sm: clamp(11px, 2.9vw, 13px);
-  --shil-font-md: clamp(13px, 3.25vw, 15px);
-  --shil-font-lg: clamp(16px, 4.4vw, 21px);
-  --shil-icon: clamp(38px, 12vw, 54px);
-  --shil-icon-sm: clamp(30px, 9vw, 40px);
-  --shil-safe-top: env(safe-area-inset-top, 0px);
-  --shil-safe-bottom: env(safe-area-inset-bottom, 0px);
-}
+/* =========================
+   ROOT
+========================= */
 
 html,
 body,
 #root {
   width: 100%;
-  min-width: 0;
   max-width: 100%;
-  min-height: 100%;
+  min-height: 100dvh;
+
   margin: 0;
   padding: 0;
+
   overflow-x: hidden !important;
-  background: var(--shil-bg);
-  color: var(--shil-text);
+  overflow-y: auto !important;
+
   direction: rtl;
-  -webkit-text-size-adjust: 100%;
-  text-size-adjust: 100%;
+
+  background: #f6f6f9;
+
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-body {
-  font-family: Inter, Vazirmatn, IRANSans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  overflow-y: auto !important;
-  overscroll-behavior-x: none;
-  touch-action: pan-y;
-}
+/* =========================
+   UNIVERSAL
+========================= */
 
-*, *::before, *::after { box-sizing: border-box; }
-img, svg, canvas, video { max-width: 100%; height: auto; }
-button, input, select, textarea { font: inherit; min-width: 0; max-width: 100%; }
-button { cursor: pointer; }
-a { color: inherit; }
-
-/* ---------- global app shell ---------- */
-.app, .shell, .app-shell, .mobile-shell, .page-shell, .mobile-page-shell,
-.project-flow-shell, .workspace-shell, .workspace-fixed-shell,
-.ready-scenarios-shell, .shil-v17-shell, .shil-v22-shell, .auth-screen,
-.shil-dashboard, .contact-mobile-page, .mobile-projects-page,
-.education-page-v11, .feedback-page-v11, .ai-page-v15,
-.executive-summary-page, .operations-report-page-v5 {
-  width: 100% !important;
-  max-width: 100vw !important;
-  min-width: 0 !important;
-  min-height: 100dvh !important;
-  margin: 0 auto !important;
-  background:
-    radial-gradient(circle at 50% -8%, rgba(106, 77, 255, .12), transparent 36%),
-    linear-gradient(180deg, #ffffff 0%, var(--shil-bg) 100%) !important;
-  color: var(--shil-text) !important;
-  overflow-x: hidden !important;
-  overflow-y: auto !important;
-}
-
-@media (min-width: 560px) {
-  .shil-v17-shell, .shil-v22-shell, .mobile-page-shell,
-  .project-flow-shell, .ready-scenarios-shell, .shil-dashboard,
-  .contact-mobile-page, .mobile-projects-page {
-    max-width: 480px !important;
-    border-inline: 1px solid rgba(15, 23, 42, .08);
-    box-shadow: 0 0 0 1px rgba(15, 23, 42, .04), 0 20px 70px rgba(15,23,42,.14);
-  }
-}
-
-/* ---------- fixed header/footer and scroll law ---------- */
-.shil-v17-header__frame, .mobile-fixed-header, .workspace-fixed-header,
-.unified-shil-header, .scenario-flow-header {
-  position: sticky !important;
-  top: 0 !important;
-  z-index: 60 !important;
-  width: 100% !important;
-  min-height: calc(var(--shil-header-h) + var(--shil-safe-top)) !important;
-  padding: calc(var(--shil-safe-top) + 8px) var(--shil-edge) 8px !important;
-  display: grid !important;
-  grid-template-columns: 44px minmax(0, 1fr) minmax(86px, 34vw) !important;
-  align-items: center !important;
-  justify-items: center !important;
-  gap: 8px !important;
-  background: rgba(255,255,255,.92) !important;
-  backdrop-filter: blur(18px) saturate(1.1);
-  border-bottom: 1px solid var(--shil-line) !important;
-  overflow: hidden !important;
-}
-
-.shil-v17-header__home, .mobile-back-btn {
-  width: 40px !important;
-  height: 40px !important;
-  min-width: 40px !important;
-  padding: 0 !important;
-  display: grid !important;
-  place-items: center !important;
-  border-radius: 14px !important;
-}
-
-.shil-v17-header__logo-slot, .shil-v17-header__logo,
-.mobile-header-logo, .topbar__brand-logo {
-  display: grid !important;
-  place-items: center !important;
-  justify-self: center !important;
-  max-width: 78px !important;
-  max-height: 38px !important;
-  object-fit: contain !important;
-}
-
-.shil-v17-header__title-pill, .mobile-title-pill, .topbar__title, .topbar__title--brand {
-  justify-self: end !important;
-  max-width: 35vw !important;
-  min-height: 30px !important;
-  padding: 6px 10px !important;
-  border-radius: 999px !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  text-align: center !important;
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-  font-size: var(--shil-font-xs) !important;
-  font-weight: 900 !important;
-  line-height: 1.25 !important;
-  background: rgba(106,77,255,.09) !important;
-  color: var(--shil-primary) !important;
-}
-
-.shil-v17-footer__frame, .mobile-fixed-footer, .workspace-action-footer,
-.workspace-fixed-footer, .unified-shil-footer, .flow-footer, .project-flow-footer,
-.bottom-action-bar, .action-bar {
-  position: sticky !important;
-  bottom: 0 !important;
-  z-index: 70 !important;
-  width: 100% !important;
-  min-height: calc(var(--shil-footer-h) + var(--shil-safe-bottom)) !important;
-  padding: 9px var(--shil-edge) calc(9px + var(--shil-safe-bottom)) !important;
-  display: grid !important;
-  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-  align-items: center !important;
-  justify-items: center !important;
-  gap: 8px !important;
-  background: rgba(255,255,255,.94) !important;
-  backdrop-filter: blur(18px) saturate(1.1);
-  border-top: 1px solid var(--shil-line) !important;
-  overflow: hidden !important;
-}
-
-.shil-v17-scroll, .mobile-scroll-content, .contact-scroll-content,
-.projects-final-scroll, .project-start-scroll, .final-contact-scroll {
-  width: 100% !important;
-  max-width: 100% !important;
-  min-width: 0 !important;
-  overflow-x: hidden !important;
-  overflow-y: auto !important;
-  -webkit-overflow-scrolling: touch;
-  padding: var(--shil-edge) var(--shil-edge) calc(var(--shil-footer-h) + var(--shil-safe-bottom) + 18px) !important;
-}
-
-.shil-v17-page-host, .page-host, .content-host {
-  width: 100% !important;
-  max-width: 100% !important;
-  min-width: 0 !important;
-  margin: 0 auto !important;
-  display: grid !important;
-  justify-items: center !important;
-  gap: var(--shil-gap) !important;
-}
-
-/* hide duplicated child chrome inside framed pages */
-.shil-v17-page-host > .mobile-fixed-header,
-.shil-v17-page-host > .workspace-fixed-header,
-.shil-v17-page-host > .unified-shil-header,
-.shil-v17-page-host > .scenario-flow-header,
-.shil-v17-page-host > .topbar,
-.shil-v17-page-host > .mobile-fixed-footer,
-.shil-v17-page-host > .workspace-fixed-footer,
-.shil-v17-page-host > .unified-shil-footer,
-.shil-v17-page-host > .flow-footer,
-.shil-v17-page-host > .project-flow-footer,
-.shil-v17-page-host > .bottom-action-bar { display: none !important; }
-
-/* ---------- centered standard components ---------- */
-.panel, .card, .flow-top-card, .focus-content-card, .scenario-stage-card,
-.dashboard-projects-master-card-v15, .dashboard-project-bucket-v15,
-.final-project-list-card, .mobile-project-list-card, .final-hub-card,
-.environment-map-panel, .environment-fields-panel, .environment-summary-card,
-.env-table-card, .equipment-panel, .equipment-card, .equipment-custom-panel,
-.review-card, .executive-card, .summary-tab-card, .advisor-card,
-.chart-card, .industrial-chart-card-v10, .contact-compact-block,
-.feedback-card-v11, .education-content-card-v11, .admin-modern-card,
-.auth-card, .shil-ai-panel, .shil-contact-card, .project-start-overview {
-  width: 100% !important;
-  max-width: 100% !important;
-  min-width: 0 !important;
-  margin-inline: auto !important;
-  padding: var(--shil-card-pad) !important;
-  border: 1px solid var(--shil-line) !important;
-  border-radius: var(--shil-radius) !important;
-  background: var(--shil-surface) !important;
-  color: var(--shil-text) !important;
-  box-shadow: var(--shil-shadow) !important;
-  overflow: hidden !important;
-  text-align: center !important;
-}
-
-.panel__header, .dashboard-projects-master-card-v15__head,
-.scenario-stage-title, .scenario-stage-title--row, .equipment-toolbar,
-.equipment-card__head, .admin-dashboard-head, .chart-card__header,
-.contact-brand-frame, .flow-top-title, .engineering-overview-header,
-.backup-scenario-group__header, .environment-fields-panel__head,
-.equipment-custom-panel__actions {
-  width: 100% !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  flex-wrap: wrap !important;
-  gap: 8px !important;
-  text-align: center !important;
-}
-
-h1, h2, h3, h4, p, span, small, strong, b, em, label, th, td, li {
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
   max-width: 100%;
+}
+
+body * {
   overflow-wrap: anywhere;
 }
-h1, h2, h3 { margin: 0 0 8px; text-align: center; line-height: 1.35; }
-p { line-height: 1.85; }
-small, .field__hint, .metric-card__label { color: var(--shil-muted); }
 
-/* ---------- buttons/forms ---------- */
-.btn, button, .shil-v17-footer__btn, .mobile-dashboard-btn, .smart-apply-button,
-.share-chip, .share-chip--button, .expand-bank-button {
-  min-height: 40px !important;
-  min-width: 0 !important;
-  max-width: 100% !important;
-  border: 1px solid rgba(106,77,255,.18) !important;
-  border-radius: 14px !important;
-  padding: 9px 12px !important;
-  display: inline-grid !important;
-  place-items: center !important;
-  text-align: center !important;
-  white-space: normal !important;
-  line-height: 1.45 !important;
-  font-size: var(--shil-font-sm) !important;
-  font-weight: 900 !important;
-  background: #fff !important;
-  color: var(--shil-text) !important;
-  box-shadow: 0 8px 18px rgba(15,23,42,.06) !important;
-}
-.btn--primary, .shil-v17-footer__btn--primary {
-  background: linear-gradient(135deg, var(--shil-primary), var(--shil-primary-2)) !important;
-  color: #fff !important;
-}
-.btn--secondary, .shil-v17-footer__btn--secondary { background: rgba(106,77,255,.10) !important; color: var(--shil-primary) !important; }
-.btn--ghost, .shil-v17-footer__btn--ghost { background: rgba(255,255,255,.70) !important; }
-.btn--danger, .danger { color: var(--shil-danger) !important; border-color: rgba(239,68,68,.20) !important; }
+/* =========================
+   APP CONTAINER
+========================= */
 
-.field, .load-field, .equipment-spec-field,
-.field input, .field select, .field textarea,
-input, select, textarea, .search-input, .city-search {
-  width: 100% !important;
-  min-width: 0 !important;
-  max-width: 100% !important;
-  text-align: center !important;
-}
-.field, .load-field, .equipment-spec-field {
-  display: grid !important;
-  justify-items: center !important;
-  gap: 6px !important;
-}
-input, select, textarea, .search-input {
-  min-height: 42px !important;
-  padding: 9px 12px !important;
-  border: 1px solid var(--shil-line) !important;
-  border-radius: 14px !important;
-  background: #fff !important;
-  color: var(--shil-text) !important;
-  font-size: var(--shil-font-sm) !important;
-}
-textarea { min-height: 92px !important; }
+.app,
+.mobile-app,
+.shil-app,
+.page,
+.screen {
+  width: 100vw !important;
+  max-width: 100vw !important;
 
-/* ---------- grids: no fixed pixel overflow ---------- */
-.form-grid, .focus-form-table, .compact-grid, .metric-grid,
-.climate-metric-grid, .environment-fields-grid, .equipment-output-grid,
-.output-grid, .executive-metric-grid, .executive-summary-grid,
-.final-summary-grid, .admin-stats, .admin-project-grid,
-.admin-feedback-grid-v11, .industrial-chart-grid-v10,
-.simulation-grid, .engineering-overview-grid, .summary-tab-grid,
-.projects-choice-grid, .final-projects-choice-grid, .scenario-category-grid,
-.route-image-card-grid, .new-project-grid-3x3, .equipment-grid,
-.design-path-grid, .project-start-overview__grid, .method-card-grid,
-.camera-orientation-grid, .site-survey-capture-grid {
-  width: 100% !important;
-  max-width: 100% !important;
-  min-width: 0 !important;
-  display: grid !important;
-  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-  align-items: stretch !important;
-  justify-items: center !important;
-  gap: var(--shil-gap) !important;
+  min-height: 100dvh;
+
+  margin: 0 auto !important;
+
   overflow-x: hidden !important;
+  overflow-y: auto !important;
+
+  position: relative;
 }
 
-.form-grid, .focus-form-table, .environment-fields-grid, .equipment-output-grid,
-.output-grid, .executive-summary-grid, .admin-project-grid,
-.engineering-overview-grid, .summary-tab-grid, .site-stage, .config-stage,
-.review-stage, .load-bank-stage, .environmental-intelligence-layout,
-.equipment-library-layout, .workspace-grid, .focus-layout {
-  grid-template-columns: 1fr !important;
+/* =========================
+   MAIN CONTENT
+========================= */
+
+.mobile-content,
+.page-content,
+.main-content {
+  width: 100%;
+
+  padding:
+    88px
+    14px
+    110px;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: flex-start;
+
+  gap: 14px;
 }
 
-.two-cols, .two, .three, .five, .custom-load-row.extended,
-.dashboard-projects-master-card-v15__summary, .smart-bank-summary {
-  display: grid !important;
-  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-  gap: var(--shil-gap) !important;
-  width: 100% !important;
-  max-width: 100% !important;
+/* =========================
+   HEADER
+========================= */
+
+.mobile-header,
+.app-header {
+  position: fixed;
+
+  top: 0;
+  left: 0;
+  right: 0;
+
+  z-index: 999;
+
+  width: 100%;
+  height: 74px;
+
+  padding:
+    10px
+    14px;
+
+  display: grid;
+
+  grid-template-columns:
+    72px
+    1fr
+    72px;
+
+  align-items: center;
+
+  background:
+    rgba(255,255,255,.96);
+
+  backdrop-filter: blur(14px);
+
+  border-bottom:
+    1px solid rgba(20,20,40,.08);
 }
 
-/* ---------- dashboard ---------- */
-.shil-dashboard {
-  padding: calc(var(--shil-safe-top) + var(--shil-edge)) var(--shil-edge) calc(var(--shil-footer-h) + var(--shil-safe-bottom) + 18px) !important;
-  display: grid !important;
-  align-content: start !important;
-  justify-items: center !important;
-  gap: var(--shil-gap) !important;
-}
-.shil-dashboard__header, .shil-dashboard-final, .shil-dashboard__intro,
-.shil-dashboard__stats, .shil-dashboard__cards {
-  width: 100% !important;
-  max-width: 100% !important;
-  display: grid !important;
-  justify-items: center !important;
-  text-align: center !important;
-  gap: var(--shil-gap) !important;
-}
-.shil-dashboard__cards { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
-.shil-dashboard-card, .mobile-dashboard-btn, .final-hub-card, .project-hub-icon,
-.route-image-card, .scenario-category-card, .design-path-item,
-.pro-path-item, .v15-path-item, .project-start-step-card,
-.method-choice, .summary-tab-card, .selected-load-card {
-  width: 100% !important;
-  min-width: 0 !important;
-  min-height: clamp(92px, 28vw, 132px) !important;
-  border-radius: var(--shil-radius) !important;
-  padding: clamp(10px, 3vw, 14px) !important;
-  display: grid !important;
-  align-content: center !important;
-  justify-items: center !important;
-  gap: 7px !important;
-  text-align: center !important;
-  overflow: hidden !important;
-}
-.shil-dashboard-card__icon, .project-hub-icon, .scenario-category-card__icon,
-.project-start-step-card__icon, .banking-step-icon, .mobile-dashboard-btn svg,
-.final-hub-card svg, .route-image-card__media, .shil-dashboard-final__logo {
-  width: var(--shil-icon) !important;
-  height: var(--shil-icon) !important;
-  min-width: var(--shil-icon) !important;
-  min-height: var(--shil-icon) !important;
-  max-width: var(--shil-icon) !important;
-  max-height: var(--shil-icon) !important;
-  display: grid !important;
-  place-items: center !important;
-  object-fit: contain !important;
-  margin-inline: auto !important;
-  border-radius: 16px !important;
-}
-.shil-dashboard-card__meta, .mobile-dashboard-btn span, .final-hub-card span,
-.project-mini-row-v15__main, .equipment-specs, .metric-card__value,
-.metric-card__label {
-  width: 100% !important;
-  max-width: 100% !important;
-  text-align: center !important;
+/* =========================
+   LOGO
+========================= */
+
+.logo,
+.app-logo,
+.mobile-logo,
+.app-header img,
+.mobile-header img {
+  width: 42px;
+  height: 42px;
+
+  object-fit: contain;
+
+  display: block;
+
+  margin: 0 auto;
 }
 
-/* ---------- rows/cards data alignment ---------- */
-.project-mini-row-v15, .mobile-project-row, .scenario-compact-item,
-.alert-line, .admin-metric-row, .equipment-summary, .selected-equipment-strip,
-.summary-list li, .climate-note-list li, .bar-chart__item,
-.chart-label-row, .contact-info-lines p, .admin-feedback-card-v11__meta,
-.project-bucket-title {
-  width: 100% !important;
-  display: grid !important;
-  grid-template-columns: 1fr !important;
-  justify-items: center !important;
-  align-items: center !important;
-  gap: 7px !important;
-  text-align: center !important;
-}
-.project-mini-row-v15__actions, .equipment-card__actions, .topbar__actions,
-.feedback-actions-v11, .final-actions, .share-actions, .chip-row,
-.ai-actions-v15, .load-toolbar, .scenario-compact-toolbar,
-.management-cartable-events {
-  width: 100% !important;
-  display: flex !important;
-  flex-wrap: wrap !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 8px !important;
+/* =========================
+   BUTTONS
+========================= */
+
+button,
+.btn,
+.mobile-btn {
+  min-height: 42px;
+
+  border-radius: 18px;
+
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+
+  border: none;
+
+  cursor: pointer;
+
+  transition: .2s ease;
 }
 
-/* ---------- tables: centered, vertical by default on narrow phones ---------- */
-table, .summary-table-like, .backup-scenario-table, .executive-equipment-table,
-.env-table-grid, .a4-equipment-list {
-  width: 100% !important;
-  max-width: 100% !important;
-  border-collapse: collapse !important;
-  table-layout: fixed !important;
-  text-align: center !important;
-  overflow-wrap: anywhere !important;
-}
-th, td, .summary-table-like > *, .env-table-grid > *, .backup-scenario-table * {
-  text-align: center !important;
-  vertical-align: middle !important;
-  padding: 8px 6px !important;
-  font-size: var(--shil-font-xs) !important;
-}
-.backup-scenario-table-wrap, .executive-equipment-table, .env-table-card {
+/* =========================
+   3x3 DESIGN GRID
+========================= */
+
+.design-steps,
+.stepbar,
+.process-steps,
+.steps-grid {
+
+  width: 100%;
+
+  display: grid !important;
+
+  grid-template-columns:
+    repeat(3, 1fr);
+
+  gap: 10px;
+
+  padding: 12px;
+
   overflow-x: hidden !important;
   overflow-y: visible !important;
+
+  align-items: stretch;
+  justify-items: center;
+
+  background: #fff;
+
+  border-radius: 28px;
+
+  box-shadow:
+    0 4px 18px rgba(20,20,40,.05);
 }
 
-@media (max-width: 420px) {
-  table, thead, tbody, tr, th, td { display: block; width: 100% !important; }
-  tr { border-bottom: 1px solid var(--shil-line); padding: 6px 0; }
+/* =========================
+   STEP CARDS
+========================= */
+
+.step-card,
+.design-step,
+.process-step {
+
+  width: 100%;
+  min-height: 122px;
+
+  border-radius: 24px;
+
+  padding:
+    10px
+    8px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #ffffff,
+      #fafafe
+    );
+
+  border:
+    1px solid rgba(120,120,180,.12);
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  text-align: center;
+
+  overflow: hidden;
+
+  transition: .2s ease;
 }
 
-/* ---------- allowed horizontal scroll only ---------- */
-.mobile-design-stepbar, .stepper-list, .pro-stepper, .focus-stepper,
-.design-path-grid, .environment-map-panel--top .environment-map-scroll,
-.allowed-horizontal-scroll, .bank-scroll-list {
-  width: 100% !important;
-  max-width: 100% !important;
+/* =========================
+   STEP NUMBER
+========================= */
+
+.step-number,
+.step-index {
+  font-size: 14px;
+  font-weight: 800;
+
+  color: #1e1e2f;
+}
+
+/* =========================
+   ICONS
+========================= */
+
+.icon,
+.step-card svg,
+.step-card img,
+.design-step svg,
+.design-step img,
+.process-step svg,
+.process-step img {
+
+  width: 26px !important;
+  height: 26px !important;
+
+  min-width: 26px;
+  min-height: 26px;
+
+  object-fit: contain;
+
+  display: block;
+
+  margin: 0 auto;
+}
+
+/* =========================
+   TEXTS
+========================= */
+
+.step-card span,
+.step-card p,
+.design-step span,
+.design-step p,
+.process-step span,
+.process-step p {
+
+  font-size: 11px;
+  line-height: 1.55;
+
+  font-weight: 700;
+
+  text-align: center;
+
+  margin: 0;
+
+  overflow-wrap: anywhere;
+}
+
+/* =========================
+   CARDS
+========================= */
+
+.card,
+.mobile-card,
+.panel,
+.box {
+
+  width: 100%;
+
+  padding: 14px;
+
+  border-radius: 24px;
+
+  background: #fff;
+
+  box-shadow:
+    0 4px 18px rgba(20,20,40,.04);
+
+  overflow: hidden;
+
+  text-align: center;
+}
+
+/* =========================
+   DATA ROWS
+========================= */
+
+.data-row,
+.info-row,
+.summary-row,
+.form-row {
+
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
+
+  text-align: center;
+}
+
+/* =========================
+   FORMS
+========================= */
+
+input,
+select,
+textarea {
+
+  width: 100%;
+  min-height: 44px;
+
+  border-radius: 16px;
+
+  border:
+    1px solid rgba(120,120,180,.14);
+
+  background: #fff;
+
+  padding:
+    10px
+    12px;
+
+  text-align: center;
+
+  font-size: 13px;
+
+  outline: none;
+}
+
+/* =========================
+   TABLES
+========================= */
+
+table {
+
+  width: 100%;
+
+  border-collapse: collapse;
+
+  table-layout: fixed;
+
+  overflow: hidden;
+}
+
+th,
+td {
+
+  padding:
+    8px
+    4px;
+
+  text-align: center !important;
+  vertical-align: middle !important;
+
+  font-size: 11px;
+  line-height: 1.5;
+
+  border-bottom:
+    1px solid rgba(20,20,40,.06);
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+.mobile-footer,
+.bottom-nav,
+.app-footer {
+
+  position: fixed;
+
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  z-index: 999;
+
+  width: 100%;
+  height: 82px;
+
+  padding:
+    8px
+    12px
+    calc(8px + env(safe-area-inset-bottom));
+
+  background:
+    rgba(255,255,255,.96);
+
+  backdrop-filter: blur(16px);
+
+  border-top:
+    1px solid rgba(20,20,40,.08);
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+}
+
+/* =========================
+   HORIZONTAL SCROLL
+   ONLY SPECIAL BLOCKS
+========================= */
+
+.horizontal-scroll,
+.environment-scroll,
+.map-scroll {
+
   overflow-x: auto !important;
   overflow-y: hidden !important;
+
   -webkit-overflow-scrolling: touch;
-  overscroll-behavior-x: contain;
-  scroll-snap-type: x proximity;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: flex-start !important;
-  gap: 8px !important;
-  padding: 6px 2px 9px !important;
-}
-.mobile-design-stepbar > *, .stepper-list > *, .pro-stepper > *, .focus-stepper > *,
-.design-path-grid > *, .bank-scroll-list > * {
-  flex: 0 0 auto !important;
-  scroll-snap-align: center;
-}
-.stepper-item {
-  min-width: 78px !important;
-  max-width: 104px !important;
-  display: grid !important;
-  justify-items: center !important;
-  text-align: center !important;
-}
-.stepper-panel { width: 100% !important; max-width: 100% !important; }
-
-/* global hard stop: any non-allowed accidental wide layout is clipped */
-body :not(.mobile-design-stepbar):not(.stepper-list):not(.pro-stepper):not(.focus-stepper):not(.design-path-grid):not(.bank-scroll-list) {
-  max-width: 100%;
 }
 
-/* ---------- maps/media/charts ---------- */
-.environment-map-panel img, .environment-map-panel svg, .site-survey-report-media img,
-.camera-orientation-board img, .chart-svg, .bar-chart, .area-chart,
-.shil-workspace-hero__image, .shil-contact-card__visual img {
-  width: 100% !important;
-  max-width: 100% !important;
-  object-fit: contain !important;
-  margin-inline: auto !important;
-  display: block !important;
-  overflow: hidden !important;
-}
-.environment-map-panel--top, .environment-map-panel {
-  display: grid !important;
-  justify-items: center !important;
-  align-items: center !important;
-}
-
-/* ---------- status/accessibility/pwa ---------- */
-.shil-v22-skip-link {
-  position: absolute !important;
-  inset-inline-start: -999px !important;
-  top: 8px !important;
-  z-index: 999 !important;
-}
-.shil-v22-skip-link:focus { inset-inline-start: 8px !important; }
-.shil-v22-system-status, .offline-status, .network-status-pill,
-.shil-v22-install-prompt {
-  max-width: calc(100vw - 20px) !important;
-  text-align: center !important;
-  justify-content: center !important;
-}
-
-/* ---------- mobile-specific compaction ---------- */
-@media (max-width: 720px) {
-  :root {
-    --shil-header-h: 58px;
-    --shil-footer-h: 64px;
-    --shil-edge: clamp(8px, 2.8vw, 12px);
-    --shil-gap: 8px;
-    --shil-card-pad: clamp(10px, 3vw, 14px);
-  }
-  .shil-dashboard__cards, .final-projects-choice-grid, .projects-choice-grid,
-  .scenario-category-grid, .route-image-card-grid, .new-project-grid-3x3,
-  .equipment-grid, .method-card-grid, .climate-metric-grid,
-  .executive-metric-grid, .metric-grid, .project-start-overview__grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-  }
-  .form-grid, .focus-form-table, .environment-fields-grid, .equipment-output-grid,
-  .output-grid, .executive-summary-grid, .admin-project-grid,
-  .industrial-chart-grid-v10, .engineering-overview-grid, .summary-tab-grid,
-  .camera-orientation-grid, .site-survey-capture-grid {
-    grid-template-columns: 1fr !important;
-  }
-  .shil-dashboard-card, .mobile-dashboard-btn, .final-hub-card,
-  .project-start-step-card, .route-image-card, .scenario-category-card {
-    min-height: clamp(86px, 27vw, 116px) !important;
-  }
-  .panel, .card, .flow-top-card, .focus-content-card, .scenario-stage-card,
-  .dashboard-projects-master-card-v15, .environment-map-panel,
-  .equipment-panel, .review-card, .executive-card { border-radius: 18px !important; }
-  .custom-load-row.extended, .two-cols, .two, .three, .five,
-  .dashboard-projects-master-card-v15__summary, .smart-bank-summary {
-    grid-template-columns: 1fr !important;
-  }
-}
+/* =========================
+   MOBILE SMALL
+========================= */
 
 @media (max-width: 360px) {
-  .shil-dashboard__cards, .final-projects-choice-grid, .projects-choice-grid,
-  .scenario-category-grid, .route-image-card-grid, .new-project-grid-3x3,
-  .equipment-grid, .method-card-grid, .project-start-overview__grid {
-    grid-template-columns: 1fr !important;
+
+  .design-steps,
+  .stepbar,
+  .process-steps,
+  .steps-grid {
+
+    grid-template-columns:
+      repeat(2, 1fr);
+
   }
-  .shil-v17-header__frame, .mobile-fixed-header, .workspace-fixed-header,
-  .unified-shil-header, .scenario-flow-header {
-    grid-template-columns: 40px minmax(0,1fr) minmax(70px,32vw) !important;
+
+}
+
+/* =========================
+   TABLET
+========================= */
+
+@media (min-width: 768px) {
+
+  .app,
+  .mobile-app,
+  .shil-app {
+
+    max-width: 480px !important;
+
+    margin: 0 auto !important;
+
   }
+
 }

@@ -1,16 +1,22 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import App from "./app/App";
-import "./styles/shil-mobile-standard-v28.css";
+import React from 'react'
+import ReactDOM from 'react-dom/client'
 
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.getRegistrations?.().then((registrations) => {
-    registrations.forEach((registration) => registration.unregister());
-  });
-}
+import App from './App'
 
-ReactDOM.createRoot(document.getElementById("root")).render(
+/* =========================
+   SHIL FINAL MOBILE ENGINE
+========================= */
+
+import './styles/shil-mobile-standard-v29.css'
+
+/* =========================
+   ROOT RENDER
+========================= */
+
+ReactDOM.createRoot(
+  document.getElementById('root') as HTMLElement
+).render(
   <React.StrictMode>
     <App />
   </React.StrictMode>
-);
+)
