@@ -1,15 +1,14 @@
-import { SHIL_IMAGE_MANIFEST } from '../../design/assetManifest';
 export const PUBLIC_ASSETS = {
   branding: {
-    logo: SHIL_IMAGE_MANIFEST.branding.appLogo.path,
-    appLogo: SHIL_IMAGE_MANIFEST.branding.appLogo.path,
+    logo: '/images/branding/shil-iran-logo-final.png',
+    appLogo: '/images/branding/shil-iran-logo-final.png',
     productsFullCard: '/images/branding/shil-products-full-card-final.png',
   },
   backgrounds: {
-    home: SHIL_IMAGE_MANIFEST.dashboard.fullscreenDesktop.path,
-    workspace: SHIL_IMAGE_MANIFEST.dashboard.fullscreenDesktop.path,
-    report: SHIL_IMAGE_MANIFEST.dashboard.fullscreenDesktop.path,
-    method: SHIL_IMAGE_MANIFEST.dashboard.fullscreenDesktop.path,
+    home: '/images/branding/dashboard-bg-desktop.jpg',
+    workspace: '/images/branding/dashboard-bg-desktop.jpg',
+    report: '/images/branding/dashboard-bg-desktop.jpg',
+    method: '/images/branding/dashboard-bg-desktop.jpg',
     shilProductsHero: '/images/backgrounds/shil-products-hero-source.png',
   },
   qr: {

@@ -1,0 +1,224 @@
+/* ==========================================================
+   SHIL V11 Scroll Access Patch
+   Purpose: keep the stable V11 visual system, but unlock vertical
+   and horizontal scrolling only where the mobile UI needs it.
+   ========================================================== */
+
+:root{
+  --shil-scroll-pad-top: calc(var(--v10-header, 72px) + env(safe-area-inset-top, 0px) + 14px);
+  --shil-scroll-pad-bottom: calc(var(--v10-footer, 82px) + env(safe-area-inset-bottom, 0px) + 18px);
+}
+
+html,
+body,
+#root{
+  min-height:100%;
+  overflow-y:auto!important;
+  -webkit-overflow-scrolling:touch;
+}
+
+body{
+  overscroll-behavior-y:contain;
+}
+
+@media (max-width:760px){
+  /* Keep the page lane locked, but let content move vertically. */
+  .app-shell,
+  .shell,
+  .mobile-page-shell,
+  .project-flow-shell,
+  .ready-scenarios-shell,
+  .ai-page-v15,
+  .feedback-page-v11,
+  .education-page-v11,
+  .shil-contact-final,
+  .login-shell{
+    min-height:100dvh!important;
+    height:auto!important;
+    max-height:none!important;
+    overflow-y:auto!important;
+    overflow-x:clip!important;
+    -webkit-overflow-scrolling:touch!important;
+    overscroll-behavior-y:contain!important;
+  }
+
+  /* Normal mobile pages with fixed header/footer. */
+  .mobile-scroll-content,
+  .projects-final-scroll,
+  .contact-scroll-content,
+  .project-start-scroll,
+  .final-contact-scroll,
+  .ready-scenarios-flow,
+  .ai-page-v15 .mobile-scroll-content,
+  .feedback-page-v11 .mobile-scroll-content,
+  .education-page-v11 .mobile-scroll-content{
+    min-height:100dvh!important;
+    height:auto!important;
+    max-height:none!important;
+    overflow-y:auto!important;
+    overflow-x:clip!important;
+    -webkit-overflow-scrolling:touch!important;
+    overscroll-behavior-y:contain!important;
+    padding-top:var(--shil-scroll-pad-top)!important;
+    padding-bottom:var(--shil-scroll-pad-bottom)!important;
+  }
+
+  /* Workspace pages: the card itself should scroll between fixed header, stepbar and footer. */
+  .focus-layout.workspace-fixed-shell,
+  .workspace-fixed-shell,
+  .focus-layout{
+    height:100dvh!important;
+    min-height:100dvh!important;
+    max-height:100dvh!important;
+    overflow:hidden!important;
+  }
+
+  .workspace-scroll-frame,
+  .focus-content-card.pro-content-card{
+    height:auto!important;
+    min-height:0!important;
+    max-height:calc(100dvh - var(--v10-header,72px) - var(--v10-stepbar,58px) - var(--v10-footer,82px) - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 32px)!important;
+    overflow-y:auto!important;
+    overflow-x:clip!important;
+    -webkit-overflow-scrolling:touch!important;
+    overscroll-behavior:contain!important;
+    scrollbar-width:thin!important;
+    padding-bottom:22px!important;
+  }
+
+  /* Horizontal scroll lanes: only these zones may scroll sideways. */
+  .mobile-design-stepbar,
+  .focus-stepper.pro-stepper,
+  .mobile-stage-rail,
+  .design-path-rail,
+  .flow-steps-rail,
+  .steps-horizontal,
+  .project-path-scroll,
+  .dashboard-nav__links,
+  .summary-tab-grid,
+  .selected-equipment-strip,
+  .backup-scenarios-table,
+  .backup-scenario-table-wrap,
+  .table-like,
+  .admin-table-wrap,
+  .review-box,
+  .equipment-choice-list,
+  .load-bank-list,
+  .executive-equipment-table{
+    width:100%!important;
+    max-width:100%!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    -webkit-overflow-scrolling:touch!important;
+    overscroll-behavior-inline:contain!important;
+    touch-action:pan-x pan-y!important;
+  }
+
+  .mobile-design-stepbar,
+  .focus-stepper.pro-stepper{
+    scroll-snap-type:x proximity!important;
+    scrollbar-width:none!important;
+  }
+  .mobile-design-stepbar::-webkit-scrollbar,
+  .focus-stepper.pro-stepper::-webkit-scrollbar{display:none!important;}
+
+  .mobile-design-stepbar > *,
+  .focus-stepper.pro-stepper > *,
+  .mobile-stage-rail > *,
+  .design-path-rail > *,
+  .flow-steps-rail > *,
+  .steps-horizontal > *,
+  .project-path-scroll > *{
+    flex-shrink:0!important;
+    scroll-snap-align:start!important;
+  }
+
+  /* Real tables should keep their natural width inside their own scroll wrapper. */
+  .backup-scenarios-table table,
+  .backup-scenario-table-wrap table,
+  .table-like table,
+  .admin-table-wrap table,
+  .executive-equipment-table table,
+  table.backup-scenario-table{
+    width:max-content!important;
+    min-width:640px!important;
+    max-width:none!important;
+  }
+
+  .summary-tab-grid,
+  .selected-equipment-strip{
+    display:flex!important;
+    flex-wrap:nowrap!important;
+    gap:10px!important;
+    scroll-snap-type:x proximity!important;
+  }
+
+  .summary-tab-grid > *,
+  .selected-equipment-strip > *{
+    flex:0 0 min(82vw, 320px)!important;
+    width:min(82vw, 320px)!important;
+    max-width:min(82vw, 320px)!important;
+    scroll-snap-align:start!important;
+  }
+
+  /* Banks and long lists need vertical access inside the workspace card. */
+  .load-bank-box,
+  .selected-load-list,
+  .equipment-choice-list,
+  .admin-project-grid,
+  .admin-feedback-grid-v11,
+  .summary-list,
+  .review-list,
+  .report-scroll-zone{
+    max-height:none!important;
+    overflow-y:visible!important;
+  }
+
+  .load-bank-list,
+  .equipment-choice-list{
+    max-height:42dvh!important;
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    -webkit-overflow-scrolling:touch!important;
+  }
+
+  /* Images and maps stay contained, not clipped by accidental fixed heights. */
+  .environment-map-panel,
+  .environment-map-card,
+  .map-panel,
+  .map-card,
+  .iran-map,
+  .iran-map-wrap,
+  .contact-brand-frame,
+  .route-image-card__media{
+    overflow:hidden!important;
+  }
+
+  .environment-map-panel img,
+  .environment-map-card img,
+  .map-panel img,
+  .map-card img,
+  .iran-map img,
+  .iran-map-wrap img,
+  .contact-brand-frame img,
+  .route-image-card__media img{
+    width:100%!important;
+    height:100%!important;
+    max-width:100%!important;
+    object-fit:contain!important;
+  }
+
+  /* Prevent accidental clipping of text-heavy cards. */
+  .review-card,
+  .metric-card,
+  .form-section,
+  .env-table-card,
+  .environment-summary-card,
+  .summary-card,
+  .admin-modern-card,
+  .panel,
+  .advisor-card,
+  .executive-card{
+    overflow-y:visible!important;
+  }
+}

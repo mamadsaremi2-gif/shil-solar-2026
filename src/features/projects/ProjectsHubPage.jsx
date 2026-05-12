@@ -1,6 +1,5 @@
 import { useMemo, useState } from "react";
 import { useProjectStore } from "../../app/store/projectStore";
-import { SHIL_IMAGE_MANIFEST } from "../../design/assetManifest";
 
 function ProjectList({ title, projects, emptyText, openWorkspace }) {
   return (
@@ -33,7 +32,7 @@ export function ProjectsHubPage() {
     <main className="mobile-page-shell mobile-projects-page shil-projects-final" dir="rtl">
       <header className="mobile-fixed-header unified-shil-header">
         <button className="mobile-back-btn" type="button" onClick={back} aria-label="بازگشت">‹</button>
-        <img className="mobile-header-logo" src={SHIL_IMAGE_MANIFEST.branding.headerLogo.path} alt="SHIL" />
+        <img className="mobile-header-logo" src="/images/branding/header-center-logo.webp" alt="SHIL" />
         <span className="mobile-title-pill">{title}</span>
       </header>
 

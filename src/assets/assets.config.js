@@ -1,25 +1,24 @@
-import { SHIL_IMAGE_MANIFEST } from '../design/assetManifest';
 export const SHIL_ASSETS = {
   logos: {
-    header: SHIL_IMAGE_MANIFEST.branding.headerLogo.path,
-    main: SHIL_IMAGE_MANIFEST.branding.appLogo.path,
+    header: '/images/branding/header-center-logo.webp',
+    main: '/images/branding/shil-iran-logo-final.png',
     shil: '/images/branding/shil-logo.png',
-    dashboardCenter: SHIL_IMAGE_MANIFEST.dashboard.centerLogo.path,
+    dashboardCenter: '/images/branding/dashboard-center-logo.webp',
   },
   backgrounds: {
-    dashboardDesktop: SHIL_IMAGE_MANIFEST.dashboard.fullscreenDesktop.path,
-    dashboardMobile: SHIL_IMAGE_MANIFEST.dashboard.fullscreenMobile.path,
+    dashboardDesktop: '/images/branding/dashboard-bg-desktop.jpg',
+    dashboardMobile: '/images/branding/dashboard-bg-mobile.jpg',
     dashboardHeroMobile: '/images/dashboard/dashboard-hero-bg-mobile.webp',
   },
   maps: {
-    environmentIran: SHIL_IMAGE_MANIFEST.environment.iranMap.path,
+    environmentIran: '/images/branding/environment-map.jpg',
   },
   routeCards: {
-    solar: SHIL_IMAGE_MANIFEST.projectRoutes.solar.path,
-    backup: SHIL_IMAGE_MANIFEST.projectRoutes.backup.path,
+    solar: '/images/routes/solar-project-route-card.webp',
+    backup: '/images/routes/backup-power-route-card.webp',
   },
   contact: {
-    equipment: SHIL_IMAGE_MANIFEST.contact.heroEquipment.path,
+    equipment: '/images/contact/contact-brand-equipment.webp',
   },
   qr: {
     instagram: '/images/qr/instagram-qr.jpg',

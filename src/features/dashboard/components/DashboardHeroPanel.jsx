@@ -1,10 +1,9 @@
 import { DashboardStats } from "./DashboardStats";
-import { SHIL_IMAGE_MANIFEST } from "../../../design/assetManifest";
 
 const BRANDING_ASSETS = {
-  desktopBg: SHIL_IMAGE_MANIFEST.dashboard.fullscreenDesktop.path,
-  mobileBg: SHIL_IMAGE_MANIFEST.dashboard.fullscreenMobile.path,
-  logo: SHIL_IMAGE_MANIFEST.dashboard.centerLogo.path,
+  desktopBg: "/images/branding/dashboard-bg-desktop.jpg",
+  mobileBg: "/images/branding/dashboard-bg-mobile.jpg",
+  logo: "/images/branding/shil-logo.png",
 };
 
 export function DashboardHeroPanel({ isAdmin, projectCount, systemStatus }) {

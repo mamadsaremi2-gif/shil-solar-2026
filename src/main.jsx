@@ -2,9 +2,6 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./app/App";
 import "./styles/modular-appearance.css";
-import { applyIOS26ThemeToRoot } from "./design/ios26Theme.tokens";
-
-applyIOS26ThemeToRoot();
 
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.getRegistrations?.().then((registrations) => {
