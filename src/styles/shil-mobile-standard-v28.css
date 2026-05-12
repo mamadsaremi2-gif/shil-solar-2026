@@ -1,6 +1,6 @@
 /* =========================================================
-   SHIL MOBILE STANDARD V29 FINAL STABLE
-   FULL REBUILD + HARD LOCK LOGO + FIXED FOOTER
+   SHIL MOBILE STANDARD — FINAL UNIFIED LOGO SYSTEM
+   ONE LOGO SIZE EVERYWHERE + MOBILE CENTERED UI
 ========================================================= */
 
 /* =========================
@@ -21,7 +21,6 @@ body,
   overflow-y: auto !important;
 
   direction: rtl;
-
   background: #f6f7fb;
 
   -webkit-font-smoothing: antialiased;
@@ -29,7 +28,7 @@ body,
 }
 
 /* =========================
-   UNIVERSAL
+   GLOBAL RESET
 ========================= */
 
 *,
@@ -42,15 +41,148 @@ body * {
   overflow-wrap: anywhere;
 }
 
-/* =========================
-   IMAGE RESET
-========================= */
-
 img,
 svg {
-  max-width: 100%;
-  height: auto;
   object-fit: contain;
+}
+
+/* =========================================================
+   SINGLE LOGO LAW
+   همه لوگوهای اپ فقط همین سایز را می‌گیرند
+========================================================= */
+
+:root {
+  --shil-logo-size: 32px;
+  --shil-header-height: 64px;
+  --shil-footer-height: 88px;
+}
+
+/* همه کلاس‌ها و عکس‌هایی که نقش لوگو دارند */
+.logo,
+.app-logo,
+.mobile-logo,
+.brand-logo,
+.site-logo,
+.header-logo,
+.nav-logo,
+.shil-logo,
+.company-logo,
+.ai-logo,
+.hero-logo,
+.assistant-logo,
+.contact-logo,
+.about-logo,
+.footer-logo,
+.mobile-header img,
+.app-header img,
+.header img,
+.topbar img,
+.navbar img,
+header img {
+  width: var(--shil-logo-size) !important;
+  height: var(--shil-logo-size) !important;
+
+  min-width: var(--shil-logo-size) !important;
+  min-height: var(--shil-logo-size) !important;
+
+  max-width: var(--shil-logo-size) !important;
+  max-height: var(--shil-logo-size) !important;
+
+  object-fit: contain !important;
+  object-position: center !important;
+
+  display: block !important;
+  flex-shrink: 0 !important;
+
+  margin: 0 auto !important;
+
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+
+  transform: none !important;
+  scale: 1 !important;
+}
+
+/* اگر لوگو داخل div/span/link باشد */
+.logo *,
+.app-logo *,
+.mobile-logo *,
+brand-logo *,
+.site-logo *,
+.header-logo *,
+.nav-logo *,
+.shil-logo *,
+.company-logo *,
+.ai-logo *,
+.hero-logo *,
+.assistant-logo *,
+.contact-logo *,
+.about-logo *,
+.footer-logo * {
+  width: var(--shil-logo-size) !important;
+  height: var(--shil-logo-size) !important;
+
+  min-width: var(--shil-logo-size) !important;
+  min-height: var(--shil-logo-size) !important;
+
+  max-width: var(--shil-logo-size) !important;
+  max-height: var(--shil-logo-size) !important;
+
+  object-fit: contain !important;
+  object-position: center !important;
+
+  transform: none !important;
+  scale: 1 !important;
+}
+
+/* حذف placeholder های بنفش/ضربدری */
+.header-placeholder,
+.logo-placeholder,
+.placeholder-logo,
+.header-logo-placeholder,
+.image-placeholder,
+.mock-image,
+[class*="placeholder"],
+[class*="Placeholder"] {
+  width: var(--shil-logo-size) !important;
+  height: var(--shil-logo-size) !important;
+
+  min-width: var(--shil-logo-size) !important;
+  min-height: var(--shil-logo-size) !important;
+
+  max-width: var(--shil-logo-size) !important;
+  max-height: var(--shil-logo-size) !important;
+
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+
+  overflow: hidden !important;
+
+  font-size: 0 !important;
+  color: transparent !important;
+}
+
+.header-placeholder::before,
+.header-placeholder::after,
+.logo-placeholder::before,
+.logo-placeholder::after,
+.placeholder-logo::before,
+.placeholder-logo::after,
+.header-logo-placeholder::before,
+.header-logo-placeholder::after,
+.image-placeholder::before,
+.image-placeholder::after,
+.mock-image::before,
+.mock-image::after,
+[class*="placeholder"]::before,
+[class*="placeholder"]::after,
+[class*="Placeholder"]::before,
+[class*="Placeholder"]::after {
+  display: none !important;
+  content: none !important;
 }
 
 /* =========================
@@ -76,29 +208,6 @@ svg {
 }
 
 /* =========================
-   MAIN CONTENT
-========================= */
-
-.mobile-content,
-.page-content,
-.main-content {
-  width: 100%;
-
-  padding:
-    78px
-    14px
-    118px;
-
-  display: flex;
-  flex-direction: column;
-
-  align-items: center;
-  justify-content: flex-start;
-
-  gap: 14px;
-}
-
-/* =========================
    HEADER
 ========================= */
 
@@ -108,7 +217,6 @@ header,
 .navbar,
 .mobile-header,
 .app-header {
-
   position: fixed;
 
   top: 0;
@@ -120,165 +228,44 @@ header,
   width: 100%;
   max-width: 100vw;
 
-  height: 60px !important;
-  min-height: 60px !important;
-  max-height: 60px !important;
+  height: var(--shil-header-height) !important;
+  min-height: var(--shil-header-height) !important;
+  max-height: var(--shil-header-height) !important;
 
   padding: 8px 12px;
 
   display: grid;
-
-  grid-template-columns:
-    44px
-    1fr
-    44px;
+  grid-template-columns: 44px 1fr 44px;
 
   align-items: center;
   justify-items: center;
 
-  background:
-    rgba(255,255,255,.96);
-
+  background: rgba(255,255,255,.96);
   backdrop-filter: blur(16px);
 
-  border-bottom:
-    1px solid rgba(20,20,40,.08);
+  border-bottom: 1px solid rgba(20,20,40,.08);
 
   overflow: hidden !important;
 }
 
 /* =========================
-   HARD LOCK LOGO
+   MAIN CONTENT
 ========================= */
 
-header img,
-.header img,
-.topbar img,
-.navbar img,
-.mobile-header img,
-.app-header img,
+.mobile-content,
+.page-content,
+.main-content {
+  width: 100%;
 
-header .logo,
-.header .logo,
-.topbar .logo,
-.navbar .logo,
-.mobile-header .logo,
-.app-header .logo,
+  padding: 82px 14px 118px;
 
-header .app-logo,
-.header .app-logo,
-.topbar .app-logo,
-.navbar .app-logo,
-.mobile-header .app-logo,
-.app-header .app-logo,
+  display: flex;
+  flex-direction: column;
 
-header .mobile-logo,
-.header .mobile-logo,
-.topbar .mobile-logo,
-.navbar .mobile-logo,
-.mobile-header .mobile-logo,
-.app-header .mobile-logo {
+  align-items: center;
+  justify-content: flex-start;
 
-  width: 28px !important;
-  height: 28px !important;
-
-  min-width: 28px !important;
-  min-height: 28px !important;
-
-  max-width: 28px !important;
-  max-height: 28px !important;
-
-  object-fit: contain !important;
-
-  display: block !important;
-
-  flex-shrink: 0 !important;
-
-  margin: 0 auto !important;
-
-  transform: scale(1) !important;
-
-  border: none !important;
-  outline: none !important;
-
-  box-shadow: none !important;
-}
-
-/* =========================
-   REMOVE PLACEHOLDERS
-========================= */
-
-.header-placeholder,
-.logo-placeholder,
-.placeholder-logo,
-.header-logo-placeholder,
-.image-placeholder,
-.mock-image,
-[class*="placeholder"],
-[class*="Placeholder"] {
-
-  width: 28px !important;
-  height: 28px !important;
-
-  min-width: 28px !important;
-  min-height: 28px !important;
-
-  max-width: 28px !important;
-  max-height: 28px !important;
-
-  background: transparent !important;
-
-  border: none !important;
-  outline: none !important;
-
-  overflow: hidden !important;
-
-  font-size: 0 !important;
-  color: transparent !important;
-}
-
-.header-placeholder::before,
-.header-placeholder::after,
-.logo-placeholder::before,
-.logo-placeholder::after,
-.placeholder-logo::before,
-.placeholder-logo::after,
-.header-logo-placeholder::before,
-.header-logo-placeholder::after,
-.image-placeholder::before,
-.image-placeholder::after,
-.mock-image::before,
-.mock-image::after,
-[class*="placeholder"]::before,
-[class*="placeholder"]::after,
-[class*="Placeholder"]::before,
-[class*="Placeholder"]::after {
-
-  display: none !important;
-  content: none !important;
-}
-
-/* =========================
-   AI / HERO LOGO
-========================= */
-
-.ai-logo,
-.hero-logo,
-.assistant-logo {
-
-  width: 140px !important;
-  height: 140px !important;
-
-  max-width: 40vw !important;
-  max-height: 40vw !important;
-
-  object-fit: contain !important;
-
-  display: block !important;
-
-  margin: 12px auto !important;
-
-  border-radius: 50% !important;
+  gap: 14px;
 }
 
 /* =========================
@@ -288,23 +275,20 @@ header .mobile-logo,
 button,
 .btn,
 .mobile-btn {
-
   min-height: 42px;
 
   border-radius: 18px;
 
   display: inline-flex;
-
   align-items: center;
   justify-content: center;
 
   text-align: center;
 
   border: none;
-
   cursor: pointer;
 
-  transition: .2s ease;
+  transition: 0.2s ease;
 }
 
 /* =========================
@@ -314,17 +298,16 @@ button,
 .design-steps,
 .stepbar,
 .process-steps,
-.steps-grid {
-
+.steps-grid,
+.scenario-grid,
+.ready-scenarios,
+.scenario-list {
   width: 100%;
 
   display: grid !important;
-
-  grid-template-columns:
-    repeat(3, minmax(0,1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 
   gap: 10px;
-
   padding: 12px;
 
   overflow-x: hidden !important;
@@ -334,40 +317,31 @@ button,
   justify-items: center;
 
   background: #fff;
-
   border-radius: 28px;
 
-  box-shadow:
-    0 4px 18px rgba(20,20,40,.05);
+  box-shadow: 0 4px 18px rgba(20,20,40,.05);
 }
 
 /* =========================
-   STEP CARD
+   STEP / SCENARIO CARDS
 ========================= */
 
 .step-card,
 .design-step,
-.process-step {
-
+.process-step,
+.scenario-card,
+.ready-scenario-card {
   width: 100%;
 
   min-height: 122px;
 
   border-radius: 24px;
 
-  padding:
-    10px
-    8px;
+  padding: 10px 8px;
 
-  background:
-    linear-gradient(
-      180deg,
-      #ffffff,
-      #fafafe
-    );
+  background: linear-gradient(180deg, #ffffff, #fafafe);
 
-  border:
-    1px solid rgba(120,120,180,.12);
+  border: 1px solid rgba(120,120,180,.12);
 
   display: flex;
   flex-direction: column;
@@ -382,42 +356,44 @@ button,
   overflow: hidden;
 }
 
-/* =========================
-   STEP ICONS
-========================= */
-
+/* آیکون‌های معمولی، جدا از لوگو */
 .icon,
 .step-card svg,
 .step-card img,
 .design-step svg,
 .design-step img,
 .process-step svg,
-.process-step img {
-
+.process-step img,
+.scenario-card svg,
+.scenario-card img,
+.ready-scenario-card svg,
+.ready-scenario-card img {
   width: 26px !important;
   height: 26px !important;
 
-  min-width: 26px;
-  min-height: 26px;
+  min-width: 26px !important;
+  min-height: 26px !important;
 
-  object-fit: contain;
+  max-width: 26px !important;
+  max-height: 26px !important;
+
+  object-fit: contain !important;
 
   display: block;
-
   margin: 0 auto;
 }
 
-/* =========================
-   STEP TEXT
-========================= */
-
+/* متن کارت‌ها */
 .step-card span,
 .step-card p,
 .design-step span,
 .design-step p,
 .process-step span,
-.process-step p {
-
+.process-step p,
+.scenario-card span,
+.scenario-card p,
+.ready-scenario-card span,
+.ready-scenario-card p {
   font-size: 11px;
   line-height: 1.55;
 
@@ -438,7 +414,6 @@ button,
 .mobile-card,
 .panel,
 .box {
-
   width: 100%;
 
   padding: 14px;
@@ -447,10 +422,30 @@ button,
 
   background: #fff;
 
-  box-shadow:
-    0 4px 18px rgba(20,20,40,.04);
+  box-shadow: 0 4px 18px rgba(20,20,40,.04);
 
   overflow: hidden;
+
+  text-align: center;
+}
+
+/* =========================
+   DATA ROWS
+========================= */
+
+.data-row,
+.info-row,
+.summary-row,
+.form-row {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
 
   text-align: center;
 }
@@ -462,20 +457,16 @@ button,
 input,
 select,
 textarea {
-
   width: 100%;
   min-height: 44px;
 
   border-radius: 16px;
 
-  border:
-    1px solid rgba(120,120,180,.14);
+  border: 1px solid rgba(120,120,180,.14);
 
   background: #fff;
 
-  padding:
-    10px
-    12px;
+  padding: 10px 12px;
 
   text-align: center;
 
@@ -489,20 +480,15 @@ textarea {
 ========================= */
 
 table {
-
   width: 100%;
 
   border-collapse: collapse;
-
   table-layout: fixed;
 }
 
 th,
 td {
-
-  padding:
-    8px
-    4px;
+  padding: 8px 4px;
 
   text-align: center !important;
   vertical-align: middle !important;
@@ -510,8 +496,7 @@ td {
   font-size: 11px;
   line-height: 1.5;
 
-  border-bottom:
-    1px solid rgba(20,20,40,.06);
+  border-bottom: 1px solid rgba(20,20,40,.06);
 }
 
 /* =========================
@@ -526,7 +511,6 @@ td {
 .step-footer,
 .wizard-footer,
 .action-footer {
-
   position: fixed !important;
 
   left: 0 !important;
@@ -538,30 +522,22 @@ td {
   width: 100vw !important;
   max-width: 100vw !important;
 
-  min-height: 86px !important;
+  min-height: var(--shil-footer-height) !important;
 
-  padding:
-    10px
-    14px
-    calc(10px + env(safe-area-inset-bottom));
+  padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
 
   display: grid !important;
-
-  grid-template-columns:
-    repeat(3, minmax(0,1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 
   gap: 10px !important;
 
   align-items: center !important;
   justify-items: center !important;
 
-  background:
-    rgba(255,255,255,.96);
-
+  background: rgba(255,255,255,.96);
   backdrop-filter: blur(16px);
 
-  border-top:
-    1px solid rgba(20,20,40,.08);
+  border-top: 1px solid rgba(20,20,40,.08);
 
   overflow: hidden !important;
 }
@@ -578,9 +554,7 @@ td {
 .step-footer button,
 .wizard-footer button,
 .action-footer button {
-
   width: 100% !important;
-
   min-width: 0 !important;
 
   height: 54px !important;
@@ -601,15 +575,13 @@ td {
 
   white-space: nowrap !important;
 
-  border:
-    1px solid rgba(120,120,180,.16) !important;
+  border: 1px solid rgba(120,120,180,.16) !important;
 
   box-shadow:
     0 8px 18px rgba(15,23,42,.08),
     inset 0 1px 0 rgba(255,255,255,.9) !important;
 }
 
-/* تایید مرحله */
 .mobile-footer button:first-child,
 .app-footer button:first-child,
 .bottom-footer button:first-child,
@@ -618,15 +590,11 @@ td {
 .step-footer button:first-child,
 .wizard-footer button:first-child,
 .action-footer button:first-child {
-
   background: #18bdf2 !important;
-
   color: #fff !important;
-
   border-color: #18bdf2 !important;
 }
 
-/* سایر دکمه‌ها */
 .mobile-footer button:not(:first-child),
 .app-footer button:not(:first-child),
 .bottom-footer button:not(:first-child),
@@ -635,20 +603,17 @@ td {
 .step-footer button:not(:first-child),
 .wizard-footer button:not(:first-child),
 .action-footer button:not(:first-child) {
-
   background: #fff !important;
-
   color: #102033 !important;
 }
 
 /* =========================
-   SPECIAL HORIZONTAL BLOCKS
+   SPECIAL HORIZONTAL SCROLL ONLY
 ========================= */
 
 .horizontal-scroll,
 .environment-scroll,
 .map-scroll {
-
   overflow-x: auto !important;
   overflow-y: hidden !important;
 
@@ -660,30 +625,14 @@ td {
 ========================= */
 
 @media (max-width: 390px) {
-
-  header img,
-  .header img,
-  .topbar img,
-  .navbar img,
-  .mobile-header img,
-  .app-header img {
-
-    width: 26px !important;
-    height: 26px !important;
-
-    min-width: 26px !important;
-    min-height: 26px !important;
-
-    max-width: 26px !important;
-    max-height: 26px !important;
+  :root {
+    --shil-logo-size: 30px;
   }
 
-  .ai-logo,
-  .hero-logo,
-  .assistant-logo {
-
-    width: 120px !important;
-    height: 120px !important;
+  .mobile-content,
+  .page-content,
+  .main-content {
+    padding-inline: 12px;
   }
 }
 
@@ -692,15 +641,18 @@ td {
 ========================= */
 
 @media (max-width: 360px) {
+  :root {
+    --shil-logo-size: 28px;
+  }
 
   .design-steps,
   .stepbar,
   .process-steps,
-  .steps-grid {
-
-    grid-template-columns:
-      repeat(2, minmax(0,1fr));
-
+  .steps-grid,
+  .scenario-grid,
+  .ready-scenarios,
+  .scenario-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .mobile-footer,
@@ -711,9 +663,7 @@ td {
   .step-footer,
   .wizard-footer,
   .action-footer {
-
     padding-inline: 10px !important;
-
     gap: 8px !important;
   }
 
@@ -725,27 +675,21 @@ td {
   .step-footer button,
   .wizard-footer button,
   .action-footer button {
-
     height: 50px !important;
-
     font-size: 12px !important;
-
     border-radius: 16px !important;
   }
 }
 
 /* =========================
-   TABLET
+   TABLET FRAME
 ========================= */
 
 @media (min-width: 768px) {
-
   .app,
   .mobile-app,
   .shil-app {
-
     max-width: 480px !important;
-
     margin: 0 auto !important;
   }
 }
