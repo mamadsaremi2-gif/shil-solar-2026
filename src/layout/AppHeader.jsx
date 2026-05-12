@@ -1,46 +1,12 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import "../styles/app-header.css";
+import { APP_LAYOUT } from './layout.config';
 
-export default function AppHeader({
-  title = "اطلاعات پروژه",
-  showHome = true,
-  className = "",
-}) {
-  const navigate = useNavigate();
-
-  const handleGoDashboard = () => {
-    navigate("/");
-  };
-
+export function AppHeader({ title, onBack, backMode = 'back', className = '' }) {
+  const icon = backMode === 'dashboard' ? APP_LAYOUT.header.dashboardIcon : APP_LAYOUT.header.backIcon;
   return (
-    <header className={`shil-app-header ${className}`} dir="rtl">
-      <div className="shil-app-header__inner">
-        <div className="shil-app-header__title-pill">
-          <span className="shil-app-header__title-text">{title}</span>
-        </div>
-
-        <div className="shil-app-header__logo-wrap">
-          <img
-            src="/assets/brand/shil-logo-header.webp"
-            alt="SHIL"
-            className="shil-app-header__logo"
-          />
-        </div>
-
-        {showHome ? (
-          <button
-            type="button"
-            className="shil-app-header__home-btn"
-            onClick={handleGoDashboard}
-            aria-label="رفتن به داشبورد"
-          >
-            <span className="shil-app-header__home-icon">⌂</span>
-          </button>
-        ) : (
-          <div className="shil-app-header__home-placeholder" />
-        )}
-      </div>
+    <header className={`${APP_LAYOUT.header.className} ${className}`.trim()}>
+      <button className="mobile-back-btn" type="button" onClick={onBack} aria-label="بازگشت">{icon}</button>
+      <img className="mobile-header-logo" src={APP_LAYOUT.header.logo} alt={APP_LAYOUT.header.logoAlt} />
+      <span className="mobile-title-pill">{title}</span>
     </header>
   );
 }
