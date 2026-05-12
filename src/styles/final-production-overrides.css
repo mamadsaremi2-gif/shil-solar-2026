@@ -1180,3 +1180,158 @@ input,select,textarea{min-height:34px!important;border-radius:9px!important;back
   .dashboard-projects-master-card-v15{padding:10px!important;border-radius:16px!important;}.dashboard-projects-master-card-v15__head{flex-direction:column;align-items:stretch;}.dashboard-projects-master-card-v15__head h2{font-size:20px!important;}.dashboard-projects-master-card-v15__head p{display:none;}.dashboard-projects-master-card-v15__summary{grid-template-columns:1fr!important;}
   .project-mini-row-v15{grid-template-columns:1fr;}.project-mini-row-v15__actions{justify-content:stretch;display:grid;grid-template-columns:repeat(2,1fr);}.project-mini-row-v15__actions .btn{width:100%;}
 }
+/* =========================================================
+   SHIL INTERNAL HEADER UNIFIED PATCH
+   Applies to internal pages only.
+   DashboardHeader remains untouched.
+========================================================= */
+
+.flow-top-card.v15-flow-header,
+.v15-flow-header.compact-page-header,
+.scenario-flow-header {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 1200 !important;
+  width: calc(100% - 16px) !important;
+  min-height: 64px !important;
+  height: 64px !important;
+  margin: calc(env(safe-area-inset-top) + 8px) 8px 8px !important;
+  padding: 0 16px !important;
+  border-radius: 20px !important;
+  background: #f6f7fa !important;
+  border: 1px solid #e5e5ea !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  overflow: hidden !important;
+  display: grid !important;
+  grid-template-columns: minmax(64px, auto) 1fr 44px !important;
+  align-items: center !important;
+  direction: rtl !important;
+}
+
+/* Left/right action container normalization */
+.flow-top-card.v15-flow-header .flow-header-actions,
+.v15-flow-header.compact-page-header .flow-header-actions,
+.scenario-flow-header {
+  align-items: center !important;
+}
+
+/* Page title pill */
+.flow-top-card.v15-flow-header .flow-header-actions > .btn:first-child,
+.v15-flow-header.compact-page-header .flow-header-actions > .btn:first-child,
+.scenario-flow-header .scenario-flow-header__title,
+.scenario-flow-header .btn:first-child {
+  width: fit-content !important;
+  min-width: 64px !important;
+  max-width: min(48vw, 240px) !important;
+  height: 40px !important;
+  padding: 0 12px !important;
+  border-radius: 999px !important;
+  background: #6a4dff !important;
+  color: #ffffff !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  font-size: clamp(10px, 3vw, 15px) !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+/* Home button */
+.flow-top-card.v15-flow-header .flow-header-actions > .btn:last-child,
+.v15-flow-header.compact-page-header .flow-header-actions > .btn:last-child,
+.scenario-flow-header .btn:last-child {
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 44px !important;
+  border-radius: 14px !important;
+  background: #6a4dff !important;
+  color: #ffffff !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  display: grid !important;
+  place-items: center !important;
+}
+
+/* Center logo stays visually fixed */
+.flow-top-card.v15-flow-header .header-brand-logo,
+.v15-flow-header.compact-page-header .header-brand-logo,
+.scenario-flow-header .header-brand-logo,
+.scenario-flow-header__brand {
+  position: absolute !important;
+  left: 50% !important;
+  top: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 46px !important;
+  height: 46px !important;
+  object-fit: contain !important;
+  z-index: 3 !important;
+  pointer-events: none !important;
+}
+
+/* Header logo image */
+.flow-top-card.v15-flow-header .header-brand-logo img,
+.v15-flow-header.compact-page-header .header-brand-logo img,
+.scenario-flow-header .header-brand-logo img,
+.scenario-flow-header__brand img {
+  width: 46px !important;
+  height: 46px !important;
+  object-fit: contain !important;
+  display: block !important;
+}
+
+/* Prevent old extra brand text from expanding header */
+.header-brand-logo span,
+.header-brand-logo strong,
+.scenario-flow-header__brand span,
+.scenario-flow-header__brand strong {
+  display: none !important;
+}
+
+/* Keep title close to its text */
+.flow-top-card.v15-flow-header .flow-header-actions > .btn:first-child span,
+.v15-flow-header.compact-page-header .flow-header-actions > .btn:first-child span,
+.scenario-flow-header .scenario-flow-header__title span {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+/* Small phones */
+@media (max-width: 390px) {
+  .flow-top-card.v15-flow-header,
+  .v15-flow-header.compact-page-header,
+  .scenario-flow-header {
+    grid-template-columns: minmax(60px, auto) 1fr 42px !important;
+    padding: 0 12px !important;
+  }
+
+  .flow-top-card.v15-flow-header .flow-header-actions > .btn:first-child,
+  .v15-flow-header.compact-page-header .flow-header-actions > .btn:first-child,
+  .scenario-flow-header .scenario-flow-header__title,
+  .scenario-flow-header .btn:first-child {
+    max-width: 44vw !important;
+    height: 38px !important;
+    padding: 0 10px !important;
+    font-size: clamp(9px, 2.8vw, 14px) !important;
+  }
+
+  .flow-top-card.v15-flow-header .flow-header-actions > .btn:last-child,
+  .v15-flow-header.compact-page-header .flow-header-actions > .btn:last-child,
+  .scenario-flow-header .btn:last-child {
+    width: 42px !important;
+    height: 42px !important;
+    min-width: 42px !important;
+  }
+
+  .flow-top-card.v15-flow-header .header-brand-logo,
+  .v15-flow-header.compact-page-header .header-brand-logo,
+  .scenario-flow-header .header-brand-logo,
+  .scenario-flow-header__brand {
+    width: 42px !important;
+    height: 42px !important;
+  }
+}
