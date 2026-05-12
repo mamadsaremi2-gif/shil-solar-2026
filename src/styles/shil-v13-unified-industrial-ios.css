@@ -1,0 +1,370 @@
+/* ==========================================================
+   SHIL V13 - Unified Industrial iOS Mobile System
+   Purpose: one visual language + open vertical/horizontal scroll access
+   ========================================================== */
+:root{
+  --v13-bg:#06111f;
+  --v13-bg-deep:#030812;
+  --v13-surface:rgba(10,25,43,.82);
+  --v13-surface-2:rgba(14,34,56,.74);
+  --v13-surface-soft:rgba(255,255,255,.065);
+  --v13-line:rgba(156,190,220,.18);
+  --v13-line-strong:rgba(90,212,238,.28);
+  --v13-text:#f3f8ff;
+  --v13-text-soft:#c8d6e6;
+  --v13-muted:#94a7ba;
+  --v13-primary:#16bff3;
+  --v13-accent:#d85cff;
+  --v13-warn:#ffe9a3;
+  --v13-radius-xl:26px;
+  --v13-radius-lg:20px;
+  --v13-radius-md:15px;
+  --v13-header-h:92px;
+  --v13-stepbar-h:64px;
+  --v13-footer-h:84px;
+}
+
+html,body,#root{width:100%;min-height:100%;}
+html{overflow-x:hidden!important;overflow-y:auto!important;background:var(--v13-bg-deep)!important;}
+body{
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  overscroll-behavior-y:auto!important;
+  -webkit-overflow-scrolling:touch!important;
+  background:
+    radial-gradient(circle at 50% -12%,rgba(83,104,255,.16),transparent 34%),
+    radial-gradient(circle at 105% 24%,rgba(29,203,238,.11),transparent 32%),
+    linear-gradient(180deg,#071323 0%,#04101d 54%,#020712 100%)!important;
+  color:var(--v13-text)!important;
+}
+body:before{opacity:.38!important;filter:none!important;}
+body:after{opacity:.28!important;filter:blur(34px)!important;}
+
+/* General scroll unlock: previous patches used fixed containers and overflow hidden too aggressively. */
+.mobile-page-shell,.project-flow-shell,.ready-scenarios-shell,.neo-page,.shil-dashboard,.workspace-shell,.app-shell,.shell{
+  width:100%!important;
+  max-width:100vw!important;
+  min-height:100dvh!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  -webkit-overflow-scrolling:touch!important;
+  overscroll-behavior-y:contain!important;
+  background:transparent!important;
+}
+.project-flow-shell,.ready-scenarios-shell,.neo-page,.shil-dashboard{
+  padding:calc(var(--v13-header-h) + env(safe-area-inset-top) + 12px) 12px calc(var(--v13-footer-h) + env(safe-area-inset-bottom) + 18px)!important;
+}
+
+/* Unified glass: reduce neon and make all blocks readable. */
+.card,.neo-panel,.smart-card,.smart-glass,.review-card,.flow-top-card,.project-start-overview,.pro-content-card,.focus-content-card,.method-choice,.field,.focus-form-table label,.site-survey-card,.environment-card,.summary-card,.contact-card,.v15-flow-header,.pro-flow-header,.smart-note,.warning-card,.load-card,.selected-load-card,.a4-preview-shell{
+  background:linear-gradient(180deg,var(--v13-surface),rgba(5,16,29,.88))!important;
+  border:1px solid var(--v13-line)!important;
+  box-shadow:0 14px 38px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.045)!important;
+  backdrop-filter:blur(14px)!important;
+  -webkit-backdrop-filter:blur(14px)!important;
+  color:var(--v13-text)!important;
+  text-shadow:none!important;
+}
+.card:before,.neo-panel:before,.smart-card:before,.review-card:before,.flow-top-card:before,.method-choice:before,.pro-content-card:before,.focus-content-card:before{opacity:.12!important;}
+*{text-shadow:none!important;}
+
+/* Header as compact native-like bar. */
+.flow-top-card,.v15-flow-header,.pro-flow-header,.mobile-fixed-header{
+  position:fixed!important;
+  top:env(safe-area-inset-top)!important;
+  left:0!important;
+  right:0!important;
+  z-index:1100!important;
+  width:100%!important;
+  min-height:var(--v13-header-h)!important;
+  height:var(--v13-header-h)!important;
+  border-radius:0 0 22px 22px!important;
+  padding:12px 16px!important;
+  display:grid!important;
+  grid-template-columns:minmax(92px,1fr) auto minmax(92px,1fr)!important;
+  align-items:center!important;
+  gap:10px!important;
+  overflow:hidden!important;
+  background:rgba(7,17,31,.88)!important;
+  border:0!important;
+  border-bottom:1px solid var(--v13-line)!important;
+  box-shadow:0 10px 28px rgba(0,0,0,.26)!important;
+}
+.flow-top-title,.mobile-header-title,.pro-flow-title{
+  justify-self:center!important;
+  min-width:0!important;
+  text-align:center!important;
+}
+.flow-top-title strong,.mobile-header-title strong,.pro-flow-title strong{
+  display:inline-flex!important;
+  max-width:42vw!important;
+  min-height:40px!important;
+  align-items:center!important;
+  justify-content:center!important;
+  padding:0 18px!important;
+  border-radius:999px!important;
+  background:linear-gradient(135deg,rgba(216,92,255,.9),rgba(126,90,255,.76))!important;
+  border:1px solid rgba(255,255,255,.18)!important;
+  color:#fff!important;
+  font-size:15px!important;
+  line-height:1.35!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  box-shadow:0 8px 18px rgba(152,72,220,.26)!important;
+}
+.flow-top-title small,.pro-flow-title small{display:none!important;}
+.header-brand-logo,.mobile-header-logo,.flow-top-card img,.pro-flow-header img{
+  width:42px!important;height:42px!important;object-fit:cover!important;border-radius:50%!important;box-shadow:none!important;opacity:.95!important;
+}
+.flow-top-card .btn,.v15-flow-header .btn,.pro-flow-header .btn,.mobile-fixed-header .btn,.mobile-back-btn,.mobile-home-btn{
+  min-width:44px!important;min-height:44px!important;height:44px!important;border-radius:15px!important;padding:0 12px!important;
+  background:rgba(255,255,255,.055)!important;border:1px solid var(--v13-line)!important;color:var(--v13-text)!important;box-shadow:none!important;font-size:13px!important;
+}
+
+/* Stepbar: always horizontally accessible, compact and readable. */
+.focus-layout{
+  position:static!important;
+  display:block!important;
+  padding:0!important;
+  overflow:visible!important;
+}
+.focus-stepper,.pro-stepper,.mobile-design-stepbar{
+  position:sticky!important;
+  top:calc(var(--v13-header-h) + env(safe-area-inset-top))!important;
+  z-index:1000!important;
+  height:var(--v13-stepbar-h)!important;
+  max-width:100%!important;
+  display:flex!important;
+  flex-direction:row!important;
+  gap:8px!important;
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+  padding:8px 10px!important;
+  margin:0 -12px 14px!important;
+  border-radius:0 0 18px 18px!important;
+  background:rgba(4,14,25,.84)!important;
+  border:0!important;
+  border-bottom:1px solid var(--v13-line)!important;
+  box-shadow:0 8px 20px rgba(0,0,0,.20)!important;
+  scroll-snap-type:x proximity!important;
+  scrollbar-width:thin!important;
+  -webkit-overflow-scrolling:touch!important;
+}
+.focus-stepper::-webkit-scrollbar,.pro-stepper::-webkit-scrollbar,.mobile-design-stepbar::-webkit-scrollbar{height:4px!important;display:block!important;}
+.focus-stepper::-webkit-scrollbar-thumb,.pro-stepper::-webkit-scrollbar-thumb,.mobile-design-stepbar::-webkit-scrollbar-thumb{background:rgba(45,196,235,.45)!important;border-radius:999px!important;}
+.focus-step,.mobile-design-stepbar .focus-step,.focus-stepper button,.mobile-design-stepbar button{
+  flex:0 0 88px!important;
+  width:88px!important;
+  min-width:88px!important;
+  height:48px!important;
+  min-height:48px!important;
+  display:grid!important;
+  grid-template-columns:20px 1fr!important;
+  grid-template-rows:auto auto!important;
+  align-items:center!important;
+  justify-items:center!important;
+  gap:0 4px!important;
+  padding:5px 6px!important;
+  border-radius:15px!important;
+  background:rgba(15,34,54,.72)!important;
+  border:1px solid var(--v13-line)!important;
+  color:var(--v13-text-soft)!important;
+  box-shadow:none!important;
+  scroll-snap-align:center!important;
+}
+.focus-step span,.mobile-design-stepbar .focus-step span{grid-row:1;grid-column:1;width:20px!important;height:20px!important;font-size:10px!important;background:rgba(35,184,223,.85)!important;color:#042032!important;box-shadow:none!important;border:0!important;}
+.focus-step em,.mobile-design-stepbar .focus-step em{display:none!important;}
+.focus-step strong,.mobile-design-stepbar .focus-step strong{grid-column:1/3!important;font-size:10px!important;line-height:1.25!important;white-space:normal!important;display:-webkit-box!important;-webkit-line-clamp:2!important;-webkit-box-orient:vertical!important;overflow:hidden!important;color:inherit!important;}
+.focus-step small{display:none!important;}
+.focus-step.is-active,.mobile-design-stepbar .focus-step.is-active,.focus-stepper button.is-active,.mobile-design-stepbar button.is-active{
+  background:linear-gradient(180deg,rgba(237,249,255,.94),rgba(197,233,245,.88))!important;
+  border-color:rgba(65,218,240,.78)!important;
+  color:#112337!important;
+  box-shadow:0 6px 16px rgba(52,211,238,.20)!important;
+}
+
+/* Main content cards: no fixed crop; vertical access must remain open. */
+.focus-content-card.pro-content-card,.focus-content-card,.pro-content-card{
+  position:relative!important;
+  top:auto!important;left:auto!important;right:auto!important;bottom:auto!important;
+  min-height:auto!important;
+  max-height:none!important;
+  overflow:visible!important;
+  padding:14px!important;
+  margin:0 0 14px!important;
+  border-radius:var(--v13-radius-lg)!important;
+}
+.focus-content-card.pro-content-card > *,.focus-content-card > *{max-width:100%!important;}
+
+/* Footer toolbar: fixed, compact; content scrolls behind with enough bottom padding. */
+.focus-actions.pro-actions,.pro-actions,.focus-actions,.mobile-fixed-footer,.final-actions{
+  position:fixed!important;
+  left:0!important;right:0!important;bottom:0!important;z-index:1120!important;
+  min-height:calc(var(--v13-footer-h) + env(safe-area-inset-bottom))!important;
+  height:auto!important;
+  display:grid!important;
+  grid-template-columns:1fr 1fr 1fr!important;
+  gap:8px!important;
+  padding:10px 12px calc(10px + env(safe-area-inset-bottom))!important;
+  margin:0!important;
+  background:rgba(4,13,24,.91)!important;
+  border-top:1px solid var(--v13-line)!important;
+  border-radius:22px 22px 0 0!important;
+  backdrop-filter:blur(18px)!important;
+  -webkit-backdrop-filter:blur(18px)!important;
+  box-shadow:0 -10px 26px rgba(0,0,0,.28)!important;
+}
+.focus-actions.pro-actions .btn,.pro-actions .btn,.focus-actions .btn,.mobile-fixed-footer .btn,.final-actions .btn{
+  min-height:50px!important;border-radius:16px!important;padding:8px 10px!important;font-size:13px!important;font-weight:900!important;box-shadow:none!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+}
+.btn--primary,.neo-main-cta,.focus-actions .btn--primary,.pro-actions .btn--primary{
+  background:linear-gradient(135deg,#17bdf0,#29d5ec)!important;color:#fff!important;border-color:rgba(128,235,255,.48)!important;box-shadow:none!important;
+}
+
+/* Forms and data cards */
+input,select,textarea,.focus-form-table input,.focus-form-table select,.focus-form-table textarea,.load-field input,.load-field select,.custom-load-row input,.custom-load-row select,.custom-bank-form input{
+  width:100%!important;
+  min-height:50px!important;
+  border-radius:16px!important;
+  background:rgba(239,246,255,.94)!important;
+  color:#102033!important;
+  border:1px solid rgba(255,255,255,.36)!important;
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.08)!important;
+  font-size:14px!important;
+  font-weight:800!important;
+  text-align:center!important;
+}
+input::placeholder,textarea::placeholder{color:#62748a!important;opacity:1!important;}
+.field,.focus-form-table label{
+  padding:12px!important;
+  border-radius:18px!important;
+}
+.field label,.focus-form-table label>span,.field-title,label strong{color:var(--v13-text)!important;font-size:13px!important;line-height:1.7!important;}
+
+/* Layout grids: mobile single column by default, except explicit horizontal strips. */
+.final-summary-grid,.review-grid,.review-stage,.final-block-grid,.site-survey-grid,.environment-fields-grid,.camera-orientation-grid,.focus-form-table,.form-grid,.field-grid,.load-row,.smart-bank-grid,.a4-section-grid.two,.a4-metric-strip,.a4-equipment-list{
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  gap:12px!important;
+  max-width:100%!important;
+}
+.review-card,.summary-card,.site-survey-card,.environment-card{min-width:0!important;overflow:visible!important;}
+.review-card h3,.summary-card h3{font-size:16px!important;color:var(--v13-text)!important;margin-bottom:10px!important;}
+.review-card p,.review-card li,.summary-card p,.summary-card li{color:var(--v13-text-soft)!important;line-height:1.9!important;font-size:13px!important;}
+
+/* Route / method cards */
+.method-card-grid.two,.method-card-grid.three,.method-card-grid.five,.scenario-category-grid,.design-path-grid{
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:12px!important;
+  overflow:visible!important;
+}
+.method-choice,.route-card,.scenario-card{
+  min-height:190px!important;
+  border-radius:22px!important;
+  padding:12px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:flex-end!important;
+}
+.route-image-card__media,.project-card-image,.method-choice figure{
+  width:100%!important;
+  aspect-ratio:4/3!important;
+  max-height:none!important;
+  border-radius:18px!important;
+  overflow:hidden!important;
+  background:rgba(239,246,255,.88)!important;
+}
+.route-image-card__media img,.project-card-image img,.method-choice figure img{
+  width:100%!important;height:100%!important;object-fit:cover!important;display:block!important;
+}
+.method-choice strong{font-size:17px!important;line-height:1.55!important;color:#fff!important;}
+.method-choice span{font-size:12px!important;color:var(--v13-text-soft)!important;line-height:1.7!important;}
+
+/* Dashboard: calm, readable, less gaming look. */
+.shil-dashboard,.neo-dashboard{padding:calc(env(safe-area-inset-top) + 12px) 14px calc(var(--v13-footer-h) + env(safe-area-inset-bottom) + 16px)!important;}
+.neo-dashboard-hero,.dashboard-hero,.hero-card{
+  min-height:auto!important;
+  aspect-ratio:16/9!important;
+  border-radius:24px!important;
+  overflow:hidden!important;
+}
+.neo-hero-bg,.dashboard-hero img,.hero-card img{width:100%!important;height:100%!important;object-fit:cover!important;}
+.neo-dashboard-grid,.dashboard-grid,.smart-feature-strip{
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:12px!important;
+  margin:14px 0 0!important;
+  padding:0!important;
+}
+.neo-action-card,.dashboard-card,.smart-feature-strip button{
+  min-height:148px!important;
+  border-radius:22px!important;
+  background:linear-gradient(180deg,var(--v13-surface),rgba(7,21,37,.92))!important;
+  border:1px solid var(--v13-line)!important;
+  box-shadow:0 10px 26px rgba(0,0,0,.20)!important;
+}
+.neo-action-card .icon,.dashboard-card .icon,.cube-icon,.project-start-step-card__icon{
+  box-shadow:none!important;filter:none!important;background:linear-gradient(180deg,rgba(129,75,214,.92),rgba(91,29,134,.92))!important;
+}
+
+/* Images with stable aspect ratios. */
+img[src*="dashboard"],.dashboard-fullscreen-image{aspect-ratio:16/9!important;object-fit:cover!important;}
+img[src*="contact"],.contact-banner-main{aspect-ratio:4/5!important;object-fit:cover!important;}
+img[src*="solar"],.solar-project-image{aspect-ratio:4/3!important;object-fit:cover!important;}
+img[src*="ups"],.ups-project-image{aspect-ratio:4/3!important;object-fit:cover!important;}
+img[src*="iran"],img[src*="map"],.iran-climate-map,.climate-map-image{aspect-ratio:16/10!important;object-fit:contain!important;background:#071323!important;}
+
+/* Horizontal sections that should be reachable. */
+.site-survey-capture-grid,.environmental-intelligence-layout,.contact-info-strip,.load-bank-list,.bank-scroll-list,.summary-horizontal-strip,.a4-report-scroll,.report-preview,.table-scroll,.equipment-table-wrap{
+  max-width:100%!important;
+  overflow-x:auto!important;
+  overflow-y:visible!important;
+  -webkit-overflow-scrolling:touch!important;
+  scroll-snap-type:x proximity!important;
+  scrollbar-width:thin!important;
+}
+.site-survey-capture-grid > *,.environmental-intelligence-layout > *,.contact-info-strip > *,.load-bank-list > *,.bank-scroll-list > *{
+  min-width:min(78vw,320px)!important;
+}
+
+/* A4/report preview: keep horizontal access without clipping. */
+.a4-report-card{
+  max-width:none!important;
+  width:720px!important;
+  min-width:720px!important;
+  margin:0 auto!important;
+  background:#fff!important;
+  color:#111827!important;
+  text-shadow:none!important;
+}
+.a4-report-card *{color:inherit!important;text-shadow:none!important;}
+.report-preview,.a4-report-scroll{padding-bottom:16px!important;}
+
+/* Alerts/notes softer. */
+.smart-note,.warning-card,.step-lock-banner{
+  background:linear-gradient(180deg,rgba(255,236,172,.95),rgba(255,225,135,.91))!important;
+  color:#2c2410!important;
+  border:1px solid rgba(255,232,150,.7)!important;
+  box-shadow:0 8px 22px rgba(0,0,0,.18)!important;
+}
+
+@media (max-width:720px){
+  :root{--v13-header-h:86px;--v13-stepbar-h:62px;--v13-footer-h:82px;}
+  .project-flow-shell,.ready-scenarios-shell,.neo-page,.shil-dashboard{
+    padding-left:10px!important;padding-right:10px!important;
+  }
+  .flow-top-card,.v15-flow-header,.pro-flow-header,.mobile-fixed-header{padding:10px 12px!important;grid-template-columns:88px 1fr 88px!important;}
+  .flow-top-title strong,.mobile-header-title strong,.pro-flow-title strong{max-width:46vw!important;font-size:14px!important;min-height:38px!important;padding:0 14px!important;}
+  .method-card-grid.two,.method-card-grid.three,.method-card-grid.five,.scenario-category-grid,.design-path-grid{grid-template-columns:1fr 1fr!important;gap:10px!important;}
+  .method-choice,.route-card,.scenario-card{min-height:170px!important;}
+  .final-summary-grid,.review-grid,.review-stage,.final-block-grid{grid-template-columns:1fr!important;}
+  .focus-content-card.pro-content-card,.focus-content-card,.pro-content-card{padding:12px!important;}
+}
+@media (max-width:390px){
+  .method-card-grid.two,.method-card-grid.three,.scenario-category-grid,.design-path-grid{grid-template-columns:1fr!important;}
+  .neo-dashboard-grid,.dashboard-grid,.smart-feature-strip{grid-template-columns:1fr 1fr!important;}
+  .flow-top-title strong,.mobile-header-title strong,.pro-flow-title strong{max-width:44vw!important;font-size:13px!important;}
+  .focus-step,.mobile-design-stepbar .focus-step,.focus-stepper button,.mobile-design-stepbar button{flex-basis:82px!important;width:82px!important;min-width:82px!important;}
+}

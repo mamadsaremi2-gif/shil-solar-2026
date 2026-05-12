@@ -1,0 +1,8 @@
+
+> shil-solar@1.0.0 test:engineering:all
+> node scripts/run-engineering-tests.mjs
+
+Engineering smoke tests passed
+Real engineering calculation tests passed
+Engineering validation tests passed
+All engineering test suites passed
