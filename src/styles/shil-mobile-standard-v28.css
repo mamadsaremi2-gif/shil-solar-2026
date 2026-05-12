@@ -1,506 +1,185 @@
 /* =========================================================
-   SHIL SOLAR — MOBILE STANDARD GRID SYSTEM V29
-   جامع‌ترین نسخه استاندارد موبایل
-   3x3 GRID + CENTERED UI + NO HORIZONTAL OVERFLOW
+   SHIL MOBILE FIX — LOGO / HEADER IMAGE / PLACEHOLDER V29.2
+   مشکل لوگوی بزرگ و باکس ضربدری بنفش
 ========================================================= */
 
-/* =========================
-   ROOT
-========================= */
+/* حذف کشیدگی عکس‌ها و لوگوها */
+img,
+svg {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
 
+/* لوگوی اصلی هدر نباید بزرگ شود */
+.header-logo,
+.app-logo,
+.mobile-logo,
+.logo,
+.brand-logo,
+.site-logo,
+.header img,
+.mobile-header img,
+.app-header img,
+.topbar img,
+.navbar img {
+  width: 34px !important;
+  height: 34px !important;
+  max-width: 34px !important;
+  max-height: 34px !important;
+  min-width: 34px !important;
+  min-height: 34px !important;
+
+  object-fit: contain !important;
+  display: block !important;
+  margin: 0 auto !important;
+
+  border: none !important;
+  outline: none !important;
+}
+
+/* اگر لوگو داخل لینک یا div باشد */
+.header-logo *,
+.app-logo *,
+.mobile-logo *,
+.logo *,
+.brand-logo *,
+.site-logo * {
+  width: 34px !important;
+  height: 34px !important;
+  max-width: 34px !important;
+  max-height: 34px !important;
+  object-fit: contain !important;
+}
+
+/* هدر موبایل استاندارد */
+.mobile-header,
+.app-header,
+.header,
+.topbar,
+.navbar {
+  height: 64px !important;
+  min-height: 64px !important;
+  max-height: 64px !important;
+
+  width: 100% !important;
+  max-width: 100vw !important;
+
+  padding: 8px 12px !important;
+
+  display: grid !important;
+  grid-template-columns: 48px 1fr 48px !important;
+  align-items: center !important;
+  justify-items: center !important;
+
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+/* اگر باکس placeholder بنفش با متن HEADER LOGO داری */
+.header-placeholder,
+.logo-placeholder,
+.placeholder-logo,
+.header-logo-placeholder,
+[class*="placeholder"],
+[class*="Placeholder"] {
+  width: 34px !important;
+  height: 34px !important;
+  max-width: 34px !important;
+  max-height: 34px !important;
+  min-width: 34px !important;
+  min-height: 34px !important;
+
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+
+  overflow: hidden !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  font-size: 0 !important;
+  color: transparent !important;
+}
+
+/* حذف ضربدر بنفش داخل placeholder */
+.header-placeholder::before,
+.header-placeholder::after,
+.logo-placeholder::before,
+.logo-placeholder::after,
+.placeholder-logo::before,
+.placeholder-logo::after,
+.header-logo-placeholder::before,
+.header-logo-placeholder::after,
+[class*="placeholder"]::before,
+[class*="placeholder"]::after,
+[class*="Placeholder"]::before,
+[class*="Placeholder"]::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* جلوگیری از اینکه عکس‌های صفحه مثل لوگو بزرگ شوند */
+.page img:not(.content-image):not(.ai-logo):not(.hero-logo),
+.screen img:not(.content-image):not(.ai-logo):not(.hero-logo),
+.mobile-content img:not(.content-image):not(.ai-logo):not(.hero-logo) {
+  max-width: 100% !important;
+  object-fit: contain !important;
+}
+
+/* لوگوی صفحه AI یا معرفی، بزرگ ولی کنترل‌شده */
+.ai-logo,
+.hero-logo,
+.assistant-logo {
+  width: 180px !important;
+  height: 180px !important;
+  max-width: 42vw !important;
+  max-height: 42vw !important;
+
+  object-fit: contain !important;
+  display: block !important;
+  margin: 18px auto 12px !important;
+
+  border-radius: 50% !important;
+}
+
+/* موبایل کوچک */
+@media (max-width: 390px) {
+  .header-logo,
+  .app-logo,
+  .mobile-logo,
+  .logo,
+  .brand-logo,
+  .site-logo,
+  .header img,
+  .mobile-header img,
+  .app-header img,
+  .topbar img,
+  .navbar img {
+    width: 30px !important;
+    height: 30px !important;
+    max-width: 30px !important;
+    max-height: 30px !important;
+    min-width: 30px !important;
+    min-height: 30px !important;
+  }
+
+  .ai-logo,
+  .hero-logo,
+  .assistant-logo {
+    width: 150px !important;
+    height: 150px !important;
+    max-width: 40vw !important;
+    max-height: 40vw !important;
+  }
+}
+
+/* جلوگیری از overflow افقی */
 html,
 body,
 #root {
-  width: 100%;
-  max-width: 100%;
-  min-height: 100dvh;
-
-  margin: 0;
-  padding: 0;
-
   overflow-x: hidden !important;
-  overflow-y: auto !important;
-
-  direction: rtl;
-
-  background: #f6f6f9;
-
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-}
-
-/* =========================
-   UNIVERSAL
-========================= */
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  max-width: 100%;
-}
-
-body * {
-  overflow-wrap: anywhere;
-}
-
-/* =========================
-   APP CONTAINER
-========================= */
-
-.app,
-.mobile-app,
-.shil-app,
-.page,
-.screen {
-  width: 100vw !important;
   max-width: 100vw !important;
-
-  min-height: 100dvh;
-
-  margin: 0 auto !important;
-
-  overflow-x: hidden !important;
-  overflow-y: auto !important;
-
-  position: relative;
-}
-
-/* =========================
-   MAIN CONTENT
-========================= */
-
-.mobile-content,
-.page-content,
-.main-content {
-  width: 100%;
-
-  padding:
-    88px
-    14px
-    110px;
-
-  display: flex;
-  flex-direction: column;
-
-  align-items: center;
-  justify-content: flex-start;
-
-  gap: 14px;
-}
-
-/* =========================
-   HEADER
-========================= */
-
-.mobile-header,
-.app-header {
-  position: fixed;
-
-  top: 0;
-  left: 0;
-  right: 0;
-
-  z-index: 999;
-
-  width: 100%;
-  height: 74px;
-
-  padding:
-    10px
-    14px;
-
-  display: grid;
-
-  grid-template-columns:
-    72px
-    1fr
-    72px;
-
-  align-items: center;
-
-  background:
-    rgba(255,255,255,.96);
-
-  backdrop-filter: blur(14px);
-
-  border-bottom:
-    1px solid rgba(20,20,40,.08);
-}
-
-/* =========================
-   LOGO
-========================= */
-
-.logo,
-.app-logo,
-.mobile-logo,
-.app-header img,
-.mobile-header img {
-  width: 42px;
-  height: 42px;
-
-  object-fit: contain;
-
-  display: block;
-
-  margin: 0 auto;
-}
-
-/* =========================
-   BUTTONS
-========================= */
-
-button,
-.btn,
-.mobile-btn {
-  min-height: 42px;
-
-  border-radius: 18px;
-
-  display: inline-flex;
-
-  align-items: center;
-  justify-content: center;
-
-  text-align: center;
-
-  border: none;
-
-  cursor: pointer;
-
-  transition: .2s ease;
-}
-
-/* =========================
-   3x3 DESIGN GRID
-========================= */
-
-.design-steps,
-.stepbar,
-.process-steps,
-.steps-grid {
-
-  width: 100%;
-
-  display: grid !important;
-
-  grid-template-columns:
-    repeat(3, 1fr);
-
-  gap: 10px;
-
-  padding: 12px;
-
-  overflow-x: hidden !important;
-  overflow-y: visible !important;
-
-  align-items: stretch;
-  justify-items: center;
-
-  background: #fff;
-
-  border-radius: 28px;
-
-  box-shadow:
-    0 4px 18px rgba(20,20,40,.05);
-}
-
-/* =========================
-   STEP CARDS
-========================= */
-
-.step-card,
-.design-step,
-.process-step {
-
-  width: 100%;
-  min-height: 122px;
-
-  border-radius: 24px;
-
-  padding:
-    10px
-    8px;
-
-  background:
-    linear-gradient(
-      180deg,
-      #ffffff,
-      #fafafe
-    );
-
-  border:
-    1px solid rgba(120,120,180,.12);
-
-  display: flex;
-  flex-direction: column;
-
-  align-items: center;
-  justify-content: center;
-
-  gap: 8px;
-
-  text-align: center;
-
-  overflow: hidden;
-
-  transition: .2s ease;
-}
-
-/* =========================
-   STEP NUMBER
-========================= */
-
-.step-number,
-.step-index {
-  font-size: 14px;
-  font-weight: 800;
-
-  color: #1e1e2f;
-}
-
-/* =========================
-   ICONS
-========================= */
-
-.icon,
-.step-card svg,
-.step-card img,
-.design-step svg,
-.design-step img,
-.process-step svg,
-.process-step img {
-
-  width: 26px !important;
-  height: 26px !important;
-
-  min-width: 26px;
-  min-height: 26px;
-
-  object-fit: contain;
-
-  display: block;
-
-  margin: 0 auto;
-}
-
-/* =========================
-   TEXTS
-========================= */
-
-.step-card span,
-.step-card p,
-.design-step span,
-.design-step p,
-.process-step span,
-.process-step p {
-
-  font-size: 11px;
-  line-height: 1.55;
-
-  font-weight: 700;
-
-  text-align: center;
-
-  margin: 0;
-
-  overflow-wrap: anywhere;
-}
-
-/* =========================
-   CARDS
-========================= */
-
-.card,
-.mobile-card,
-.panel,
-.box {
-
-  width: 100%;
-
-  padding: 14px;
-
-  border-radius: 24px;
-
-  background: #fff;
-
-  box-shadow:
-    0 4px 18px rgba(20,20,40,.04);
-
-  overflow: hidden;
-
-  text-align: center;
-}
-
-/* =========================
-   DATA ROWS
-========================= */
-
-.data-row,
-.info-row,
-.summary-row,
-.form-row {
-
-  width: 100%;
-
-  display: flex;
-  flex-direction: column;
-
-  align-items: center;
-  justify-content: center;
-
-  gap: 6px;
-
-  text-align: center;
-}
-
-/* =========================
-   FORMS
-========================= */
-
-input,
-select,
-textarea {
-
-  width: 100%;
-  min-height: 44px;
-
-  border-radius: 16px;
-
-  border:
-    1px solid rgba(120,120,180,.14);
-
-  background: #fff;
-
-  padding:
-    10px
-    12px;
-
-  text-align: center;
-
-  font-size: 13px;
-
-  outline: none;
-}
-
-/* =========================
-   TABLES
-========================= */
-
-table {
-
-  width: 100%;
-
-  border-collapse: collapse;
-
-  table-layout: fixed;
-
-  overflow: hidden;
-}
-
-th,
-td {
-
-  padding:
-    8px
-    4px;
-
-  text-align: center !important;
-  vertical-align: middle !important;
-
-  font-size: 11px;
-  line-height: 1.5;
-
-  border-bottom:
-    1px solid rgba(20,20,40,.06);
-}
-
-/* =========================
-   FOOTER
-========================= */
-
-.mobile-footer,
-.bottom-nav,
-.app-footer {
-
-  position: fixed;
-
-  left: 0;
-  right: 0;
-  bottom: 0;
-
-  z-index: 999;
-
-  width: 100%;
-  height: 82px;
-
-  padding:
-    8px
-    12px
-    calc(8px + env(safe-area-inset-bottom));
-
-  background:
-    rgba(255,255,255,.96);
-
-  backdrop-filter: blur(16px);
-
-  border-top:
-    1px solid rgba(20,20,40,.08);
-
-  display: flex;
-
-  align-items: center;
-  justify-content: center;
-}
-
-/* =========================
-   HORIZONTAL SCROLL
-   ONLY SPECIAL BLOCKS
-========================= */
-
-.horizontal-scroll,
-.environment-scroll,
-.map-scroll {
-
-  overflow-x: auto !important;
-  overflow-y: hidden !important;
-
-  -webkit-overflow-scrolling: touch;
-}
-
-/* =========================
-   MOBILE SMALL
-========================= */
-
-@media (max-width: 360px) {
-
-  .design-steps,
-  .stepbar,
-  .process-steps,
-  .steps-grid {
-
-    grid-template-columns:
-      repeat(2, 1fr);
-
-  }
-
-}
-
-/* =========================
-   TABLET
-========================= */
-
-@media (min-width: 768px) {
-
-  .app,
-  .mobile-app,
-  .shil-app {
-
-    max-width: 480px !important;
-
-    margin: 0 auto !important;
-
-  }
-
 }
