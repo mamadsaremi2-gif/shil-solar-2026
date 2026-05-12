@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import "./styles/v14-minimal-industrial.css";
 import App from "./app/App";
 import "./styles/modular-appearance.css";
 

@@ -1,12 +1,7 @@
-import { getSupabaseClient, isSupabaseConfigured } from "../shared/lib/supabaseLazy";
+import { supabase } from "../lib/supabase";
 
 export async function logEvent(eventName, metadata = {}) {
-  if (!isSupabaseConfigured) return;
-
   try {
-    const supabase = await getSupabaseClient();
-    if (!supabase) return;
-
     const {
       data: { user },
     } = await supabase.auth.getUser();

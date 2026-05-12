@@ -1,16 +1,8 @@
-import { getSupabaseClient, isSupabaseConfigured } from "../shared/lib/supabaseLazy";
+import { supabase } from "../lib/supabase";
 import { logEvent } from "./analyticsService";
-
-async function getClient() {
-  if (!isSupabaseConfigured) return null;
-  return getSupabaseClient();
-}
 
 // گرفتن پروژه‌ها
 export async function getProjects() {
-  const supabase = await getClient();
-  if (!supabase) return [];
-
   const { data, error } = await supabase
     .from("app_projects")
     .select("*")
@@ -26,9 +18,6 @@ export async function getProjects() {
 
 // ساخت پروژه
 export async function createProject(project) {
-  const supabase = await getClient();
-  if (!supabase) return null;
-
   const {
     data: { user },
     error: userError,
@@ -55,7 +44,8 @@ export async function createProject(project) {
     return null;
   }
 
-  void logEvent("create_project", {
+  // 🔥 لاگ گرفتن
+  logEvent("create_project", {
     title: project.title,
   });
 
@@ -64,9 +54,6 @@ export async function createProject(project) {
 
 // آپدیت پروژه
 export async function updateProject(id, updates) {
-  const supabase = await getClient();
-  if (!supabase) return null;
-
   const { data, error } = await supabase
     .from("app_projects")
     .update(updates)
@@ -79,16 +66,13 @@ export async function updateProject(id, updates) {
     return null;
   }
 
-  void logEvent("update_project", { id });
+  logEvent("update_project", { id });
 
   return data;
 }
 
 // حذف پروژه
 export async function deleteProject(id) {
-  const supabase = await getClient();
-  if (!supabase) return false;
-
   const { error } = await supabase
     .from("app_projects")
     .delete()
@@ -99,7 +83,7 @@ export async function deleteProject(id) {
     return false;
   }
 
-  void logEvent("delete_project", { id });
+  logEvent("delete_project", { id });
 
   return true;
 }
