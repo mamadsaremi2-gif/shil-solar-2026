@@ -3,18 +3,10 @@ import ReactDOM from 'react-dom/client'
 
 import App from './App'
 
-/* =========================
-   SHIL FINAL MOBILE ENGINE
-========================= */
-
 import './styles/shil-mobile-standard-v29.css'
 
-/* =========================
-   ROOT RENDER
-========================= */
-
 ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
+  document.getElementById('root')
 ).render(
   <React.StrictMode>
     <App />
