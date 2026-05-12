@@ -1,6 +1,6 @@
 import { useProjectStore } from "../../../app/store/projectStore";
 
-export function DashboardStats({ projectCount, systemStatus }) {
+export function DashboardStats({ projectCount }) {
   const { setRoute, openAIPage } = useProjectStore();
 
   function handleOpenAI() {
@@ -10,8 +10,6 @@ export function DashboardStats({ projectCount, systemStatus }) {
     }
     setRoute?.({ name: "ai" });
   }
-
-  const isOnline = systemStatus?.tone === "success" || systemStatus?.title?.includes("متصل") || systemStatus?.title?.includes("آنلاین");
 
   return (
     <section className="shil-dashboard__stats shil-dashboard__stats--minimal" aria-label="خلاصه وضعیت داشبورد">
@@ -31,11 +29,6 @@ export function DashboardStats({ projectCount, systemStatus }) {
         <strong>{projectCount || 0}</strong>
         <small>در حال انجام و نهایی</small>
       </article>
-
-      <div className={`network-status-pill is-${isOnline ? "online" : "offline"}`} title={systemStatus?.detail || ""}>
-        <i aria-hidden="true" />
-        <span>وضعیت شبکه: {isOnline ? "آنلاین" : "آفلاین"}</span>
-      </div>
     </section>
   );
 }
