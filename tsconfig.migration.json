@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.future.json",
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "outDir": "dist-types"
+  },
+  "include": ["src/**/*.js", "src/types/**/*.d.ts"]
+}

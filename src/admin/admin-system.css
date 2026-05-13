@@ -1,6 +1,0 @@
-/* Admin panel visual overrides */
-.admin-panel,
-.admin-page {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
