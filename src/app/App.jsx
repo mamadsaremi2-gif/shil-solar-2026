@@ -13,6 +13,10 @@ import Assistant from "../pages/Assistant.jsx";
 import ProjectInfo from "../pages/project/ProjectInfo.jsx";
 import Environment from "../pages/project/Environment.jsx";
 import ProjectPath from "../pages/project/ProjectPath.jsx";
+import CalculationMethod from "../pages/project/CalculationMethod.jsx";
+import CalculationInputs from "../pages/project/CalculationInputs.jsx";
+import SystemSettings from "../pages/project/SystemSettings.jsx";
+import SystemSettings from "../pages/project/SystemSettings.jsx";
 
 export default function App() {
   return (
