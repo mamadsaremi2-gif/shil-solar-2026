@@ -1,9 +1,7 @@
-﻿import React from "react";
+import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./app/App.jsx";
-import "./styles/app.css";
-
-window.React = React;
+import "./styles/shil-ui.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
