@@ -11,14 +11,20 @@ import Scenarios from "../pages/Scenarios.jsx";
 import Assistant from "../pages/Assistant.jsx";
 
 import ProjectInfo from "../pages/project/ProjectInfo.jsx";
+import Environment from "../pages/project/Environment.jsx";
+import ProjectPath from "../pages/project/ProjectPath.jsx";
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
+
         <Route path="/" element={<Dashboard />} />
 
-        <Route path="/new-project" element={<NewProject />} />
+        <Route
+          path="/new-project"
+          element={<NewProject />}
+        />
 
         <Route
           path="/new-project/info"
@@ -27,7 +33,7 @@ export default function App() {
 
         <Route
           path="/new-project/environment"
-          element={<Projects />}
+          element={<Environment />}
         />
 
         <Route
@@ -70,6 +76,7 @@ export default function App() {
         <Route path="/feedback" element={<Feedback />} />
         <Route path="/scenarios" element={<Scenarios />} />
         <Route path="/assistant" element={<Assistant />} />
+
       </Routes>
     </BrowserRouter>
   );
