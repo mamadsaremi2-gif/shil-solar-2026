@@ -65,3 +65,10 @@ export default function DashboardGrid() {
       </div>
 
       <div className="dash-grid-v15">
+        {dashboardItems.map((item) => (
+          <DashboardCard key={item.title} {...item} />
+        ))}
+      </div>
+    </section>
+  );
+}
