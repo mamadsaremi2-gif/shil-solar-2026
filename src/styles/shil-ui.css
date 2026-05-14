@@ -3235,3 +3235,167 @@ textarea{
 
   color:#8be9ff;
 }
+.widget-head-v15{
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  margin-bottom:18px;
+
+  color:white;
+}
+
+.widget-head-v15 span{
+  font-size:11px;
+
+  color:#8be9ff;
+}
+
+.widget-head-v15 h3{
+  margin-top:6px;
+
+  font-size:18px;
+
+  font-weight:900;
+}
+
+.energy-distribution-v15,
+.activity-feed-v15,
+.environment-widget-v15{
+  margin-top:18px;
+
+  border-radius:28px;
+
+  padding:18px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(8,18,38,.96),
+      rgba(2,6,23,.98)
+    );
+
+  border:
+    1px solid rgba(125,249,255,.14);
+}
+
+.energy-legend-v15{
+  display:flex;
+
+  flex-direction:column;
+
+  gap:10px;
+}
+
+.energy-legend-item-v15{
+  display:flex;
+
+  align-items:center;
+
+  gap:10px;
+
+  color:white;
+}
+
+.energy-legend-item-v15 span{
+  width:12px;
+  height:12px;
+
+  border-radius:999px;
+}
+
+.energy-legend-item-v15 p{
+  flex:1;
+
+  font-size:13px;
+}
+
+.energy-legend-item-v15 strong{
+  font-size:13px;
+}
+
+.activity-list-v15{
+  display:flex;
+
+  flex-direction:column;
+
+  gap:14px;
+}
+
+.activity-item-v15{
+  display:flex;
+
+  gap:12px;
+}
+
+.activity-dot-v15{
+  width:12px;
+  height:12px;
+
+  border-radius:999px;
+
+  margin-top:6px;
+
+  background:#38bdf8;
+
+  box-shadow:
+    0 0 12px rgba(56,189,248,.7);
+}
+
+.activity-content-v15{
+  flex:1;
+
+  color:white;
+}
+
+.activity-content-v15 p{
+  font-size:13px;
+
+  margin-bottom:4px;
+}
+
+.activity-content-v15 span{
+  font-size:11px;
+
+  color:#8be9ff;
+}
+
+.environment-grid-v15{
+  display:grid;
+
+  grid-template-columns:1fr 1fr;
+
+  gap:12px;
+}
+
+.environment-card-v15{
+  min-height:92px;
+
+  border-radius:20px;
+
+  padding:14px;
+
+  background:
+    rgba(15,23,42,.82);
+
+  border:
+    1px solid rgba(125,249,255,.12);
+
+  color:white;
+}
+
+.environment-card-v15 h4{
+  font-size:13px;
+
+  margin-bottom:10px;
+}
+
+.environment-card-v15 p{
+  font-size:14px;
+
+  color:#8be9ff;
+
+  font-weight:800;
+}
