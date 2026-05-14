@@ -2444,3 +2444,59 @@ textarea{
 
   color:white;
 }
+
+/* =========================
+   ENGINEERING VISUAL PACK
+========================= */
+
+.chart-v15{
+  border-radius:28px;
+
+  padding:18px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(8,18,38,.94),
+      rgba(2,6,23,.98)
+    );
+
+  border:
+    1px solid rgba(125,249,255,.12);
+}
+
+.formula-v15{
+  border-radius:24px;
+
+  padding:18px;
+
+  color:white;
+
+  overflow:auto;
+
+  background:
+    rgba(8,18,38,.92);
+
+  border:
+    1px solid rgba(125,249,255,.12);
+}
+
+.map-v15{
+  overflow:hidden;
+
+  border-radius:28px;
+
+  border:
+    1px solid rgba(125,249,255,.12);
+}
+
+.json-viewer-v15{
+  border-radius:24px;
+
+  overflow:auto;
+
+  padding:12px;
+
+  background:
+    rgba(8,18,38,.95);
+}
