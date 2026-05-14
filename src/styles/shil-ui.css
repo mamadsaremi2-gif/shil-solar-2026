@@ -2948,3 +2948,67 @@ textarea{
   border:
     1px solid rgba(125,249,255,.12);
 }
+
+/* =========================
+   REALTIME + MEDIA PACK
+========================= */
+
+.video-v15{
+  overflow:hidden;
+
+  border-radius:28px;
+
+  border:
+    1px solid rgba(125,249,255,.12);
+
+  background:
+    rgba(8,18,38,.95);
+}
+
+.audio-player-v15{
+  min-height:88px;
+
+  border-radius:24px;
+
+  padding:18px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(8,18,38,.95),
+      rgba(2,6,23,.98)
+    );
+
+  border:
+    1px solid rgba(125,249,255,.12);
+}
+
+.waveform-v15{
+  width:100%;
+
+  min-height:120px;
+
+  border-radius:18px;
+
+  overflow:hidden;
+}
+
+.voice-v15{
+  min-height:72px;
+
+  border-radius:18px;
+
+  display:flex;
+
+  align-items:center;
+
+  padding:0 18px;
+
+  color:white;
+
+  background:
+    rgba(37,99,235,.18);
+
+  border:
+    1px solid rgba(125,249,255,.12);
+}
