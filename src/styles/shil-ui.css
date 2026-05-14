@@ -2119,3 +2119,89 @@ textarea{
   padding-bottom:
     calc(env(safe-area-inset-bottom) + 110px);
 }
+
+/* =========================
+   CLOUD + OFFLINE + PDF
+========================= */
+
+.virtual-item-v15{
+  display:flex;
+
+  align-items:center;
+
+  padding:14px;
+
+  border-bottom:
+    1px solid rgba(255,255,255,.06);
+
+  color:white;
+}
+
+.pdf-viewer-v15{
+  width:100%;
+
+  overflow:auto;
+
+  border-radius:24px;
+
+  padding:12px;
+
+  background:
+    rgba(8,18,38,.92);
+}
+
+.pdf-viewer-v15 canvas{
+  border-radius:18px;
+}
+
+.offline-chip-v15{
+  display:inline-flex;
+
+  align-items:center;
+
+  gap:8px;
+
+  padding:8px 14px;
+
+  border-radius:999px;
+
+  background:
+    rgba(34,197,94,.12);
+
+  color:#4ade80;
+
+  font-size:12px;
+
+  border:
+    1px solid rgba(34,197,94,.18);
+}
+
+.sync-indicator-v15{
+  width:12px;
+  height:12px;
+
+  border-radius:999px;
+
+  background:#22c55e;
+
+  box-shadow:
+    0 0 14px rgba(34,197,94,.8);
+}
+
+.performance-card-v15{
+  border-radius:24px;
+
+  padding:18px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(8,18,38,.94),
+      rgba(2,6,23,.98)
+    );
+
+  border:
+    1px solid rgba(125,249,255,.12);
+
+  color:white;
+}
