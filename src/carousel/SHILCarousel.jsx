@@ -1,14 +1,14 @@
 ﻿import React from "react";
-import useEmblaCarousel from
-  "embla-carousel-react";
+import useEmblaCarousel
+from "embla-carousel-react";
 
 export default function SHILCarousel({
   children,
 }) {
 
-  const [ref] =
+  const [emblaRef] =
     useEmblaCarousel({
-      loop: false,
+      dragFree: true,
       align: "start",
     });
 
@@ -16,7 +16,7 @@ export default function SHILCarousel({
 
     <div
       className="embla-v15"
-      ref={ref}
+      ref={emblaRef}
     >
 
       <div className="embla-container-v15">
@@ -24,5 +24,6 @@ export default function SHILCarousel({
       </div>
 
     </div>
+
   );
 }

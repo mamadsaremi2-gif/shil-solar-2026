@@ -1,5 +1,5 @@
-﻿import { useInView } from
-  "react-intersection-observer";
+﻿import { useInView }
+from "react-intersection-observer";
 
 export function useReveal() {
 
@@ -7,8 +7,8 @@ export function useReveal() {
     ref,
     inView,
   } = useInView({
-    triggerOnce: true,
     threshold: 0.12,
+    triggerOnce: true,
   });
 
   return {

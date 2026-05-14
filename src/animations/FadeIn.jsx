@@ -3,28 +3,31 @@ import { motion } from "framer-motion";
 
 export default function FadeIn({
   children,
+  delay = 0,
 }) {
 
   return (
+
     <motion.div
       initial={{
         opacity: 0,
-        y: 18,
+        y: 20,
       }}
-      whileInView={{
+
+      animate={{
         opacity: 1,
         y: 0,
       }}
+
       transition={{
         duration: 0.45,
-      }}
-      viewport={{
-        once: true,
+        delay,
       }}
     >
 
       {children}
 
     </motion.div>
+
   );
 }

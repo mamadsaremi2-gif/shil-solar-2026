@@ -2248,3 +2248,54 @@ textarea{
 
   font-weight:800;
 }
+
+/* =========================
+   VISUAL PACK V15
+========================= */
+
+.glass-tilt-v15{
+  border-radius:28px;
+
+  overflow:hidden;
+}
+
+.embla-v15{
+  overflow:hidden;
+
+  width:100%;
+}
+
+.embla-container-v15{
+  display:flex;
+
+  gap:14px;
+}
+
+.mobile-card-v15{
+  min-height:180px;
+
+  border-radius:28px;
+
+  padding:18px;
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(8,18,38,.94),
+      rgba(2,6,23,.98)
+    );
+
+  border:
+    1px solid rgba(125,249,255,.12);
+
+  color:white;
+
+  font-size:18px;
+
+  font-weight:800;
+}
