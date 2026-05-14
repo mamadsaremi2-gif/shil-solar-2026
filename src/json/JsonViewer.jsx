@@ -1,23 +1,17 @@
 ﻿import React from "react";
-
-import ReactJson
-from "react-json-view";
+import JsonView from "@uiw/react-json-view";
 
 export default function JsonViewer({
-  data
+  data = {},
 }) {
-
   return (
-
     <div className="json-viewer-v15">
-
-      <ReactJson
-        src={data}
-        theme="monokai"
+      <JsonView
+        value={data}
         collapsed={1}
+        displayDataTypes={false}
+        displayObjectSize={false}
       />
-
     </div>
-
   );
 }
