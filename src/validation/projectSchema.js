@@ -1,7 +1,14 @@
-﻿import { z } from "zod";
+﻿import * as yup from "yup";
 
-export const projectSchema = z.object({
-  projectName: z.string().min(2, "نام پروژه الزامی است"),
-  clientName: z.string().min(2, "نام کارفرما الزامی است"),
-  city: z.string().min(2, "شهر پروژه الزامی است"),
+export const projectSchema = yup.object({
+
+  projectName:
+    yup.string().required(),
+
+  city:
+    yup.string().required(),
+
+  load:
+    yup.number().required(),
+
 });

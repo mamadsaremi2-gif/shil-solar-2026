@@ -2299,3 +2299,148 @@ textarea{
 
   font-weight:800;
 }
+
+/* =========================
+   FORM SYSTEM V15
+========================= */
+
+.project-form-v15{
+  display:flex;
+
+  flex-direction:column;
+
+  gap:14px;
+}
+
+.project-form-v15 input{
+  height:54px;
+
+  border:none;
+
+  outline:none;
+
+  border-radius:18px;
+
+  padding:0 18px;
+
+  background:
+    rgba(8,18,38,.92);
+
+  color:white;
+
+  border:
+    1px solid rgba(125,249,255,.12);
+}
+
+.project-form-v15 button{
+  height:54px;
+
+  border:none;
+
+  border-radius:18px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #2563eb,
+      #7c3aed
+    );
+
+  color:white;
+
+  font-weight:800;
+}
+
+.smart-textarea-v15{
+  width:100%;
+
+  border:none;
+
+  outline:none;
+
+  resize:none;
+
+  border-radius:18px;
+
+  padding:16px;
+
+  background:
+    rgba(8,18,38,.92);
+
+  color:white;
+}
+
+.signature-v15{
+  border-radius:24px;
+
+  overflow:hidden;
+
+  background:
+    rgba(8,18,38,.92);
+
+  border:
+    1px solid rgba(125,249,255,.12);
+}
+
+.signature-canvas-v15{
+  width:100%;
+}
+
+.dropzone-v15{
+  min-height:180px;
+
+  border-radius:24px;
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  text-align:center;
+
+  color:white;
+
+  border:
+    2px dashed rgba(125,249,255,.18);
+
+  background:
+    rgba(8,18,38,.92);
+}
+
+.mask-input-v15{
+  width:100%;
+
+  height:54px;
+
+  border:none;
+
+  outline:none;
+
+  border-radius:18px;
+
+  padding:0 18px;
+
+  background:
+    rgba(8,18,38,.92);
+
+  color:white;
+}
+
+.datepicker-v15{
+  width:100%;
+
+  height:54px;
+
+  border:none;
+
+  outline:none;
+
+  border-radius:18px;
+
+  padding:0 18px;
+
+  background:
+    rgba(8,18,38,.92);
+
+  color:white;
+}
