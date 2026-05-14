@@ -2766,3 +2766,50 @@ textarea{
   border:
     1px solid rgba(125,249,255,.12);
 }
+
+/* =========================
+   MEDIA + SEARCH PACK
+========================= */
+
+.camera-v15{
+  overflow:hidden;
+
+  border-radius:28px;
+
+  border:
+    1px solid rgba(125,249,255,.12);
+}
+
+.cropper-v15{
+  position:relative;
+
+  height:320px;
+
+  overflow:hidden;
+
+  border-radius:28px;
+}
+
+.markdown-v15{
+  border-radius:24px;
+
+  padding:18px;
+
+  color:white;
+
+  background:
+    rgba(8,18,38,.94);
+
+  border:
+    1px solid rgba(125,249,255,.12);
+}
+
+.qr-v15{
+  width:fit-content;
+
+  padding:16px;
+
+  border-radius:24px;
+
+  background:white;
+}
