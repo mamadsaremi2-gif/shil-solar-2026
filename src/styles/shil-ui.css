@@ -2205,3 +2205,46 @@ textarea{
 
   color:white;
 }
+
+/* =========================
+   CAROUSEL + SLIDER
+========================= */
+
+.embla-v15{
+  overflow:hidden;
+
+  width:100%;
+}
+
+.embla-container-v15{
+  display:flex;
+
+  gap:14px;
+}
+
+.mobile-slide-v15{
+  min-height:160px;
+
+  border-radius:28px;
+
+  padding:18px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(8,18,38,.95),
+      rgba(2,6,23,.98)
+    );
+
+  border:
+    1px solid rgba(125,249,255,.12);
+
+  color:white;
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  font-weight:800;
+}
