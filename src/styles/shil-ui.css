@@ -3399,3 +3399,172 @@ textarea{
 
   font-weight:800;
 }
+.engineering-alerts-v15,
+.project-progress-v15,
+.equipment-widget-v15{
+  margin-top:18px;
+
+  border-radius:28px;
+
+  padding:18px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(8,18,38,.96),
+      rgba(2,6,23,.98)
+    );
+
+  border:
+    1px solid rgba(125,249,255,.14);
+}
+
+.engineering-alert-list-v15,
+.project-progress-list-v15,
+.equipment-list-v15{
+  display:flex;
+
+  flex-direction:column;
+
+  gap:14px;
+}
+
+.engineering-alert-item-v15{
+  min-height:76px;
+
+  border-radius:18px;
+
+  display:flex;
+
+  align-items:center;
+
+  gap:14px;
+
+  padding:14px;
+
+  color:white;
+
+  border:
+    1px solid rgba(255,255,255,.08);
+}
+
+.engineering-alert-item-v15.success{
+  background:
+    rgba(34,197,94,.12);
+}
+
+.engineering-alert-item-v15.warning{
+  background:
+    rgba(245,158,11,.12);
+}
+
+.engineering-alert-item-v15.danger{
+  background:
+    rgba(239,68,68,.12);
+}
+
+.engineering-alert-icon-v15{
+  width:42px;
+  height:42px;
+
+  border-radius:14px;
+
+  display:grid;
+
+  place-items:center;
+
+  background:
+    rgba(255,255,255,.08);
+}
+
+.engineering-alert-content-v15 h4{
+  font-size:13px;
+
+  margin-bottom:6px;
+}
+
+.engineering-alert-content-v15 p{
+  font-size:12px;
+
+  color:#8be9ff;
+}
+
+.project-progress-item-v15{
+  color:white;
+}
+
+.project-progress-head-v15{
+  display:flex;
+
+  justify-content:space-between;
+
+  margin-bottom:10px;
+}
+
+.project-progress-head-v15 h4{
+  font-size:13px;
+}
+
+.project-progress-head-v15 span{
+  font-size:12px;
+
+  color:#8be9ff;
+}
+
+.project-progress-bar-v15{
+  width:100%;
+
+  height:10px;
+
+  overflow:hidden;
+
+  border-radius:999px;
+
+  background:
+    rgba(255,255,255,.08);
+}
+
+.project-progress-fill-v15{
+  height:100%;
+
+  border-radius:999px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #38bdf8,
+      #8b5cf6
+    );
+}
+
+.equipment-item-v15{
+  min-height:64px;
+
+  border-radius:18px;
+
+  padding:0 16px;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  color:white;
+
+  background:
+    rgba(15,23,42,.78);
+
+  border:
+    1px solid rgba(125,249,255,.08);
+}
+
+.equipment-item-v15 p{
+  font-size:13px;
+}
+
+.equipment-item-v15 strong{
+  font-size:14px;
+
+  color:#8be9ff;
+}
