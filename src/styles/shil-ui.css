@@ -4079,3 +4079,63 @@ textarea{
 
   color:#4ade80;
 }
+
+/* =========================
+   PROJECT STEP RAIL V15
+========================= */
+
+.project-step-rail-v15{
+  display:flex;
+  gap:10px;
+  overflow-x:auto;
+  padding:2px 0 14px;
+  margin-bottom:14px;
+  scrollbar-width:none;
+}
+
+.project-step-rail-v15::-webkit-scrollbar{
+  display:none;
+}
+
+.project-step-pill-v15{
+  min-width:72px;
+  height:72px;
+  border-radius:22px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  color:#cbd5e1;
+  background:rgba(15,23,42,.72);
+  border:1px solid rgba(125,249,255,.12);
+  text-decoration:none;
+}
+
+.project-step-pill-v15 span{
+  width:28px;
+  height:28px;
+  border-radius:10px;
+  display:grid;
+  place-items:center;
+  font-size:12px;
+  font-weight:900;
+  background:rgba(255,255,255,.06);
+}
+
+.project-step-pill-v15 p{
+  margin:0;
+  font-size:11px;
+  font-weight:800;
+}
+
+.project-step-pill-v15.active{
+  color:white;
+  background:linear-gradient(145deg, rgba(14,165,233,.42), rgba(124,58,237,.42));
+  border-color:rgba(125,249,255,.32);
+  box-shadow:0 0 22px rgba(56,189,248,.12);
+}
+
+.project-step-pill-v15.active span{
+  background:rgba(255,255,255,.16);
+}
