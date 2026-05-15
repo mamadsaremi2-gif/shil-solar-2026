@@ -5867,3 +5867,63 @@ textarea{
 
   font-weight:900;
 }
+/* =========================
+   REAL ENGINEERING LOGIC UI
+========================= */
+
+.engineering-result-panel-v15{
+  margin-top:18px;
+  border-radius:28px;
+  padding:18px;
+  background:
+    radial-gradient(circle at top left, rgba(34,197,94,.14), transparent 34%),
+    linear-gradient(145deg, rgba(8,18,38,.96), rgba(2,6,23,.98));
+  border:1px solid rgba(125,249,255,.14);
+}
+
+.engine-status-chip-v15{
+  min-height:34px;
+  padding:0 12px;
+  border-radius:999px;
+  display:flex;
+  align-items:center;
+  font-size:10px;
+  font-weight:900;
+  color:#4ade80;
+  background:rgba(34,197,94,.14);
+  border:1px solid rgba(34,197,94,.22);
+}
+
+.engineering-result-grid-v15{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+.engineering-result-grid-v15 div{
+  min-height:126px;
+  border-radius:22px;
+  padding:16px;
+  color:white;
+  background:rgba(15,23,42,.82);
+  border:1px solid rgba(125,249,255,.08);
+}
+
+.engineering-result-grid-v15 h4{
+  font-size:12px;
+  margin-bottom:12px;
+  color:#cbd5e1;
+}
+
+.engineering-result-grid-v15 strong{
+  display:block;
+  font-size:22px;
+  font-weight:900;
+  color:#8be9ff;
+  margin-bottom:8px;
+}
+
+.engineering-result-grid-v15 p{
+  font-size:11px;
+  color:#94a3b8;
+}

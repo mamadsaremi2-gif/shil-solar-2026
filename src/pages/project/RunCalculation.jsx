@@ -20,6 +20,7 @@ import EngineeringMiniCard from "../../components/project/EngineeringMiniCard.js
 import EngineeringInputGrid from "../../components/project/EngineeringInputGrid.jsx";
 import EngineeringStatusPanel from "../../components/project/EngineeringStatusPanel.jsx";
 import ReportExportCenter from "../../components/reports/ReportExportCenter.jsx";
+import EngineeringResultPanel from "../../components/project/EngineeringResultPanel.jsx";
 
 export default function RunCalculation() {
   return (
@@ -126,6 +127,8 @@ export default function RunCalculation() {
           </button>
         </section>
 
+        <EngineeringResultPanel />
+
         <ReportExportCenter />
 
         <EngineeringStatusPanel
@@ -155,5 +158,7 @@ export default function RunCalculation() {
     </div>
   );
 }
+
+
 
 
