@@ -19,6 +19,7 @@ import ProjectActionBar from "../../components/project/ProjectActionBar.jsx";
 import EngineeringMiniCard from "../../components/project/EngineeringMiniCard.jsx";
 import EngineeringInputGrid from "../../components/project/EngineeringInputGrid.jsx";
 import EngineeringStatusPanel from "../../components/project/EngineeringStatusPanel.jsx";
+import ReportExportCenter from "../../components/reports/ReportExportCenter.jsx";
 
 export default function RunCalculation() {
   return (
@@ -125,6 +126,8 @@ export default function RunCalculation() {
           </button>
         </section>
 
+        <ReportExportCenter />
+
         <EngineeringStatusPanel
           title="وضعیت موتور محاسبات"
           items={[
@@ -152,3 +155,5 @@ export default function RunCalculation() {
     </div>
   );
 }
+
+
