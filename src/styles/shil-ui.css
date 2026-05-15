@@ -5481,3 +5481,133 @@ textarea{
   border-radius:999px;
   background:linear-gradient(90deg,#38bdf8,#8b5cf6);
 }
+
+/* =========================
+   ADVANCED FORM SYSTEM
+========================= */
+
+.advanced-form-v15{
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+  margin-top:18px;
+}
+
+.advanced-form-status-grid-v15{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+.form-status-card-v15{
+  min-height:110px;
+  border-radius:24px;
+  padding:16px;
+  color:white;
+  border:1px solid rgba(125,249,255,.12);
+}
+
+.form-status-card-v15.success{
+  background:rgba(34,197,94,.10);
+}
+
+.form-status-card-v15.primary{
+  background:rgba(56,189,248,.10);
+}
+
+.form-status-card-v15.warning{
+  background:rgba(250,204,21,.10);
+}
+
+.form-status-card-v15 h4{
+  font-size:12px;
+  margin-bottom:14px;
+}
+
+.form-status-card-v15 strong{
+  font-size:18px;
+  font-weight:900;
+}
+
+.form-section-v15{
+  border-radius:28px;
+  padding:18px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(8,18,38,.96),
+      rgba(2,6,23,.98)
+    );
+  border:1px solid rgba(125,249,255,.14);
+}
+
+.form-section-head-v15{
+  margin-bottom:18px;
+}
+
+.form-section-head-v15 h3{
+  font-size:15px;
+  color:white;
+  margin-bottom:6px;
+}
+
+.form-section-head-v15 span{
+  font-size:11px;
+  color:#8be9ff;
+}
+
+.form-section-content-v15{
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+}
+
+.input-field-v15{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.input-field-v15 label{
+  font-size:12px;
+  color:#cbd5e1;
+}
+
+.input-field-v15 input,
+.input-field-v15 select,
+.input-field-v15 textarea{
+  width:100%;
+  min-height:56px;
+  border:none;
+  outline:none;
+  border-radius:18px;
+  padding:14px;
+  color:white;
+  background:rgba(15,23,42,.82);
+  border:1px solid rgba(125,249,255,.08);
+}
+
+.input-field-v15 textarea{
+  min-height:140px;
+  resize:none;
+}
+
+.input-field-v15 small{
+  color:#f87171;
+  font-size:11px;
+}
+
+.advanced-submit-v15{
+  min-height:58px;
+  border:none;
+  border-radius:22px;
+  color:white;
+  font-size:13px;
+  font-weight:900;
+  background:
+    linear-gradient(
+      135deg,
+      #2563eb,
+      #7c3aed
+    );
+}

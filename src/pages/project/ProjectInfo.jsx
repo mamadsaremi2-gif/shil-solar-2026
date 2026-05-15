@@ -7,6 +7,7 @@ import ProjectStepRail from "../../components/project/ProjectStepRail.jsx";
 import ProjectActionBar from "../../components/project/ProjectActionBar.jsx";
 import EngineeringMiniCard from "../../components/project/EngineeringMiniCard.jsx";
 import EngineeringStatusPanel from "../../components/project/EngineeringStatusPanel.jsx";
+import AdvancedProjectForm from "../../components/forms/AdvancedProjectForm.jsx";
 import EngineeringInputGrid from "../../components/project/EngineeringInputGrid.jsx";
 
 export default function ProjectInfo() {
@@ -109,6 +110,8 @@ export default function ProjectInfo() {
           </div>
         </section>
 
+        <AdvancedProjectForm />
+
         <EngineeringStatusPanel
           title="وضعیت اطلاعات پروژه"
           items={[
@@ -125,3 +128,5 @@ export default function ProjectInfo() {
     </div>
   );
 }
+
+

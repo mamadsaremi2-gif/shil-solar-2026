@@ -115,6 +115,7 @@
     "react-idle-timer": "^5.7.3",
     "react-image-crop": "^11.0.10",
     "react-imask": "^7.6.1",
+    "react-input-mask": "^2.0.4",
     "react-intersection-observer": "^10.0.3",
     "react-katex": "^3.1.0",
     "react-lazy-load-image-component": "^1.6.3",
