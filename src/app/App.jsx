@@ -10,6 +10,7 @@ import Feedback from "../pages/Feedback.jsx";
 import Scenarios from "../pages/Scenarios.jsx";
 import Assistant from "../pages/Assistant.jsx";
 import LoginPage from "../pages/LoginPage.jsx";
+import NotFoundPage from "../pages/NotFoundPage.jsx";
 
 import ProjectInfo from "../pages/project/ProjectInfo.jsx";
 import Environment from "../pages/project/Environment.jsx";
@@ -44,9 +45,12 @@ export default function App() {
         <Route path="/scenarios" element={<Scenarios />} />
         <Route path="/assistant" element={<Assistant />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
   );
 }
+
+
 
 
