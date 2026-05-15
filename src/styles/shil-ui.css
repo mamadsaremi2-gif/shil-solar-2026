@@ -3691,3 +3691,146 @@ textarea{
 
   color:#8be9ff;
 }
+.battery-health-v15,
+.live-system-table-v15,
+.reports-widget-v15{
+  margin-top:18px;
+
+  border-radius:28px;
+
+  padding:18px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(8,18,38,.96),
+      rgba(2,6,23,.98)
+    );
+
+  border:
+    1px solid rgba(125,249,255,.14);
+}
+
+.battery-chip-v15{
+  min-height:34px;
+
+  padding:0 14px;
+
+  border-radius:999px;
+
+  display:flex;
+
+  align-items:center;
+
+  background:
+    rgba(34,197,94,.14);
+
+  border:
+    1px solid rgba(34,197,94,.22);
+
+  color:#4ade80;
+
+  font-size:11px;
+
+  font-weight:800;
+}
+
+.live-system-list-v15,
+.reports-list-v15{
+  display:flex;
+
+  flex-direction:column;
+
+  gap:12px;
+}
+
+.live-system-row-v15{
+  min-height:64px;
+
+  border-radius:18px;
+
+  padding:0 16px;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  color:white;
+
+  background:
+    rgba(15,23,42,.78);
+
+  border:
+    1px solid rgba(125,249,255,.08);
+}
+
+.live-system-row-v15 p{
+  font-size:13px;
+}
+
+.live-system-row-v15 strong{
+  font-size:12px;
+
+  color:#4ade80;
+}
+
+.report-item-v15{
+  min-height:76px;
+
+  border-radius:20px;
+
+  padding:14px;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  gap:12px;
+
+  background:
+    rgba(15,23,42,.82);
+
+  border:
+    1px solid rgba(125,249,255,.1);
+
+  color:white;
+}
+
+.report-item-v15 h4{
+  font-size:13px;
+
+  margin-bottom:6px;
+}
+
+.report-item-v15 p{
+  font-size:11px;
+
+  color:#8be9ff;
+}
+
+.report-item-v15 button{
+  min-width:82px;
+
+  height:40px;
+
+  border:none;
+
+  border-radius:14px;
+
+  color:white;
+
+  font-size:11px;
+
+  font-weight:800;
+
+  background:
+    linear-gradient(
+      135deg,
+      #2563eb,
+      #7c3aed
+    );
+}
