@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 
 import DashboardBottomNav from "../../components/dashboard/DashboardBottomNav.jsx";
+import ProjectActionBar from "../../components/project/ProjectActionBar.jsx";
 import ProjectStepRail from "../../components/project/ProjectStepRail.jsx";
 
 const runItems = [
@@ -81,8 +82,10 @@ export default function RunCalculation() {
         </button>
       </div>
 
+      <ProjectActionBar />
       <DashboardBottomNav />
     </div>
   );
 }
+
 

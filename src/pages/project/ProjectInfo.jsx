@@ -11,6 +11,7 @@ import {
 import { motion } from "framer-motion";
 
 import DashboardBottomNav from "../../components/dashboard/DashboardBottomNav.jsx";
+import ProjectActionBar from "../../components/project/ProjectActionBar.jsx";
 import ProjectStepRail from "../../components/project/ProjectStepRail.jsx";
 
 export default function ProjectInfo() {
@@ -203,7 +204,9 @@ export default function ProjectInfo() {
 
       {/* FOOTER */}
 
+      <ProjectActionBar />
       <DashboardBottomNav />
     </div>
   );
 }
+

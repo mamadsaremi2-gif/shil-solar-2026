@@ -16,6 +16,7 @@ import {
 import { motion } from "framer-motion";
 
 import DashboardBottomNav from "../../components/dashboard/DashboardBottomNav.jsx";
+import ProjectActionBar from "../../components/project/ProjectActionBar.jsx";
 import ProjectStepRail from "../../components/project/ProjectStepRail.jsx";
 
 const environmentCards = [
@@ -207,9 +208,11 @@ export default function Environment() {
 
       </div>
 
+      <ProjectActionBar />
       <DashboardBottomNav />
 
     </div>
   );
 }
+
 

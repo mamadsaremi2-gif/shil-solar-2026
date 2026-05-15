@@ -4139,3 +4139,77 @@ textarea{
 .project-step-pill-v15.active span{
   background:rgba(255,255,255,.16);
 }
+
+/* =========================
+   PROJECT ACTION BAR
+========================= */
+
+.project-actionbar-v15{
+  position:fixed;
+
+  left:0;
+  right:0;
+  bottom:0;
+
+  z-index:120;
+
+  height:86px;
+
+  padding:14px;
+
+  display:grid;
+
+  grid-template-columns:1fr 1fr 1fr;
+
+  gap:10px;
+
+  background:
+    rgba(2,6,23,.92);
+
+  backdrop-filter:
+    blur(18px);
+
+  border-top:
+    1px solid rgba(125,249,255,.12);
+}
+
+.project-action-btn-v15{
+  border:none;
+
+  border-radius:20px;
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  gap:8px;
+
+  color:white;
+
+  font-size:12px;
+
+  font-weight:800;
+}
+
+.project-action-btn-v15.primary{
+  background:
+    linear-gradient(
+      135deg,
+      #2563eb,
+      #7c3aed
+    );
+}
+
+.project-action-btn-v15.secondary{
+  background:
+    rgba(15,23,42,.92);
+
+  border:
+    1px solid rgba(125,249,255,.12);
+}
+
+.project-action-btn-v15.ghost{
+  background:
+    rgba(255,255,255,.05);
+}
