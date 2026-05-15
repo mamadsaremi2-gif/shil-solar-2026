@@ -4578,3 +4578,141 @@ textarea{
   gap:12px;
   margin-top:18px;
 }
+
+/* =========================
+   PROJECT PATH PAGE
+========================= */
+
+.project-path-grid-v15{
+  display:flex;
+
+  flex-direction:column;
+
+  gap:16px;
+
+  margin-top:18px;
+}
+
+.project-path-card-v15{
+  min-height:182px;
+
+  position:relative;
+
+  overflow:hidden;
+
+  border:none;
+
+  border-radius:30px;
+
+  padding:22px;
+
+  text-align:right;
+
+  color:white;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(8,18,38,.96),
+      rgba(2,6,23,.98)
+    );
+
+  border:
+    1px solid rgba(125,249,255,.12);
+}
+
+.project-path-card-v15.solar{
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(250,204,21,.16),
+      transparent 34%
+    ),
+
+    linear-gradient(
+      145deg,
+      rgba(8,18,38,.96),
+      rgba(2,6,23,.98)
+    );
+}
+
+.project-path-card-v15.hybrid{
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(56,189,248,.16),
+      transparent 34%
+    ),
+
+    linear-gradient(
+      145deg,
+      rgba(8,18,38,.96),
+      rgba(2,6,23,.98)
+    );
+}
+
+.project-path-card-v15.backup{
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(239,68,68,.14),
+      transparent 34%
+    ),
+
+    linear-gradient(
+      145deg,
+      rgba(8,18,38,.96),
+      rgba(2,6,23,.98)
+    );
+}
+
+.project-path-icon-v15{
+  width:72px;
+  height:72px;
+
+  border-radius:24px;
+
+  display:grid;
+
+  place-items:center;
+
+  margin-bottom:20px;
+
+  background:
+    rgba(255,255,255,.08);
+}
+
+.project-path-card-v15 h3{
+  font-size:18px;
+
+  font-weight:900;
+
+  margin-bottom:12px;
+}
+
+.project-path-card-v15 p{
+  font-size:12px;
+
+  line-height:2;
+
+  color:#cbd5e1;
+
+  max-width:90%;
+}
+
+.project-path-dot-v15{
+  position:absolute;
+
+  top:18px;
+  left:18px;
+
+  width:12px;
+  height:12px;
+
+  border-radius:999px;
+
+  background:#4ade80;
+
+  box-shadow:
+    0 0 14px rgba(74,222,128,.8);
+}
