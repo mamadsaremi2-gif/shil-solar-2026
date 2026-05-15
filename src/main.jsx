@@ -10,3 +10,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <App />
   </React.StrictMode>
 );
+import {
+  startRealtimeSimulation,
+} from "./realtime/streams/startRealtimeSimulation.js";
+
+startRealtimeSimulation();

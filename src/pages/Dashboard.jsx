@@ -131,6 +131,7 @@ export default function Dashboard() {
           ))}
         </section>
 
+        <LiveRealtimePanel />
         <DataLayerStatusPanel />
         <AnalyticsDashboard />
         <LiveEnergyWidget />
@@ -172,6 +173,9 @@ import PVStringWidget from "../components/dashboard/PVStringWidget.jsx";
 import RealtimeMonitorWidget from "../components/dashboard/RealtimeMonitorWidget.jsx";
 import AnalyticsDashboard from "../components/analytics/AnalyticsDashboard.jsx";
 import DataLayerStatusPanel from "../components/dashboard/DataLayerStatusPanel.jsx";
+import LiveRealtimePanel from "../components/dashboard/LiveRealtimePanel.jsx";
+
+
 
 
 
