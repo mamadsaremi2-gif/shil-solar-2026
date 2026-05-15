@@ -5146,3 +5146,127 @@ textarea{
   line-height:1.8;
   color:#cbd5e1;
 }
+
+/* =========================
+   ADVANCED ENGINEERING WIDGETS
+========================= */
+
+.energy-source-widget-v15,
+.engineering-log-widget-v15,
+.safety-widget-v15{
+  margin-top:18px;
+
+  border-radius:28px;
+
+  padding:18px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(8,18,38,.96),
+      rgba(2,6,23,.98)
+    );
+
+  border:
+    1px solid rgba(125,249,255,.14);
+}
+
+.energy-source-legend-v15,
+.engineering-log-list-v15{
+  display:flex;
+
+  flex-direction:column;
+
+  gap:12px;
+}
+
+.energy-source-row-v15,
+.engineering-log-row-v15{
+  min-height:58px;
+
+  border-radius:18px;
+
+  padding:0 16px;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  color:white;
+
+  background:
+    rgba(15,23,42,.78);
+
+  border:
+    1px solid rgba(125,249,255,.08);
+}
+
+.energy-source-left-v15{
+  display:flex;
+
+  align-items:center;
+
+  gap:10px;
+}
+
+.energy-dot-v15{
+  width:10px;
+  height:10px;
+
+  border-radius:999px;
+
+  background:#38bdf8;
+}
+
+.energy-source-row-v15 p,
+.engineering-log-row-v15 p{
+  font-size:12px;
+}
+
+.energy-source-row-v15 strong{
+  color:#8be9ff;
+}
+
+.engineering-log-row-v15 strong{
+  color:#4ade80;
+}
+
+.safety-grid-v15{
+  display:grid;
+
+  grid-template-columns:1fr 1fr;
+
+  gap:12px;
+}
+
+.safety-card-v15{
+  min-height:120px;
+
+  border-radius:22px;
+
+  padding:16px;
+
+  background:
+    rgba(15,23,42,.82);
+
+  border:
+    1px solid rgba(125,249,255,.1);
+
+  color:white;
+}
+
+.safety-card-v15 h4{
+  font-size:13px;
+
+  margin-bottom:16px;
+}
+
+.safety-card-v15 p{
+  font-size:20px;
+
+  font-weight:900;
+
+  color:#facc15;
+}

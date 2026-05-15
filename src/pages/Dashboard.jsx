@@ -148,6 +148,9 @@ export default function Dashboard() {
         <EquipmentWidget />
         <TaskPipelineWidget />
         <ReportsWidget />
+        <EnergySourceWidget />
+        <EngineeringLogWidget />
+        <SafetyWidget />
         <EnvironmentWidget />
         <ActivityFeed />
       </main>
@@ -156,3 +159,7 @@ export default function Dashboard() {
     </div>
   );
 }
+import EnergySourceWidget from "../components/dashboard/EnergySourceWidget.jsx";
+import EngineeringLogWidget from "../components/dashboard/EngineeringLogWidget.jsx";
+import SafetyWidget from "../components/dashboard/SafetyWidget.jsx";
+
