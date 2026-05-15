@@ -14,6 +14,20 @@ import {
 } from "lucide-react";
 
 import DashboardBottomNav from "../components/dashboard/DashboardBottomNav.jsx";
+import LiveEnergyWidget from "../components/dashboard/LiveEnergyWidget.jsx";
+import SystemStatusGrid from "../components/dashboard/SystemStatusGrid.jsx";
+import EnergyDistributionWidget from "../components/dashboard/EnergyDistributionWidget.jsx";
+import ActivityFeed from "../components/dashboard/ActivityFeed.jsx";
+import EnvironmentWidget from "../components/dashboard/EnvironmentWidget.jsx";
+import EngineeringAlertsWidget from "../components/dashboard/EngineeringAlertsWidget.jsx";
+import ProjectProgressWidget from "../components/dashboard/ProjectProgressWidget.jsx";
+import EquipmentWidget from "../components/dashboard/EquipmentWidget.jsx";
+import EngineeringRadarWidget from "../components/dashboard/EngineeringRadarWidget.jsx";
+import TaskPipelineWidget from "../components/dashboard/TaskPipelineWidget.jsx";
+import EngineeringStatsWidget from "../components/dashboard/EngineeringStatsWidget.jsx";
+import BatteryHealthWidget from "../components/dashboard/BatteryHealthWidget.jsx";
+import LiveSystemTable from "../components/dashboard/LiveSystemTable.jsx";
+import ReportsWidget from "../components/dashboard/ReportsWidget.jsx";
 
 const metrics = [
   { title: "پروژه‌ها", value: "12", unit: "فعال", icon: <FolderOpen size={24} /> },
@@ -57,10 +71,10 @@ export default function Dashboard() {
           </div>
 
           <div className="hero-content-v15">
-            <h1>داشبورد مهندسی فعال شد</h1>
+            <h1>داشبورد مهندسی فعال</h1>
             <h2>
-              زیرساخت‌های محاسبات، گزارش، نقشه،
-              ذخیره‌سازی و تحلیل به رابط اصلی متصل شدند.
+              مانیتورینگ، تحلیل انرژی، وضعیت تجهیزات،
+              گزارش‌ها و مسیر طراحی پروژه در یک داشبورد یکپارچه.
             </h2>
           </div>
         </section>
@@ -83,7 +97,7 @@ export default function Dashboard() {
             <span className="status-chip">ENGINE ONLINE</span>
             <h2>موتور SHIL آماده اتصال واقعی است</h2>
             <p>
-              مرحله بعد اتصال فرم‌ها، Store، محاسبات واقعی و APIهای محیطی به همین داشبورد است.
+              داشبورد حالا ویجت‌های تحلیلی، مانیتورینگ و گزارش را به‌صورت واقعی نمایش می‌دهد.
             </p>
           </div>
 
@@ -110,6 +124,21 @@ export default function Dashboard() {
             </Link>
           ))}
         </section>
+
+        <LiveEnergyWidget />
+        <SystemStatusGrid />
+        <EnergyDistributionWidget />
+        <EngineeringStatsWidget />
+        <EngineeringRadarWidget />
+        <BatteryHealthWidget />
+        <LiveSystemTable />
+        <EngineeringAlertsWidget />
+        <ProjectProgressWidget />
+        <EquipmentWidget />
+        <TaskPipelineWidget />
+        <ReportsWidget />
+        <EnvironmentWidget />
+        <ActivityFeed />
       </main>
 
       <DashboardBottomNav />
