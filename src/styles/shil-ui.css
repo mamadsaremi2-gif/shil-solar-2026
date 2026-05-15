@@ -6141,3 +6141,30 @@ textarea{
   line-height:2;
   color:#cbd5e1;
 }
+
+/* =========================
+   PRODUCTION OPTIMIZATION
+========================= */
+
+.production-error-v15{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  color:white;
+  background:#020617;
+  text-align:center;
+}
+
+.production-error-v15 h2{
+  font-size:22px;
+  font-weight:900;
+  margin-bottom:12px;
+}
+
+.production-error-v15 p{
+  font-size:13px;
+  color:#cbd5e1;
+}

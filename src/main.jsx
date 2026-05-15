@@ -15,3 +15,10 @@ import {
 } from "./realtime/streams/startRealtimeSimulation.js";
 
 startRealtimeSimulation();
+import { reportWebVitals } from "./production/performance/webVitals.js";
+import { preloadCriticalAssets } from "./production/performance/preloadAssets.js";
+import { registerGlobalErrorHandlers } from "./production/errors/globalErrors.js";
+
+registerGlobalErrorHandlers();
+preloadCriticalAssets();
+reportWebVitals();
