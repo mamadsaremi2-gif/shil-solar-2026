@@ -15,6 +15,7 @@ import {
 import { motion } from "framer-motion";
 
 import DashboardBottomNav from "../../components/dashboard/DashboardBottomNav.jsx";
+import ProjectStepRail from "../../components/project/ProjectStepRail.jsx";
 
 const inputs = [
   {
@@ -69,6 +70,7 @@ export default function CalculationInputs() {
       </header>
 
       <main className="dashboard-main-v15">
+        <ProjectStepRail />
 
         <motion.section
           className="hero-card-v15"
@@ -172,3 +174,4 @@ export default function CalculationInputs() {
     </div>
   );
 }
+

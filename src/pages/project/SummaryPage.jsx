@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 
 import DashboardBottomNav from "../../components/dashboard/DashboardBottomNav.jsx";
+import ProjectStepRail from "../../components/project/ProjectStepRail.jsx";
 
 const summaryItems = [
   {
@@ -69,6 +70,7 @@ export default function SummaryPage() {
       </header>
 
       <main className="dashboard-main-v15">
+        <ProjectStepRail />
 
         <section className="hero-card-v15">
 
@@ -173,3 +175,4 @@ export default function SummaryPage() {
     </div>
   );
 }
+

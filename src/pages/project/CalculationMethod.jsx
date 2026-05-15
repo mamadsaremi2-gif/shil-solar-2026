@@ -6,6 +6,7 @@ export default function CalculationMethod() {
     <div className="dashboard-shell-v15" dir="rtl">
 
       <main className="dashboard-main-v15">
+        <ProjectStepRail />
 
         <section className="hero-card-v15">
 
@@ -27,3 +28,4 @@ export default function CalculationMethod() {
     </div>
   );
 }
+

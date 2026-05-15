@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 
 import DashboardBottomNav from "../../components/dashboard/DashboardBottomNav.jsx";
+import ProjectStepRail from "../../components/project/ProjectStepRail.jsx";
 
 const runItems = [
   { title: "موتور طراحی", desc: "اجرای الگوریتم مهندسی", icon: <Cpu size={34} />, tone: "cyan" },
@@ -39,6 +40,7 @@ export default function RunCalculation() {
       </header>
 
       <main className="dashboard-main-v15">
+        <ProjectStepRail />
         <section className="hero-card-v15">
           <div className="hero-row-v15">
             <span>STEP 08</span>
@@ -83,3 +85,4 @@ export default function RunCalculation() {
     </div>
   );
 }
+
