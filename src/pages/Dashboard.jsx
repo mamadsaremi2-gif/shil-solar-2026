@@ -131,6 +131,7 @@ export default function Dashboard() {
           ))}
         </section>
 
+        <BackendStatusPanel />
         <LiveRealtimePanel />
         <DataLayerStatusPanel />
         <AnalyticsDashboard />
@@ -174,6 +175,9 @@ import RealtimeMonitorWidget from "../components/dashboard/RealtimeMonitorWidget
 import AnalyticsDashboard from "../components/analytics/AnalyticsDashboard.jsx";
 import DataLayerStatusPanel from "../components/dashboard/DataLayerStatusPanel.jsx";
 import LiveRealtimePanel from "../components/dashboard/LiveRealtimePanel.jsx";
+import BackendStatusPanel from "../components/dashboard/BackendStatusPanel.jsx";
+
+
 
 
 

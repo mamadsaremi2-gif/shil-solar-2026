@@ -9,6 +9,7 @@ import Contact from "../pages/Contact.jsx";
 import Feedback from "../pages/Feedback.jsx";
 import Scenarios from "../pages/Scenarios.jsx";
 import Assistant from "../pages/Assistant.jsx";
+import LoginPage from "../pages/LoginPage.jsx";
 
 import ProjectInfo from "../pages/project/ProjectInfo.jsx";
 import Environment from "../pages/project/Environment.jsx";
@@ -42,7 +43,10 @@ export default function App() {
         <Route path="/feedback" element={<Feedback />} />
         <Route path="/scenarios" element={<Scenarios />} />
         <Route path="/assistant" element={<Assistant />} />
+        <Route path="/login" element={<LoginPage />} />
       </Routes>
     </BrowserRouter>
   );
 }
+
+
