@@ -6168,3 +6168,119 @@ textarea{
   font-size:13px;
   color:#cbd5e1;
 }
+
+/* =========================
+   ENTERPRISE FINAL LAYER
+========================= */
+
+.enterprise-final-panel-v15{
+  margin-top:18px;
+  border-radius:28px;
+  padding:18px;
+  background:
+    radial-gradient(circle at top left, rgba(34,197,94,.14), transparent 34%),
+    linear-gradient(145deg, rgba(8,18,38,.96), rgba(2,6,23,.98));
+  border:1px solid rgba(34,197,94,.22);
+}
+
+.enterprise-ready-chip-v15{
+  min-height:34px;
+  padding:0 12px;
+  border-radius:999px;
+  display:flex;
+  align-items:center;
+  color:#4ade80;
+  background:rgba(34,197,94,.14);
+  border:1px solid rgba(34,197,94,.22);
+  font-size:10px;
+  font-weight:900;
+}
+
+.enterprise-final-grid-v15{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:12px;
+}
+
+.enterprise-final-grid-v15 div{
+  min-height:112px;
+  border-radius:22px;
+  padding:16px;
+  color:white;
+  background:rgba(15,23,42,.82);
+  border:1px solid rgba(125,249,255,.08);
+}
+
+.enterprise-final-grid-v15 svg{
+  color:#4ade80;
+  margin-bottom:12px;
+}
+
+.enterprise-final-grid-v15 h4{
+  font-size:13px;
+  font-weight:900;
+  margin-bottom:8px;
+}
+
+.enterprise-final-grid-v15 p{
+  font-size:11px;
+  color:#cbd5e1;
+}
+
+/* =========================
+   ENTERPRISE FINAL LAYER
+========================= */
+
+.enterprise-final-panel-v15{
+  margin-top:18px;
+  border-radius:28px;
+  padding:18px;
+  background:
+    radial-gradient(circle at top left, rgba(34,197,94,.14), transparent 34%),
+    linear-gradient(145deg, rgba(8,18,38,.96), rgba(2,6,23,.98));
+  border:1px solid rgba(34,197,94,.22);
+}
+
+.enterprise-ready-chip-v15{
+  min-height:34px;
+  padding:0 12px;
+  border-radius:999px;
+  display:flex;
+  align-items:center;
+  color:#4ade80;
+  background:rgba(34,197,94,.14);
+  border:1px solid rgba(34,197,94,.22);
+  font-size:10px;
+  font-weight:900;
+}
+
+.enterprise-final-grid-v15{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:12px;
+}
+
+.enterprise-final-grid-v15 div{
+  min-height:112px;
+  border-radius:22px;
+  padding:16px;
+  color:white;
+  background:rgba(15,23,42,.82);
+  border:1px solid rgba(125,249,255,.08);
+}
+
+.enterprise-final-grid-v15 svg{
+  color:#4ade80;
+  margin-bottom:12px;
+}
+
+.enterprise-final-grid-v15 h4{
+  font-size:13px;
+  font-weight:900;
+  margin-bottom:8px;
+}
+
+.enterprise-final-grid-v15 p{
+  font-size:11px;
+  color:#cbd5e1;
+}

@@ -131,6 +131,7 @@ export default function Dashboard() {
           ))}
         </section>
 
+        <EnterpriseFinalPanel />
         <AIAssistantPanel />
         <BackendStatusPanel />
         <LiveRealtimePanel />
@@ -178,6 +179,9 @@ import DataLayerStatusPanel from "../components/dashboard/DataLayerStatusPanel.j
 import LiveRealtimePanel from "../components/dashboard/LiveRealtimePanel.jsx";
 import BackendStatusPanel from "../components/dashboard/BackendStatusPanel.jsx";
 import AIAssistantPanel from "../components/ai/AIAssistantPanel.jsx";
+import EnterpriseFinalPanel from "../components/dashboard/EnterpriseFinalPanel.jsx";
+
+
 
 
 

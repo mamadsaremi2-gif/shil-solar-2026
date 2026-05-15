@@ -22,3 +22,8 @@ import { registerGlobalErrorHandlers } from "./production/errors/globalErrors.js
 registerGlobalErrorHandlers();
 preloadCriticalAssets();
 reportWebVitals();
+import { initSentry } from "./enterprise/telemetry/sentry.js";
+import { initTelemetry } from "./enterprise/telemetry/telemetry.js";
+
+initSentry();
+initTelemetry();
