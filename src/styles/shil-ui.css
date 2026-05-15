@@ -6026,3 +6026,118 @@ textarea{
   font-size:11px;
   color:#cbd5e1;
 }
+
+/* =========================
+   AI ENGINEERING LAYER
+========================= */
+
+.ai-panel-v15{
+  margin-top:18px;
+  border-radius:28px;
+  padding:18px;
+  background:
+    radial-gradient(circle at top left, rgba(236,72,153,.14), transparent 34%),
+    linear-gradient(145deg, rgba(8,18,38,.96), rgba(2,6,23,.98));
+  border:1px solid rgba(125,249,255,.14);
+}
+
+.ai-chip-v15{
+  min-height:34px;
+  padding:0 12px;
+  border-radius:999px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:#f0abfc;
+  background:rgba(236,72,153,.14);
+  border:1px solid rgba(236,72,153,.24);
+  font-size:10px;
+  font-weight:900;
+}
+
+.ai-feature-grid-v15{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:12px;
+}
+
+.ai-feature-grid-v15 div{
+  min-height:102px;
+  border-radius:22px;
+  padding:16px;
+  color:white;
+  background:rgba(15,23,42,.82);
+  border:1px solid rgba(125,249,255,.08);
+}
+
+.ai-feature-grid-v15 svg{
+  color:#f0abfc;
+  margin-bottom:10px;
+}
+
+.ai-feature-grid-v15 h4{
+  font-size:13px;
+  font-weight:900;
+  margin-bottom:8px;
+}
+
+.ai-feature-grid-v15 p{
+  font-size:11px;
+  line-height:1.8;
+  color:#cbd5e1;
+}
+
+.ai-run-btn-v15{
+  width:100%;
+  min-height:58px;
+  margin-top:16px;
+  border:none;
+  border-radius:22px;
+  color:white;
+  font-size:13px;
+  font-weight:900;
+  background:linear-gradient(135deg,#ec4899,#7c3aed);
+}
+
+.ai-run-btn-v15:disabled{
+  opacity:.65;
+}
+
+.ai-result-v15,
+.ai-error-v15{
+  margin-top:16px;
+  border-radius:22px;
+  padding:16px;
+  color:white;
+  background:rgba(15,23,42,.82);
+  border:1px solid rgba(125,249,255,.08);
+}
+
+.ai-error-v15{
+  color:#f87171;
+}
+
+.ai-result-head-v15{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:14px;
+}
+
+.ai-result-head-v15 span{
+  font-size:11px;
+  color:#f0abfc;
+  font-weight:900;
+}
+
+.ai-result-head-v15 strong{
+  font-size:11px;
+  color:#8be9ff;
+}
+
+.ai-result-v15 p,
+.ai-result-v15 li{
+  font-size:12px;
+  line-height:2;
+  color:#cbd5e1;
+}
