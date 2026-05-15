@@ -28,6 +28,11 @@ import EngineeringStatsWidget from "../components/dashboard/EngineeringStatsWidg
 import BatteryHealthWidget from "../components/dashboard/BatteryHealthWidget.jsx";
 import LiveSystemTable from "../components/dashboard/LiveSystemTable.jsx";
 import ReportsWidget from "../components/dashboard/ReportsWidget.jsx";
+import IrradianceWidget from "../components/dashboard/IrradianceWidget.jsx";
+import CableSizingWidget from "../components/dashboard/CableSizingWidget.jsx";
+import LossAnalysisWidget from "../components/dashboard/LossAnalysisWidget.jsx";
+import MPPTStatusWidget from "../components/dashboard/MPPTStatusWidget.jsx";
+import WeatherLiveWidget from "../components/dashboard/WeatherLiveWidget.jsx";
 
 const metrics = [
   { title: "پروژه‌ها", value: "12", unit: "فعال", icon: <FolderOpen size={24} /> },
@@ -39,9 +44,9 @@ const metrics = [
 const quick = [
   { title: "پروژه جدید", desc: "شروع طراحی مهندسی", to: "/new-project", icon: <Plus size={34} /> },
   { title: "پروژه‌ها", desc: "مدیریت پروژه‌ها", to: "/projects", icon: <FolderOpen size={34} /> },
-  { title: "نمودار انرژی", desc: "تحلیل تولید و مصرف", to: "/new-project/run", icon: <BarChart3 size={34} /> },
-  { title: "نقشه پروژه", desc: "موقعیت و اقلیم", to: "/new-project/environment", icon: <MapPinned size={34} /> },
-  { title: "گزارش نهایی", desc: "PDF و خروجی", to: "/new-project/summary", icon: <FileText size={34} /> },
+  { title: "تحلیل انرژی", desc: "تولید، مصرف و تلفات", to: "/new-project/run", icon: <BarChart3 size={34} /> },
+  { title: "شرایط محیطی", desc: "موقعیت، تابش و آب‌وهوا", to: "/new-project/environment", icon: <MapPinned size={34} /> },
+  { title: "گزارش نهایی", desc: "PDF و خروجی مهندسی", to: "/new-project/summary", icon: <FileText size={34} /> },
   { title: "دستیار هوشمند", desc: "AI Engineering", to: "/assistant", icon: <Bot size={34} /> },
 ];
 
@@ -67,14 +72,14 @@ export default function Dashboard() {
         <section className="hero-card-v15">
           <div className="hero-row-v15">
             <span>SHIL V15</span>
-            <span>LIVE PLATFORM</span>
+            <span>ENGINEERING DASHBOARD</span>
           </div>
 
           <div className="hero-content-v15">
-            <h1>داشبورد مهندسی فعال</h1>
+            <h1>داشبورد مهندسی یکپارچه</h1>
             <h2>
-              مانیتورینگ، تحلیل انرژی، وضعیت تجهیزات،
-              گزارش‌ها و مسیر طراحی پروژه در یک داشبورد یکپارچه.
+              مانیتورینگ انرژی، وضعیت تجهیزات، MPPT، تابش،
+              کابل، تلفات و گزارش پروژه در یک محیط موبایل‌فرست.
             </h2>
           </div>
         </section>
@@ -95,9 +100,10 @@ export default function Dashboard() {
         <section className="integration-live-card-v15">
           <div>
             <span className="status-chip">ENGINE ONLINE</span>
-            <h2>موتور SHIL آماده اتصال واقعی است</h2>
+            <h2>لایه مهندسی SHIL فعال است</h2>
             <p>
-              داشبورد حالا ویجت‌های تحلیلی، مانیتورینگ و گزارش را به‌صورت واقعی نمایش می‌دهد.
+              این داشبورد فقط داده‌های فنی و مهندسی نمایش می‌دهد؛
+              بخش‌های مالی از UI اصلی حذف شده‌اند.
             </p>
           </div>
 
@@ -126,8 +132,13 @@ export default function Dashboard() {
         </section>
 
         <LiveEnergyWidget />
+        <IrradianceWidget />
+        <WeatherLiveWidget />
         <SystemStatusGrid />
+        <MPPTStatusWidget />
         <EnergyDistributionWidget />
+        <CableSizingWidget />
+        <LossAnalysisWidget />
         <EngineeringStatsWidget />
         <EngineeringRadarWidget />
         <BatteryHealthWidget />
