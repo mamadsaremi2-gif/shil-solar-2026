@@ -6703,3 +6703,78 @@ textarea{
   color:white;
   background:linear-gradient(135deg,#2563eb,#7c3aed);
 }
+
+/* =========================
+   PROJECT REAL FORM
+========================= */
+
+.project-real-form-v15{
+  width:100%;
+  margin-top:18px;
+  padding-bottom:140px;
+}
+
+.project-real-grid-v15{
+  display:grid;
+  gap:12px;
+}
+
+.project-real-grid-v15 input,
+.project-real-grid-v15 textarea{
+
+  width:100%;
+
+  min-height:58px;
+
+  border:none;
+  outline:none;
+
+  border-radius:18px;
+
+  padding:16px;
+
+  color:white;
+
+  background:
+    rgba(15,23,42,.82);
+
+  border:
+    1px solid rgba(125,249,255,.08);
+
+}
+
+.project-real-grid-v15 textarea{
+  min-height:120px;
+  resize:none;
+}
+
+.project-next-btn-v15{
+
+  width:100%;
+
+  min-height:64px;
+
+  margin-top:18px;
+
+  border:none;
+
+  border-radius:22px;
+
+  color:white;
+
+  font-size:15px;
+
+  font-weight:900;
+
+  background:
+    linear-gradient(
+      135deg,
+      #2563eb,
+      #7c3aed
+    );
+
+}
+
+.dashboard-main-v15{
+  padding-bottom:160px !important;
+}
