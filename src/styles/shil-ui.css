@@ -4843,3 +4843,66 @@ textarea{
   line-height:1.8;
   color:#cbd5e1;
 }
+
+/* =========================
+   SYSTEM SETTINGS PAGE
+========================= */
+
+.system-config-grid-v15{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-top:18px;
+}
+
+.system-config-card-v15{
+  min-height:152px;
+  border-radius:24px;
+  padding:16px;
+  color:white;
+  background:
+    radial-gradient(circle at top left, rgba(139,92,246,.14), transparent 34%),
+    linear-gradient(145deg, rgba(8,18,38,.96), rgba(2,6,23,.98));
+  border:1px solid rgba(125,249,255,.12);
+}
+
+.system-config-card-v15 svg{
+  margin-bottom:14px;
+  color:#8be9ff;
+}
+
+.system-config-card-v15 h4{
+  font-size:13px;
+  font-weight:900;
+  margin-bottom:8px;
+}
+
+.system-config-card-v15 p{
+  font-size:11px;
+  line-height:1.8;
+  color:#cbd5e1;
+}
+
+.system-warning-v15{
+  margin-top:18px;
+  min-height:86px;
+  border-radius:24px;
+  padding:16px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  color:white;
+  background:rgba(250,204,21,.10);
+  border:1px solid rgba(250,204,21,.20);
+}
+
+.system-warning-v15 svg{
+  min-width:22px;
+  color:#fde047;
+}
+
+.system-warning-v15 p{
+  font-size:12px;
+  line-height:2;
+  color:#fef3c7;
+}
