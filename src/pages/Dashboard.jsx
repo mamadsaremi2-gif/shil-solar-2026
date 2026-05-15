@@ -151,6 +151,9 @@ export default function Dashboard() {
         <EnergySourceWidget />
         <EngineeringLogWidget />
         <SafetyWidget />
+        <ThermalAnalysisWidget />
+        <PVStringWidget />
+        <RealtimeMonitorWidget />
         <EnvironmentWidget />
         <ActivityFeed />
       </main>
@@ -162,4 +165,9 @@ export default function Dashboard() {
 import EnergySourceWidget from "../components/dashboard/EnergySourceWidget.jsx";
 import EngineeringLogWidget from "../components/dashboard/EngineeringLogWidget.jsx";
 import SafetyWidget from "../components/dashboard/SafetyWidget.jsx";
+import ThermalAnalysisWidget from "../components/dashboard/ThermalAnalysisWidget.jsx";
+import PVStringWidget from "../components/dashboard/PVStringWidget.jsx";
+import RealtimeMonitorWidget from "../components/dashboard/RealtimeMonitorWidget.jsx";
+
+
 

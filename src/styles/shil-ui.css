@@ -5270,3 +5270,115 @@ textarea{
 
   color:#facc15;
 }
+
+/* =========================
+   REALTIME ENGINEERING WIDGETS
+========================= */
+
+.thermal-widget-v15,
+.pv-string-widget-v15,
+.realtime-monitor-v15{
+  margin-top:18px;
+
+  border-radius:28px;
+
+  padding:18px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(8,18,38,.96),
+      rgba(2,6,23,.98)
+    );
+
+  border:
+    1px solid rgba(125,249,255,.14);
+}
+
+.pv-string-grid-v15{
+  display:grid;
+
+  grid-template-columns:1fr 1fr;
+
+  gap:12px;
+}
+
+.pv-string-card-v15{
+  min-height:126px;
+
+  border-radius:22px;
+
+  padding:16px;
+
+  background:
+    rgba(15,23,42,.82);
+
+  border:
+    1px solid rgba(125,249,255,.1);
+
+  color:white;
+}
+
+.pv-string-card-v15 h4{
+  font-size:12px;
+
+  margin-bottom:14px;
+
+  color:#cbd5e1;
+}
+
+.pv-string-card-v15 p{
+  font-size:18px;
+
+  font-weight:900;
+
+  margin-bottom:12px;
+
+  color:#8be9ff;
+}
+
+.pv-string-card-v15 strong{
+  font-size:11px;
+
+  color:#4ade80;
+}
+
+.realtime-monitor-list-v15{
+  display:flex;
+
+  flex-direction:column;
+
+  gap:12px;
+}
+
+.realtime-monitor-row-v15{
+  min-height:58px;
+
+  border-radius:18px;
+
+  padding:0 16px;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  color:white;
+
+  background:
+    rgba(15,23,42,.78);
+
+  border:
+    1px solid rgba(125,249,255,.08);
+}
+
+.realtime-monitor-row-v15 p{
+  font-size:12px;
+}
+
+.realtime-monitor-row-v15 strong{
+  font-size:12px;
+
+  color:#4ade80;
+}
