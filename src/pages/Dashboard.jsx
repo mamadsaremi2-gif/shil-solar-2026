@@ -131,6 +131,7 @@ export default function Dashboard() {
           ))}
         </section>
 
+        <AnalyticsDashboard />
         <LiveEnergyWidget />
         <IrradianceWidget />
         <WeatherLiveWidget />
@@ -168,6 +169,9 @@ import SafetyWidget from "../components/dashboard/SafetyWidget.jsx";
 import ThermalAnalysisWidget from "../components/dashboard/ThermalAnalysisWidget.jsx";
 import PVStringWidget from "../components/dashboard/PVStringWidget.jsx";
 import RealtimeMonitorWidget from "../components/dashboard/RealtimeMonitorWidget.jsx";
+import AnalyticsDashboard from "../components/analytics/AnalyticsDashboard.jsx";
+
+
 
 
 
