@@ -1,33 +1,20 @@
 ﻿import React from "react";
 import { Link } from "react-router-dom";
-
-import {
-  FolderOpen,
-  ChevronLeft,
-  Save,
-  CheckCircle2,
-} from "lucide-react";
-
-import { motion } from "framer-motion";
+import { ChevronLeft, FolderOpen } from "lucide-react";
 
 import DashboardBottomNav from "../../components/dashboard/DashboardBottomNav.jsx";
-import ProjectActionBar from "../../components/project/ProjectActionBar.jsx";
 import ProjectStepRail from "../../components/project/ProjectStepRail.jsx";
+import ProjectActionBar from "../../components/project/ProjectActionBar.jsx";
+import EngineeringMiniCard from "../../components/project/EngineeringMiniCard.jsx";
+import EngineeringStatusPanel from "../../components/project/EngineeringStatusPanel.jsx";
+import EngineeringInputGrid from "../../components/project/EngineeringInputGrid.jsx";
 
 export default function ProjectInfo() {
   return (
     <div className="dashboard-shell-v15" dir="rtl">
-      {/* BG GLOW */}
-
-      <div className="dashboard-bg-glow glow-1" />
-      <div className="dashboard-bg-glow glow-2" />
-      <div className="dashboard-bg-glow glow-3" />
-
-      {/* HEADER */}
-
       <header className="dashboard-header-v15">
         <Link to="/new-project" className="header-btn-v15">
-          <ChevronLeft size={22} />
+          <ChevronLeft size={20} />
         </Link>
 
         <div className="brand-v15">
@@ -35,178 +22,106 @@ export default function ProjectInfo() {
           <span>PROJECT INFORMATION</span>
         </div>
 
-        <div className="header-btn-v15">
-          <FolderOpen size={22} />
-        </div>
+        <Link to="/new-project/environment" className="header-btn-v15">
+          بعدی
+        </Link>
       </header>
-
-      {/* MAIN */}
 
       <main className="dashboard-main-v15">
         <ProjectStepRail />
-        {/* HERO */}
 
-        <motion.section
-          className="hero-card-v15"
-          initial={{ opacity: 0, y: 18 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35 }}
-        >
+        <section className="hero-card-v15">
           <div className="hero-row-v15">
             <span>STEP 01</span>
             <span>PROJECT CORE</span>
           </div>
 
           <div className="hero-content-v15">
-            <h1>Ø§Ø·Ù„Ø§Ø¹Ø§Øª Ù¾Ø±ÙˆÚ˜Ù‡</h1>
-
+            <h1>اطلاعات پروژه</h1>
             <h2>
-              Ù…Ø´Ø®ØµØ§Øª Ù¾Ø§ÛŒÙ‡ Ù¾Ø±ÙˆÚ˜Ù‡ Ùˆ Ø§Ø·Ù„Ø§Ø¹Ø§Øª Ø§ÙˆÙ„ÛŒÙ‡
+              ثبت مشخصات پایه پروژه، کارفرما، موقعیت و نوع طراحی مهندسی.
             </h2>
           </div>
-        </motion.section>
+        </section>
 
-        {/* FORM CARD */}
+        <EngineeringInputGrid>
+          <EngineeringMiniCard
+            title="نوع پروژه"
+            value="خورشیدی"
+            subtitle="PV / Hybrid / Backup"
+          />
 
-        <motion.section
-          className="status-card-v15"
-          initial={{ opacity: 0, y: 22 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.04 }}
-        >
-          <div className="status-chip">
-            SHIL V15
+          <EngineeringMiniCard
+            title="وضعیت"
+            value="Draft"
+            subtitle="در حال تکمیل"
+          />
+
+          <EngineeringMiniCard
+            title="نسخه"
+            value="V15"
+            subtitle="Engineering UI"
+          />
+
+          <EngineeringMiniCard
+            title="شناسه"
+            value="SHIL-001"
+            subtitle="Project ID"
+          />
+        </EngineeringInputGrid>
+
+        <section className="project-section-v15">
+          <div className="project-section-head-v15">
+            <h3>فرم اطلاعات پایه</h3>
+            <span>Project Data</span>
           </div>
 
-          {/* FIELD */}
-
           <div className="project-field-v15">
-            <label>Ù†Ø§Ù… Ù¾Ø±ÙˆÚ˜Ù‡</label>
-
-            <input
-              type="text"
-              placeholder="Ù…Ø«Ù„Ø§Ù‹ ÙˆÛŒÙ„Ø§ÛŒ Ø®ÙˆØ±Ø´ÛŒØ¯ÛŒ Ø´Ù…Ø§Ù„"
-            />
+            <label>نام پروژه</label>
+            <input placeholder="مثلاً نیروگاه خورشیدی ویلایی" />
           </div>
 
-          {/* FIELD */}
-
           <div className="project-field-v15">
-            <label>Ù†Ø§Ù… Ú©Ø§Ø±ÙØ±Ù…Ø§</label>
-
-            <input
-              type="text"
-              placeholder="Ù†Ø§Ù… Ø´Ø®Øµ ÛŒØ§ Ø´Ø±Ú©Øª"
-            />
+            <label>نام کارفرما</label>
+            <input placeholder="نام شخص یا شرکت" />
           </div>
 
-          {/* FIELD */}
+          <div className="project-field-v15">
+            <label>شهر / استان</label>
+            <input placeholder="مثلاً شیراز / فارس" />
+          </div>
 
           <div className="project-field-v15">
-            <label>Ù†ÙˆØ¹ Ù¾Ø±ÙˆÚ˜Ù‡</label>
-
+            <label>نوع پروژه</label>
             <select>
-              <option>
-                Ø§Ù†ØªØ®Ø§Ø¨ Ù†ÙˆØ¹ Ù¾Ø±ÙˆÚ˜Ù‡
-              </option>
-
-              <option>
-                Ù†ÛŒØ±ÙˆÚ¯Ø§Ù‡ Ø®ÙˆØ±Ø´ÛŒØ¯ÛŒ
-              </option>
-
-              <option>
-                Ø¨Ø±Ù‚ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ
-              </option>
-
-              <option>
-                Ù‡ÛŒØ¨Ø±ÛŒØ¯
-              </option>
+              <option>خورشیدی با پنل</option>
+              <option>برق اضطراری</option>
+              <option>هیبرید</option>
             </select>
           </div>
 
-          {/* FIELD */}
-
           <div className="project-field-v15">
-            <label>Ø´Ù‡Ø± Ù¾Ø±ÙˆÚ˜Ù‡</label>
-
-            <input
-              type="text"
-              placeholder="Ù…Ø«Ù„Ø§Ù‹ Ø´ÛŒØ±Ø§Ø²"
-            />
-          </div>
-
-          {/* FIELD */}
-
-          <div className="project-field-v15">
-            <label>Ø´Ù…Ø§Ø±Ù‡ ØªÙ…Ø§Ø³</label>
-
-            <input
-              type="text"
-              placeholder="09xxxxxxxxx"
-            />
-          </div>
-
-          {/* FIELD */}
-
-          <div className="project-field-v15">
-            <label>ØªÙˆØ¶ÛŒØ­Ø§Øª Ù¾Ø±ÙˆÚ˜Ù‡</label>
-
+            <label>توضیحات فنی</label>
             <textarea
               rows="5"
-              placeholder="ØªÙˆØ¶ÛŒØ­Ø§Øª ÙÙ†ÛŒØŒ Ù†ÛŒØ§Ø²Ù…Ù†Ø¯ÛŒâ€ŒÙ‡Ø§ Ùˆ Ø´Ø±Ø§ÛŒØ· Ù¾Ø±ÙˆÚ˜Ù‡..."
+              placeholder="شرایط پروژه، نیاز مصرف، محدودیت‌ها و توضیحات اجرایی..."
             />
           </div>
-        </motion.section>
+        </section>
 
-        {/* STATUS */}
-
-        <motion.section
-          className="status-card-v15"
-          initial={{ opacity: 0, y: 22 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.08 }}
-        >
-          <div className="status-chip">
-            ENGINE STATUS
-          </div>
-
-          <h2>ÙˆØ¶Ø¹ÛŒØª Ù…Ø±Ø­Ù„Ù‡</h2>
-
-          <p>
-            Ø§Ø·Ù„Ø§Ø¹Ø§Øª Ù¾Ø§ÛŒÙ‡ Ù¾Ø±ÙˆÚ˜Ù‡ Ø¨Ø±Ø§ÛŒ Ø§ØªØµØ§Ù„
-            Ø¨Ù‡ Ù…ÙˆØªÙˆØ± Ø·Ø±Ø§Ø­ÛŒ Ùˆ Ù…Ø­Ø§Ø³Ø¨Ø§Øª Ù…Ù‡Ù†Ø¯Ø³ÛŒ
-            Ø¯Ø± Ø§ÛŒÙ† Ù…Ø±Ø­Ù„Ù‡ Ø°Ø®ÛŒØ±Ù‡ Ù…ÛŒâ€ŒØ´ÙˆØ¯.
-          </p>
-        </motion.section>
+        <EngineeringStatusPanel
+          title="وضعیت اطلاعات پروژه"
+          items={[
+            { label: "Project Name", value: "در انتظار" },
+            { label: "Client", value: "در انتظار" },
+            { label: "Location", value: "در انتظار" },
+            { label: "Validation", value: "Ready" },
+          ]}
+        />
       </main>
-
-      {/* ACTION BAR */}
-
-      <div className="project-actionbar-v15">
-        <button className="action-btn-v15 secondary">
-          <ChevronLeft size={20} />
-
-          Ù…Ø±Ø­Ù„Ù‡ Ù‚Ø¨Ù„
-        </button>
-
-        <button className="action-btn-v15">
-          <Save size={20} />
-
-          Ø°Ø®ÛŒØ±Ù‡ Ù¾ÛŒØ´â€ŒÙ†ÙˆÛŒØ³
-        </button>
-
-        <button className="action-btn-v15 primary">
-          <CheckCircle2 size={20} />
-
-          ØªØ§ÛŒÛŒØ¯ Ù…Ø±Ø­Ù„Ù‡
-        </button>
-      </div>
-
-      {/* FOOTER */}
 
       <ProjectActionBar />
       <DashboardBottomNav />
     </div>
   );
 }
-
