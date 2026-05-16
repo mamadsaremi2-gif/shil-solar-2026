@@ -29,16 +29,17 @@ export default function Scenarios() {
             <h3>{scenario.title}</h3>
 
             <div className="shil-scenario-detail-grid">
-              <span>دسته</span><strong>{scenario.category}</strong>
-              <span>نوع سیستم</span><strong>{scenario.systemType || scenario.domain}</strong>
+              <span>نوع پروژه</span><strong>{scenario.category}</strong>
+              <span>سطح</span><strong>{scenario.level}</strong>
               <span>توان تقریبی</span><strong>{scenario.loadEstimate} W</strong>
               <span>اینورتر</span><strong>{scenario.inverter}</strong>
-              <span>باتری</span><strong>{scenario.suggestedBattery}</strong>
-              <span>پنل پیشنهادی</span><strong>{scenario.suggestedPanels}</strong>
+              <span>نوع باتری</span><strong>{scenario.batteryType}</strong>
+              <span>باتری پیشنهادی</span><strong>{scenario.suggestedBattery}</strong>
+              <span>تعداد پنل</span><strong>{scenario.suggestedPanels}</strong>
             </div>
 
             <button className="shil-primary-action" type="button">
-              استفاده از این سناریو
+              انتخاب سناریو
             </button>
           </article>
         ))}
