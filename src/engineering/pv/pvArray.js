@@ -1,4 +1,4 @@
-export function calculatePVArray({
+﻿export function calculatePVArray({
   dailyEnergyWh = 0,
   peakSunHours = 5,
   panelPowerW = 585,

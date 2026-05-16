@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { useDropzone }
 from "react-dropzone";
 
@@ -18,7 +18,7 @@ export default function FileDropzone() {
       <input {...getInputProps()} />
 
       <p>
-        ??????? ?? ????? ??? ????
+        فایل‌ها را اینجا رها کنید
       </p>
 
     </div>

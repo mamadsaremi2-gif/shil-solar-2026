@@ -1,10 +1,10 @@
-import React from "react";
+﻿import React from "react";
 
 const alerts = [
 
   {
     title: "High Temperature",
-    value: "46�C",
+    value: "46°C",
   },
 
   {
@@ -36,7 +36,7 @@ export default function SafetyWidget() {
 
           <span>SAFETY</span>
 
-          <h3>????? ????? ?????</h3>
+          <h3>وضعیت ایمنی سیستم</h3>
 
         </div>
 

@@ -1,4 +1,4 @@
-export const mockProjectResult = {
+﻿export const mockProjectResult = {
   panelCount: 12,
   inverterPower: 6000,
   batteryCapacity: 200,

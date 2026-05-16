@@ -1,4 +1,4 @@
-export function calculatePVString({
+﻿export function calculatePVString({
   panelVoc = 49.5,
   panelVmp = 41.8,
   panelImp = 13.99,

@@ -2,6 +2,7 @@ import React from "react";
 import { Link, useParams } from "react-router-dom";
 import { Sun, BatteryCharging, Feather, Gauge, Factory } from "lucide-react";
 import ShilPageShell from "../components/ShilPageShell.jsx";
+import { getScenarioList } from "../data/scenarios/scenarioLibrary.js";
 
 const domainLabel = { solar: "پروژه های انرژی خورشیدی", emergency: "پروژه های برق اضطراری" };
 const weightLabel = { light: "سبک", medium: "متوسط", heavy: "سنگین" };
@@ -10,11 +11,11 @@ export default function Scenarios() {
   const { domain, weight } = useParams();
 
   if (domain && weight) {
-    const scenarios = Array.from({ length: 100 }, (_, index) => `${domainLabel[domain]} - سناریوی ${weightLabel[weight]} ${index + 1}`);
+    const scenarios = getScenarioList(domain, weight);
     return (
       <ShilPageShell title={`سناریوهای آماده ${weightLabel[weight]}`}>
         <section className="shil-scenario-list">
-          {scenarios.map((item) => <article className="shil-scenario-row" key={item}>{item}</article>)}
+          {scenarios.map((item) => <article className="shil-scenario-row" key={item.id}><strong>{item.title}</strong><span>{item.description}</span></article>)}
         </section>
       </ShilPageShell>
     );

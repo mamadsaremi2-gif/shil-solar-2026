@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { AlertTriangle, ShieldCheck } from "lucide-react";
 import { useTelemetryStore } from "../../industrial/telemetry/telemetryStore.js";
 import { evaluateAlarms } from "../../industrial/alarms/alarmEngine.js";
@@ -12,7 +12,7 @@ export default function AlarmCenterPanel() {
       <div className="widget-head-v15">
         <div>
           <span>ALARM CENTER</span>
-          <h3>???? ????? ?????</h3>
+          <h3>مرکز هشدار صنعتی</h3>
         </div>
       </div>
 
@@ -21,8 +21,8 @@ export default function AlarmCenterPanel() {
           <div className="alarm-row-v15 ok">
             <ShieldCheck size={20} />
             <div>
-              <h4>???? ????? ????</h4>
-              <p>????? ?? ????? ?????? ???.</p>
+              <h4>بدون هشدار فعال</h4>
+              <p>سیستم در وضعیت پایدار است.</p>
             </div>
           </div>
         ) : (

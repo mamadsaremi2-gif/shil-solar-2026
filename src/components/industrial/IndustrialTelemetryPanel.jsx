@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { Wifi, Cpu, BatteryCharging, Zap } from "lucide-react";
 import { useTelemetryStore } from "../../industrial/telemetry/telemetryStore.js";
 
@@ -10,7 +10,7 @@ export default function IndustrialTelemetryPanel() {
       <div className="widget-head-v15">
         <div>
           <span>INDUSTRIAL TELEMETRY</span>
-          <h3>?????????? ????? ???????</h3>
+          <h3>مانیتورینگ صنعتی تجهیزات</h3>
         </div>
 
         <div className={`industrial-chip-v15 ${connected ? "online" : "offline"}`}>

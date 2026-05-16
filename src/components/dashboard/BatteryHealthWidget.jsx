@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 
 import {
   LineChart,
@@ -55,7 +55,7 @@ export default function BatteryHealthWidget() {
 
           <span>BATTERY HEALTH</span>
 
-          <h3>????? ????? ?????</h3>
+          <h3>وضعیت سلامت باتری</h3>
 
         </div>
 

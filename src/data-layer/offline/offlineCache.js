@@ -1,4 +1,4 @@
-import localforage from "localforage";
+﻿import localforage from "localforage";
 
 export const shilOfflineStore = localforage.createInstance({
   name: "SHIL_V15",

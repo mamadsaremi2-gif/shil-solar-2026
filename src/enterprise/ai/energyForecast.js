@@ -1,4 +1,4 @@
-export function forecastEnergy({
+﻿export function forecastEnergy({
   dailyEnergy = 58,
   days = 7,
   weatherFactor = 0.92,

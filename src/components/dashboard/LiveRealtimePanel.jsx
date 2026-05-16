@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 
 import {
   Activity,
@@ -33,7 +33,7 @@ export default function LiveRealtimePanel() {
 
           <span>REALTIME CORE</span>
 
-          <h3>???? ??????? ?????</h3>
+          <h3>هسته لحظه‌ای سیستم</h3>
 
         </div>
 

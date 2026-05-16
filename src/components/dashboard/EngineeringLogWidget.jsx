@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 
 const logs = [
 
@@ -36,7 +36,7 @@ export default function EngineeringLogWidget() {
 
           <span>ENGINE LOG</span>
 
-          <h3>??? ?????? ?????</h3>
+          <h3>لاگ مهندسی سیستم</h3>
 
         </div>
 

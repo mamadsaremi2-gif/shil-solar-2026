@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { Activity, CheckCircle2, ShieldCheck, RotateCcw } from "lucide-react";
 
 import { APP_VERSION } from "../../ops/version/appVersion.js";
@@ -14,7 +14,7 @@ export default function OperationalStatusPanel() {
       version: APP_VERSION,
     });
 
-    alert("Snapshot ????? ??");
+    alert("Snapshot ذخیره شد");
   }
 
   return (
@@ -22,7 +22,7 @@ export default function OperationalStatusPanel() {
       <div className="widget-head-v15">
         <div>
           <span>OPERATIONAL STATUS</span>
-          <h3>????? ??????????? ??</h3>
+          <h3>وضعیت بهره‌برداری اپ</h3>
         </div>
 
         <div className="ops-version-v15">
@@ -34,25 +34,25 @@ export default function OperationalStatusPanel() {
         <div>
           <Activity size={22} />
           <h4>App Health</h4>
-          <p>???? ???????? ???? ?????</p>
+          <p>تمام ماژول‌ها فعال هستند</p>
         </div>
 
         <div>
           <CheckCircle2 size={22} />
           <h4>Project Flow</h4>
-          <p>? ????? ????? ???? ???</p>
+          <p>۸ مرحله پروژه متصل است</p>
         </div>
 
         <div>
           <ShieldCheck size={22} />
           <h4>Safe Mode</h4>
-          <p>Recovery ????? ???</p>
+          <p>Recovery آماده است</p>
         </div>
 
         <button type="button" onClick={handleSnapshot}>
           <RotateCcw size={22} />
           <h4>Snapshot</h4>
-          <p>????? ????? ????</p>
+          <p>ذخیره وضعیت فعلی</p>
         </button>
       </div>
     </section>

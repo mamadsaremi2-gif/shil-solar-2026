@@ -1,24 +1,24 @@
-import React from "react";
+﻿import React from "react";
 
 const equipments = [
 
   {
-    title: "??? JA Solar",
+    title: "پنل JA Solar",
     qty: 24,
   },
 
   {
-    title: "????? Lithium",
+    title: "باتری Lithium",
     qty: 8,
   },
 
   {
-    title: "??????? Hybrid",
+    title: "اینورتر Hybrid",
     qty: 2,
   },
 
   {
-    title: "???? DC",
+    title: "کابل DC",
     qty: 340,
   },
 
@@ -36,7 +36,7 @@ export default function EquipmentWidget() {
 
           <span>EQUIPMENT</span>
 
-          <h3>??????? ?????</h3>
+          <h3>تجهیزات پروژه</h3>
 
         </div>
 

@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import InputMask from "react-input-mask";
 
 export default function PhoneMask() {
@@ -14,7 +14,7 @@ export default function PhoneMask() {
         <input
           {...inputProps}
           className="mask-input-v15"
-          placeholder="????? ????"
+          placeholder="شماره تماس"
         />
 
       )}

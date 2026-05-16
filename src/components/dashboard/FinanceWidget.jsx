@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 
 const finance = [
 
@@ -36,7 +36,7 @@ export default function FinanceWidget() {
 
           <span>FINANCIAL</span>
 
-          <h3>????? ???????</h3>
+          <h3>تحلیل اقتصادی</h3>
 
         </div>
 

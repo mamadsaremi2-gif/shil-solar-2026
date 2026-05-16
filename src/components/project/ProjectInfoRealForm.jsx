@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 
 import {
   useNavigate,
@@ -31,7 +31,7 @@ export default function ProjectInfoRealForm() {
       <div className="project-real-grid-v15">
 
         <input
-          placeholder="????? ?????"
+          placeholder="عنوان پروژه"
           value={project.title}
           onChange={(e)=>
             setProjectField(
@@ -42,7 +42,7 @@ export default function ProjectInfoRealForm() {
         />
 
         <input
-          placeholder="??? ?????"
+          placeholder="نام مشتری"
           value={project.customer}
           onChange={(e)=>
             setProjectField(
@@ -54,7 +54,7 @@ export default function ProjectInfoRealForm() {
 
         <input
           type="number"
-          placeholder="???? ?????? (Wh)"
+          placeholder="مصرف روزانه (Wh)"
           value={project.dailyEnergyWh}
           onChange={(e)=>
             setProjectField(
@@ -66,7 +66,7 @@ export default function ProjectInfoRealForm() {
 
         <input
           type="number"
-          placeholder="??? ??? (W)"
+          placeholder="پیک بار (W)"
           value={project.peakLoadW}
           onChange={(e)=>
             setProjectField(
@@ -77,7 +77,7 @@ export default function ProjectInfoRealForm() {
         />
 
         <textarea
-          placeholder="??????? ?????"
+          placeholder="توضیحات پروژه"
         />
 
       </div>
@@ -88,7 +88,7 @@ export default function ProjectInfoRealForm() {
         onClick={handleNext}
       >
 
-        ????? ????? ???
+        ادامه مرحله بعد
 
       </button>
 

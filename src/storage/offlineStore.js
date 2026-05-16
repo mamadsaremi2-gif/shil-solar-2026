@@ -1,4 +1,4 @@
-import localforage
+﻿import localforage
 from "localforage";
 
 export const offlineStore =

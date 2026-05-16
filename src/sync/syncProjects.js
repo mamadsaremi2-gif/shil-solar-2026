@@ -1,4 +1,4 @@
-export async function syncProjects() {
+﻿export async function syncProjects() {
 
   return {
     success: true,

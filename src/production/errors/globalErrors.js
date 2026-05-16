@@ -1,4 +1,4 @@
-export function registerGlobalErrorHandlers() {
+﻿export function registerGlobalErrorHandlers() {
   window.addEventListener("error", (event) => {
     console.error("[SHIL Global Error]", event.error);
   });

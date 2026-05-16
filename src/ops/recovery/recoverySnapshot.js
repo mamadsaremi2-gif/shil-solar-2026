@@ -1,4 +1,4 @@
-export function createRecoverySnapshot(data = {}) {
+﻿export function createRecoverySnapshot(data = {}) {
   const snapshot = {
     id: crypto.randomUUID(),
     createdAt: new Date().toISOString(),

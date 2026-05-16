@@ -1,4 +1,4 @@
-import adapter
+﻿import adapter
 from "webrtc-adapter";
 
 export {

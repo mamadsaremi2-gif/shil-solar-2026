@@ -1,4 +1,4 @@
-export function generateBOM(result) {
+﻿export function generateBOM(result) {
 
   return [
 

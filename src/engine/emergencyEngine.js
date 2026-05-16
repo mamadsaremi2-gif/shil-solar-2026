@@ -1,4 +1,4 @@
-export function runEmergencySizing(data = {}) {
+﻿export function runEmergencySizing(data = {}) {
   const loadPower = Number(data.loadPower || 0);
   const backupHours = Number(data.backupHours || 2);
   const batteryVoltage = Number(data.batteryVoltage || 24);

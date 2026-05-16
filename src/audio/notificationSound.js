@@ -1,4 +1,4 @@
-import { Howl }
+﻿import { Howl }
 from "howler";
 
 export const notificationSound =

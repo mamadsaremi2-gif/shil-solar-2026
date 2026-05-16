@@ -1,4 +1,4 @@
-export async function requestVoice() {
+﻿export async function requestVoice() {
 
   const stream =
     await navigator

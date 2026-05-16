@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 
 const losses = [
 
@@ -36,7 +36,7 @@ export default function LossAnalysisWidget() {
 
           <span>LOSS ANALYSIS</span>
 
-          <h3>????? ????? ?????</h3>
+          <h3>تحلیل تلفات سیستم</h3>
 
         </div>
 

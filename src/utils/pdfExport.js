@@ -1,4 +1,4 @@
-import jsPDF from "jspdf";
+﻿import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 
 export async function exportPDF(elementId, fileName = "shil-report.pdf") {

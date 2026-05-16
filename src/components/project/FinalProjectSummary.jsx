@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 
 import {
   useProjectStore,
@@ -31,7 +31,7 @@ export default function FinalProjectSummary() {
 
         <div>
           <span>FINAL SUMMARY</span>
-          <h3>????? ????? ?????</h3>
+          <h3>خلاصه نهایی پروژه</h3>
         </div>
 
       </div>
@@ -39,21 +39,21 @@ export default function FinalProjectSummary() {
       <div className="summary-grid-v15">
 
         <div>
-          <h4>??? ???????</h4>
+          <h4>پنل خورشیدی</h4>
           <strong>
             {result.pv.panelCount}
           </strong>
         </div>
 
         <div>
-          <h4>???????</h4>
+          <h4>اینورتر</h4>
           <strong>
             {result.inverter.recommendedInverterW}W
           </strong>
         </div>
 
         <div>
-          <h4>?????</h4>
+          <h4>باتری</h4>
           <strong>
             {result.battery.batteryKWh}kWh
           </strong>

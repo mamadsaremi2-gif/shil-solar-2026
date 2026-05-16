@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 
 import {
   ArrowRight,
@@ -17,7 +17,7 @@ export default function ProjectActionBar() {
         <ArrowRight size={18} />
 
         <span>
-          ????? ???
+          مرحله قبل
         </span>
 
       </button>
@@ -27,7 +27,7 @@ export default function ProjectActionBar() {
         <Save size={18} />
 
         <span>
-          ????? ????????
+          ذخیره پیش‌نویس
         </span>
 
       </button>
@@ -37,7 +37,7 @@ export default function ProjectActionBar() {
         <CheckCircle2 size={18} />
 
         <span>
-          ????? ?????
+          تایید مرحله
         </span>
 
       </button>

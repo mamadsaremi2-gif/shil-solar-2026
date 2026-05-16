@@ -1,5 +1,6 @@
 import React from "react";
 import { Link, useParams, useLocation } from "react-router-dom";
+import { approveProjectStep } from "../../workflow/projectWorkflow.js";
 import EngineeringPageShell from "../../components/EngineeringPageShell.jsx";
 import { inputMethods } from "../../data/shilFlowConfig.jsx";
 
@@ -20,7 +21,7 @@ export default function CalculationMethod() {
           <div className="shil-section-head"><h2>یکی از روش‌های ورود دیتا را انتخاب کنید</h2><span>{isEmergency ? "Emergency" : labels[subtype] || "Solar"}</span></div>
           <div className="shil-method-grid-five">
             {inputMethods.map((method) => (
-              <Link key={method.key} className="shil-large-choice" to={`/new-project/input/${domain}/${method.key}`} state={{ subtype }}>
+              <Link key={method.key} className="shil-large-choice" onClick={() => approveProjectStep("method")} to={`/new-project/input/${domain}/${method.key}`} state={{ subtype }}>
                 <h2>{method.title}</h2>
                 <p>{method.description}</p>
               </Link>

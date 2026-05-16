@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 
 import {
   ChevronLeft,
@@ -12,17 +12,17 @@ export default function ActionBar() {
 
       <button className="action-btn-v15 secondary">
         <ChevronLeft size={18} />
-        ????? ???
+        مرحله قبل
       </button>
 
       <button className="action-btn-v15">
         <Save size={18} />
-        ?????
+        ذخیره
       </button>
 
       <button className="action-btn-v15 primary">
         <CheckCircle2 size={18} />
-        ?????
+        تایید
       </button>
 
     </div>

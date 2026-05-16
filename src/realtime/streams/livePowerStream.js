@@ -1,4 +1,4 @@
-import { interval } from "rxjs";
+﻿import { interval } from "rxjs";
 import { map } from "rxjs/operators";
 
 export const livePowerStream = interval(2000).pipe(

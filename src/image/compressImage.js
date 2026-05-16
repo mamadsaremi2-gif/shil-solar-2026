@@ -1,4 +1,4 @@
-import imageCompression
+﻿import imageCompression
 from "browser-image-compression";
 
 export async function compressImage(

@@ -46,6 +46,6 @@ export const assetPlacementGuide = [
   ["QR پشتیبانی", SHIL_ASSETS.contact.qrSupport],
   ["QR واتساپ", SHIL_ASSETS.contact.qrWhatsApp],
   ["QR کاتالوگ", SHIL_ASSETS.contact.qrCatalog],
-  ["آیکون‌های داشبورد", "/assets/shil/icons/dashboard/"],
-  ["آیکون‌های پروژه جدید", "/assets/shil/icons/project/"],
+  ["آیکون‌های داشبورد", "/assets/shil/icon/dashboard/"],
+  ["آیکون‌های پروژه جدید", "/assets/shil/icon/project/"],
 ];

@@ -1,0 +1,18 @@
+export const SYSTEM_SETTINGS_FIELDS = [
+  "systemVoltage",
+  "batteryType",
+  "batteryUnitVoltage",
+  "batteryUnitAh",
+  "dod",
+  "inverterEfficiency",
+  "controllerEfficiency",
+  "panelWatt",
+  "panelVoc",
+  "panelVmp",
+  "controllerMaxVoc",
+  "mpptMinVoltage",
+  "mpptMaxVoltage",
+  "dcCableLength",
+  "acCableLength",
+  "batteryCableLength",
+];

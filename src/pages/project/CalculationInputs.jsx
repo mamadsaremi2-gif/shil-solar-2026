@@ -1,5 +1,6 @@
 import React from "react";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
+import StepConfirmLink from "../../components/StepConfirmLink.jsx";
 import EngineeringPageShell from "../../components/EngineeringPageShell.jsx";
 
 const methodTitles = {
@@ -55,7 +56,7 @@ export default function CalculationInputs() {
           </div>
         </div>
 
-        <Link className="shil-primary-wide" to={`/new-project/system/${domain}`} state={{ method, subtype }}>تأیید و ادامه به تنظیمات سیستم</Link>
+        <StepConfirmLink to={`/new-project/system/${domain}`} state={{ method, subtype }}>تأیید و ادامه به تنظیمات سیستم</StepConfirmLink>
       </section>
     </EngineeringPageShell>
   );

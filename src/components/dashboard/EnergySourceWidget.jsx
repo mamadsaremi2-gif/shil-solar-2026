@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 
 import {
   PieChart,
@@ -45,7 +45,7 @@ export default function EnergySourceWidget() {
 
           <span>ENERGY SOURCES</span>
 
-          <h3>????? ????? ?????</h3>
+          <h3>منابع تامین انرژی</h3>
 
         </div>
 

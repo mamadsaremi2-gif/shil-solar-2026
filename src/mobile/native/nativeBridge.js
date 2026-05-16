@@ -1,4 +1,4 @@
-import { Device } from "@capacitor/device";
+﻿import { Device } from "@capacitor/device";
 import { Network } from "@capacitor/network";
 
 export async function getNativeDeviceInfo() {

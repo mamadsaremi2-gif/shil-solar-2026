@@ -1,5 +1,6 @@
 import React from "react";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
+import StepConfirmLink from "../../components/StepConfirmLink.jsx";
 import EngineeringPageShell from "../../components/EngineeringPageShell.jsx";
 
 export default function SystemSettings() {
@@ -34,7 +35,7 @@ export default function SystemSettings() {
 
         {emergency ? <div className="shil-reason-card">عنوان محصول تخصصی فعلاً در رابط کاربری نمایش داده نمی‌شود؛ کاربر فقط مسیر برق اضطراری، اینورتر و باتری را می‌بیند، اما هسته محاسبات با منطق دقیق برق اضطراری اجرا می‌شود.</div> : null}
 
-        <Link className="shil-primary-wide" to={`/new-project/summary/${domain}`} state={{ method }}>تأیید و مشاهده چکیده</Link>
+        <StepConfirmLink to={`/new-project/summary/${domain}`} state={{ method }}>تأیید و مشاهده چکیده</StepConfirmLink>
       </section>
     </EngineeringPageShell>
   );

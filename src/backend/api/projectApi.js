@@ -1,4 +1,4 @@
-import { supabase } from "../db/supabaseClient.js";
+﻿import { supabase } from "../db/supabaseClient.js";
 
 export async function createProject(project) {
   const { data, error } = await supabase

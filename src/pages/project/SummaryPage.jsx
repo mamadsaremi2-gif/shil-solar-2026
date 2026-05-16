@@ -1,5 +1,6 @@
 import React from "react";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
+import StepConfirmLink from "../../components/StepConfirmLink.jsx";
 import EngineeringPageShell from "../../components/EngineeringPageShell.jsx";
 
 export default function SummaryPage() {
@@ -33,7 +34,7 @@ export default function SummaryPage() {
           <div className="shil-section-head"><h2>پیشنهاد هوشمند SHIL</h2><span>با دلیل مهندسی</span></div>
           <div className="shil-reason-card">هر پیشنهاد یا حذف بار فقط همراه با دلیل نمایش داده می‌شود؛ مثال: افزایش ولتاژ سیستم به 48V باعث کاهش جریان و افت ولتاژ می‌شود.</div>
         </div>
-        <Link className="shil-primary-wide" to={`/new-project/run/${domain}`} state={{ method }}>اجرای محاسبات نهایی</Link>
+        <StepConfirmLink to={`/new-project/run/${domain}`} state={{ method }}>اجرای محاسبات نهایی</StepConfirmLink>
       </section>
     </EngineeringPageShell>
   );
