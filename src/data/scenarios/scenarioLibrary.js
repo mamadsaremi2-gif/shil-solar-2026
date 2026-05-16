@@ -1,94 +1,27 @@
-export const scenarioLibrary = [
-  {
-    id: 1,
-    category: "??? ???????",
-    title: "????????? ??? ??????? - ??????? ??? 1",
-    systemType: "UPS",
-    batteryType: "Lithium",
-    inverter: "5kW Hybrid",
-    loadEstimate: 2500,
-    environment: "????",
-    city: "?????",
-    suggestedPanels: 4,
-    suggestedBattery: "48V 100Ah",
-  },
+﻿export const scenarioLibrary = Array.from({ length: 600 }, (_, i) => {
+  const id = i + 1;
+  const domain = id <= 300 ? "solar" : "emergency";
+  const levelIndex = id % 3;
+  const level = levelIndex === 0 ? "سنگین" : levelIndex === 1 ? "سبک" : "متوسط";
 
-  {
-    id: 2,
-    category: "??? ???????",
-    title: "????????? ??? ??????? - ??????? ??? 2",
-    systemType: "UPS",
-    batteryType: "AGM",
-    inverter: "3kW OffGrid",
-    loadEstimate: 1800,
-    environment: "?????",
-    city: "??????",
-    suggestedPanels: 2,
-    suggestedBattery: "24V 200Ah",
-  },
-
-  {
-    id: 3,
-    category: "??????? ??????",
-    title: "????? ??????? ?????? ??????",
-    systemType: "Hybrid",
-    batteryType: "Lithium",
-    inverter: "8kW Hybrid",
-    loadEstimate: 5500,
-    environment: "????",
-    city: "?????",
-    suggestedPanels: 10,
-    suggestedBattery: "48V 200Ah",
-  },
-
-  {
-    id: 4,
-    category: "??????",
-    title: "??????? ??????? ???? ?? ????",
-    systemType: "OnGrid",
-    batteryType: "None",
-    inverter: "20kW OnGrid",
-    loadEstimate: 12000,
-    environment: "?????",
-    city: "?????",
-    suggestedPanels: 36,
-    suggestedBattery: "?????",
-  },
-
-  {
-    id: 5,
-    category: "??????",
-    title: "????? ??????? ??????",
-    systemType: "OffGrid",
-    batteryType: "Lithium",
-    inverter: "6kW OffGrid",
-    loadEstimate: 3200,
-    environment: "????????",
-    city: "?????",
-    suggestedPanels: 8,
-    suggestedBattery: "48V 150Ah",
-  },
-];
-
-export function getScenarioList(domain, weight) {
-  const domainMap = {
-    solar: ["???????", "??????", "??????", "??????"],
-    emergency: ["??? ???????"]
+  return {
+    id,
+    domain,
+    level,
+    category: domain === "solar" ? "پروژه های انرژی خورشیدی" : "پروژه های برق اضطراری",
+    title: `${domain === "solar" ? "پروژه های انرژی خورشیدی" : "پروژه های برق اضطراری"} - سناریوی ${level} ${id}`,
+    loadEstimate: 1000 + id * 25,
+    inverter: domain === "solar" ? "اینورتر خورشیدی" : "اینورتر خورشیدی + باتری",
+    batteryType: "Lithium / AGM",
+    suggestedBattery: "48V",
+    suggestedPanels: domain === "solar" ? Math.ceil(id / 10) : 0
   };
+});
 
-  const weightMap = {
-    light: "???",
-    medium: "?????",
-    heavy: "?????"
-  };
-
-  return scenarioLibrary.filter((scenario) => {
-    const domainMatch = !domain || domainMap[domain]?.some((key) =>
-      String(scenario.category || scenario.title || "").includes(key)
-    );
-
-    const weightMatch = !weight || String(scenario.title || "").includes(weightMap[weight] || "");
-
-    return domainMatch && weightMatch;
+export function getScenarioList(domain, level) {
+  return scenarioLibrary.filter((item) => {
+    const domainOk = !domain || item.domain === domain;
+    const levelOk = !level || item.level === level || item.title.includes(level);
+    return domainOk && levelOk;
   });
 }
