@@ -1,97 +1,45 @@
-﻿import React from "react";
-import { Link } from "react-router-dom";
-import { ChevronLeft, MapPinned } from "lucide-react";
-
-import DashboardBottomNav from "../../components/dashboard/DashboardBottomNav.jsx";
-import ProjectStepRail from "../../components/project/ProjectStepRail.jsx";
-import ProjectActionBar from "../../components/project/ProjectActionBar.jsx";
-import EngineeringMiniCard from "../../components/project/EngineeringMiniCard.jsx";
-import EngineeringStatusPanel from "../../components/project/EngineeringStatusPanel.jsx";
-import EngineeringInputGrid from "../../components/project/EngineeringInputGrid.jsx";
+import React from "react";
+import EngineeringPageShell from "../../components/EngineeringPageShell.jsx";
+import { SHIL_ASSETS } from "../../config/shilAssetPaths.js";
 
 export default function Environment() {
   return (
-    <div className="dashboard-shell-v15" dir="rtl">
-      <header className="dashboard-header-v15">
-        <Link to="/new-project/info" className="header-btn-v15">
-          <ChevronLeft size={20} />
-        </Link>
-
-        <div className="brand-v15">
-          <h1>SHIL</h1>
-          <span>ENVIRONMENT ENGINE</span>
+    <EngineeringPageShell title="شرایط محیطی" className="shil-environment-page">
+      <section className="shil-card-stack">
+        <div className="shil-section-card">
+          <div className="shil-section-head"><h2>موقعیت پروژه</h2><span>استان / شهر</span></div>
+          <div className="shil-form-grid">
+            <label><span>استان</span><input placeholder="مثلاً فارس" /></label>
+            <label><span>شهر</span><input placeholder="مثلاً شیراز" /></label>
+            <label><span>آدرس پروژه</span><input placeholder="اختیاری" /></label>
+            <label><span>مختصات GPS</span><input placeholder="Auto / Manual" /></label>
+          </div>
         </div>
 
-        <Link to="/new-project/path" className="header-btn-v15">
-          بعدی
-        </Link>
-      </header>
-
-      <main className="dashboard-main-v15">
-        <ProjectStepRail />
-
-        <section className="hero-card-v15">
-          <div className="hero-row-v15">
-            <span>STEP 02</span>
-            <span>SITE ANALYSIS</span>
+        <div className="shil-section-card">
+          <div className="shil-section-head"><h2>نقشه گرمایشی ایران</h2><span>Heatmap</span></div>
+          <div className="shil-heatmap-frame">
+            <img src={SHIL_ASSETS.maps.iranHeatmap} alt="نقشه گرمایشی ایران" onError={(e) => { e.currentTarget.style.display = "none"; }} />
+            <div className="shil-heatmap-fallback">نقشه گرمایشی ایران در مسیر مشخص‌شده قرار می‌گیرد</div>
           </div>
+        </div>
 
-          <div className="hero-content-v15">
-            <h1>شرایط محیطی</h1>
-            <h2>
-              ثبت موقعیت، تابش، زاویه نصب، جهت جغرافیایی و تحلیل سایه پروژه.
-            </h2>
+        <div className="shil-section-card">
+          <div className="shil-section-head"><h2>پارامترهای اقلیمی</h2><span>دیتای مهندسی</span></div>
+          <div className="shil-horizontal-block">
+            {[
+              ["دمای محیط", "°C"], ["ارتفاع از سطح دریا", "m"], ["رطوبت", "%"], ["سرعت باد", "km/h"], ["شدت تابش", "kWh/m²"], ["زاویه تابش", "deg"]
+            ].map(([label, unit]) => <label key={label} className="shil-inline-field"><span>{label}</span><input placeholder={unit} /></label>)}
           </div>
-        </section>
+        </div>
 
-        <EngineeringInputGrid>
-          <EngineeringMiniCard
-            title="GPS"
-            value="35.68°"
-            subtitle="مختصات محل پروژه"
-          />
-
-          <EngineeringMiniCard
-            title="تابش"
-            value="5.8"
-            subtitle="kWh/m²/day"
-          />
-
-          <EngineeringMiniCard
-            title="زاویه نصب"
-            value="32°"
-            subtitle="Tilt پیشنهادی"
-          />
-
-          <EngineeringMiniCard
-            title="جهت"
-            value="جنوب"
-            subtitle="Azimuth بهینه"
-          />
-        </EngineeringInputGrid>
-
-        <section className="environment-map-v15">
-          <div className="map-grid-v15" />
-          <div className="map-center-dot" />
-          <div className="map-overlay-v15">
-            <MapPinned size={16} />
-            موقعیت پروژه و تحلیل سایت
+        <div className="shil-section-card">
+          <div className="shil-section-head"><h2>نوع محیط نصب</h2><span>اختیاری</span></div>
+          <div className="shil-chip-row">
+            {['شهری','صنعتی','ساحلی','کوهستانی','کویری','مرطوب'].map((item) => <button key={item}>{item}</button>)}
           </div>
-        </section>
-
-        <EngineeringStatusPanel
-          title="وضعیت تحلیل محیطی"
-          items={[
-            { label: "GPS", value: "ثبت شد" },
-            { label: "Solar Data", value: "آماده" },
-            { label: "Shadow Check", value: "در انتظار" },
-            { label: "Validation", value: "OK" },
-          ]}
-        />
-      </main>
-
-      <ProjectActionBar />
-      <DashboardBottomNav />
-    </div>
+        </div>
+      </section>
+    </EngineeringPageShell>
   );
 }

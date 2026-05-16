@@ -7,5 +7,6 @@ export const MAIN_NAVIGATION = [
   APP_ROUTES.readyScenarios,
   APP_ROUTES.aiAssistant,
   APP_ROUTES.userFeedback,
+  APP_ROUTES.education,
   APP_ROUTES.contact,
 ];

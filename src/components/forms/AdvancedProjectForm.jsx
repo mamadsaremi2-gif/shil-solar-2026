@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 
 import {
   useForm,
@@ -212,7 +212,7 @@ export default function AdvancedProjectForm() {
         </InputField>
 
         <InputField
-          label="ساعات بکاپ"
+          label="زمان برق اضطراری مورد نیاز"
           error={errors.backupHours?.message}
         >
 

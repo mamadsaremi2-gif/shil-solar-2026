@@ -1,136 +1,62 @@
-﻿import React from "react";
-import { Link } from "react-router-dom";
-import {
-  ChevronLeft,
-  BatteryCharging,
-  SunMedium,
-  Zap,
-  Ruler,
-} from "lucide-react";
+import React from "react";
+import { Link, useLocation, useParams } from "react-router-dom";
+import EngineeringPageShell from "../../components/EngineeringPageShell.jsx";
 
-import DashboardBottomNav from "../../components/dashboard/DashboardBottomNav.jsx";
-import ProjectStepRail from "../../components/project/ProjectStepRail.jsx";
-import ProjectActionBar from "../../components/project/ProjectActionBar.jsx";
-import EngineeringMiniCard from "../../components/project/EngineeringMiniCard.jsx";
-import EngineeringInputGrid from "../../components/project/EngineeringInputGrid.jsx";
-import EngineeringStatusPanel from "../../components/project/EngineeringStatusPanel.jsx";
+const methodTitles = {
+  equipment: "لیست تجهیزات",
+  power: "توان کل",
+  current: "جریان کل",
+  profile: "پروفایل مصرف",
+  energy: "انرژی مورد نیاز",
+};
+
+function EquipmentFields({ emergency }) {
+  return (
+    <>
+      <div className="shil-form-grid">
+        <label><span>نام تجهیز</span><input placeholder="مثلاً یخچال / روشنایی / پمپ" /></label>
+        <label><span>تعداد</span><input placeholder="عدد" /></label>
+        <label><span>توان</span><input placeholder="W" /></label>
+        <label><span>ولتاژ</span><input placeholder="V" /></label>
+        <label><span>{emergency ? "زمان برق اضطراری مورد نیاز" : "مدت مصرف روزانه"}</span><input placeholder={emergency ? "مدت مورد نیاز" : "مدت مصرف"} /></label>
+        {emergency ? <label><span>اولویت بار</span><select><option>حیاتی</option><option>نیمه حیاتی</option><option>عادی</option></select></label> : <label><span>ضریب همزمانی</span><input placeholder="مثلاً 0.8" /></label>}
+      </div>
+      {emergency ? <div className="shil-reason-card">در برق اضطراری، اولویت بار برای تصمیم‌های هوشمند لازم است؛ اگر ظرفیت کافی نباشد، SHIL فقط با ذکر دلیل مهندسی بارهای غیرضروری را پیشنهاد به حذف می‌کند.</div> : null}
+    </>
+  );
+}
 
 export default function CalculationInputs() {
-  return (
-    <div className="dashboard-shell-v15" dir="rtl">
-      <header className="dashboard-header-v15">
-        <Link to="/new-project/method" className="header-btn-v15">
-          <ChevronLeft size={20} />
-        </Link>
+  const { domain = "solar", method = "equipment" } = useParams();
+  const location = useLocation();
+  const emergency = domain === "emergency";
+  const subtype = location.state?.subtype || (emergency ? "emergency" : "solar");
+  const title = `${methodTitles[method] || "ورودی محاسبات"} ${emergency ? "برق اضطراری" : "خورشیدی"}`;
 
-        <div className="brand-v15">
-          <h1>SHIL</h1>
-          <span>INPUT ENGINE</span>
+  return (
+    <EngineeringPageShell title={title}>
+      <section className="shil-card-stack">
+        <div className="shil-section-card">
+          <div className="shil-section-head"><h2>ورود دیتای مهندسی</h2><span>{emergency ? "Emergency Core" : subtype}</span></div>
+          {method === "equipment" ? <EquipmentFields emergency={emergency} /> : null}
+          {method === "power" ? <div className="shil-form-grid"><label><span>توان کل</span><input placeholder="W / kW" /></label><label><span>ولتاژ سیستم</span><input placeholder="V" /></label><label><span>ضریب رشد آینده</span><input placeholder="%" /></label>{emergency ? <label><span>زمان برق اضطراری مورد نیاز</span><input placeholder="مدت مورد نیاز" /></label> : null}</div> : null}
+          {method === "current" ? <div className="shil-form-grid"><label><span>جریان کل</span><input placeholder="A" /></label><label><span>ولتاژ سیستم</span><input placeholder="V" /></label>{emergency ? <label><span>زمان برق اضطراری مورد نیاز</span><input placeholder="مدت مورد نیاز" /></label> : null}</div> : null}
+          {method === "profile" ? <div className="shil-horizontal-block"><label className="shil-inline-field"><span>بازه ۱</span><input placeholder="مصرف" /></label><label className="shil-inline-field"><span>بازه ۲</span><input placeholder="مصرف" /></label><label className="shil-inline-field"><span>بازه ۳</span><input placeholder="مصرف" /></label><label className="shil-inline-field"><span>بازه ۴</span><input placeholder="مصرف" /></label></div> : null}
+          {method === "energy" ? <div className="shil-form-grid"><label><span>انرژی مورد نیاز</span><input placeholder="Wh / kWh" /></label><label><span>ضریب اطمینان</span><input placeholder="%" /></label>{emergency ? <label><span>زمان برق اضطراری مورد نیاز</span><input placeholder="مدت مورد نیاز" /></label> : null}</div> : null}
         </div>
 
-        <Link to="/new-project/system" className="header-btn-v15">
-          بعدی
-        </Link>
-      </header>
-
-      <main className="dashboard-main-v15">
-        <ProjectStepRail />
-
-        <section className="hero-card-v15">
-          <div className="hero-row-v15">
-            <span>STEP 05</span>
-            <span>CALCULATION INPUTS</span>
+        <div className="shil-section-card">
+          <div className="shil-section-head"><h2>جمع لحظه‌ای</h2><span>Real-time</span></div>
+          <div className="shil-summary-grid">
+            <div><span>توان کل</span><strong>در انتظار دیتا</strong></div>
+            <div><span>جریان کل</span><strong>در انتظار دیتا</strong></div>
+            <div><span>انرژی مورد نیاز</span><strong>در انتظار دیتا</strong></div>
+            <div><span>{emergency ? "پیک راه‌اندازی" : "پیک مصرف"}</span><strong>در انتظار دیتا</strong></div>
           </div>
+        </div>
 
-          <div className="hero-content-v15">
-            <h1>ورودی محاسبات</h1>
-            <h2>
-              مصرف، فضای نصب، ظرفیت باتری، توان اینورتر و پارامترهای پایه طراحی را وارد کنید.
-            </h2>
-          </div>
-        </section>
-
-        <EngineeringInputGrid>
-          <EngineeringMiniCard title="مصرف روزانه" value="12.5" subtitle="kWh/day" />
-          <EngineeringMiniCard title="توان بار" value="4.8" subtitle="kW" />
-          <EngineeringMiniCard title="فضای نصب" value="42" subtitle="m²" />
-          <EngineeringMiniCard title="ولتاژ سیستم" value="48V" subtitle="DC Bus" />
-        </EngineeringInputGrid>
-
-        <section className="project-section-v15">
-          <div className="project-section-head-v15">
-            <h3>ورودی‌های طراحی</h3>
-            <span>Engineering Inputs</span>
-          </div>
-
-          <div className="project-field-v15">
-            <label>مصرف روزانه انرژی</label>
-            <input type="number" placeholder="مثلاً 12500 Wh" />
-          </div>
-
-          <div className="project-field-v15">
-            <label>توان لحظه‌ای بار</label>
-            <input type="number" placeholder="مثلاً 4800 W" />
-          </div>
-
-          <div className="project-field-v15">
-            <label>ساعات پشتیبانی باتری</label>
-            <input type="number" placeholder="مثلاً 8 ساعت" />
-          </div>
-
-          <div className="project-field-v15">
-            <label>فضای قابل نصب پنل</label>
-            <input type="number" placeholder="مثلاً 42 متر مربع" />
-          </div>
-
-          <div className="project-field-v15">
-            <label>توضیحات مصرف</label>
-            <textarea
-              rows="5"
-              placeholder="لیست تجهیزات، ساعات کارکرد، اولویت بارها و شرایط خاص..."
-            />
-          </div>
-        </section>
-
-        <section className="input-feature-grid-v15">
-          <div className="input-feature-card-v15">
-            <BatteryCharging size={28} />
-            <h4>Battery Input</h4>
-            <p>ولتاژ، ظرفیت و زمان پشتیبانی</p>
-          </div>
-
-          <div className="input-feature-card-v15">
-            <SunMedium size={28} />
-            <h4>PV Input</h4>
-            <p>توان پنل و فضای نصب</p>
-          </div>
-
-          <div className="input-feature-card-v15">
-            <Zap size={28} />
-            <h4>Load Input</h4>
-            <p>توان مصرف و انرژی روزانه</p>
-          </div>
-
-          <div className="input-feature-card-v15">
-            <Ruler size={28} />
-            <h4>Site Limit</h4>
-            <p>محدودیت فضا و اجرا</p>
-          </div>
-        </section>
-
-        <EngineeringStatusPanel
-          title="وضعیت ورودی‌ها"
-          items={[
-            { label: "Daily Energy", value: "در انتظار" },
-            { label: "Load Power", value: "در انتظار" },
-            { label: "Battery Backup", value: "Ready" },
-            { label: "Validation", value: "OK" },
-          ]}
-        />
-      </main>
-
-      <ProjectActionBar />
-      <DashboardBottomNav />
-    </div>
+        <Link className="shil-primary-wide" to={`/new-project/system/${domain}`} state={{ method, subtype }}>تأیید و ادامه به تنظیمات سیستم</Link>
+      </section>
+    </EngineeringPageShell>
   );
 }

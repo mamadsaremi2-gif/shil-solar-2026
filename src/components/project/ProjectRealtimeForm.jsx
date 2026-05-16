@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { useProjectStore } from "../../store/projectStore.js";
 
 export default function ProjectRealtimeForm() {
@@ -58,7 +58,7 @@ export default function ProjectRealtimeForm() {
         <input
           type="number"
           value={project.backupHours}
-          placeholder="ساعت بکاپ"
+          placeholder="زمان برق اضطراری مورد نیاز"
           onChange={(e)=>
             setProjectField("backupHours", Number(e.target.value))
           }

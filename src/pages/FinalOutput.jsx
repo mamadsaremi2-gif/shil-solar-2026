@@ -1,4 +1,20 @@
 import React from "react";
-import StepPage from "../components/dashboard/StepPage.jsx";
-import { runEngineeringDesign } from "../engine/runEngineeringDesign.js";
-export default function FinalOutput(){const r=runEngineeringDesign({});return <StepPage title="خروجی نهایی محاسبات" subtitle="خروجی مهندسی بدون محاسبات مالی"><div className="result-grid-v15"><div><b>{r.energyDaily}</b><span>kWh/day</span><p>انرژی روزانه</p></div><div><b>{r.systemPower}</b><span>kW</span><p>توان سیستم</p></div><div><b>{r.efficiency}</b><span>%</span><p>بازده کل</p></div></div></StepPage>}
+import ShilPageShell from "../components/ShilPageShell.jsx";
+
+export default function FinalOutput() {
+  return (
+    <ShilPageShell title="خروجی نهایی محاسبات">
+      <section className="shil-card-stack">
+        <div className="shil-section-card">
+          <div className="shil-section-head"><h2>خروجی مهندسی</h2><span>Final Output</span></div>
+          <div className="shil-summary-grid">
+            <div><span>انرژی روزانه</span><strong>در انتظار محاسبه</strong></div>
+            <div><span>توان سیستم</span><strong>در انتظار محاسبه</strong></div>
+            <div><span>بازده کل</span><strong>در انتظار محاسبه</strong></div>
+            <div><span>گزارش</span><strong>PDF / Excel / CSV</strong></div>
+          </div>
+        </div>
+      </section>
+    </ShilPageShell>
+  );
+}

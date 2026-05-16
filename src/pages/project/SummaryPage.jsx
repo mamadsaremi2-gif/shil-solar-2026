@@ -1,127 +1,40 @@
-﻿import React from "react";
-import { Link } from "react-router-dom";
-import {
-  ChevronLeft,
-  CheckCircle2,
-  AlertTriangle,
-  FileCheck,
-  Database,
-  ShieldCheck,
-} from "lucide-react";
-
-import DashboardBottomNav from "../../components/dashboard/DashboardBottomNav.jsx";
-import ProjectStepRail from "../../components/project/ProjectStepRail.jsx";
-import ProjectActionBar from "../../components/project/ProjectActionBar.jsx";
-import EngineeringMiniCard from "../../components/project/EngineeringMiniCard.jsx";
-import EngineeringInputGrid from "../../components/project/EngineeringInputGrid.jsx";
-import EngineeringStatusPanel from "../../components/project/EngineeringStatusPanel.jsx";
+import React from "react";
+import { Link, useLocation, useParams } from "react-router-dom";
+import EngineeringPageShell from "../../components/EngineeringPageShell.jsx";
 
 export default function SummaryPage() {
+  const { domain = "solar" } = useParams();
+  const location = useLocation();
+  const emergency = domain === "emergency";
+  const method = location.state?.method || "equipment";
+
   return (
-    <div className="dashboard-shell-v15" dir="rtl">
-      <header className="dashboard-header-v15">
-        <Link to="/new-project/system" className="header-btn-v15">
-          <ChevronLeft size={20} />
-        </Link>
-
-        <div className="brand-v15">
-          <h1>SHIL</h1>
-          <span>SUMMARY CHECK</span>
+    <EngineeringPageShell title="چکیده اطلاعات">
+      <section className="shil-card-stack">
+        <div className="shil-section-card">
+          <div className="shil-section-head"><h2>خلاصه پروژه</h2><span>{emergency ? "برق اضطراری" : "خورشیدی"}</span></div>
+          <div className="shil-summary-grid">
+            <div><span>نام پروژه</span><strong>در انتظار ثبت</strong></div>
+            <div><span>نوع کاربری</span><strong>در انتظار ثبت</strong></div>
+            <div><span>موقعیت پروژه</span><strong>از شرایط محیطی</strong></div>
+            <div><span>روش ورود دیتا</span><strong>{method}</strong></div>
+          </div>
         </div>
-
-        <Link to="/new-project/run" className="header-btn-v15">
-          اجرا
-        </Link>
-      </header>
-
-      <main className="dashboard-main-v15">
-        <ProjectStepRail />
-
-        <section className="hero-card-v15">
-          <div className="hero-row-v15">
-            <span>STEP 07</span>
-            <span>VALIDATION</span>
+        <div className="shil-section-card">
+          <div className="shil-section-head"><h2>خلاصه مصرف و تجهیزات</h2><span>Validation</span></div>
+          <div className="shil-summary-grid">
+            <div><span>توان کل</span><strong>در انتظار محاسبه</strong></div>
+            <div><span>جریان کل</span><strong>در انتظار محاسبه</strong></div>
+            <div><span>انرژی مورد نیاز</span><strong>در انتظار محاسبه</strong></div>
+            {emergency ? <div><span>زمان برق اضطراری مورد نیاز</span><strong>در انتظار ثبت</strong></div> : <div><span>ظرفیت پیشنهادی پنل</span><strong>در انتظار محاسبه</strong></div>}
           </div>
-
-          <div className="hero-content-v15">
-            <h1>چکیده اطلاعات</h1>
-            <h2>
-              مرور نهایی اطلاعات پروژه، کنترل خطاها، پیام‌های مهندسی و آماده‌سازی اجرای محاسبات.
-            </h2>
-          </div>
-        </section>
-
-        <EngineeringInputGrid>
-          <EngineeringMiniCard title="وضعیت پروژه" value="Ready" subtitle="آماده اجرای محاسبات" />
-          <EngineeringMiniCard title="Validation" value="OK" subtitle="خطای بحرانی ندارد" />
-          <EngineeringMiniCard title="PV Check" value="Pass" subtitle="پنل و MPPT بررسی شد" />
-          <EngineeringMiniCard title="Cable Check" value="Pass" subtitle="افت ولتاژ مجاز است" />
-        </EngineeringInputGrid>
-
-        <section className="summary-validation-v15">
-          <div className="summary-validation-row-v15 success">
-            <CheckCircle2 size={22} />
-            <div>
-              <h4>اطلاعات پروژه کامل است</h4>
-              <p>نام پروژه، موقعیت، نوع سیستم و مسیر طراحی ثبت شده‌اند.</p>
-            </div>
-          </div>
-
-          <div className="summary-validation-row-v15 success">
-            <ShieldCheck size={22} />
-            <div>
-              <h4>کنترل‌های مهندسی معتبر هستند</h4>
-              <p>MPPT، کابل، باتری و اینورتر برای اجرای اولیه آماده‌اند.</p>
-            </div>
-          </div>
-
-          <div className="summary-validation-row-v15 warning">
-            <AlertTriangle size={22} />
-            <div>
-              <h4>نیاز به بازبینی محیطی</h4>
-              <p>تحلیل سایه هنوز می‌تواند با داده واقعی سایت تکمیل شود.</p>
-            </div>
-          </div>
-        </section>
-
-        <section className="project-section-v15">
-          <div className="project-section-head-v15">
-            <h3>خلاصه فنی پروژه</h3>
-            <span>Engineering Summary</span>
-          </div>
-
-          <div className="summary-table-v15">
-            <div><span>نوع سیستم</span><strong>Hybrid PV</strong></div>
-            <div><span>توان پنل</span><strong>585 W</strong></div>
-            <div><span>ولتاژ باتری</span><strong>48 V</strong></div>
-            <div><span>اینورتر</span><strong>5 kW</strong></div>
-            <div><span>تلفات پایه</span><strong>12%</strong></div>
-            <div><span>وضعیت خروجی</span><strong>Ready</strong></div>
-          </div>
-        </section>
-
-        <EngineeringStatusPanel
-          title="وضعیت نهایی قبل از اجرا"
-          items={[
-            { label: "Project Data", value: "OK" },
-            { label: "Environment", value: "OK" },
-            { label: "System Settings", value: "OK" },
-            { label: "Run Engine", value: "Ready" },
-          ]}
-        />
-
-        <section className="summary-run-card-v15">
-          <FileCheck size={28} />
-          <div>
-            <h4>پروژه آماده اجرای موتور محاسبات است</h4>
-            <p>با تایید این مرحله، داده‌ها به موتور طراحی SHIL ارسال می‌شوند.</p>
-          </div>
-          <Database size={24} />
-        </section>
-      </main>
-
-      <ProjectActionBar />
-      <DashboardBottomNav />
-    </div>
+        </div>
+        <div className="shil-section-card">
+          <div className="shil-section-head"><h2>پیشنهاد هوشمند SHIL</h2><span>با دلیل مهندسی</span></div>
+          <div className="shil-reason-card">هر پیشنهاد یا حذف بار فقط همراه با دلیل نمایش داده می‌شود؛ مثال: افزایش ولتاژ سیستم به 48V باعث کاهش جریان و افت ولتاژ می‌شود.</div>
+        </div>
+        <Link className="shil-primary-wide" to={`/new-project/run/${domain}`} state={{ method }}>اجرای محاسبات نهایی</Link>
+      </section>
+    </EngineeringPageShell>
   );
 }

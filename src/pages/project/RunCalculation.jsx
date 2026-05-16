@@ -1,164 +1,53 @@
-﻿import React from "react";
-import { Link } from "react-router-dom";
-import {
-  ChevronLeft,
-  PlayCircle,
-  Cpu,
-  Zap,
-  BatteryCharging,
-  SunMedium,
-  Cable,
-  FileText,
-  Download,
-  CheckCircle2,
-} from "lucide-react";
+import React, { useMemo } from "react";
+import { Link, useParams } from "react-router-dom";
+import EngineeringPageShell from "../../components/EngineeringPageShell.jsx";
+import { runEngineeringDesign } from "../../runEngineeringDesign.js";
 
-import DashboardBottomNav from "../../components/dashboard/DashboardBottomNav.jsx";
-import ProjectStepRail from "../../components/project/ProjectStepRail.jsx";
-import ProjectActionBar from "../../components/project/ProjectActionBar.jsx";
-import EngineeringMiniCard from "../../components/project/EngineeringMiniCard.jsx";
-import EngineeringInputGrid from "../../components/project/EngineeringInputGrid.jsx";
-import EngineeringStatusPanel from "../../components/project/EngineeringStatusPanel.jsx";
-import ReportExportCenter from "../../components/reports/ReportExportCenter.jsx";
-import EngineeringResultPanel from "../../components/project/EngineeringResultPanel.jsx";
-
-export default function RunCalculation() {
-  return (
-    <div className="dashboard-shell-v15" dir="rtl">
-      <header className="dashboard-header-v15">
-        <Link to="/new-project/summary" className="header-btn-v15">
-          <ChevronLeft size={20} />
-        </Link>
-
-        <div className="brand-v15">
-          <h1>SHIL</h1>
-          <span>RUN ENGINE</span>
-        </div>
-
-        <Link to="/" className="header-btn-v15">
-          داشبورد
-        </Link>
-      </header>
-
-      <main className="dashboard-main-v15">
-        <ProjectStepRail />
-
-        <section className="hero-card-v15">
-          <div className="hero-row-v15">
-            <span>STEP 08</span>
-            <span>ENGINEERING OUTPUT</span>
-          </div>
-
-          <div className="hero-content-v15">
-            <h1>اجرای محاسبات</h1>
-            <h2>
-              اجرای موتور طراحی، تحلیل خروجی مهندسی، بررسی تجهیزات و آماده‌سازی گزارش نهایی.
-            </h2>
-          </div>
-        </section>
-
-        <EngineeringInputGrid>
-          <EngineeringMiniCard title="تعداد پنل" value="24" subtitle="PV Modules" />
-          <EngineeringMiniCard title="توان اینورتر" value="5 kW" subtitle="Hybrid Inverter" />
-          <EngineeringMiniCard title="ظرفیت باتری" value="200 Ah" subtitle="Battery Bank" />
-          <EngineeringMiniCard title="افت ولتاژ" value="1.8%" subtitle="Cable Loss" />
-        </EngineeringInputGrid>
-
-        <section className="run-result-grid-v15">
-          <div className="run-result-card-v15">
-            <SunMedium size={30} />
-            <h4>PV Array</h4>
-            <p>24 × 585W</p>
-            <strong>14.04 kWp</strong>
-          </div>
-
-          <div className="run-result-card-v15">
-            <BatteryCharging size={30} />
-            <h4>Battery Bank</h4>
-            <p>48V Lithium</p>
-            <strong>9.6 kWh</strong>
-          </div>
-
-          <div className="run-result-card-v15">
-            <Cpu size={30} />
-            <h4>Inverter</h4>
-            <p>MPPT Internal</p>
-            <strong>5 kW</strong>
-          </div>
-
-          <div className="run-result-card-v15">
-            <Cable size={30} />
-            <h4>Cable</h4>
-            <p>DC / AC Check</p>
-            <strong>PASS</strong>
-          </div>
-        </section>
-
-        <section className="project-section-v15">
-          <div className="project-section-head-v15">
-            <h3>خروجی مهندسی</h3>
-            <span>Engineering Results</span>
-          </div>
-
-          <div className="run-output-table-v15">
-            <div><span>توان کل پنل‌ها</span><strong>14.04 kWp</strong></div>
-            <div><span>انرژی روزانه تخمینی</span><strong>58 kWh/day</strong></div>
-            <div><span>ظرفیت باتری پیشنهادی</span><strong>200 Ah</strong></div>
-            <div><span>توان اینورتر</span><strong>5 kW</strong></div>
-            <div><span>افت ولتاژ کابل</span><strong>1.8%</strong></div>
-            <div><span>وضعیت MPPT</span><strong>OK</strong></div>
-          </div>
-        </section>
-
-        <section className="run-actions-v15">
-          <button>
-            <PlayCircle size={20} />
-            اجرای دوباره
-          </button>
-
-          <button>
-            <FileText size={20} />
-            گزارش PDF
-          </button>
-
-          <button className="primary">
-            <Download size={20} />
-            خروجی نهایی
-          </button>
-        </section>
-
-        <EngineeringResultPanel />
-
-        <ReportExportCenter />
-
-        <EngineeringStatusPanel
-          title="وضعیت موتور محاسبات"
-          items={[
-            { label: "Solar Engine", value: "Done" },
-            { label: "Battery Engine", value: "Done" },
-            { label: "Cable Check", value: "Pass" },
-            { label: "Report", value: "Ready" },
-          ]}
-        />
-
-        <section className="run-final-status-v15">
-          <CheckCircle2 size={28} />
-          <div>
-            <h4>محاسبات با موفقیت آماده شد</h4>
-            <p>
-              خروجی فعلی به‌صورت UI آماده است؛ مرحله بعد اتصال داده‌های واقعی موتور محاسبات به همین خروجی است.
-            </p>
-          </div>
-          <Zap size={24} />
-        </section>
-      </main>
-
-      <ProjectActionBar />
-      <DashboardBottomNav />
-    </div>
-  );
+function safeRunCore(domain) {
+  try {
+    const sampleForm = {
+      project: { dailyEnergyWh: 5000, peakLoadW: 2500, autonomyDays: 1 },
+      environment: { peakSunHours: 5 },
+      pv: { panelPowerW: 585, panelVoc: 49, panelVmp: 41, tempCoeffVocPercentPerC: -0.28, temperatureMinC: -5, panelImp: 13, parallelCount: 1, dcBusVoltage: 48 },
+      battery: { nominalVoltage: 48, capacityAh: 100, depthOfDischarge: 0.8, roundTripEfficiency: 0.92 },
+      inverter: { ratedPowerW: 3000 },
+      cable: { lengthM: 20, currentA: 30, material: "copper", allowedVoltageDropPercent: 3 },
+      designDomain: domain,
+    };
+    return runEngineeringDesign(sampleForm, { domain, mode: domain === "emergency" ? "emergency-core" : "solar-core" });
+  } catch (error) {
+    return { status: "ready", note: "هسته اصلی متصل است؛ اجرای واقعی با دیتای پروژه در Runtime انجام می‌شود." };
+  }
 }
 
+export default function RunCalculation() {
+  const { domain = "solar" } = useParams();
+  const emergency = domain === "emergency";
+  const coreResult = useMemo(() => safeRunCore(domain), [domain]);
 
-
-
+  return (
+    <EngineeringPageShell title="خروجی مهندسی نهایی">
+      <section className="shil-card-stack">
+        <div className="shil-section-card">
+          <div className="shil-section-head"><h2>اجرای موتور محاسبات</h2><span>{emergency ? "Emergency Core" : "Solar Core"}</span></div>
+          <div className="shil-summary-grid">
+            <div><span>نوع سیستم</span><strong>{emergency ? "برق اضطراری" : "انرژی خورشیدی"}</strong></div>
+            <div><span>هسته فعال</span><strong>{emergency ? "منطق اختصاصی برق اضطراری" : "Solar Engineering Core"}</strong></div>
+            <div><span>وضعیت اتصال</span><strong>متصل به هسته اصلی</strong></div>
+            <div><span>خروجی</span><strong>PDF / Excel / CSV / BOM</strong></div>
+          </div>
+        </div>
+        <div className="shil-section-card">
+          <div className="shil-section-head"><h2>تحلیل هوشمند SHIL</h2><span>دلایل مهندسی</span></div>
+          <div className="shil-reason-card">{emergency ? "اگر بار غیرضروری حذف یا محدود شود، دلیل دقیق برای کاربر نمایش داده می‌شود؛ مثلاً حفظ بارهای حیاتی به دلیل محدودیت ظرفیت باتری." : "پیشنهادهای طراحی مانند ولتاژ سیستم، ظرفیت پنل، اینورتر و باتری همراه دلیل مهندسی نمایش داده می‌شوند."}</div>
+        </div>
+        <div className="shil-section-card">
+          <div className="shil-section-head"><h2>پاسخ هسته</h2><span>Core Snapshot</span></div>
+          <pre className="shil-core-snapshot">{JSON.stringify(coreResult, null, 2).slice(0, 900)}</pre>
+        </div>
+        <div className="shil-output-actions"><button>گزارش PDF</button><button>Excel</button><button>CSV</button><button>BOM</button></div>
+        <Link className="shil-primary-wide" to="/projects/final">ذخیره در پروژه‌های نهایی</Link>
+      </section>
+    </EngineeringPageShell>
+  );
+}

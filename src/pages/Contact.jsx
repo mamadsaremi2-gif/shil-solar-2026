@@ -1,17 +1,27 @@
-﻿import React from "react";
-import DashboardBottomNav from "../components/dashboard/DashboardBottomNav.jsx";
+import React from "react";
+import ShilPageShell from "../components/ShilPageShell.jsx";
 
-export default function PlaceholderPage() {
+const qrItems = ["سایت رسمی", "پشتیبانی", "کاتالوگ محصولات", "شبکه های اجتماعی"];
+
+export default function Contact() {
   return (
-    <div className="dashboard-shell-v15" dir="rtl">
-      <main className="dashboard-main-v15">
-        <section className="status-card-v15">
-          <div className="status-chip">SHIL V15</div>
-          <h2>صفحه در حال توسعه</h2>
-          <p>این صفحه در مرحله بعدی با طراحی کامل SHIL V15 تکمیل می‌شود.</p>
-        </section>
-      </main>
-      <DashboardBottomNav />
-    </div>
+    <ShilPageShell title="ارتباط با ما">
+      <section className="shil-contact-banner">
+        <img src="/assets/shil-products.png" alt="محصولات SHIL" />
+        <a href="https://shil.ir" target="_blank" rel="noreferrer">ورود به سایت SHIL</a>
+      </section>
+      <section className="shil-info-panel">
+        <h3>اطلاعات ارتباط با شرکت</h3>
+        <p>آدرس، شماره تماس، پشتیبانی، ایمیل و اطلاعات رسمی شرکت در این بخش قرار می‌گیرد.</p>
+      </section>
+      <section className="shil-qr-grid">
+        {qrItems.map((item, index) => (
+          <div className="shil-qr-card" key={item}>
+            <img src={`/assets/qr-${index + 1}.png`} alt={item} />
+            <span>{item}</span>
+          </div>
+        ))}
+      </section>
+    </ShilPageShell>
   );
 }

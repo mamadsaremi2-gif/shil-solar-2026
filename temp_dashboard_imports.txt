@@ -1,7 +1,0 @@
-﻿import React from "react";
-
-import LiveEnergyWidget
-from "../components/dashboard/LiveEnergyWidget.jsx";
-
-import SystemStatusGrid
-from "../components/dashboard/SystemStatusGrid.jsx";

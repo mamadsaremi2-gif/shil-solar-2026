@@ -1,3 +1,0 @@
-import React from "react";
-import StepPage from "../components/dashboard/StepPage.jsx";
-export default function ProjectInfo(){return <StepPage title="اطلاعات پروژه" subtitle="مشخصات پایه، نسخه و پیش‌نویس"><div className="form-grid-v15"><input placeholder="نام پروژه"/><input placeholder="نام کارفرما"/><input placeholder="شهر پروژه"/><select><option>نوع کاربری پروژه</option><option>خانگی</option><option>صنعتی</option></select><textarea placeholder="توضیحات پروژه"/></div><div className="action-row-v15"><button>ذخیره پیش‌نویس</button><button className="primary">تأیید مرحله</button></div></StepPage>}
