@@ -1,22 +1,71 @@
-const labels = {
-  solar: "پروژه‌های انرژی خورشیدی",
-  emergency: "پروژه‌های برق اضطراری",
-  light: "سبک",
-  medium: "متوسط",
-  heavy: "سنگین",
-};
+export const scenarioLibrary = [
+  {
+    id: 1,
+    category: "??? ???????",
+    title: "????????? ??? ??????? - ??????? ??? 1",
+    systemType: "UPS",
+    batteryType: "Lithium",
+    inverter: "5kW Hybrid",
+    loadEstimate: 2500,
+    environment: "????",
+    city: "?????",
+    suggestedPanels: 4,
+    suggestedBattery: "48V 100Ah",
+  },
 
-export function getScenarioList(domain = "solar", weight = "light") {
-  return Array.from({ length: 100 }, (_, index) => ({
-    id: `${domain}-${weight}-${index + 1}`,
-    title: `${labels[domain]} - سناریوی ${labels[weight]} ${index + 1}`,
-    domain,
-    weight,
-    description: `سناریوی آماده ${labels[weight]} برای شروع سریع پروژه و تکمیل خودکار اطلاعات پایه.`,
-    payload: {
-      usageType: weight === "heavy" ? "صنعتی" : weight === "medium" ? "تجاری" : "خانگی",
-      estimatedPowerW: weight === "heavy" ? 15000 : weight === "medium" ? 7000 : 2500,
-      source: "scenario-library",
-    },
-  }));
-}
+  {
+    id: 2,
+    category: "??? ???????",
+    title: "????????? ??? ??????? - ??????? ??? 2",
+    systemType: "UPS",
+    batteryType: "AGM",
+    inverter: "3kW OffGrid",
+    loadEstimate: 1800,
+    environment: "?????",
+    city: "??????",
+    suggestedPanels: 2,
+    suggestedBattery: "24V 200Ah",
+  },
+
+  {
+    id: 3,
+    category: "??????? ??????",
+    title: "????? ??????? ?????? ??????",
+    systemType: "Hybrid",
+    batteryType: "Lithium",
+    inverter: "8kW Hybrid",
+    loadEstimate: 5500,
+    environment: "????",
+    city: "?????",
+    suggestedPanels: 10,
+    suggestedBattery: "48V 200Ah",
+  },
+
+  {
+    id: 4,
+    category: "??????",
+    title: "??????? ??????? ???? ?? ????",
+    systemType: "OnGrid",
+    batteryType: "None",
+    inverter: "20kW OnGrid",
+    loadEstimate: 12000,
+    environment: "?????",
+    city: "?????",
+    suggestedPanels: 36,
+    suggestedBattery: "?????",
+  },
+
+  {
+    id: 5,
+    category: "??????",
+    title: "????? ??????? ??????",
+    systemType: "OffGrid",
+    batteryType: "Lithium",
+    inverter: "6kW OffGrid",
+    loadEstimate: 3200,
+    environment: "????????",
+    city: "?????",
+    suggestedPanels: 8,
+    suggestedBattery: "48V 150Ah",
+  },
+];
