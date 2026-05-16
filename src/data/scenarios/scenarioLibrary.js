@@ -69,3 +69,26 @@ export const scenarioLibrary = [
     suggestedBattery: "48V 150Ah",
   },
 ];
+
+export function getScenarioList(domain, weight) {
+  const domainMap = {
+    solar: ["???????", "??????", "??????", "??????"],
+    emergency: ["??? ???????"]
+  };
+
+  const weightMap = {
+    light: "???",
+    medium: "?????",
+    heavy: "?????"
+  };
+
+  return scenarioLibrary.filter((scenario) => {
+    const domainMatch = !domain || domainMap[domain]?.some((key) =>
+      String(scenario.category || scenario.title || "").includes(key)
+    );
+
+    const weightMatch = !weight || String(scenario.title || "").includes(weightMap[weight] || "");
+
+    return domainMatch && weightMatch;
+  });
+}
