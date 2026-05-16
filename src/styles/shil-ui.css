@@ -7716,3 +7716,94 @@ html,body,#root{width:100%;max-width:100%;min-height:100%;overflow-x:hidden;}
   font-size:12px;
 }
 
+
+.shil-scenario-hub{
+  width:100%;
+  max-width:100vw;
+  min-height:calc(100dvh - 180px);
+  padding:18px 16px 120px;
+  box-sizing:border-box;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:18px;
+  overflow-x:hidden;
+}
+
+.shil-big-route-card{
+  width:100%;
+  min-height:92px;
+  border-radius:28px;
+  border:1px solid rgba(255,255,255,.14);
+  background:rgba(8,10,28,.78);
+  color:#fff;
+  font-size:18px;
+  font-weight:900;
+  text-align:center;
+  backdrop-filter:blur(16px);
+  box-shadow:0 0 24px rgba(124,58,237,.22);
+}
+
+.shil-big-route-card:active{
+  transform:scale(.98);
+}
+
+.shil-scenario-page{
+  width:100%;
+  max-width:100vw;
+  overflow-x:hidden;
+  padding:14px 16px 120px;
+  box-sizing:border-box;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+.shil-scenario-detail-card{
+  width:100%;
+  border-radius:26px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(8,10,28,.76);
+  color:#fff;
+  padding:16px;
+  box-sizing:border-box;
+  backdrop-filter:blur(14px);
+  box-shadow:0 0 18px rgba(124,58,237,.14);
+}
+
+.shil-scenario-detail-card h3{
+  margin:0 0 14px;
+  font-size:16px;
+  font-weight:900;
+  text-align:right;
+}
+
+.shil-scenario-detail-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px 12px;
+  margin-bottom:14px;
+}
+
+.shil-scenario-detail-grid span{
+  color:#cbd5e1;
+  font-size:12px;
+  text-align:right;
+}
+
+.shil-scenario-detail-grid strong{
+  color:#fff;
+  font-size:13px;
+  text-align:left;
+}
+
+.shil-primary-action{
+  width:100%;
+  height:48px;
+  border:none;
+  border-radius:999px;
+  color:#fff;
+  font-weight:900;
+  background:linear-gradient(135deg,#06b6d4,#8b5cf6,#f59e0b);
+}
+

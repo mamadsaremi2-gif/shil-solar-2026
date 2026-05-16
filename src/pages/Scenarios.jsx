@@ -1,28 +1,77 @@
-﻿import ShilPageShell from "../components/ShilPageShell.jsx";
+﻿import { useMemo } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import ShilPageShell from "../components/ShilPageShell.jsx";
 import { getScenarioList } from "../data/scenarios/scenarioLibrary.js";
 
-const getDomainFromPath = () => {
-  const path = window.location.pathname.toLowerCase();
-  if (path.includes("emergency")) return "emergency";
-  if (path.includes("solar")) return "solar";
-  return "";
+const domainLabels = {
+  solar: "سناریوهای آماده پروژه‌های خورشیدی",
+  emergency: "سناریوهای آماده برق اضطراری",
 };
 
-const getLevelFromPath = () => {
-  const path = window.location.pathname.toLowerCase();
-  if (path.includes("light")) return "سبک";
-  if (path.includes("medium")) return "متوسط";
-  if (path.includes("heavy")) return "سنگین";
-  return "";
+const levelLabels = {
+  light: "سبک",
+  medium: "متوسط",
+  heavy: "سنگین",
 };
 
 export default function Scenarios() {
-  const domain = getDomainFromPath();
-  const level = getLevelFromPath();
-  const scenarios = getScenarioList(domain, level);
+  const navigate = useNavigate();
+  const { domain, level } = useParams();
+
+  const scenarios = useMemo(() => {
+    if (!domain || !level) return [];
+    return getScenarioList(domain, levelLabels[level]).slice(0, 100);
+  }, [domain, level]);
+
+  const selectScenario = (scenario) => {
+    localStorage.setItem("shil:selectedScenario", JSON.stringify(scenario));
+    localStorage.setItem("shil:scenarioDomain", domain);
+
+    if (domain === "solar") {
+      navigate("/new-project/environment?from=scenario");
+    } else {
+      navigate("/new-project/inputs?from=scenario&domain=emergency");
+    }
+  };
+
+  if (!domain) {
+    return (
+      <ShilPageShell title="سناریوهای آماده">
+        <div className="shil-scenario-hub">
+          <button onClick={() => navigate("/scenarios/solar")} className="shil-big-route-card">
+            سناریوهای آماده پروژه‌های خورشیدی
+          </button>
+
+          <button onClick={() => navigate("/scenarios/emergency")} className="shil-big-route-card">
+            سناریوهای آماده برق اضطراری
+          </button>
+        </div>
+      </ShilPageShell>
+    );
+  }
+
+  if (domain && !level) {
+    return (
+      <ShilPageShell title={domainLabels[domain] || "سناریوهای آماده"}>
+        <div className="shil-scenario-hub">
+          <button onClick={() => navigate(`/scenarios/${domain}/light`)} className="shil-big-route-card">
+            سبک
+          </button>
+
+          <button onClick={() => navigate(`/scenarios/${domain}/medium`)} className="shil-big-route-card">
+            متوسط
+          </button>
+
+          <button onClick={() => navigate(`/scenarios/${domain}/heavy`)} className="shil-big-route-card">
+            سنگین
+          </button>
+        </div>
+      </ShilPageShell>
+    );
+  }
 
   return (
-    <ShilPageShell title={level ? `سناریوهای آماده ${level}` : "سناریوهای آماده"}>
+    <ShilPageShell title={`${domainLabels[domain]} - ${levelLabels[level]}`}>
       <div className="shil-scenario-page">
         {scenarios.map((scenario) => (
           <article key={scenario.id} className="shil-scenario-detail-card">
@@ -38,8 +87,12 @@ export default function Scenarios() {
               <span>تعداد پنل</span><strong>{scenario.suggestedPanels}</strong>
             </div>
 
-            <button className="shil-primary-action" type="button">
-              انتخاب سناریو
+            <button
+              className="shil-primary-action"
+              type="button"
+              onClick={() => selectScenario(scenario)}
+            >
+              انتخاب سناریو و ادامه
             </button>
           </article>
         ))}
