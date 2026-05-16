@@ -7807,3 +7807,128 @@ html,body,#root{width:100%;max-width:100%;min-height:100%;overflow-x:hidden;}
   background:linear-gradient(135deg,#06b6d4,#8b5cf6,#f59e0b);
 }
 
+
+/* ===== SHIL REAL GLASS DASHBOARD ===== */
+
+.shil-dashboard-page a,
+.shil-dashboard-page button,
+.dashboard-card,
+.dashboard-item,
+.shil-dashboard-card {
+  position: relative;
+  border-radius: 28px;
+  padding: 18px 14px;
+  min-width: 110px;
+  min-height: 128px;
+
+  background: linear-gradient(
+    145deg,
+    rgba(255,255,255,.10),
+    rgba(255,255,255,.03)
+  );
+
+  border: 1px solid rgba(120,210,255,.25);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.18),
+    inset 0 -20px 40px rgba(0,0,0,.22),
+    0 10px 35px rgba(0,0,0,.35),
+    0 0 25px rgba(0,180,255,.12);
+
+  backdrop-filter: blur(18px) saturate(150%);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+
+  overflow: hidden;
+
+  transition:
+    transform .25s ease,
+    box-shadow .25s ease,
+    border-color .25s ease;
+}
+
+.shil-dashboard-page a:hover,
+.shil-dashboard-page button:hover,
+.dashboard-card:hover,
+.dashboard-item:hover,
+.shil-dashboard-card:hover {
+
+  transform: translateY(-6px) scale(1.04);
+
+  border-color: rgba(180,240,255,.65);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.25),
+    0 16px 45px rgba(0,0,0,.45),
+    0 0 30px rgba(0,220,255,.28),
+    0 0 42px rgba(170,70,255,.18);
+}
+
+/* REMOVE WHITE ICON FRAMES */
+.shil-dashboard-page img,
+.dashboard-card img,
+.dashboard-item img,
+.shil-dashboard-card img {
+
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+
+  max-width: 72px;
+  max-height: 72px;
+
+  object-fit: contain;
+
+  filter:
+    drop-shadow(0 0 12px rgba(0,220,255,.35))
+    drop-shadow(0 0 18px rgba(140,80,255,.18));
+
+  position: relative;
+  z-index: 2;
+}
+
+/* TEXT */
+.shil-dashboard-page span,
+.shil-dashboard-page p,
+.shil-dashboard-page h3 {
+
+  position: relative;
+  z-index: 2;
+
+  color: white;
+  text-align: center;
+
+  text-shadow:
+    0 0 10px rgba(0,220,255,.18);
+
+  font-weight: 600;
+}
+
+/* GLASS REFLECTION */
+.shil-dashboard-page a::before,
+.shil-dashboard-page button::before,
+.dashboard-card::before,
+.dashboard-item::before,
+.shil-dashboard-card::before {
+
+  content: "";
+
+  position: absolute;
+
+  top: -40%;
+  left: -30%;
+
+  width: 160%;
+  height: 120%;
+
+  background:
+    linear-gradient(
+      120deg,
+      rgba(255,255,255,.20),
+      rgba(255,255,255,0)
+    );
+
+  transform: rotate(12deg);
+
+  pointer-events: none;
+}
+
