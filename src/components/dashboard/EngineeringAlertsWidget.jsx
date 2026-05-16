@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 
 import {
   AlertTriangle,
@@ -10,29 +10,29 @@ import {
 const alerts = [
 
   {
-    title: "افت ولتاژ",
+    title: "??? ?????",
     value: "2.1%",
     status: "warning",
     icon: <Zap size={20} />,
   },
 
   {
-    title: "سلامت باتری",
+    title: "????? ?????",
     value: "GOOD",
     status: "success",
     icon: <ShieldCheck size={20} />,
   },
 
   {
-    title: "وضعیت اینورتر",
+    title: "????? ???????",
     value: "ONLINE",
     status: "success",
     icon: <Cpu size={20} />,
   },
 
   {
-    title: "دمای سیستم",
-    value: "47°C",
+    title: "???? ?????",
+    value: "47�C",
     status: "danger",
     icon: <AlertTriangle size={20} />,
   },
@@ -51,7 +51,7 @@ export default function EngineeringAlertsWidget() {
 
           <span>ENGINE STATUS</span>
 
-          <h3>وضعیت تجهیزات و هشدارها</h3>
+          <h3>????? ??????? ? ???????</h3>
 
         </div>
 

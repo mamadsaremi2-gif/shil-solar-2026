@@ -9,7 +9,7 @@ export default function WelcomePage() {
       </header>
 
       <main className="shil-welcome-center">
-        <img className="shil-welcome-logo" src="/assets/shil-logo.png" alt="SHIL" />
+        <img className="shil-welcome-logo" src="/assets/shil/logo/welcome/shil-welcome-logo.webp" alt="SHIL" />
         <Link className="shil-primary-entry" to="/dashboard">ورود به داشبورد</Link>
       </main>
     </div>

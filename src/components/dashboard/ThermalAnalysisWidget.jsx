@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 
 import {
   LineChart,
@@ -61,7 +61,7 @@ export default function ThermalAnalysisWidget() {
 
           <span>THERMAL ANALYSIS</span>
 
-          <h3>تحلیل حرارتی سیستم</h3>
+          <h3>????? ?????? ?????</h3>
 
         </div>
 

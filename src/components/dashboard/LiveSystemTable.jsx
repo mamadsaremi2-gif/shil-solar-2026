@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 
 const rows = [
 
@@ -36,7 +36,7 @@ export default function LiveSystemTable() {
 
           <span>LIVE SYSTEM</span>
 
-          <h3>وضعیت لحظه‌ای سیستم</h3>
+          <h3>????? ??????? ?????</h3>
 
         </div>
 

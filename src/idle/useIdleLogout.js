@@ -1,4 +1,4 @@
-﻿import {
+import {
   useIdleTimer
 } from "react-idle-timer";
 

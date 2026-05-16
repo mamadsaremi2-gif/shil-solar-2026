@@ -1,15 +1,15 @@
-﻿import React from "react";
+import React from "react";
 import { Link, useLocation } from "react-router-dom";
 
 const steps = [
-  { id: 1, title: "اطلاعات", path: "/new-project/info" },
-  { id: 2, title: "محیط", path: "/new-project/environment" },
-  { id: 3, title: "مسیر", path: "/new-project/path" },
-  { id: 4, title: "روش", path: "/new-project/method" },
-  { id: 5, title: "ورودی", path: "/new-project/inputs" },
-  { id: 6, title: "سیستم", path: "/new-project/system" },
-  { id: 7, title: "چکیده", path: "/new-project/summary" },
-  { id: 8, title: "اجرا", path: "/new-project/run" },
+  { id: 1, title: "???????", path: "/new-project/info" },
+  { id: 2, title: "????", path: "/new-project/environment" },
+  { id: 3, title: "????", path: "/new-project/path" },
+  { id: 4, title: "???", path: "/new-project/method" },
+  { id: 5, title: "?????", path: "/new-project/inputs" },
+  { id: 6, title: "?????", path: "/new-project/system" },
+  { id: 7, title: "?????", path: "/new-project/summary" },
+  { id: 8, title: "????", path: "/new-project/run" },
 ];
 
 export default function ProjectStepRail() {

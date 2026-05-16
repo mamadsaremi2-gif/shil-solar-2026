@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import {
   ResponsiveContainer,
   ComposedChart,
@@ -12,12 +12,12 @@ import {
 } from "recharts";
 
 const data = [
-  { month: "فروردین", pv: 520, load: 410, loss: 42 },
-  { month: "اردیبهشت", pv: 610, load: 450, loss: 48 },
-  { month: "خرداد", pv: 720, load: 510, loss: 56 },
-  { month: "تیر", pv: 780, load: 540, loss: 62 },
-  { month: "مرداد", pv: 750, load: 530, loss: 59 },
-  { month: "شهریور", pv: 680, load: 500, loss: 51 },
+  { month: "???????", pv: 520, load: 410, loss: 42 },
+  { month: "????????", pv: 610, load: 450, loss: 48 },
+  { month: "?????", pv: 720, load: 510, loss: 56 },
+  { month: "???", pv: 780, load: 540, loss: 62 },
+  { month: "?????", pv: 750, load: 530, loss: 59 },
+  { month: "??????", pv: 680, load: 500, loss: 51 },
 ];
 
 export default function EngineeringComposedChart() {
@@ -26,7 +26,7 @@ export default function EngineeringComposedChart() {
       <div className="widget-head-v15">
         <div>
           <span>MONTHLY ANALYSIS</span>
-          <h3>تحلیل تولید، مصرف و تلفات</h3>
+          <h3>????? ?????? ???? ? ?????</h3>
         </div>
       </div>
 

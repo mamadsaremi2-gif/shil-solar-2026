@@ -1,4 +1,4 @@
-﻿import React, { useState } from "react";
+import React, { useState } from "react";
 
 import QRCode from "react-qr-code";
 
@@ -15,7 +15,7 @@ export default function DeviceCommissioningPanel() {
 
         <div>
           <span>DEVICE COMMISSIONING</span>
-          <h3>راه‌اندازی تجهیزات</h3>
+          <h3>?????????? ???????</h3>
         </div>
 
       </div>

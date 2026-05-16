@@ -6800,7 +6800,7 @@ button, input, textarea, select { font: inherit; }
 .shil-welcome-page,
 .shil-dashboard-home,
 .shil-page-shell {
-  background-image: linear-gradient(180deg, rgba(4, 10, 19, 0.38), rgba(4, 10, 19, 0.78)), url('/assets/shil-dashboard-bg.png');
+  background-image: linear-gradient(180deg, rgba(4, 10, 19, 0.38), rgba(4, 10, 19, 0.78)), url('/assets/shil/background/main/shil-main-bg.webp');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -7043,9 +7043,9 @@ button, input, textarea, select { font: inherit; }
 }
 
 /* SHIL final flow integration patch - safe mobile-first layer */
-.shil-welcome-page { background-image: linear-gradient(180deg, rgba(4,10,19,.28), rgba(4,10,19,.72)), url('/assets/shil/backgrounds/welcome-fullscreen.png'), url('/assets/shil/backgrounds/dashboard-mobile-fullscreen.png'); }
-.shil-dashboard-home { background-image: linear-gradient(180deg, rgba(4,10,19,.34), rgba(4,10,19,.76)), url('/assets/shil/backgrounds/dashboard-mobile-fullscreen.png'), url('/assets/shil/backgrounds/app-master-blur.png'); }
-.shil-page-shell { background-image: linear-gradient(180deg, rgba(4,10,19,.44), rgba(4,10,19,.84)), url('/assets/shil/backgrounds/app-master-blur.png'), url('/assets/shil/backgrounds/dashboard-mobile-fullscreen.png'); }
+.shil-welcome-page { background-image: linear-gradient(180deg, rgba(4,10,19,.28), rgba(4,10,19,.72)), url('/assets/shil/background/login/shil-login-bg.webp'), url('/assets/shil/background/main/shil-main-bg.webp'); }
+.shil-dashboard-home { background-image: linear-gradient(180deg, rgba(4,10,19,.34), rgba(4,10,19,.76)), url('/assets/shil/background/main/shil-main-bg.webp'), url('/assets/shil/background/main/shil-main-bg.webp'); }
+.shil-page-shell { background-image: linear-gradient(180deg, rgba(4,10,19,.44), rgba(4,10,19,.84)), url('/assets/shil/background/main/shil-main-bg.webp'), url('/assets/shil/background/main/shil-main-bg.webp'); }
 
 .shil-engineering-shell .shil-page-content {
   padding-top: calc(var(--shil-header-h) + env(safe-area-inset-top) + 10px);

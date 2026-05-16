@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 
 import {
   AreaChart,
@@ -60,7 +60,7 @@ export default function IrradianceWidget() {
 
           <span>IRRADIANCE</span>
 
-          <h3>شدت تابش خورشیدی</h3>
+          <h3>??? ???? ???????</h3>
 
         </div>
 

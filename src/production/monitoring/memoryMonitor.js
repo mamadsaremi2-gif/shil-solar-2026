@@ -1,4 +1,4 @@
-﻿export function monitorMemory() {
+export function monitorMemory() {
   if (!performance.memory) {
     return null;
   }

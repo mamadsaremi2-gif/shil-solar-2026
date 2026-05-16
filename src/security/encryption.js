@@ -1,4 +1,4 @@
-﻿import CryptoJS
+import CryptoJS
 from "crypto-js";
 
 const SECRET =

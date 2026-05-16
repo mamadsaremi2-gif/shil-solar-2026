@@ -1,27 +1,27 @@
-﻿export const installerChecklist = [
+export const installerChecklist = [
   {
     id: "gps",
-    title: "ثبت موقعیت GPS",
+    title: "??? ?????? GPS",
     required: true,
   },
   {
     id: "pv_photo",
-    title: "عکس محل نصب پنل",
+    title: "??? ??? ??? ???",
     required: true,
   },
   {
     id: "compass",
-    title: "ثبت جهت قطب‌نما",
+    title: "??? ??? ???????",
     required: true,
   },
   {
     id: "inverter_label",
-    title: "عکس پلاک اینورتر",
+    title: "??? ???? ???????",
     required: true,
   },
   {
     id: "protection",
-    title: "بررسی حفاظت DC/AC",
+    title: "????? ????? DC/AC",
     required: true,
   },
 ];

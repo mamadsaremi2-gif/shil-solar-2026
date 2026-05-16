@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 
 const items = [
   { title: "PV Yield", value: "58 kWh", level: 88 },
@@ -13,7 +13,7 @@ export default function AnalysisBars() {
       <div className="widget-head-v15">
         <div>
           <span>ANALYSIS BARS</span>
-          <h3>شاخص‌های تحلیلی کلیدی</h3>
+          <h3>???????? ?????? ?????</h3>
         </div>
       </div>
 

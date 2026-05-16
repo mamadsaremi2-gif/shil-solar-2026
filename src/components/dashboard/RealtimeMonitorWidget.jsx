@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 
 const realtime = [
 
@@ -36,7 +36,7 @@ export default function RealtimeMonitorWidget() {
 
           <span>REALTIME MONITOR</span>
 
-          <h3>مانیتورینگ لحظه‌ای</h3>
+          <h3>?????????? ???????</h3>
 
         </div>
 

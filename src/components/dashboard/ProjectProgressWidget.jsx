@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 
 const projects = [
 
@@ -31,7 +31,7 @@ export default function ProjectProgressWidget() {
 
           <span>PROJECTS</span>
 
-          <h3>پیشرفت پروژه‌ها</h3>
+          <h3>?????? ????????</h3>
 
         </div>
 

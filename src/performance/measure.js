@@ -1,4 +1,4 @@
-﻿export function measurePerformance(label) {
+export function measurePerformance(label) {
 
   const start = performance.now();
 

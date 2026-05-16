@@ -7,7 +7,7 @@ export default function Contact() {
   return (
     <ShilPageShell title="ارتباط با ما">
       <section className="shil-contact-banner">
-        <img src="/assets/shil-products.png" alt="محصولات SHIL" />
+        <img src="/assets/shil/contact/shil-products-banner.webp" alt="محصولات SHIL" />
         <a href="https://shil.ir" target="_blank" rel="noreferrer">ورود به سایت SHIL</a>
       </section>
       <section className="shil-info-panel">

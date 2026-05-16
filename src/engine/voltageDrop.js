@@ -1,4 +1,4 @@
-﻿export function calculateVoltageDrop(
+export function calculateVoltageDrop(
   current,
   length,
   area

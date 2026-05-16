@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 
 import {
   RadioTower,
@@ -24,7 +24,7 @@ export default function FleetMonitoringPanel() {
 
         <div>
           <span>FLEET MONITORING</span>
-          <h3>مانیتورینگ چند نیروگاه</h3>
+          <h3>?????????? ??? ???????</h3>
         </div>
 
       </div>

@@ -1,4 +1,4 @@
-﻿import CryptoJS from "crypto-js";
+import CryptoJS from "crypto-js";
 
 const SECRET_KEY = "SHIL_V15_LOCAL_SECRET";
 

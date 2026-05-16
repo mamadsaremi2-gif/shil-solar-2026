@@ -1,4 +1,4 @@
-﻿import { calculatePVArray } from "../pv/pvArray.js";
+import { calculatePVArray } from "../pv/pvArray.js";
 import { calculatePVString } from "../pv/pvString.js";
 import { calculateBatteryBank } from "../battery/batteryBank.js";
 import { calculateInverterSizing } from "../inverter/inverterSizing.js";
