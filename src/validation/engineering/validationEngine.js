@@ -1,4 +1,4 @@
-import { validateProjectRules } from "./rules/projectRules.js";
+﻿import { validateProjectRules } from "./rules/projectRules.js";
 import { validatePVRules, getPVValidationMetrics } from "./rules/pvRules.js";
 import { validateBatteryRules } from "./rules/batteryRules.js";
 import { validateInverterRules } from "./rules/inverterRules.js";
@@ -15,7 +15,7 @@ const RULE_GROUPS = [
 ];
 
 export function validateEngineeringForm(form) {
-  const messages = RULE_GROUPS.flatMap((rule) => rule(form));
+  const messages = RULE_GROUPS.flatMap((rule) => rule(form || {}));
   const errors = messages.filter((item) => item.severity === "error");
   const warnings = messages.filter((item) => item.severity === "warning");
 
@@ -24,7 +24,7 @@ export function validateEngineeringForm(form) {
     errors,
     warnings,
     metrics: {
-      pv: getPVValidationMetrics(form)
+      pv: getPVValidationMetrics(form || {})
     }
   };
 }

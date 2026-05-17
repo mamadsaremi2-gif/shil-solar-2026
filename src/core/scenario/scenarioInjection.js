@@ -1,32 +1,29 @@
-﻿import { scenarioLibrary } from "../../data/scenarios/scenarioLibrary";
+import { scenarioLibrary, getScenarioById } from "../../data/scenarios/scenarioLibrary.js";
+import { scenarioToEngineeringForm } from "./scenarioToEngineeringForm.js";
 
-export function getScenarioById(id) {
-  return scenarioLibrary.find((item) => item.id === Number(id));
-}
+export { scenarioLibrary, getScenarioById };
 
-export function injectScenarioIntoProject(scenario, projectType) {
+export function injectScenarioIntoProject(scenario, projectType = scenario?.domain || "solar") {
+  const form = scenarioToEngineeringForm(scenario || {});
   return {
-    id: scenario.id,
-    title: scenario.title,
+    id: scenario?.id,
+    title: scenario?.title,
     type: projectType,
-    level: scenario.level,
-
-    environment: {
-      city: "",
-      province: "",
-      irradiance: null,
-      temperature: null
-    },
-
+    level: scenario?.level,
+    domain: scenario?.domain,
+    calculationEngine: scenario?.calculationEngine || projectType,
+    environment: form.environment,
     equipment: {
-      inverter: scenario.inverter,
-      batteryType: scenario.batteryType,
-      suggestedBattery: scenario.suggestedBattery,
-      suggestedPanels: scenario.suggestedPanels
+      inverter: scenario?.inverter,
+      batteryType: scenario?.batteryType,
+      suggestedBattery: scenario?.suggestedBattery,
+      suggestedPanels: scenario?.suggestedPanels,
+      requiredEquipment: scenario?.requiredEquipment,
     },
-
     calculations: {
-      estimatedLoad: scenario.loadEstimate
-    }
+      estimatedLoad: scenario?.loadEstimate,
+      dailyEnergyWh: scenario?.dailyEnergyWh,
+      form,
+    },
   };
 }

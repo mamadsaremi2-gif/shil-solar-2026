@@ -1,4 +1,4 @@
-﻿* {
+* {
   box-sizing: border-box;
 }
 
@@ -241,3 +241,25 @@ p {
   place-items: center;
   font-weight: 700;
 }
+
+
+/* SHIL solar configuration final update */
+.shil-solar-config-page select,
+.shil-solar-config-page input { width: 100%; min-height: 44px; border-radius: 16px; border: 1px solid rgba(125, 255, 224, .22); background: rgba(0,0,0,.2); color: #eaffff; padding: 0 12px; }
+.shil-mini-choice-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 12px 0 16px; }
+.shil-mini-choice-row button,
+.shil-soft-button { border: 1px solid rgba(125,255,224,.25); background: rgba(14, 165, 160, .08); color: #eaffff; border-radius: 16px; padding: 10px 8px; }
+.shil-mini-choice-row button.active { border-color: rgba(34, 211, 238, .8); background: rgba(34, 211, 238, .16); box-shadow: 0 0 24px rgba(34,211,238,.15); }
+.shil-result-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+.shil-result-grid > div,
+.shil-expert-box > div { border: 1px solid rgba(125,255,224,.18); background: rgba(255,255,255,.045); border-radius: 18px; padding: 12px; display: flex; flex-direction: column; gap: 5px; }
+.shil-result-grid span,
+.shil-expert-box span { color: #9bd1d0; font-size: 12px; }
+.shil-result-grid strong,
+.shil-expert-box strong { color: #fff; font-size: 14px; line-height: 1.7; }
+.shil-result-grid small { color: #bdebe8; font-size: 12px; }
+.shil-reason-list { margin: 12px 0 0; padding: 0 18px 0 0; color: #dff; line-height: 2; }
+.shil-reason-list li { margin-bottom: 6px; }
+.shil-expert-box { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
+.shil-floating-warning { position: sticky; top: 102px; z-index: 50; border: 1px solid rgba(251, 191, 36, .5); background: rgba(92, 54, 0, .9); color: #fff7d6; border-radius: 18px; padding: 12px; box-shadow: 0 12px 32px rgba(0,0,0,.35); }
+@media (min-width: 390px) { .shil-result-grid { grid-template-columns: 1fr 1fr; } }

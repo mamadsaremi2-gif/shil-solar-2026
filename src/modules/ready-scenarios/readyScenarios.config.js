@@ -1,4 +1,4 @@
-export const READY_SCENARIO_GROUPS = [
+export const READY_SCENARIO_GROسیستم پشتیبان باتری و اینورتر = [
   {
     id: "solar",
     title: "سناریوهای آماده انرژی خورشیدی",

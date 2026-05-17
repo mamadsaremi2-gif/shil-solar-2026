@@ -1,0 +1,74 @@
+﻿/* ===== SHIL IOS DASHBOARD ICONS ===== */
+
+.dashboard-card,
+.dashboard .card,
+.dashboard-grid .card{
+  background:rgba(255,255,255,0.72) !important;
+  backdrop-filter:blur(18px) !important;
+  -webkit-backdrop-filter:blur(18px) !important;
+
+  border-radius:34px !important;
+
+  border:1px solid rgba(255,255,255,0.55) !important;
+
+  box-shadow:
+    0 8px 24px rgba(0,0,0,0.08),
+    inset 0 1px 0 rgba(255,255,255,0.7) !important;
+
+  transition:0.25s ease !important;
+
+  overflow:visible !important;
+}
+
+.dashboard-card:hover,
+.dashboard .card:hover{
+  transform:translateY(-4px) scale(1.02) !important;
+}
+
+.dashboard-card img,
+.dashboard .card img,
+.dashboard-grid img{
+  width:92px !important;
+  height:92px !important;
+
+  object-fit:contain !important;
+
+  display:block !important;
+
+  margin:0 auto 14px auto !important;
+
+  background:transparent !important;
+
+  filter:
+    drop-shadow(0 8px 18px rgba(107,72,255,0.22))
+    saturate(1.08)
+    contrast(1.04) !important;
+}
+
+.dashboard-card h3,
+.dashboard .card h3,
+.dashboard-card span{
+  font-size:18px !important;
+  font-weight:700 !important;
+  text-align:center !important;
+  color:#31115e !important;
+}
+
+.dashboard-grid{
+  display:grid !important;
+  grid-template-columns:1fr 1fr !important;
+  gap:18px !important;
+}
+
+@media (max-width:768px){
+
+  .dashboard-grid{
+    grid-template-columns:1fr 1fr !important;
+  }
+
+  .dashboard-card img,
+  .dashboard .card img{
+    width:82px !important;
+    height:82px !important;
+  }
+}

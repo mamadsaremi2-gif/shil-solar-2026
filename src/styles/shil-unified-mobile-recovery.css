@@ -1,0 +1,71 @@
+﻿* {
+  box-sizing: border-box !important;
+}
+
+html,
+body,
+#root {
+  width: 100% !important;
+  min-height: 100% !important;
+  margin: 0 !important;
+}
+
+body {
+  direction: rtl !important;
+  overflow-x: hidden !important;
+  background: #f7f9fc !important;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+}
+
+img {
+  max-width: 100% !important;
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: inherit !important;
+}
+
+input,
+textarea,
+select {
+  width: 100% !important;
+  max-width: 360px !important;
+  min-height: 36px !important;
+  border-radius: 12px !important;
+}
+
+button {
+  border-radius: 14px !important;
+}
+
+body.shil-route-login #root > div,
+body.shil-route-welcome #root > div,
+body.shil-route-dashboard #root > div,
+body.shil-route-new-project #root > div,
+body.shil-route-projects #root > div,
+body.shil-route-contact #root > div,
+body.shil-route-feedback #root > div,
+body.shil-route-assistant #root > div,
+body.shil-route-education #root > div {
+  width: min(100%, 430px) !important;
+  min-height: 100vh !important;
+  margin: 0 auto !important;
+  padding: 56px 14px 88px !important;
+  overflow-x: hidden !important;
+}
+
+body.shil-route-welcome img {
+  width: min(86vw, 340px) !important;
+  height: auto !important;
+}
+
+body.shil-route-new-project a,
+body.shil-route-new-project button,
+body.shil-route-projects a,
+body.shil-route-projects button {
+  text-decoration: none !important;
+  text-align: center !important;
+}
