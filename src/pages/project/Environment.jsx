@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ShilPageShell from "../../components/ShilPageShell";
+import ProjectMiniRail from "../../components/ProjectMiniRail.jsx";
 import SmartCityInput, { findIranCityByName, getDefaultIranCity } from "../../components/SmartCityInput";
 import { analyzeEnvironmentForEngineering } from "../../core/environment/environmentAssessment.js";
 
@@ -267,6 +268,7 @@ export default function Environment() {
       draftLabel="ذخیره"
       scrollXVisible
     >
+      <ProjectMiniRail />
       <div className="shil-env-page">
         <section className="shil-env-card">
           <h3 className="shil-section-title">موقعیت پروژه</h3>

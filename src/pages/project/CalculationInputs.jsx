@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ShilPageShell from "../../components/ShilPageShell.jsx";
+import ProjectMiniRail from "../../components/ProjectMiniRail.jsx";
 import { consumerEquipmentLibrary, searchConsumerEquipment } from "../../data/catalogs/consumerEquipmentLibrary.js";
 import { buildScenarioCalculationInput } from "../../core/scenario/scenarioToEngineeringForm.js";
 import { METHOD_LABELS, persistLoadEngineResult, runLoadEngine } from "../../core/calculation/loadEngine.js";
@@ -114,6 +115,7 @@ export default function CalculationInputs() {
 
   return (
     <ShilPageShell title={METHOD_LABELS[method] || "ورودی محاسبات"}>
+      <ProjectMiniRail />
       <div className="shil-equipment-page">
         <section className="shil-env-card">
           <h3 className="shil-section-title">زمینه محاسبات</h3>
