@@ -5,7 +5,7 @@ import { validateInverterRules } from "./rules/inverterRules.js";
 import { validateCableRules } from "./rules/cableRules.js";
 import { validateLossRules } from "./rules/lossRules.js";
 
-const RULE_GROسیستم پشتیبان باتری و اینورتر = [
+const RULE_GROUPS = [
   validateProjectRules,
   validatePVRules,
   validateBatteryRules,
@@ -15,7 +15,7 @@ const RULE_GROسیستم پشتیبان باتری و اینورتر = [
 ];
 
 export function validateEngineeringForm(form) {
-  const messages = RULE_GROسیستم پشتیبان باتری و اینورتر.flatMap((rule) => rule(form));
+  const messages = RULE_GROUPS.flatMap((rule) => rule(form));
   const errors = messages.filter((item) => item.severity === "error");
   const warnings = messages.filter((item) => item.severity === "warning");
 
