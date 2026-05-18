@@ -540,3 +540,18 @@ p {
   .shil-result-table-final .shil-result-row{grid-template-columns:1fr !important;gap:4px !important}
   .shil-result-table-final .shil-result-header{display:none !important}
 }
+
+/* SHIL final system-settings bank smart pick refinements */
+.shil-bank-collapsed-field .shil-smart-pick-box{
+  border:1px solid rgba(125,255,224,.16);
+  border-radius:18px;
+  background:linear-gradient(135deg,rgba(34,211,238,.10),rgba(255,255,255,.035));
+  padding:10px;
+  display:grid;
+  gap:4px;
+  margin:8px 0;
+}
+.shil-bank-collapsed-field .shil-smart-pick-box span{color:#9ffcf4;font-size:11px;font-weight:900}
+.shil-bank-collapsed-field .shil-smart-pick-box strong{color:#fff;font-size:12px;line-height:1.75}
+.shil-bank-collapsed-field .shil-smart-pick-box small{color:#c9fffb;font-size:11px;line-height:1.65}
+.shil-bank-collapsed-field .shil-bank-body{margin-top:0}

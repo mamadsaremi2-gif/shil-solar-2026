@@ -121,7 +121,8 @@ function sizeCableAndProtection({ inverter, inverterParallel, pvArray, batteryDe
 
 function validateManual({ designPowerW, designSurgeW, inverterPick, batteryDesign, pvArray, requiredBatteryWh, settings }) {
   const warnings = [];
-  const inverterCount = Math.max(1, Number(settings.inverterCount || inverterPick.parallelCount || 1));
+  const baseInverterCount = Math.max(1, Number(settings.inverterCount || inverterPick.parallelCount || 1));
+  const inverterCount = Math.max(baseInverterCount, ceil(baseInverterCount * Math.max(1, Number(settings.inverterExtraFactor || 1))));
   const batteryCount = Math.max(1, Number(settings.batteryCount || batteryDesign.totalCount || 1));
   const panelCount = Math.max(1, Number(settings.panelCount || pvArray.panelCount || 1));
   const inverterCapacity = inverterPick.inverter.ratedPowerW * inverterCount;
@@ -152,12 +153,16 @@ export function runSolarAutoDesign({ load, environment, settings = {} }) {
   const losses = clamp(0.86 - thermalLoss - soilingLoss, 0.55, 0.86);
 
   const inverterPick = chooseInverter(designPowerW, designSurgeW, settings.systemVoltage, settings.inverterId);
-  const inverterCount = Math.max(1, Number(settings.inverterCount || inverterPick.parallelCount || 1));
+  const baseInverterCount = Math.max(1, Number(settings.inverterCount || inverterPick.parallelCount || 1));
+  const inverterCount = Math.max(baseInverterCount, ceil(baseInverterCount * Math.max(1, Number(settings.inverterExtraFactor || 1))));
   const panel = choosePanel(settings.panelId, settings.panelPowerW || 700);
   const requiredBatteryWh = normalized.totalEnergyWh * autonomyDays;
   const batteryDesign = chooseBattery(inverterPick.inverter.dcVoltage, requiredBatteryWh, settings.batteryVoltage, settings.batteryId);
-  const batteryCount = Number(settings.batteryCount || batteryDesign.totalCount || 0);
+  const baseBatteryCount = Number(settings.batteryCount || batteryDesign.totalCount || 0);
+  const batteryCount = Math.max(baseBatteryCount, ceil(baseBatteryCount * Math.max(1, Number(settings.batteryExtraFactor || 1))));
   const pvArray = sizePvArray({ dailyWh: normalized.totalEnergyWh, psh, panel, inverter: inverterPick.inverter, losses, autonomyDays, manualPanelCount: settings.panelCount });
+  const basePanelCount = Number(settings.panelCount || pvArray.panelCount || 0);
+  const panelCountWithFutureReserve = Math.max(basePanelCount, ceil(basePanelCount * Math.max(1, Number(settings.panelExtraFactor || 1))));
   const protection = sizeCableAndProtection({ inverter: inverterPick.inverter, inverterParallel: inverterCount, pvArray, batteryDesign, designPowerW });
 
   const warnings = [];
@@ -167,15 +172,16 @@ export function runSolarAutoDesign({ load, environment, settings = {} }) {
   if (inverterCount > 1 && !inverterPick.inverter.parallelCapable) warnings.push("تعداد اینورتر بیشتر از یک عدد است اما مدل انتخابی قابلیت پارالل ندارد.");
   warnings.push(...validateManual({ designPowerW, designSurgeW, inverterPick, batteryDesign, pvArray, requiredBatteryWh, settings: { ...settings, inverterCount, batteryCount } }));
 
-  const batteryTotalCount = Math.max(batteryDesign.totalCount, Number(settings.batteryCount || 0) || batteryDesign.totalCount);
-  const panelTotalCount = Math.max(pvArray.panelCount, Number(settings.panelCount || 0) || pvArray.panelCount);
+  const batteryTotalCount = Math.max(batteryDesign.totalCount, batteryCount);
+  const panelTotalCount = Math.max(pvArray.panelCount, panelCountWithFutureReserve);
   const explanations = [
     `توان طراحی با ضریب افزایش استاندارد ${reserveFactor} برابر، ${designPowerW} وات محاسبه شد.`,
     `توان راه‌اندازی ${designSurgeW} وات است؛ بارهای موتوری بدون سافت‌استارتر با ضریب 2.5 و با سافت‌استارتر با ضریب 1.2 لحاظ می‌شوند.`,
     `اینورتر ${inverterPick.inverter.title} انتخاب شد چون توان نامی و توان لحظه‌ای مورد نیاز را پوشش می‌دهد.`,
     `ولتاژ باتری به صورت شناور بررسی شد؛ برای 12V محدوده 11 تا 13، برای 24V محدوده 22 تا 26 و برای 48V محدوده 44 تا 52 ولت پذیرفته می‌شود.`,
     `آرایش پنل ${pvArray.seriesCount} سری × ${pvArray.parallelCount} موازی انتخاب شد تا ولتاژ رشته داخل محدوده MPPT اینورتر بماند.`,
-    `فضای نصب پنل با احتساب مسیر تعمیر و نگهداری ${pvArray.maintenanceAreaM2} مترمربع برآورد شد.`
+    `فضای نصب پنل با احتساب مسیر تعمیر و نگهداری ${pvArray.maintenanceAreaM2} مترمربع برآورد شد.`,
+    `ضرایب توسعه آینده در محاسبه نهایی لحاظ شدند: اینورتر ${Number(settings.inverterExtraFactor || 1)}، باتری ${Number(settings.batteryExtraFactor || 1)}، پنل ${Number(settings.panelExtraFactor || 1)}.`
   ];
   if (inverterCount > 1) explanations.push(`برای توسعه/توان بیشتر، ${inverterCount} عدد اینورتر در نظر گرفته شده است.`);
 
@@ -183,7 +189,17 @@ export function runSolarAutoDesign({ load, environment, settings = {} }) {
     valid: warnings.length === 0,
     method: "solar-auto-design",
     load: normalized,
-    settings: { autonomyDays, reserveFactor, systemType: settings.systemType || "offgrid", manual: settings.manualMode || false },
+    settings: {
+      autonomyDays,
+      reserveFactor,
+      systemType: settings.systemType || "offgrid",
+      manual: settings.manualMode || false,
+      equipmentManual: settings.equipmentManualMode || false,
+      parameterManual: settings.parameterManualMode || false,
+      panelExtraFactor: Number(settings.panelExtraFactor || 1),
+      inverterExtraFactor: Number(settings.inverterExtraFactor || 1),
+      batteryExtraFactor: Number(settings.batteryExtraFactor || 1)
+    },
     inverter: { ...inverterPick.inverter, count: inverterCount, parallelRequired: inverterCount > 1, manual: inverterPick.manual },
     panel,
     pvArray: { ...pvArray, panelCount: panelTotalCount },

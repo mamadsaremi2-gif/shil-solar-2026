@@ -51,10 +51,10 @@ function DesignModeCards({ value, onChange }) {
   );
 }
 
-function BankSelect({ title, subtitle, value, count, onValue, onCount, items, renderMeta, renderReason, smartValue }) {
+function BankSelect({ title, subtitle, value, extraFactor, onValue, onExtraFactor, items, renderMeta, renderReason, smartValue, smartTitle }) {
   const selected = items.find((item) => item.id === value);
   return (
-    <div className="shil-bank-card shil-bank-card-final">
+    <div className="shil-bank-card shil-bank-card-final shil-bank-collapsed-field">
       <div className="shil-bank-topline">
         <div>
           <h2>{title}</h2>
@@ -63,19 +63,27 @@ function BankSelect({ title, subtitle, value, count, onValue, onCount, items, re
         <b>{smartValue}</b>
       </div>
 
-      <div className="shil-bank-body">
-        <label className="shil-bank-field">
-          <span>انتخاب از بانک SHIL</span>
-          <select value={value} onChange={(e) => onValue(e.target.value)}>
-            {items.map((item) => <option key={item.id} value={item.id}>{item.title}</option>)}
-          </select>
-        </label>
-
-        <label className="shil-bank-field shil-bank-count-field">
-          <span>تعداد / ضریب توسعه آینده</span>
-          <input type="number" min="1" value={count} onChange={(e) => onCount(e.target.value)} />
-        </label>
+      <div className="shil-smart-pick-box">
+        <span>انتخاب هوشمند اپ</span>
+        <strong>{smartTitle || optionTitle(selected)}</strong>
+        <small>{smartValue}</small>
       </div>
+
+      <DetailsToggle title="تغییر بانک و توسعه آینده">
+        <div className="shil-bank-body">
+          <label className="shil-bank-field">
+            <span>انتخاب از بانک SHIL</span>
+            <select value={value} onChange={(e) => onValue(e.target.value)}>
+              {items.map((item) => <option key={item.id} value={item.id}>{item.title}</option>)}
+            </select>
+          </label>
+
+          <label className="shil-bank-field shil-bank-count-field">
+            <span>ضریب اضافه کردن</span>
+            <input type="number" step="0.05" min="1" value={extraFactor} onChange={(e) => onExtraFactor(e.target.value)} />
+          </label>
+        </div>
+      </DetailsToggle>
 
       <DetailsToggle title="توضیحات این بانک">
         <div className="shil-bank-meta">{renderMeta(selected)}</div>
@@ -190,39 +198,39 @@ export default function SystemSettings() {
   const [systemType, setSystemType] = useState("offgrid");
   const [autonomyDays, setAutonomyDays] = useState(1);
   const [reserveFactor, setReserveFactor] = useState(1.2);
-  const [manualMode, setManualMode] = useState(false);
+  const [equipmentManualMode, setEquipmentManualMode] = useState(false);
+  const [parameterManualMode, setParameterManualMode] = useState(false);
   const [panelId, setPanelId] = useState(SHIL_SOLAR_PANELS.at(-1)?.id || "");
   const [inverterId, setInverterId] = useState(SHIL_SOLAR_INVERTERS.find((i) => i.ratedPowerW >= 5000)?.id || SHIL_SOLAR_INVERTERS[0]?.id || "");
   const [batteryId, setBatteryId] = useState(SHIL_LITHIUM_BATTERIES.find((b) => b.nominalVoltage === 48 && b.capacityAh === 200)?.id || SHIL_LITHIUM_BATTERIES[0]?.id || "");
-  const [panelCount, setPanelCount] = useState(0);
-  const [inverterCount, setInverterCount] = useState(0);
-  const [batteryCount, setBatteryCount] = useState(0);
+  const [panelExtraFactor, setPanelExtraFactor] = useState(1);
+  const [inverterExtraFactor, setInverterExtraFactor] = useState(1);
+  const [batteryExtraFactor, setBatteryExtraFactor] = useState(1);
   const [warning, setWarning] = useState("");
 
   const settings = useMemo(() => ({
     systemType,
     autonomyDays: Number(autonomyDays) || 1,
     reserveFactor: Number(reserveFactor) || 1.2,
-    panelId: manualMode ? panelId : undefined,
-    inverterId: manualMode ? inverterId : undefined,
-    batteryId: manualMode ? batteryId : undefined,
-    panelCount: manualMode ? Number(panelCount) || undefined : undefined,
-    inverterCount: manualMode ? Number(inverterCount) || undefined : undefined,
-    batteryCount: manualMode ? Number(batteryCount) || undefined : undefined,
-    manualMode
-  }), [systemType, autonomyDays, reserveFactor, manualMode, panelId, inverterId, batteryId, panelCount, inverterCount, batteryCount]);
+    panelId: equipmentManualMode ? panelId : undefined,
+    inverterId: equipmentManualMode ? inverterId : undefined,
+    batteryId: equipmentManualMode ? batteryId : undefined,
+    panelExtraFactor: Number(panelExtraFactor) || 1,
+    inverterExtraFactor: Number(inverterExtraFactor) || 1,
+    batteryExtraFactor: Number(batteryExtraFactor) || 1,
+    manualMode: equipmentManualMode || parameterManualMode,
+    equipmentManualMode,
+    parameterManualMode
+  }), [systemType, autonomyDays, reserveFactor, equipmentManualMode, parameterManualMode, panelId, inverterId, batteryId, panelExtraFactor, inverterExtraFactor, batteryExtraFactor]);
 
   const solarDesign = useMemo(() => runSolarAutoDesign({ load, environment, settings }), [load, environment, settings]);
 
   useEffect(() => {
-    if (manualMode) return;
+    if (equipmentManualMode) return;
     setPanelId(solarDesign.panel.id);
     setInverterId(solarDesign.inverter.id);
     setBatteryId(solarDesign.battery.battery.id);
-    setPanelCount(solarDesign.pvArray.panelCount);
-    setInverterCount(solarDesign.inverter.count);
-    setBatteryCount(solarDesign.battery.totalCount);
-  }, [manualMode, solarDesign.panel.id, solarDesign.inverter.id, solarDesign.battery.battery.id, solarDesign.pvArray.panelCount, solarDesign.inverter.count, solarDesign.battery.totalCount]);
+  }, [equipmentManualMode, solarDesign.panel.id, solarDesign.inverter.id, solarDesign.battery.battery.id]);
 
   useEffect(() => {
     if (!warning) return undefined;
@@ -231,13 +239,14 @@ export default function SystemSettings() {
   }, [warning]);
 
   const applySmart = () => {
-    setManualMode(false);
+    setEquipmentManualMode(false);
+    setParameterManualMode(false);
+    setPanelExtraFactor(1);
+    setInverterExtraFactor(1);
+    setBatteryExtraFactor(1);
     setPanelId(solarDesign.panel.id);
     setInverterId(solarDesign.inverter.id);
     setBatteryId(solarDesign.battery.battery.id);
-    setPanelCount(solarDesign.pvArray.panelCount);
-    setInverterCount(solarDesign.inverter.count);
-    setBatteryCount(solarDesign.battery.totalCount);
   };
 
   const confirmSolar = () => {
@@ -284,14 +293,14 @@ export default function SystemSettings() {
         <div className="shil-section-card shil-config-block">
           <div className="shil-section-head"><h2>پارامترهای اثرگذار</h2><span>مستقیم در انتخاب تجهیزات</span></div>
           <div className="shil-form-grid shil-param-grid">
-            <label><span>روزهای خودکفایی</span><input type="number" min="1" max="7" value={autonomyDays} onChange={(e) => setAutonomyDays(e.target.value)} /></label>
-            <label><span>ضریب افزایش استاندارد</span><input type="number" step="0.05" min="1" value={reserveFactor} onChange={(e) => setReserveFactor(e.target.value)} /></label>
+            <label><span>روزهای خودکفایی</span><input type="number" min="1" max="7" value={autonomyDays} onChange={(e) => { setParameterManualMode(true); setAutonomyDays(e.target.value); }} /></label>
+            <label><span>ضریب اطمینان استاندارد</span><input type="number" step="0.05" min="1" value={reserveFactor} onChange={(e) => { setParameterManualMode(true); setReserveFactor(e.target.value); }} /></label>
           </div>
           <div className="shil-action-row shil-smart-mode-row">
-            <button type="button" className={!manualMode ? "shil-soft-button active" : "shil-soft-button"} onClick={applySmart}>اعمال هوشمند SHIL</button>
-            <button type="button" className={manualMode ? "shil-soft-button active" : "shil-soft-button"} onClick={() => setManualMode(!manualMode)}>{manualMode ? "ورود دستی فعال" : "ورود دستی تجهیزات"}</button>
+            <button type="button" className={!equipmentManualMode && !parameterManualMode ? "shil-soft-button active" : "shil-soft-button"} onClick={applySmart}>اعمال هوشمند SHIL</button>
+            <button type="button" className={equipmentManualMode ? "shil-soft-button active" : "shil-soft-button"} onClick={() => setEquipmentManualMode(!equipmentManualMode)}>{equipmentManualMode ? "ورود دستی تجهیزات فعال" : "ورود دستی تجهیزات"}</button>
           </div>
-          <p className="shil-muted-line">با تغییر هر عدد، انتخاب اینورتر، باتری، پنل، سری/موازی، کابل، حفاظت و فضای نصب دوباره محاسبه می‌شود.</p>
+          <p className="shil-muted-line">در حالت پیش‌فرض، روزهای خودکفایی و ضریب اطمینان استاندارد مستقیم روی موتور محاسبات وارپ می‌شوند؛ با ورود عدد جدید، همان لحظه حالت دستی پارامتر فعال و محاسبات دوباره انجام می‌شود.</p>
         </div>
 
         <div className="shil-system-banks-grid shil-system-banks-grid-final">
@@ -299,9 +308,10 @@ export default function SystemSettings() {
             title="بانک اینورتر خورشیدی"
             subtitle="1.6kW تا 30kW"
             value={inverterId}
-            count={inverterCount || solarDesign.inverter.count}
-            onValue={(v) => { setManualMode(true); setInverterId(v); }}
-            onCount={(v) => { setManualMode(true); setInverterCount(v); }}
+            extraFactor={inverterExtraFactor}
+            onValue={(v) => { setEquipmentManualMode(true); setInverterId(v); }}
+            onExtraFactor={(v) => { setEquipmentManualMode(true); setInverterExtraFactor(v); }}
+            smartTitle={optionTitle(solarDesign.inverter)}
             items={SHIL_SOLAR_INVERTERS}
             smartValue={`${kw(solarDesign.inverter.ratedPowerW)} / ${solarDesign.inverter.dcVoltage}V`}
             renderMeta={(item) => <>{item?.ratedPowerW}W / ورودی باتری {item?.dcVoltage}V / MPPT {item?.mpptMinV}-{item?.mpptMaxV}V / سقف PV {item?.maxPvPowerW}W</>}
@@ -311,9 +321,10 @@ export default function SystemSettings() {
             title="بانک باتری"
             subtitle="12V / 24V / 48V"
             value={batteryId}
-            count={batteryCount || solarDesign.battery.totalCount}
-            onValue={(v) => { setManualMode(true); setBatteryId(v); }}
-            onCount={(v) => { setManualMode(true); setBatteryCount(v); }}
+            extraFactor={batteryExtraFactor}
+            onValue={(v) => { setEquipmentManualMode(true); setBatteryId(v); }}
+            onExtraFactor={(v) => { setEquipmentManualMode(true); setBatteryExtraFactor(v); }}
+            smartTitle={solarDesign.battery.battery.title}
             items={SHIL_LITHIUM_BATTERIES}
             smartValue={`${solarDesign.battery.battery.nominalVoltage}V / ${faNumber(solarDesign.battery.totalCount)} عدد`}
             renderMeta={(item) => <>{item?.nominalVoltage}V / {item?.capacityAh}Ah / بازه شناور {item?.minVoltage}-{item?.maxVoltage}V / انرژی خام {item?.energyWh}Wh</>}
@@ -323,9 +334,10 @@ export default function SystemSettings() {
             title="بانک پنل خورشیدی"
             subtitle="400W تا 700W"
             value={panelId}
-            count={panelCount || solarDesign.pvArray.panelCount}
-            onValue={(v) => { setManualMode(true); setPanelId(v); }}
-            onCount={(v) => { setManualMode(true); setPanelCount(v); }}
+            extraFactor={panelExtraFactor}
+            onValue={(v) => { setEquipmentManualMode(true); setPanelId(v); }}
+            onExtraFactor={(v) => { setEquipmentManualMode(true); setPanelExtraFactor(v); }}
+            smartTitle={solarDesign.panel.title}
             items={SHIL_SOLAR_PANELS}
             smartValue={`${solarDesign.panel.powerW}W / ${faNumber(solarDesign.pvArray.panelCount)} عدد`}
             renderMeta={(item) => <>{item?.powerW}W / Vmp {item?.vmp}V / Voc {item?.voc}V / مساحت تقریبی {item?.areaM2}m²</>}
