@@ -555,3 +555,23 @@ p {
 .shil-bank-collapsed-field .shil-smart-pick-box strong{color:#fff;font-size:12px;line-height:1.75}
 .shil-bank-collapsed-field .shil-smart-pick-box small{color:#c9fffb;font-size:11px;line-height:1.65}
 .shil-bank-collapsed-field .shil-bank-body{margin-top:0}
+/* Final fix: old system-settings step now redirects to active page route. */
+.shil-system-settings-redirect .shil-muted-text {
+  margin: 0 0 12px;
+  color: rgba(232, 238, 255, 0.72);
+  line-height: 1.9;
+}
+.shil-system-settings-redirect .shil-primary-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0 18px;
+  margin-top: 12px;
+  border-radius: 14px;
+  text-decoration: none;
+  background: rgba(111, 231, 255, 0.14);
+  border: 1px solid rgba(111, 231, 255, 0.36);
+  color: #eaf8ff;
+  font-weight: 800;
+}

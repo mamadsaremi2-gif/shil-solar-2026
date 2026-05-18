@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./app/App.jsx";
 import "./styles/shil-ui.css";
+import "./styles/app.css";
 
 window.React = React;
 
