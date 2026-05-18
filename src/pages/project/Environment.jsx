@@ -4,6 +4,7 @@ import ShilPageShell from "../../components/ShilPageShell";
 import ProjectMiniRail from "../../components/ProjectMiniRail.jsx";
 import SmartCityInput, { findIranCityByName, getDefaultIranCity } from "../../components/SmartCityInput";
 import { analyzeEnvironmentForEngineering } from "../../core/environment/environmentAssessment.js";
+import { approveProjectStep } from "../../workflow/projectWorkflow.js";
 
 const installTypes = [
   { key: "urban", label: "شهری", humidityOffset: 0, soiling: 3, description: "محیط معمول شهری با ریسک متوسط گردوغبار" },
@@ -268,6 +269,7 @@ export default function Environment() {
     };
 
     localStorage.setItem("shil:environmentDraft", JSON.stringify(environmentDraft));
+    approveProjectStep("environment");
     localStorage.setItem("shil:environmentAssessment", JSON.stringify(assessment));
     navigate(`/new-project/path?domain=${domain}&from=environment`);
   };
