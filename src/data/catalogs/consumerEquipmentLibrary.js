@@ -45,7 +45,7 @@ export const consumerEquipmentLibrary = Array.from({ length: 250 }, (_, i) => {
     powerFactor: base[3] > 1.7 ? 0.82 : base[5] === "heavy" ? 0.88 : 0.95,
     startupFactor: base[3],
     surgeFactor: base[3],
-    motorStartCurrentFactor: base[3] > 1.7 ? 1.7 : 1,
+    motorStartCurrentFactor: base[3] > 1.7 ? 2.5 : 1,
     softStarterFactor: base[3] > 1.7 ? 1.2 : 1,
     hasSoftStarter: false,
     energyDailyWh,

@@ -28,6 +28,7 @@ export default function CalculationInputs() {
   const method = params.method || localStorage.getItem("shil:calculationMethod") || "equipment";
 
   const [query, setQuery] = useState("");
+  const [isEquipmentPickerOpen, setIsEquipmentPickerOpen] = useState(false);
   const [selectedIds, setSelectedIds] = useState(() => new Set());
   const [itemOverrides, setItemOverrides] = useState({});
   const [showExpert, setShowExpert] = useState(false);
@@ -43,7 +44,7 @@ export default function CalculationInputs() {
 
   const items = useMemo(() => {
     const results = searchConsumerEquipment(query);
-    return query.trim() ? results.slice(0, 120) : consumerEquipmentLibrary.slice(0, 100);
+    return results.slice(0, 250);
   }, [query]);
 
   const selectedItems = useMemo(() => {
@@ -94,6 +95,28 @@ export default function CalculationInputs() {
     setItemOverrides((prev) => ({ ...prev, [id]: { ...(prev[id] || {}), ...patch } }));
   };
 
+  const applySmartDetails = () => {
+    setShowExpert(true);
+    setItemOverrides((prev) => {
+      const next = { ...prev };
+      consumerEquipmentLibrary.forEach((item) => {
+        if (!selectedIds.has(item.id)) return;
+        const isMotor = item.type === "inductive" || Number(item.startupFactor || item.surgeFactor || 1) > 1.7;
+        next[item.id] = {
+          ...(next[item.id] || {}),
+          quantity: next[item.id]?.quantity ?? 1,
+          usageHoursPerDay: next[item.id]?.usageHoursPerDay ?? item.usageHoursPerDay,
+          simultaneityFactor: next[item.id]?.simultaneityFactor ?? item.simultaneityFactor ?? item.diversityFactor ?? 1,
+          powerFactor: next[item.id]?.powerFactor ?? item.powerFactor ?? (isMotor ? 0.82 : 0.95),
+          isMotor,
+          hasSoftStarter: next[item.id]?.hasSoftStarter ?? false,
+          loadKind: isMotor ? "motor" : "resistive/electronic",
+        };
+      });
+      return next;
+    });
+  };
+
   const confirmLoad = () => {
     const result = persistLoadEngineResult({
       domain,
@@ -110,7 +133,7 @@ export default function CalculationInputs() {
 
     localStorage.setItem("shil:loadEngineResult", JSON.stringify(result));
     buildScenarioCalculationInput();
-    navigate(`/new-project/execution/${domain}?from=load-method`);
+    navigate(`/new-project/system/${domain}?from=calculation-inputs`);
   };
 
   return (
@@ -128,18 +151,54 @@ export default function CalculationInputs() {
         </section>
 
         {method === "equipment" || method === "profile" ? (
-          <section className="shil-env-card">
-            <h3 className="shil-section-title">جستجوی تجهیزات مصرفی</h3>
-            <input
-              className="shil-input"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="مثلاً یخچال، کولر، پمپ، روشنایی، سرور..."
-            />
-            <p className="shil-muted-note">بانک داخلی شامل ۲۵۰ تجهیز با توان، جریان، ساعت پیش‌فرض، ضریب همزمانی، ضریب توان و منطق راه‌اندازی موتوری است.</p>
-            <button type="button" className="shil-secondary-wide" onClick={() => setShowExpert((v) => !v)}>
-              {showExpert ? "مخفی کردن محاسبات هوشمند" : "نمایش محاسبات هوشمند"}
+          <section className="shil-env-card shil-equipment-picker-card">
+            <h3 className="shil-section-title">لیست تجهیزات</h3>
+            <button type="button" className="shil-equipment-field" onClick={() => setIsEquipmentPickerOpen((v) => !v)}>
+              <span>انتخاب از بانک ۲۵۰ تجهیز</span>
+              <strong>{selectedItems.length ? `${selectedItems.length} تجهیز انتخاب شده` : "باز کردن لیست"}</strong>
             </button>
+
+            {isEquipmentPickerOpen ? (
+              <div className="shil-equipment-picker-panel">
+                <input
+                  className="shil-input"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="جستجو: پمپ، روشنایی، کولر، سرور..."
+                />
+                <div className="shil-equipment-scroll-list">
+                  {items.map((item) => {
+                    const selected = selectedIds.has(item.id);
+                    const isMotor = item.type === "inductive" || Number(item.surgeFactor || item.startupFactor || 1) > 1.7;
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        className={`shil-equipment-option ${selected ? "active" : ""}`}
+                        onClick={() => toggleItem(item)}
+                      >
+                        <strong>{item.title}</strong>
+                        <span>{item.ratedPowerW}W · {item.usageHoursPerDay}h · {isMotor ? "موتوری" : "مصرفی"}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+                <button type="button" className="shil-secondary-wide" onClick={() => setIsEquipmentPickerOpen(false)}>
+                  بستن لیست تجهیزات
+                </button>
+              </div>
+            ) : null}
+
+            <div className="shil-equipment-actions">
+              <button type="button" className="shil-secondary-wide" onClick={applySmartDetails}>
+                اعمال هوشمند
+              </button>
+              <button type="button" className="shil-secondary-wide" onClick={() => setShowExpert((v) => !v)}>
+                {showExpert ? "خلاصه ساده" : "نمایش جزئیات تخصصی"}
+              </button>
+            </div>
+
+            <p className="shil-muted-note">انتخاب تجهیزات فقط داخل همین فیلد انجام می‌شود؛ با جستجو یا اسکرول انتخاب کن، سپس لیست را ببند و تجهیزات انتخابی را اصلاح کن.</p>
           </section>
         ) : null}
 
@@ -195,40 +254,50 @@ export default function CalculationInputs() {
         ) : null}
 
         {method === "equipment" || method === "profile" ? (
-          <section className="shil-equipment-list">
-            {items.map((item) => {
-              const selected = selectedIds.has(item.id);
+          <section className="shil-selected-equipment-list">
+            <h3 className="shil-section-title">تجهیزات انتخابی</h3>
+            {!selectedItems.length ? (
+              <div className="shil-empty-selection">هنوز تجهیزی انتخاب نشده است.</div>
+            ) : selectedItems.map((item) => {
               const override = itemOverrides[item.id] || {};
               const preview = enginePreview.selectedItems?.find((x) => x.id === item.id);
-              const isMotor = item.type === "inductive" || Number(item.surgeFactor || 1) > 1.7;
+              const isMotor = item.type === "inductive" || Number(item.surgeFactor || item.startupFactor || 1) > 1.7;
               return (
-                <article key={item.id} className={`shil-equipment-card ${selected ? "active" : ""}`}>
-                  <button type="button" className="shil-equipment-main" onClick={() => toggleItem(item)}>
-                    <strong>{item.title}</strong>
-                    <span>{item.category} | {item.class}</span>
-                    <small>{item.ratedPowerW} W | {item.usageHoursPerDay} h | PF {item.powerFactor || "Auto"} | همزمانی {item.simultaneityFactor || item.diversityFactor}</small>
-                  </button>
-                  {selected ? (
-                    <div className="shil-equipment-controls">
-                      <label>تعداد<input className="shil-input" value={override.quantity ?? 1} onChange={(e) => patchOverride(item.id, { quantity: e.target.value })} inputMode="numeric" /></label>
-                      <label>ساعت استفاده<input className="shil-input" value={override.usageHoursPerDay ?? item.usageHoursPerDay} onChange={(e) => patchOverride(item.id, { usageHoursPerDay: e.target.value })} inputMode="decimal" /></label>
-                      {isMotor ? (
-                        <label className="shil-check-row">
-                          <input type="checkbox" checked={Boolean(override.hasSoftStarter)} onChange={(e) => patchOverride(item.id, { hasSoftStarter: e.target.checked })} />
-                          سافت‌استارتر دارد
-                        </label>
-                      ) : null}
-                      {showExpert && preview ? (
-                        <div className="shil-expert-mini">
-                          <span>جریان نامی: {preview.nominalCurrentA} A</span>
-                          <span>جریان کارکرد: {preview.runningCurrentA} A</span>
-                          <span>جریان راه‌اندازی: {preview.startCurrentA} A</span>
-                          <span>ضریب راه‌اندازی: ×{preview.currentStartFactor}</span>
-                          <small>{preview.expertReason}</small>
-                        </div>
-                      ) : null}
+                <article key={item.id} className="shil-equipment-card active">
+                  <div className="shil-selected-equipment-head">
+                    <div>
+                      <strong>{item.title}</strong>
+                      <span>{item.category} | {isMotor ? "موتوری" : "مقاومتی/الکترونیکی"}</span>
                     </div>
-                  ) : null}
+                    <button type="button" className="shil-remove-equipment" onClick={() => toggleItem(item)}>حذف</button>
+                  </div>
+                  <div className="shil-equipment-controls">
+                    <label>تعداد<input className="shil-input" value={override.quantity ?? item.quantity ?? 1} onChange={(e) => patchOverride(item.id, { quantity: e.target.value })} inputMode="numeric" /></label>
+                    <label>ساعت مصرف<input className="shil-input" value={override.usageHoursPerDay ?? item.usageHoursPerDay} onChange={(e) => patchOverride(item.id, { usageHoursPerDay: e.target.value })} inputMode="decimal" /></label>
+                    {showExpert ? (
+                      <>
+                        <label>ضریب همزمانی<input className="shil-input" value={override.simultaneityFactor ?? item.simultaneityFactor ?? item.diversityFactor ?? 1} onChange={(e) => patchOverride(item.id, { simultaneityFactor: e.target.value })} inputMode="decimal" /></label>
+                        <label>راندمان/PF<input className="shil-input" value={override.powerFactor ?? item.powerFactor ?? 0.95} onChange={(e) => patchOverride(item.id, { powerFactor: e.target.value })} inputMode="decimal" /></label>
+                      </>
+                    ) : null}
+                    {isMotor ? (
+                      <label className="shil-check-row">
+                        <input type="checkbox" checked={Boolean(override.hasSoftStarter)} onChange={(e) => patchOverride(item.id, { hasSoftStarter: e.target.checked })} />
+                        سافت‌استارتر دارد؛ جریان راه‌اندازی از ۲.۵× به ۱.۲× جریان نامی کاهش یابد
+                      </label>
+                    ) : showExpert ? (
+                      <div className="shil-load-kind-note">نوع بار: مقاومتی/الکترونیکی</div>
+                    ) : null}
+                    {showExpert && preview ? (
+                      <div className="shil-expert-mini">
+                        <span>جریان نامی: {preview.nominalCurrentA} A</span>
+                        <span>جریان کارکرد: {preview.runningCurrentA} A</span>
+                        <span>جریان راه‌اندازی: {preview.startCurrentA} A</span>
+                        <span>ضریب استارت: ×{preview.currentStartFactor}</span>
+                        <small>{preview.expertReason}</small>
+                      </div>
+                    ) : null}
+                  </div>
                 </article>
               );
             })}
@@ -236,7 +305,7 @@ export default function CalculationInputs() {
         ) : null}
 
         <button type="button" className="shil-primary-wide" onClick={confirmLoad}>
-          تأیید روش محاسبات و انتخاب نوع اجرای پروژه
+          تأیید اطلاعات و ورود به پیکربندی تنظیمات
         </button>
       </div>
     </ShilPageShell>

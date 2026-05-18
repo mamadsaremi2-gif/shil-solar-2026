@@ -1,11 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ShilPageShell from "../components/ShilPageShell.jsx";
+import { appendUserRecord, readUserRecords } from "../auth/session.js";
 
 const allowed = ["خورشیدی", "پنل", "باتری", "اینورتر", "برق", "اضطراری", "کابل", "شارژر", "مصرف", "انرژی", "سانورتر", "ژنراتور"];
 
 export default function Assistant() {
   const [question, setQuestion] = useState("");
   const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    setItems(readUserRecords("shil-assistant-questions", []));
+  }, []);
 
   function submit(event) {
     event.preventDefault();
@@ -15,7 +20,8 @@ export default function Assistant() {
     const answer = isAllowed
       ? "پاسخ تخصصی دستیار SHIL در این بخش براساس چارچوب انرژی خورشیدی، برق اضطراری، تجهیزات و طراحی سیستم نمایش داده می‌شود. در اتصال نهایی، این بخش به موتور هوش مصنوعی اپ متصل می‌شود."
       : "این دستیار فقط به پرسش‌های مرتبط با انرژی خورشیدی، برق اضطراری، تجهیزات و طراحی سیستم پاسخ می‌دهد.";
-    setItems([{ title: text, answer }, ...items]);
+    const record = appendUserRecord("shil-assistant-questions", { title: text, answer, status: "answered" });
+    setItems([record, ...items]);
     setQuestion("");
   }
 
@@ -26,7 +32,7 @@ export default function Assistant() {
         <button type="submit">ارسال سوال</button>
       </form>
       <section className="shil-thread-list">
-        {items.map((item, index) => <article className="shil-thread-card" key={`${item.title}-${index}`}><h3>{item.title}</h3><p>{item.answer}</p></article>)}
+        {items.map((item) => <article className="shil-thread-card" key={item.id || item.title}><h3>{item.title}</h3><p>{item.answer}</p></article>)}
       </section>
     </ShilPageShell>
   );

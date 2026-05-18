@@ -1,19 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ShilPageShell from "../components/ShilPageShell.jsx";
+import { appendUserRecord, readUserRecords } from "../auth/session.js";
 
 const categories = ["UI/UX", "محاسبات", "خطاها", "امکانات جدید", "سناریوها", "عملکرد اپ"];
 
 export default function Feedback() {
   const [category, setCategory] = useState(categories[0]);
   const [text, setText] = useState("");
-  const [threads, setThreads] = useState([
-    { category: "امکانات جدید", text: "افزودن سناریوهای بیشتر برای پروژه های صنعتی", adminReply: "این پیشنهاد در مسیر توسعه سناریوهای آماده بررسی می‌شود." },
-  ]);
+  const [threads, setThreads] = useState([]);
+
+  useEffect(() => {
+    setThreads(readUserRecords("shil-feedback", []));
+  }, []);
 
   function submit(event) {
     event.preventDefault();
     if (!text.trim()) return;
-    setThreads([{ category, text: text.trim(), adminReply: "در انتظار پاسخ ادمین" }, ...threads]);
+    const record = appendUserRecord("shil-feedback", { category, text: text.trim(), adminReply: "در انتظار پاسخ ادمین" });
+    setThreads([record, ...threads]);
     setText("");
   }
 
@@ -27,8 +31,8 @@ export default function Feedback() {
         <button type="submit">ثبت پیشنهاد</button>
       </form>
       <section className="shil-thread-list">
-        {threads.map((item, index) => (
-          <article className="shil-thread-card" key={`${item.category}-${index}`}>
+        {threads.map((item) => (
+          <article className="shil-thread-card" key={item.id || `${item.category}-${item.text}`}>
             <h3>{item.category}</h3>
             <p>{item.text}</p>
             <div className="shil-admin-reply"><strong>پاسخ ادمین:</strong><span>{item.adminReply}</span></div>

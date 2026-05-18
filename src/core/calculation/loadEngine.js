@@ -29,7 +29,7 @@ export function normalizeLoadItem(item = {}) {
   const phase = item.phase || (voltage >= 380 ? "three" : "single");
   const isMotor = detectMotorLoad(item);
   const hasSoftStarter = Boolean(item.hasSoftStarter);
-  const motorStartCurrentFactor = isMotor ? Number(item.motorStartCurrentFactor ?? 1.7) || 1.7 : 1;
+  const motorStartCurrentFactor = isMotor ? Number(item.motorStartCurrentFactor ?? 2.5) || 2.5 : 1;
   const softStarterFactor = isMotor ? Number(item.softStarterFactor ?? 1.2) || 1.2 : 1;
   const currentStartFactor = isMotor ? (hasSoftStarter ? softStarterFactor : motorStartCurrentFactor) : 1;
   const surgeFactor = Number(item.surgeFactor ?? item.startupFactor ?? currentStartFactor ?? 1) || 1;
@@ -152,7 +152,7 @@ export function runLoadEngine(input = {}) {
     recommendedBatteryWh,
     expertSummary: {
       rule: "ضریب توان، ضریب همزمانی، ساعت پیش‌فرض و جریان راه‌اندازی پشت پرده اعمال شده‌اند.",
-      motorStartRule: "برای بارهای موتوری ۱.۷ برابر جریان نامی و در صورت فعال بودن سافت‌استارتر ۱.۲ برابر جریان نامی لحاظ می‌شود.",
+      motorStartRule: "برای بارهای موتوری به‌صورت پیش‌فرض ۲.۵ برابر جریان نامی و در صورت فعال بودن سافت‌استارتر ۱.۲ برابر جریان نامی لحاظ می‌شود.",
       transferredFields: ["totalPowerW", "totalEnergyWh", "acCurrentA", "startCurrentA", "surgePowerW", "selectedItems"],
     },
     nextEngine: domain === "emergency" ? "emergency-core" : "solar-core",
@@ -165,7 +165,7 @@ function buildLoadWarnings({ totalPowerW, totalEnergyWh, surgePowerW, selectedIt
   const warnings = [];
   if (!selectedItems.length) warnings.push("هیچ تجهیزی انتخاب نشده؛ محاسبه فعلاً بر اساس سناریوی آماده انجام می‌شود.");
   if (surgePowerW > totalPowerW * 2.5) warnings.push("توان راه‌اندازی بالا است؛ اینورتر باید برای پیک استارت بررسی شود.");
-  if (selectedItems.some((item) => item.isMotor && !item.hasSoftStarter)) warnings.push("برای تجهیزات موتوری بدون سافت‌استارتر، جریان راه‌اندازی ۱.۷ برابر جریان نامی لحاظ شده است.");
+  if (selectedItems.some((item) => item.isMotor && !item.hasSoftStarter)) warnings.push("برای تجهیزات موتوری بدون سافت‌استارتر، جریان راه‌اندازی ۲.۵ برابر جریان نامی لحاظ شده است.");
   if (domain === "solar" && totalEnergyWh > 25000) warnings.push("انرژی روزانه بالا است؛ فضای نصب پنل و باتری باید دقیق کنترل شود.");
   if (domain === "emergency" && totalPowerW > 8000) warnings.push("توان اضطراری سنگین است؛ بررسی سه‌فاز یا ژنراتور کمکی پیشنهاد می‌شود.");
   return warnings;

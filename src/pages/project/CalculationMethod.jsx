@@ -1,67 +1,65 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { approveProjectStep } from "../../workflow/projectWorkflow.js";
 import EngineeringPageShell from "../../components/EngineeringPageShell.jsx";
 
-const methodCards = [
-  {
-    key: "equipment",
-    title: "لیست تجهیزات",
-    badge: "250 تجهیز",
-    description: "انتخاب تجهیزات مصرفی سبک و سنگین با ساعت استفاده، ضریب همزمانی، توان و انرژی روزانه.",
-    output: "توان، انرژی، جریان، پیک استارت",
-  },
-  {
-    key: "profile",
-    title: "پروفایل مصرف",
-    badge: "Load Profile",
-    description: "تعریف الگوی مصرف صبح، ظهر، عصر و شب برای پروژه‌هایی که زمان مصرف مهم است.",
-    output: "پیک مصرف، بار پایه، ضریب همزمانی",
-  },
-  {
-    key: "energy",
-    title: "انرژی مورد نیاز",
-    badge: "kWh/day",
-    description: "ورود مستقیم انرژی روزانه مورد نیاز برای طراحی سریع خورشیدی یا برق اضطراری.",
-    output: "Wh/day و kWh/day",
-  },
-  {
-    key: "power",
-    title: "توان کل",
-    badge: "W / kW",
-    description: "ورود مستقیم توان کل مصرفی و ضریب پیک برای محاسبات سریع اینورتر و باتری.",
-    output: "توان پیوسته و توان لحظه‌ای",
-  },
-  {
-    key: "current",
-    title: "جریان کل",
-    badge: "A",
-    description: "ورود جریان کل برای پروژه‌هایی که دیتای آمپری یا تابلو برق در دسترس است.",
-    output: "جریان AC، جریان DC، توان متناظر",
-  },
+const fallbackMethodCards = [
+  { key: "equipment", title: "لیست تجهیزات", badge: "Equipment" },
+  { key: "profile", title: "پروفایل مصرف", badge: "Profile" },
+  { key: "energy", title: "انرژی روزانه", badge: "kWh/day" },
+  { key: "power", title: "توان کل", badge: "W / kW" },
+  { key: "current", title: "جریان کل", badge: "A" },
 ];
 
-const labels = { offgrid: "آفگرید", hybrid: "هیبرید", ongrid: "آنگرید", emergency: "برق اضطراری" };
+const labels = { offgrid: "آفگرید", hybrid: "هیبرید", ongrid: "آنگرید", emergency: "برق اضطراری", solar: "خورشیدی" };
 
 function readDraft(key) {
   try { return JSON.parse(localStorage.getItem(key) || "null"); }
   catch { return null; }
 }
 
+function normalizeCards(cards) {
+  if (!Array.isArray(cards) || cards.length === 0) return fallbackMethodCards;
+  return cards
+    .filter((item) => item && item.key && item.title)
+    .slice(0, 5)
+    .map((item) => ({
+      key: String(item.key),
+      title: String(item.title),
+      badge: item.badge ? String(item.badge) : String(item.key),
+    }));
+}
+
 export default function CalculationMethod() {
   const params = useParams();
   const location = useLocation();
-  const storedDomain = localStorage.getItem("shil:scenarioDomain");
-  const isEmergency = location.pathname.includes("/emergency") || params.domain === "emergency" || storedDomain === "emergency";
+  const query = new URLSearchParams(location.search);
+  const storedDomain = localStorage.getItem("shil:calculationDomain") || localStorage.getItem("shil:scenarioDomain");
+  const domainFromQuery = query.get("domain");
+  const isEmergency = domainFromQuery === "emergency" || location.pathname.includes("/emergency") || params.domain === "emergency" || storedDomain === "emergency";
   const domain = isEmergency ? "emergency" : "solar";
   const subtype = params.connection || (isEmergency ? "emergency" : "solar");
-  const title = isEmergency ? "روش محاسبات برق اضطراری" : `روش محاسبات ${labels[subtype] || "انرژی خورشیدی"}`;
+  const title = isEmergency ? "روش محاسبات برق اضطراری" : `روش محاسبات ${labels[subtype] || labels[domain]}`;
+  const [methodCards, setMethodCards] = useState(fallbackMethodCards);
 
   const context = useMemo(() => ({
     scenario: readDraft("shil:selectedScenario"),
     environment: readDraft("shil:environmentDraft"),
-    assessment: readDraft("shil:environmentAssessment"),
   }), []);
+
+  useEffect(() => {
+    let alive = true;
+    fetch("/calculation-method-cards.json", { cache: "no-store" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!alive) return;
+        setMethodCards(normalizeCards(data?.cards || data));
+      })
+      .catch(() => {
+        if (alive) setMethodCards(fallbackMethodCards);
+      });
+    return () => { alive = false; };
+  }, []);
 
   const handleSelect = (methodKey) => {
     approveProjectStep("method");
@@ -71,33 +69,29 @@ export default function CalculationMethod() {
 
   return (
     <EngineeringPageShell title={title}>
-      <section className="shil-card-stack">
-        <div className="shil-section-card">
+      <section className="shil-card-stack shil-calculation-method-page">
+        <div className="shil-section-card shil-method-minimal-panel">
           <div className="shil-section-head">
-            <h2>یکی از روش‌های محاسبات بار را انتخاب کنید</h2>
-            <span>{isEmergency ? "Emergency Load Core" : "Solar Load Core"}</span>
+            <h2>انتخاب روش محاسبات</h2>
+            <span>{domain === "emergency" ? "برق اضطراری" : "خورشیدی"}</span>
           </div>
 
-          <div className="shil-summary-grid">
-            <div><span>سناریو</span><strong>{context.scenario?.title || "سناریوی آماده / دستی"}</strong></div>
-            <div><span>شهر/اقلیم</span><strong>{context.environment?.city || "اصفهان"}</strong></div>
-            <div><span>مسیر بعد</span><strong>روش محاسبات ← موتور بار ← طراحی سیستم</strong></div>
-            <div><span>هسته نهایی</span><strong>{domain === "emergency" ? "برق اضطراری" : "خورشیدی"}</strong></div>
+          <div className="shil-method-context-strip">
+            <span>{context.scenario?.title || "مسیر پروژه"}</span>
+            <strong>{context.environment?.city || "شرایط محیطی ثبت شد"}</strong>
           </div>
 
-          <div className="shil-method-grid-five">
+          <div className="shil-method-grid-five shil-method-grid-minimal">
             {methodCards.map((method) => (
               <Link
                 key={method.key}
-                className="shil-large-choice shil-method-card-engine"
+                className="shil-large-choice shil-method-card-engine shil-method-card-minimal"
                 onClick={() => handleSelect(method.key)}
                 to={`/new-project/input/${domain}/${method.key}`}
                 state={{ subtype, from: "calculation-method" }}
               >
                 <span className="shil-method-badge">{method.badge}</span>
                 <h2>{method.title}</h2>
-                <p>{method.description}</p>
-                <small>{method.output}</small>
               </Link>
             ))}
           </div>

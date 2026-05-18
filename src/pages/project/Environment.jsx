@@ -88,9 +88,10 @@ export default function Environment() {
   const [installType, setInstallType] = useState("urban");
   const [manualClimate, setManualClimate] = useState(() => cityToClimate(isfahan, domain, "urban"));
   const [compassAttachment, setCompassAttachment] = useState(null);
-  const [siteAttachment, setSiteAttachment] = useState(null);
+  const [siteAttachments, setSiteAttachments] = useState([]);
   const [compassPreview, setCompassPreview] = useState("");
-  const [sitePreview, setSitePreview] = useState("");
+  const [sitePreviews, setSitePreviews] = useState([]);
+  const [compassUploadChoice, setCompassUploadChoice] = useState("ask");
   const [gpsStatus, setGpsStatus] = useState("");
   const [validationMessage, setValidationMessage] = useState("");
 
@@ -136,8 +137,9 @@ export default function Environment() {
     peakSunHours: climate.peakSunHours,
     soilingLossPercent: activeInstallType.soiling,
     compassAttachment,
-    siteAttachment,
-  }), [domain, city, selectedCity, address, gpsMode, latitude, longitude, activeInstallType, climate, compassAttachment, siteAttachment]);
+    siteAttachments,
+    siteAttachment: siteAttachments[0] || null,
+  }), [domain, city, selectedCity, address, gpsMode, latitude, longitude, activeInstallType, climate, compassAttachment, siteAttachments]);
 
   const pickCity = (item) => {
     if (!item) return;
@@ -183,9 +185,19 @@ export default function Environment() {
   };
 
   const handleSiteUpload = (event) => {
-    const file = event.target.files?.[0];
-    setSiteAttachment(fileToAttachment(file, "site-photo", latitude, longitude));
-    readPreview(file, setSitePreview);
+    const files = Array.from(event.target.files || []);
+    setSiteAttachments(files.map((file) => fileToAttachment(file, "site-photo", latitude, longitude)).filter(Boolean));
+
+    if (!files.length) {
+      setSitePreviews([]);
+      return;
+    }
+
+    Promise.all(files.map((file) => new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result || ""));
+      reader.readAsDataURL(file);
+    }))).then(setSitePreviews);
   };
 
   const requestCurrentLocation = () => {
@@ -248,7 +260,8 @@ export default function Environment() {
       corrosionRisk: assessment.corrosionRisk,
       needsAntiCorrosion: assessment.needsAntiCorrosion,
       compassAttachment,
-      siteAttachment,
+      siteAttachments,
+      siteAttachment: siteAttachments[0] || null,
       engineeringAssessment: assessment,
       manualOverride,
       source: selectedCity ? "iran-city-smart-catalog-with-manual-override" : "manual-entry",
@@ -256,7 +269,7 @@ export default function Environment() {
 
     localStorage.setItem("shil:environmentDraft", JSON.stringify(environmentDraft));
     localStorage.setItem("shil:environmentAssessment", JSON.stringify(assessment));
-    navigate(`/new-project/method?domain=${domain}&from=environment`);
+    navigate(`/new-project/path?domain=${domain}&from=environment`);
   };
 
   return (
@@ -270,6 +283,12 @@ export default function Environment() {
     >
       <ProjectMiniRail />
       <div className="shil-env-page">
+        <section className="shil-env-card shil-env-map-card">
+          <h3 className="shil-section-title">نقشه سیستم گرمایشی ایران</h3>
+          <div className="shil-map-container"><img src="/assets/shil/map/iran-heatmap.webp" alt="Iran heating system map" /></div>
+          <small className="shil-env-hint">این نقشه بلافاصله بعد از مسیر مراحل نمایش داده می‌شود تا کاربر قبل از ورود اطلاعات، دید اقلیمی اولیه داشته باشد.</small>
+        </section>
+
         <section className="shil-env-card">
           <h3 className="shil-section-title">موقعیت پروژه</h3>
 
@@ -317,7 +336,7 @@ export default function Environment() {
 
         <section className="shil-env-card">
           <div className="shil-section-row">
-            <h3 className="shil-section-title">پارامترهای اقلیمی قابل ویرایش</h3>
+            <h3 className="shil-section-title">داده‌های اقلیمی</h3>
             <button type="button" className="shil-mini-action" onClick={restoreCityClimate}>بازگشت به اقلیم شهر</button>
           </div>
 
@@ -333,7 +352,7 @@ export default function Environment() {
         </section>
 
         <section className="shil-env-card">
-          <h3 className="shil-section-title">نوع محیط نصب</h3>
+          <h3 className="shil-section-title">شرایط نصب</h3>
           <div className="shil-install-scroll">
             {installTypes.map((item) => (
               <button key={item.key} type="button" className={`shil-install-chip ${installType === item.key ? "active" : ""}`} onClick={() => setInstallType(item.key)}>
@@ -342,22 +361,30 @@ export default function Environment() {
             ))}
           </div>
           <small className="shil-env-hint">{activeInstallType.description}</small>
-        </section>
 
-        <section className="shil-env-card">
-          <h3 className="shil-section-title">آپلود مدارک محل نصب</h3>
-          <div className="shil-upload-grid">
-            <label className="shil-upload-box">
-              <span>اسکرین‌شات قطب‌نما</span>
-              <small>با موبایل در محل پروژه بگیر؛ مختصات فعلی کنار فایل ذخیره می‌شود و جنوب ۱۸۰ درجه مبنای اولیه قرار می‌گیرد.</small>
-              <input type="file" accept="image/*" capture="environment" onChange={handleCompassUpload} />
+          <div className="shil-upload-grid shil-install-upload-grid">
+            <div className="shil-upload-box shil-smart-upload-box">
+              <span>آپلود جهت‌نما</span>
+              <small>اپ به‌صورت هوشمند می‌پرسد آیا می‌خواهی اسکرین جهت‌نما را از گالری انتخاب کنی یا فعلاً بعداً اضافه شود.</small>
+              <div className="shil-upload-choice-row">
+                <button type="button" className={compassUploadChoice === "gallery" ? "active" : ""} onClick={() => setCompassUploadChoice("gallery")}>انتخاب از گالری</button>
+                <button type="button" className={compassUploadChoice === "later" ? "active" : ""} onClick={() => setCompassUploadChoice("later")}>بعداً</button>
+              </div>
+              {compassUploadChoice === "gallery" ? (
+                <input type="file" accept="image/*" onChange={handleCompassUpload} />
+              ) : null}
               {compassPreview ? <img src={compassPreview} alt="Compass preview" /> : null}
-            </label>
+            </div>
+
             <label className="shil-upload-box">
-              <span>تصویر محل نصب سیستم خورشیدی</span>
-              <small>برای بررسی سایه، فضای نصب، جهت پنل، موانع و محدودیت‌های اجرایی.</small>
-              <input type="file" accept="image/*" capture="environment" onChange={handleSiteUpload} />
-              {sitePreview ? <img src={sitePreview} alt="Site preview" /> : null}
+              <span>تصاویر محل نصب</span>
+              <small>با توجه به وسعت اجرای پروژه، چند عکس از بام، محوطه، سایه‌اندازها، مسیر کابل و موانع آپلود کن.</small>
+              <input type="file" accept="image/*" multiple onChange={handleSiteUpload} />
+              {sitePreviews.length ? (
+                <div className="shil-site-preview-grid">
+                  {sitePreviews.map((src, index) => <img key={index} src={src} alt={`Site preview ${index + 1}`} />)}
+                </div>
+              ) : null}
             </label>
           </div>
         </section>
@@ -380,7 +407,7 @@ export default function Environment() {
         </section>
 
         <section className="shil-env-card">
-          <h3 className="shil-section-title">خلاصه داده‌های اعمال‌شده</h3>
+          <h3 className="shil-section-title">خلاصه</h3>
           <div className="shil-climate-grid">
             <div className="shil-climate-box"><span>شهر</span><strong>{city || "اصفهان"}</strong></div>
             <div className="shil-climate-box"><span>استان</span><strong>{selectedCity?.province || "اصفهان"}</strong></div>
@@ -390,17 +417,14 @@ export default function Environment() {
             <div className="shil-climate-box"><span>رطوبت</span><strong>{climate.humidity}%</strong></div>
             <div className="shil-climate-box"><span>ساعت آفتابی</span><strong>{climate.peakSunHours}</strong></div>
             <div className="shil-climate-box"><span>ضریب آلودگی</span><strong>{activeInstallType.soiling}%</strong></div>
+            <div className="shil-climate-box"><span>تصاویر محل نصب</span><strong>{siteAttachments.length} فایل</strong></div>
+            <div className="shil-climate-box"><span>جهت‌نما</span><strong>{compassAttachment ? "ثبت شد" : "ثبت نشده"}</strong></div>
             <div className="shil-climate-box"><span>منبع داده</span><strong>{manualOverride ? "ویرایش دستی" : "بانک شهر"}</strong></div>
           </div>
         </section>
 
-        <section className="shil-env-card">
-          <h3 className="shil-section-title">نقشه گرمایشی ایران</h3>
-          <div className="shil-map-container"><img src="/assets/shil/map/iran-heatmap.webp" alt="Iran Heatmap" /></div>
-        </section>
-
         {validationMessage ? <div className="shil-env-error">{validationMessage}</div> : null}
-        <button type="button" className="shil-primary-wide" onClick={confirmEnvironment}>تأیید شرایط محیطی و ادامه به روش محاسبات</button>
+        <button type="button" className="shil-primary-wide" onClick={confirmEnvironment}>تأیید شرایط محیطی و ادامه به انتخاب مسیر پروژه</button>
       </div>
     </ShilPageShell>
   );

@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { Link, useParams } from "react-router-dom";
 import EngineeringPageShell from "../../components/EngineeringPageShell.jsx";
+import { appendUserRecord } from "../../auth/session.js";
 import { runEngineeringDesign } from "../../runEngineeringDesign.js";
 import { buildScenarioCalculationInput } from "../../core/scenario/scenarioToEngineeringForm.js";
 
@@ -54,6 +55,15 @@ export default function RunCalculation() {
   const coreResult = coreRun.result;
   const scenario = coreRun.input?.scenario;
 
+  function saveFinalProject() {
+    appendUserRecord("shil-projects", {
+      title: scenario?.title || (emergency ? "پروژه برق اضطراری" : "پروژه خورشیدی"),
+      status: "final",
+      domain: emergency ? "emergency" : "solar",
+      coreResult,
+    });
+  }
+
   return (
     <EngineeringPageShell title="خروجی مهندسی نهایی">
       <section className="shil-card-stack">
@@ -76,7 +86,7 @@ export default function RunCalculation() {
           <pre className="shil-core-snapshot">{JSON.stringify(coreResult, null, 2).slice(0, 1400)}</pre>
         </div>
         <div className="shil-output-actions"><button>گزارش PDF</button><button>Excel</button><button>CSV</button><button>BOM</button></div>
-        <Link className="shil-primary-wide" to="/projects/final">ذخیره در پروژه‌های نهایی</Link>
+        <Link className="shil-primary-wide" to="/projects/final" onClick={saveFinalProject}>ذخیره در پروژه‌های نهایی</Link>
       </section>
     </EngineeringPageShell>
   );

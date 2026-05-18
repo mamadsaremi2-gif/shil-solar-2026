@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import IosIconGrid from "../components/IosIconGrid.jsx";
 import { dashboardItems } from "../data/shilFlowConfig.jsx";
+import { clearSession } from "../auth/session.js";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -23,8 +24,7 @@ export default function Dashboard() {
       ? {
           ...item,
           onClick: () => {
-            localStorage.removeItem("shil-session");
-            localStorage.removeItem("shil-role");
+            clearSession();
             navigate("/login", { replace: true });
           },
         }

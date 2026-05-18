@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "../pages/LoginPage.jsx";
 import WelcomePage from "../pages/WelcomePage.jsx";
 import Dashboard from "../pages/Dashboard.jsx";
+import AdminDashboard from "../pages/AdminDashboard.jsx";
 import NewProject from "../pages/NewProject.jsx";
 import Projects from "../pages/Projects.jsx";
 import Contact from "../pages/Contact.jsx";
@@ -32,6 +33,7 @@ export default function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/welcome" element={<WelcomePage />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/new-project" element={<NewProject />} />
 
         <Route path="/new-project/info" element={<ProjectInfo />} />
