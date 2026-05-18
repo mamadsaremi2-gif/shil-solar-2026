@@ -16,12 +16,13 @@ function Toast({ message }) {
 
 const optionTitle = (item) => item?.title || "-";
 const faNumber = (value) => Number(value || 0).toLocaleString("fa-IR");
+const kw = (w) => `${faNumber(Math.round(Number(w || 0) / 100) / 10)} کیلووات`;
 
-function DetailsToggle({ title, children, defaultOpen = false }) {
+function DetailsToggle({ title, children, defaultOpen = false, attached = false }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="shil-details-box">
-      <button type="button" className="shil-details-toggle" onClick={() => setOpen(!open)}>
+    <div className={attached ? "shil-details-box shil-details-attached" : "shil-details-box"}>
+      <button type="button" className="shil-details-toggle" onClick={() => setOpen(!open)} aria-expanded={open}>
         <span>{title}</span>
         <b>{open ? "بستن" : "نمایش جزئیات"}</b>
       </button>
@@ -30,77 +31,104 @@ function DetailsToggle({ title, children, defaultOpen = false }) {
   );
 }
 
-function BankSelect({ title, subtitle, value, count, onValue, onCount, items, renderMeta, renderReason }) {
+function DesignModeCards({ value, onChange }) {
+  const items = [
+    { key: "offgrid", label: "آفگرید", hint: "باتری محور", note: "مناسب نقاط بدون شبکه یا نیازمند استقلال کامل" },
+    { key: "ongrid", label: "آنگرید", hint: "شبکه محور", note: "مناسب تزریق یا مصرف همزمان با شبکه" },
+    { key: "hybrid", label: "هیبرید", hint: "ترکیبی", note: "ترکیب شبکه، PV و ذخیره‌ساز" }
+  ];
   return (
-    <div className="shil-bank-card">
-      <div className="shil-section-head">
-        <h2>{title}</h2>
-        <span>{subtitle}</span>
+    <div className="shil-system-type-cards shil-design-mode-cards">
+      {items.map((item) => (
+        <button key={item.key} type="button" className={value === item.key ? "active" : ""} onClick={() => onChange(item.key)}>
+          <span className="shil-mode-icon">{item.key === "offgrid" ? "⛭" : item.key === "ongrid" ? "⌁" : "◇"}</span>
+          <strong>{item.label}</strong>
+          <small>{item.hint}</small>
+          <em>{item.note}</em>
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function BankSelect({ title, subtitle, value, count, onValue, onCount, items, renderMeta, renderReason, smartValue }) {
+  const selected = items.find((item) => item.id === value);
+  return (
+    <div className="shil-bank-card shil-bank-card-final">
+      <div className="shil-bank-topline">
+        <div>
+          <h2>{title}</h2>
+          <span>{subtitle}</span>
+        </div>
+        <b>{smartValue}</b>
       </div>
 
-      <label className="shil-bank-field">
-        <span>انتخاب از بانک SHIL</span>
-        <select value={value} onChange={(e) => onValue(e.target.value)}>
-          {items.map((item) => <option key={item.id} value={item.id}>{item.title}</option>)}
-        </select>
-      </label>
+      <div className="shil-bank-body">
+        <label className="shil-bank-field">
+          <span>انتخاب از بانک SHIL</span>
+          <select value={value} onChange={(e) => onValue(e.target.value)}>
+            {items.map((item) => <option key={item.id} value={item.id}>{item.title}</option>)}
+          </select>
+        </label>
 
-      <label className="shil-bank-field">
-        <span>تعداد / ضریب توسعه آینده</span>
-        <input type="number" min="1" value={count} onChange={(e) => onCount(e.target.value)} />
-      </label>
+        <label className="shil-bank-field shil-bank-count-field">
+          <span>تعداد / ضریب توسعه آینده</span>
+          <input type="number" min="1" value={count} onChange={(e) => onCount(e.target.value)} />
+        </label>
+      </div>
 
-      <DetailsToggle title="توضیحات بانک و دلیل انتخاب">
-        <div className="shil-bank-meta">{renderMeta(items.find((item) => item.id === value))}</div>
-        {renderReason ? <div className="shil-bank-reason">{renderReason(items.find((item) => item.id === value))}</div> : null}
+      <DetailsToggle title="توضیحات این بانک">
+        <div className="shil-bank-meta">{renderMeta(selected)}</div>
+        {renderReason ? <div className="shil-bank-reason">{renderReason(selected)}</div> : null}
       </DetailsToggle>
     </div>
   );
 }
 
-
 function ConfigurationLinkedDetails({ design }) {
+  const protectionReport = design.protection?.report || [];
+  const explanations = design.explanations || [];
   const detailRows = [
     {
       title: "اینورتر خورشیدی",
       value: `${optionTitle(design.inverter)} / ${faNumber(design.inverter.count)} عدد`,
       details: [
-        `توان مبنای طراحی: ${faNumber(design.load.totalPowerW)}W × ضریب افزایش ${design.settings.reserveFactor} = ${faNumber(design.load.totalPowerW * design.settings.reserveFactor)}W`,
-        `ولتاژ DC اینورتر: ${design.inverter.dcVoltage}V؛ انتخاب باتری باید با بازه شناور همین ولتاژ همخوان باشد.`,
-        design.inverter.parallelRequired ? "به دلیل بیشتر بودن توان مورد نیاز، کارکرد موازی اینورترها در نتیجه پیکربندی ثبت شده است." : "توان اینورتر انتخابی نیاز بار را بدون الزام موازی‌سازی پوشش می‌دهد."
+        `توان مبنای طراحی از جدول نتیجه خوانده می‌شود: ${faNumber(design.load.totalPowerW)} وات × ضریب ${design.settings.reserveFactor} = ${faNumber(design.load.totalPowerW * design.settings.reserveFactor)} وات.`,
+        `نوع اجرا: ${design.settings.systemType === "offgrid" ? "آفگرید" : design.settings.systemType === "hybrid" ? "هیبرید" : "آنگرید"}. این مقدار نوع اینورتر نهایی را در چکیده و اجرای محاسبات مشخص می‌کند.`,
+        `ولتاژ DC اینورتر ${design.inverter.dcVoltage} ولت است؛ باتری باید با بازه شناور همان کلاس ولتاژ همخوان باشد.`
       ]
     },
     {
       title: "باتری و خودکفایی",
       value: `${design.battery.battery.title} / ${faNumber(design.battery.totalCount)} عدد`,
       details: [
-        `روز خودکفایی واردشده: ${design.settings.autonomyDays} روز؛ این مقدار مستقیماً تعداد باتری و انرژی ذخیره را تغییر می‌دهد.`,
-        `ساختار باتری: ${faNumber(design.battery.seriesCount)} سری × ${faNumber(design.battery.parallelCount)} موازی.`,
-        `بازه ولتاژ شناور باتری: ${design.battery.voltageRange}؛ باید با ورودی DC اینورتر همخوان باشد.`
+        `روز خودکفایی ${design.settings.autonomyDays} روز است و مستقیم روی تعداد باتری اثر می‌گذارد.`,
+        `ساختار از جدول نتیجه: ${faNumber(design.battery.seriesCount)} سری × ${faNumber(design.battery.parallelCount)} موازی.`,
+        `بازه ولتاژ شناور ${design.battery.voltageRange} است و با ورودی DC اینورتر کنترل می‌شود.`
       ]
     },
     {
       title: "پنل خورشیدی و آرایه PV",
       value: `${design.panel.title} / ${faNumber(design.pvArray.panelCount)} عدد`,
       details: [
-        `توان کل آرایه: ${faNumber(design.pvArray.arrayPowerW)}W بر اساس تعداد پنل انتخاب‌شده.`,
+        `توان آرایه ${faNumber(design.pvArray.arrayPowerW)} وات است و از تعداد پنل و توان پنل انتخاب‌شده محاسبه می‌شود.`,
         `ساختار آرایه: ${faNumber(design.pvArray.seriesCount)} سری × ${faNumber(design.pvArray.parallelCount)} موازی.`,
-        `سری پنل‌ها بر اساس محدوده MPPT و موازی‌ها بر اساس توان مورد نیاز و ضریب توسعه تعیین شده‌اند.`
+        "سری پنل‌ها برای قرار گرفتن در محدوده MPPT اینورتر و موازی‌ها برای پوشش توان و توسعه آینده انتخاب شده‌اند."
       ]
     },
     {
       title: "فضا، کابل و حفاظت",
       value: `${design.space.maintenanceAreaM2} m² / DC ${design.protection.dcBreakerA}A / AC ${design.protection.acBreakerA}A`,
       details: [
-        `فضای نصب با لحاظ تعداد پنل، مساحت هر پنل و فضای تعمیر و نگهداری محاسبه شده است: ${design.space.note}`,
-        `کابل DC: ${design.protection.dcCable}، کابل PV: ${design.protection.pvCable}، کابل باتری: ${design.protection.batteryCable}.`,
-        `حفاظت بر اساس جریان کاری، ضریب اطمینان، اضافه‌بار و تفکیک سمت DC/AC انتخاب شده است.`
+        `فضای نصب با تعداد پنل، مساحت پنل و فضای سرویس محاسبه شده است: ${design.space.note}`,
+        `کابل‌ها: DC ${design.protection.dcCable}، PV ${design.protection.pvCable}، باتری ${design.protection.batteryCable}.`,
+        "حفاظت با تفکیک سمت DC/AC، جریان کاری، ضریب اطمینان و اضافه‌بار انتخاب می‌شود."
       ]
     }
   ];
 
   return (
-    <DetailsToggle title="نمایش جزئیات متصل به جدول نتیجه پیکربندی">
+    <DetailsToggle title="نمایش جزئیات جدول، کابل و حفاظت" attached>
       <div className="shil-linked-details-grid">
         {detailRows.map((row) => (
           <div className="shil-linked-detail-card" key={row.title}>
@@ -115,8 +143,8 @@ function ConfigurationLinkedDetails({ design }) {
         ))}
       </div>
       <div className="shil-expert-box shil-linked-protection-report">
-        {design.protection.report.map((item) => <div key={item}><span>حفاظت</span><strong>{item}</strong></div>)}
-        {design.explanations.map((item) => <div key={item}><span>SHIL</span><strong>{item}</strong></div>)}
+        {protectionReport.map((item) => <div key={item}><span>حفاظت</span><strong>{item}</strong></div>)}
+        {explanations.map((item) => <div key={item}><span>SHIL</span><strong>{item}</strong></div>)}
       </div>
     </DetailsToggle>
   );
@@ -125,7 +153,7 @@ function ConfigurationLinkedDetails({ design }) {
 function ResultTable({ design }) {
   const rows = [
     ["نوع اجرا", design.settings.systemType === "offgrid" ? "آفگرید" : design.settings.systemType === "hybrid" ? "هیبرید" : "آنگرید", "نوع اینورتر و ساختار نهایی طراحی"],
-    ["توان طراحی", `${faNumber(design.load.totalPowerW)}W × ضریب ${design.settings.reserveFactor}`, `${faNumber(design.load.totalPowerW * design.settings.reserveFactor)}W مبنای انتخاب اینورتر`],
+    ["توان طراحی", `${faNumber(design.load.totalPowerW)}W × ضریب ${design.settings.reserveFactor}`, `${kw(design.load.totalPowerW * design.settings.reserveFactor)} مبنای انتخاب اینورتر`],
     ["اینورتر", `${optionTitle(design.inverter)} / ${faNumber(design.inverter.count)} عدد`, design.inverter.parallelRequired ? "نیازمند کارکرد موازی" : "پوشش مستقیم توان"],
     ["باتری", `${design.battery.battery.title} / ${faNumber(design.battery.totalCount)} عدد`, `${faNumber(design.battery.seriesCount)} سری × ${faNumber(design.battery.parallelCount)} موازی / بازه ${design.battery.voltageRange}`],
     ["پنل", `${design.panel.title} / ${faNumber(design.pvArray.panelCount)} عدد`, `${faNumber(design.pvArray.seriesCount)} سری × ${faNumber(design.pvArray.parallelCount)} موازی / ${faNumber(design.pvArray.arrayPowerW)}W`],
@@ -135,7 +163,12 @@ function ResultTable({ design }) {
   ];
 
   return (
-    <div className="shil-result-table" role="table" aria-label="نتیجه پیکربندی سیستم">
+    <div className="shil-result-table shil-result-table-final" role="table" aria-label="نتیجه پیکربندی سیستم">
+      <div className="shil-result-row shil-result-header" role="row">
+        <span>بخش</span>
+        <strong>مقدار محاسبه‌شده</strong>
+        <small>دلیل / اثر در محاسبات</small>
+      </div>
       {rows.map(([name, value, reason]) => (
         <div className="shil-result-row" role="row" key={name}>
           <span>{name}</span>
@@ -240,39 +273,28 @@ export default function SystemSettings() {
 
   return (
     <EngineeringPageShell title="پیکربندی تجهیزات سیستم">
-      <section className="shil-card-stack shil-solar-config-page">
+      <section className="shil-card-stack shil-solar-config-page shil-system-final-page">
         <Toast message={warning} />
 
-        <div className="shil-section-card">
+        <div className="shil-section-card shil-config-block">
           <div className="shil-section-head"><h2>کنترل طراحی</h2><span>نوع اجرای اینورتر خورشیدی</span></div>
-          <div className="shil-system-type-cards">
-            {[
-              { key: "offgrid", label: "آفگرید", hint: "باتری محور" },
-              { key: "ongrid", label: "آنگرید", hint: "شبکه محور" },
-              { key: "hybrid", label: "هیبرید", hint: "ترکیبی" }
-            ].map((item) => (
-              <button key={item.key} type="button" className={systemType === item.key ? "active" : ""} onClick={() => setSystemType(item.key)}>
-                <strong>{item.label}</strong>
-                <small>{item.hint}</small>
-              </button>
-            ))}
-          </div>
+          <DesignModeCards value={systemType} onChange={setSystemType} />
         </div>
 
-        <div className="shil-section-card">
+        <div className="shil-section-card shil-config-block">
           <div className="shil-section-head"><h2>پارامترهای اثرگذار</h2><span>مستقیم در انتخاب تجهیزات</span></div>
-          <div className="shil-form-grid">
+          <div className="shil-form-grid shil-param-grid">
             <label><span>روزهای خودکفایی</span><input type="number" min="1" max="7" value={autonomyDays} onChange={(e) => setAutonomyDays(e.target.value)} /></label>
             <label><span>ضریب افزایش استاندارد</span><input type="number" step="0.05" min="1" value={reserveFactor} onChange={(e) => setReserveFactor(e.target.value)} /></label>
           </div>
-          <div className="shil-action-row">
-            <button type="button" className="shil-soft-button" onClick={applySmart}>اعمال هوشمند SHIL</button>
+          <div className="shil-action-row shil-smart-mode-row">
+            <button type="button" className={!manualMode ? "shil-soft-button active" : "shil-soft-button"} onClick={applySmart}>اعمال هوشمند SHIL</button>
             <button type="button" className={manualMode ? "shil-soft-button active" : "shil-soft-button"} onClick={() => setManualMode(!manualMode)}>{manualMode ? "ورود دستی فعال" : "ورود دستی تجهیزات"}</button>
           </div>
           <p className="shil-muted-line">با تغییر هر عدد، انتخاب اینورتر، باتری، پنل، سری/موازی، کابل، حفاظت و فضای نصب دوباره محاسبه می‌شود.</p>
         </div>
 
-        <div className="shil-system-banks-grid">
+        <div className="shil-system-banks-grid shil-system-banks-grid-final">
           <BankSelect
             title="بانک اینورتر خورشیدی"
             subtitle="1.6kW تا 30kW"
@@ -281,6 +303,7 @@ export default function SystemSettings() {
             onValue={(v) => { setManualMode(true); setInverterId(v); }}
             onCount={(v) => { setManualMode(true); setInverterCount(v); }}
             items={SHIL_SOLAR_INVERTERS}
+            smartValue={`${kw(solarDesign.inverter.ratedPowerW)} / ${solarDesign.inverter.dcVoltage}V`}
             renderMeta={(item) => <>{item?.ratedPowerW}W / ورودی باتری {item?.dcVoltage}V / MPPT {item?.mpptMinV}-{item?.mpptMaxV}V / سقف PV {item?.maxPvPowerW}W</>}
             renderReason={(item) => <>{item?.title} زمانی مجاز است که توان دائم، توان لحظه‌ای و بازه ولتاژ شناور باتری با نیاز مصرف‌کننده همخوانی داشته باشد.</>}
           />
@@ -292,6 +315,7 @@ export default function SystemSettings() {
             onValue={(v) => { setManualMode(true); setBatteryId(v); }}
             onCount={(v) => { setManualMode(true); setBatteryCount(v); }}
             items={SHIL_LITHIUM_BATTERIES}
+            smartValue={`${solarDesign.battery.battery.nominalVoltage}V / ${faNumber(solarDesign.battery.totalCount)} عدد`}
             renderMeta={(item) => <>{item?.nominalVoltage}V / {item?.capacityAh}Ah / بازه شناور {item?.minVoltage}-{item?.maxVoltage}V / انرژی خام {item?.energyWh}Wh</>}
             renderReason={() => <>ولتاژ باتری به صورت شناور کنترل می‌شود؛ برای اینورتر 12، 24 و 48 ولت، بازه باتری معادل همان ولتاژ باید داخل محدوده مجاز اینورتر باشد.</>}
           />
@@ -303,19 +327,20 @@ export default function SystemSettings() {
             onValue={(v) => { setManualMode(true); setPanelId(v); }}
             onCount={(v) => { setManualMode(true); setPanelCount(v); }}
             items={SHIL_SOLAR_PANELS}
+            smartValue={`${solarDesign.panel.powerW}W / ${faNumber(solarDesign.pvArray.panelCount)} عدد`}
             renderMeta={(item) => <>{item?.powerW}W / Vmp {item?.vmp}V / Voc {item?.voc}V / مساحت تقریبی {item?.areaM2}m²</>}
             renderReason={() => <>تعداد سری پنل‌ها طوری تعیین می‌شود که ولتاژ رشته داخل محدوده MPPT اینورتر بماند و تعداد موازی توان مورد نیاز و توسعه آینده را پوشش دهد.</>}
           />
         </div>
 
-        <div className="shil-section-card shil-auto-result-card">
+        <div className="shil-section-card shil-auto-result-card shil-result-card-final">
           <div className="shil-section-head"><h2>نتیجه پیکربندی</h2><span>{solarDesign.valid ? "قابل تأیید" : "نیازمند اصلاح"}</span></div>
           <ResultTable design={solarDesign} />
           {solarDesign.warnings.map((item) => <div key={item} className="shil-inline-warning">{item}</div>)}
           <ConfigurationLinkedDetails design={solarDesign} />
         </div>
 
-        <button type="button" className="shil-primary-wide" onClick={confirmSolar}>تأیید پیکربندی و رفتن به چکیده</button>
+        <button type="button" className="shil-primary-wide shil-confirm-config-button" onClick={confirmSolar}>تأیید پیکربندی و رفتن به چکیده</button>
       </section>
     </EngineeringPageShell>
   );
