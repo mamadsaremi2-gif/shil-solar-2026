@@ -8623,205 +8623,119 @@ html,body,#root{width:100%;max-width:100%;min-height:100%;overflow-x:hidden;}
 
 @import "./app.css";
 
-/* SHIL optional AI installation visualization block - summary page */
-.shil-ai-preview-card{
-  overflow:hidden;
+
+
+
+
+/* =========================================
+   SYSTEM SETTINGS FIXED FOOTER FINAL
+   ========================================= */
+
+.shil-system-settings-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
 }
-.shil-ai-preview-toggle{
-  width:100%;
-  border:0;
-  background:transparent;
-  color:#fff;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  text-align:right;
-  padding:0;
-  cursor:pointer;
+
+.shil-system-settings-scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: 120px;
 }
-.shil-ai-preview-toggle span{
-  display:flex;
-  flex-direction:column;
-  gap:5px;
+
+.shil-system-confirm-footer {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 120;
+  background: rgba(10,10,10,0.92);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding: 12px 14px calc(env(safe-area-inset-bottom) + 12px);
 }
-.shil-ai-preview-toggle strong{
-  font-size:18px;
-  font-weight:900;
-  color:#fff;
+
+.shil-system-confirm-footer-inner {
+  max-width: 680px;
+  margin: 0 auto;
 }
-.shil-ai-preview-toggle small{
-  font-size:12px;
-  color:rgba(202,242,247,.72);
-  line-height:1.8;
+
+/* ??????? ?? ?????? ????? ??? ???? */
+
+.shil-system-settings-content:last-child {
+  margin-bottom: 90px;
 }
-.shil-ai-preview-toggle b{
-  flex:0 0 auto;
-  border:1px solid rgba(34,211,238,.28);
-  color:#bffcff;
-  border-radius:999px;
-  padding:8px 13px;
-  font-size:12px;
-  background:rgba(34,211,238,.08);
+
+
+
+/* SHIL_SYSTEM_SETTINGS_SCROLL_END_CONFIRM_PATCH_START */
+
+/* دکمه تایید صفحه تنظیمات سیستم باید در انتهای اسکرول باشد، نه فیکس روی viewport */
+.shil-system-confirm-footer,
+.system-confirm-footer,
+.system-settings-footer,
+.settings-confirm-footer,
+.system-actions-footer,
+.system-bottom-actions,
+.confirm-footer,
+.bottom-actions,
+.footer-actions {
+  position: relative !important;
+  left: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  width: 100% !important;
+  z-index: 5 !important;
+  margin: 18px auto 96px !important;
+  padding: 0 14px !important;
+  background: transparent !important;
+  border-top: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
-.shil-ai-preview-body{
-  margin-top:14px;
-  border-top:1px solid rgba(255,255,255,.08);
-  padding-top:14px;
-  display:flex;
-  flex-direction:column;
-  gap:12px;
+
+/* خود دکمه تایید مرتب و وسط صفحه بماند */
+.shil-system-confirm-footer button,
+.system-confirm-footer button,
+.system-settings-footer button,
+.settings-confirm-footer button,
+.system-actions-footer button,
+.system-bottom-actions button,
+.confirm-footer button,
+.bottom-actions button,
+.footer-actions button {
+  width: min(100%, 680px) !important;
+  margin: 0 auto !important;
+  display: flex !important;
 }
-.shil-ai-transfer-row{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) auto;
-  gap:10px;
-  align-items:center;
+
+/* جلوگیری از افتادن انتهای صفحه زیر نوار پایین اصلی اپ */
+.system-settings-page,
+.shil-system-settings-page {
+  padding-bottom: 110px !important;
 }
-.shil-ai-source-status{
-  border:1px dashed rgba(148,163,184,.28);
-  background:rgba(2,6,23,.32);
-  border-radius:18px;
-  padding:12px 14px;
-  display:flex;
-  flex-direction:column;
-  gap:5px;
+
+/* SHIL_SYSTEM_SETTINGS_SCROLL_END_CONFIRM_PATCH_END */
+/* SHIL_CONFIRM_BUTTON_SCROLL_END_PATCH */
+.shil-confirm-config-button {
+  position: relative !important;
+  left: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  top: auto !important;
+  transform: none !important;
+  z-index: 5 !important;
+
+  display: flex !important;
+  width: min(100%, 680px) !important;
+  margin: 22px auto 120px !important;
 }
-.shil-ai-source-status.ready{
-  border-style:solid;
-  border-color:rgba(80,220,196,.34);
-  background:rgba(80,220,196,.07);
-}
-.shil-ai-source-status span{
-  color:rgba(226,238,255,.66);
-  font-size:12px;
-}
-.shil-ai-source-status strong{
-  color:#fff;
-  font-size:13px;
-}
-.shil-ai-mode-row{
-  display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:8px;
-}
-.shil-ai-mode-row button{
-  min-height:42px;
-  border-radius:15px;
-  border:1px solid rgba(255,255,255,.10);
-  background:rgba(15,23,42,.54);
-  color:rgba(226,238,255,.82);
-  font-weight:800;
-}
-.shil-ai-mode-row button.active{
-  border-color:rgba(34,211,238,.62);
-  background:linear-gradient(135deg, rgba(34,211,238,.16), rgba(154,92,255,.13));
-  color:#fff;
-  box-shadow:0 0 20px rgba(34,211,238,.13);
-}
-.shil-ai-install-visual img{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  opacity:.42;
-  filter:saturate(1.08) contrast(1.04);
-}
-.shil-ai-install-visual .shil-ai-sky,
-.shil-ai-install-visual .shil-ai-roof,
-.shil-ai-install-visual strong{
-  z-index:2;
-}
-.shil-ai-apply-row{
-  justify-content:flex-start;
-  flex-wrap:wrap;
-}
-.shil-primary-small{
-  border:1px solid rgba(34,211,238,.52);
-  background:linear-gradient(135deg, rgba(34,211,238,.20), rgba(154,92,255,.18));
-  color:#fff;
-  border-radius:999px;
-  padding:10px 16px;
-  font-weight:900;
-}
-.shil-ai-engineering-output{
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-  margin-top:4px;
-}
-.shil-ai-install-table-card{
-  border:1px solid rgba(255,255,255,.08);
-  background:rgba(2,6,23,.30);
-  border-radius:20px;
-  padding:12px;
-}
-.shil-ai-install-table-card h3{
-  margin:0 0 10px;
-  font-size:14px;
-  color:#e8fbff;
-}
-.shil-ai-install-table{
-  display:flex;
-  flex-direction:column;
-  gap:7px;
-}
-.shil-ai-install-table > div{
-  display:grid;
-  grid-template-columns:1fr 1fr 2fr;
-  gap:8px;
-  align-items:center;
-  border-radius:13px;
-  padding:9px 10px;
-  background:rgba(255,255,255,.045);
-  border:1px solid rgba(255,255,255,.055);
-}
-.shil-ai-install-table > div.head{
-  background:rgba(34,211,238,.08);
-  border-color:rgba(34,211,238,.16);
-  color:#bffcff;
-  font-size:11px;
-  font-weight:900;
-}
-.shil-ai-install-table span{
-  color:rgba(226,238,255,.72);
-  font-size:12px;
-}
-.shil-ai-install-table strong{
-  color:#fff;
-  font-size:12px;
-}
-.shil-ai-install-table small{
-  color:rgba(226,238,255,.62);
-  font-size:11px;
-  line-height:1.8;
-}
-.shil-ai-final-note{
-  border:1px solid rgba(80,220,196,.18);
-  background:rgba(80,220,196,.06);
-  border-radius:20px;
-  padding:13px;
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-}
-.shil-ai-final-note strong{
-  color:#fff;
-  font-size:14px;
-}
-.shil-ai-final-note p{
-  margin:0;
-  color:rgba(226,238,255,.72);
-  line-height:1.9;
-  font-size:12px;
-}
-@media (max-width:720px){
-  .shil-ai-transfer-row,
-  .shil-ai-mode-row{
-    grid-template-columns:1fr;
-  }
-  .shil-ai-install-table > div{
-    grid-template-columns:1fr;
-  }
+
+/* ??? ????? ??? ???? ???? fixed ????? ??? ????? ??? ??? ?? ?? ???? ?????? */
+button.shil-confirm-config-button {
+  position: relative !important;
+  margin-bottom: 120px !important;
 }
