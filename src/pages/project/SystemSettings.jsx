@@ -58,6 +58,70 @@ function BankSelect({ title, subtitle, value, count, onValue, onCount, items, re
   );
 }
 
+
+function ConfigurationLinkedDetails({ design }) {
+  const detailRows = [
+    {
+      title: "اینورتر خورشیدی",
+      value: `${optionTitle(design.inverter)} / ${faNumber(design.inverter.count)} عدد`,
+      details: [
+        `توان مبنای طراحی: ${faNumber(design.load.totalPowerW)}W × ضریب افزایش ${design.settings.reserveFactor} = ${faNumber(design.load.totalPowerW * design.settings.reserveFactor)}W`,
+        `ولتاژ DC اینورتر: ${design.inverter.dcVoltage}V؛ انتخاب باتری باید با بازه شناور همین ولتاژ همخوان باشد.`,
+        design.inverter.parallelRequired ? "به دلیل بیشتر بودن توان مورد نیاز، کارکرد موازی اینورترها در نتیجه پیکربندی ثبت شده است." : "توان اینورتر انتخابی نیاز بار را بدون الزام موازی‌سازی پوشش می‌دهد."
+      ]
+    },
+    {
+      title: "باتری و خودکفایی",
+      value: `${design.battery.battery.title} / ${faNumber(design.battery.totalCount)} عدد`,
+      details: [
+        `روز خودکفایی واردشده: ${design.settings.autonomyDays} روز؛ این مقدار مستقیماً تعداد باتری و انرژی ذخیره را تغییر می‌دهد.`,
+        `ساختار باتری: ${faNumber(design.battery.seriesCount)} سری × ${faNumber(design.battery.parallelCount)} موازی.`,
+        `بازه ولتاژ شناور باتری: ${design.battery.voltageRange}؛ باید با ورودی DC اینورتر همخوان باشد.`
+      ]
+    },
+    {
+      title: "پنل خورشیدی و آرایه PV",
+      value: `${design.panel.title} / ${faNumber(design.pvArray.panelCount)} عدد`,
+      details: [
+        `توان کل آرایه: ${faNumber(design.pvArray.arrayPowerW)}W بر اساس تعداد پنل انتخاب‌شده.`,
+        `ساختار آرایه: ${faNumber(design.pvArray.seriesCount)} سری × ${faNumber(design.pvArray.parallelCount)} موازی.`,
+        `سری پنل‌ها بر اساس محدوده MPPT و موازی‌ها بر اساس توان مورد نیاز و ضریب توسعه تعیین شده‌اند.`
+      ]
+    },
+    {
+      title: "فضا، کابل و حفاظت",
+      value: `${design.space.maintenanceAreaM2} m² / DC ${design.protection.dcBreakerA}A / AC ${design.protection.acBreakerA}A`,
+      details: [
+        `فضای نصب با لحاظ تعداد پنل، مساحت هر پنل و فضای تعمیر و نگهداری محاسبه شده است: ${design.space.note}`,
+        `کابل DC: ${design.protection.dcCable}، کابل PV: ${design.protection.pvCable}، کابل باتری: ${design.protection.batteryCable}.`,
+        `حفاظت بر اساس جریان کاری، ضریب اطمینان، اضافه‌بار و تفکیک سمت DC/AC انتخاب شده است.`
+      ]
+    }
+  ];
+
+  return (
+    <DetailsToggle title="نمایش جزئیات متصل به جدول نتیجه پیکربندی">
+      <div className="shil-linked-details-grid">
+        {detailRows.map((row) => (
+          <div className="shil-linked-detail-card" key={row.title}>
+            <div className="shil-linked-detail-head">
+              <span>{row.title}</span>
+              <strong>{row.value}</strong>
+            </div>
+            <ul>
+              {row.details.map((item) => <li key={item}>{item}</li>)}
+            </ul>
+          </div>
+        ))}
+      </div>
+      <div className="shil-expert-box shil-linked-protection-report">
+        {design.protection.report.map((item) => <div key={item}><span>حفاظت</span><strong>{item}</strong></div>)}
+        {design.explanations.map((item) => <div key={item}><span>SHIL</span><strong>{item}</strong></div>)}
+      </div>
+    </DetailsToggle>
+  );
+}
+
 function ResultTable({ design }) {
   const rows = [
     ["نوع اجرا", design.settings.systemType === "offgrid" ? "آفگرید" : design.settings.systemType === "hybrid" ? "هیبرید" : "آنگرید", "نوع اینورتر و ساختار نهایی طراحی"],
@@ -248,14 +312,7 @@ export default function SystemSettings() {
           <div className="shil-section-head"><h2>نتیجه پیکربندی</h2><span>{solarDesign.valid ? "قابل تأیید" : "نیازمند اصلاح"}</span></div>
           <ResultTable design={solarDesign} />
           {solarDesign.warnings.map((item) => <div key={item} className="shil-inline-warning">{item}</div>)}
-        </div>
-
-        <div className="shil-section-card">
-          <div className="shil-section-head"><h2>کابل و سیستم حفاظتی</h2><span>گزارش تفکیکی SHIL</span></div>
-          <DetailsToggle title="نمایش دلیل انتخاب کابل و تجهیزات حفاظتی">
-            <ul className="shil-reason-list">{solarDesign.protection.report.map((item) => <li key={item}>{item}</li>)}</ul>
-            <div className="shil-expert-box">{solarDesign.explanations.map((item) => <div key={item}><span>SHIL</span><strong>{item}</strong></div>)}</div>
-          </DetailsToggle>
+          <ConfigurationLinkedDetails design={solarDesign} />
         </div>
 
         <button type="button" className="shil-primary-wide" onClick={confirmSolar}>تأیید پیکربندی و رفتن به چکیده</button>
