@@ -8622,3 +8622,49 @@ html,body,#root{width:100%;max-width:100%;min-height:100%;overflow-x:hidden;}
 }
 
 @import "./app.css";
+
+
+
+
+
+/* =========================================
+   SYSTEM SETTINGS FIXED FOOTER FINAL
+   ========================================= */
+
+.shil-system-settings-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+.shil-system-settings-scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: 120px;
+}
+
+.shil-system-confirm-footer {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 120;
+  background: rgba(10,10,10,0.92);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding: 12px 14px calc(env(safe-area-inset-bottom) + 12px);
+}
+
+.shil-system-confirm-footer-inner {
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+/* ??????? ?? ?????? ????? ??? ???? */
+
+.shil-system-settings-content:last-child {
+  margin-bottom: 90px;
+}
+
