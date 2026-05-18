@@ -104,3 +104,30 @@ export function readAllUserRecords(baseKey) {
     .filter((key) => key.startsWith(prefix))
     .flatMap((key) => safeParse(localStorage.getItem(key), []).map((item) => ({ ...item, sourceKey: key })));
 }
+
+
+export function upsertUserRecord(baseKey, matcher, patch) {
+  const session = getCurrentSession() || createSession({ role: "guest", authType: "guest" });
+  const key = getUserScopedKey(baseKey, session.userId);
+  const list = safeParse(localStorage.getItem(key), []);
+  const index = list.findIndex((item) => matcher(item));
+  const now = new Date().toISOString();
+  if (index >= 0) {
+    const updated = { ...list[index], ...patch, updatedAt: now };
+    const next = [...list];
+    next[index] = updated;
+    localStorage.setItem(key, JSON.stringify(next));
+    return updated;
+  }
+  const nextRecord = {
+    ...patch,
+    id: makeId(baseKey),
+    userId: session.userId,
+    userRole: session.role,
+    userLogin: session.login,
+    createdAt: now,
+    updatedAt: now,
+  };
+  localStorage.setItem(key, JSON.stringify([nextRecord, ...list]));
+  return nextRecord;
+}

@@ -18,10 +18,7 @@ function ProjectList({ type }) {
     <ShilPageShell title={title}>
       <section className="shil-list-panel">
         {rows.map((row) => (
-          <article className="shil-mini-project-card" key={row.id}>
-            <strong>{row.title || "پروژه بدون عنوان"}</strong>
-            <span>{type === "final" ? "آماده خروجی گزارش" : "قابل ادامه و ویرایش"}</span>
-          </article>
+          <Link className="shil-mini-project-card" key={row.id} to={type === "final" ? (row.resumeUrl || "/new-project/run") : (row.resumeUrl || "/new-project/info")}><strong>{row.title || "پروژه بدون عنوان"}</strong><span>{type === "final" ? "آماده خروجی گزارش" : "قابل ادامه و ویرایش"}</span></Link>
         ))}
         {!rows.length ? <article className="shil-mini-project-card"><strong>هنوز پروژه‌ای ثبت نشده است</strong><span>داده‌های این صفحه فقط برای همین کاربر نمایش داده می‌شود.</span></article> : null}
       </section>

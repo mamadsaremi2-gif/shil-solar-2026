@@ -76,6 +76,14 @@ export default function ProjectPath() {
     localStorage.setItem("shil:calculationDomain", domain);
     localStorage.setItem("shil:scenarioDomain", domain);
 
+    if (domain === "emergency") {
+      approveProjectStep("method");
+      approveProjectStep("inputs");
+      localStorage.setItem("shil:selectedCalculationMethod", JSON.stringify({ key: "emergency", title: "برق اضطراری" }));
+      navigate("/new-project/summary/emergency", { state: { method: "برق اضطراری" } });
+      return;
+    }
+
     navigate(`/new-project/method?domain=${encodeURIComponent(domain)}&from=project-path`);
   };
 
@@ -89,7 +97,7 @@ export default function ProjectPath() {
           </div>
 
           <p className="shil-section-note">
-            بعد از تأیید این مرحله، مستقیماً وارد صفحه انتخاب روش محاسبات می‌شوید.
+            بعد از تأیید مسیر خورشیدی وارد روش محاسبات می‌شوید؛ مسیر برق اضطراری مستقیم به چکیده اطلاعات می‌رود.
           </p>
 
           <div className="shil-execution-grid shil-project-path-two-cards">
@@ -109,7 +117,7 @@ export default function ProjectPath() {
           </div>
 
           {warning ? <div className="shil-inline-warning">{warning}</div> : null}
-          <button type="button" className="shil-primary-wide" onClick={confirm}>تأیید مرحله و ورود به روش محاسبات</button>
+          <button type="button" className="shil-primary-wide" onClick={confirm}>تأیید مسیر پروژه</button>
         </div>
       </section>
     </EngineeringPageShell>

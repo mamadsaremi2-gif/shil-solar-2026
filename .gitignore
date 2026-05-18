@@ -1,3 +1,13 @@
 ﻿node_modules
 dist
-.vercel
+*.zip
+*.rar
+*.7z
+*.pdf
+*.png
+*.jpg
+*.jpeg
+*.mp4
+*.psd
+.cache
+.vscode

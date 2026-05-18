@@ -24,6 +24,7 @@ import ExecutionMethod from "../pages/project/ExecutionMethod.jsx";
 import SystemSettings from "../pages/project/SystemSettings.jsx";
 import SummaryPage from "../pages/project/SummaryPage.jsx";
 import RunCalculation from "../pages/project/RunCalculation.jsx";
+import UnderDevelopment from "../pages/project/UnderDevelopment.jsx";
 
 export default function App() {
   return (
@@ -55,7 +56,7 @@ export default function App() {
         <Route path="/new-project/summary" element={<SummaryPage />} />
         <Route path="/new-project/run/:domain" element={<RunCalculation />} />
         <Route path="/new-project/run" element={<RunCalculation />} />
-        <Route path="/new-project/future" element={<NewProject />} />
+        <Route path="/new-project/future" element={<UnderDevelopment />} />
 
         <Route path="/projects" element={<Projects />} />
         <Route path="/projects/running" element={<Projects view="running" />} />

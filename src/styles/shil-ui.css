@@ -8825,3 +8825,89 @@ html,body,#root{width:100%;max-width:100%;min-height:100%;overflow-x:hidden;}
     grid-template-columns:1fr;
   }
 }
+
+
+/* SHIL_FINAL_DELIVERY_UPDATE_START */
+input,
+textarea,
+select,
+[contenteditable="true"]{
+  direction:auto;
+  unicode-bidi:plaintext;
+  font-variant-numeric:tabular-nums;
+}
+
+.dashboard-icons .shil-ios-icon-img{
+  width:clamp(70px,18vw,96px) !important;
+  height:clamp(70px,18vw,96px) !important;
+}
+.new-project-grid-3x3 .shil-ios-icon-img{
+  width:clamp(58px,15vw,82px) !important;
+  height:clamp(58px,15vw,82px) !important;
+}
+.dashboard-icons .shil-ios-icon-title,
+.new-project-grid-3x3 .shil-ios-icon-title{
+  font-size:clamp(12px,3.3vw,15px) !important;
+}
+
+.shil-under-development-card{
+  min-height:48vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:16px;
+  text-align:center;
+}
+
+.shil-engineering-list{
+  margin:0;
+  padding:0 18px 0 0;
+  display:grid;
+  gap:10px;
+  color:rgba(255,255,255,.82);
+  line-height:1.9;
+}
+.shil-final-preview-image{
+  width:100%;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.12);
+  object-fit:cover;
+  max-height:360px;
+}
+.shil-soft-link-button{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:48px;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.14);
+  background:rgba(255,255,255,.06);
+  color:#fff;
+  font-weight:900;
+}
+.shil-delivery-hero{
+  border-color:rgba(34,211,238,.28) !important;
+  box-shadow:0 0 0 1px rgba(34,211,238,.08),0 18px 50px rgba(0,0,0,.22) !important;
+}
+.shil-output-actions{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+.shil-output-actions button{
+  border:1px solid rgba(255,255,255,.13);
+  background:rgba(255,255,255,.08);
+  color:#fff;
+  border-radius:16px;
+  min-height:46px;
+  font-weight:900;
+}
+.shil-mini-project-card{
+  display:grid;
+  gap:6px;
+}
+@media (max-width:380px){
+  .dashboard-icons .shil-ios-icon-img{width:68px !important;height:68px !important;}
+  .new-project-grid-3x3 .shil-ios-icon-img{width:56px !important;height:56px !important;}
+}
+/* SHIL_FINAL_DELIVERY_UPDATE_END */

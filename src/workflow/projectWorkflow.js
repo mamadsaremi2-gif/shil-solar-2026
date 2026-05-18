@@ -1,3 +1,5 @@
+import { upsertUserRecord } from "../auth/session.js";
+
 export const PROJECT_STEP_ORDER = [
   { key: "info", route: "/new-project/info", title: "اطلاعات پروژه" },
   { key: "environment", route: "/new-project/environment", title: "شرایط محیطی" },
@@ -24,9 +26,35 @@ export function writeWorkflowState(nextState) {
   window.dispatchEvent(new CustomEvent("shil-workflow-updated", { detail: nextState }));
 }
 
+
+
+function safeParseLocal(key, fallback = {}) {
+  try { return JSON.parse(localStorage.getItem(key) || "null") || fallback; } catch { return fallback; }
+}
+
+function saveRunningProjectSnapshot(stepKey) {
+  const project = safeParseLocal("shil:projectInfoDraft", {});
+  const selectedPath = safeParseLocal("shil:selectedProjectPath", {});
+  const domain = localStorage.getItem("shil:calculationDomain") || selectedPath.calculationDomain || "solar";
+  const title = project.projectName || project.name || (domain === "emergency" ? "پروژه برق اضطراری" : "پروژه خورشیدی");
+  const resumeUrl = domain === "emergency" && stepKey === "path" ? "/new-project/summary/emergency" : (PROJECT_STEP_ORDER.find((step) => step.key === stepKey)?.route || "/new-project/info");
+  const projectKey = localStorage.getItem("shil:activeProjectKey") || `draft-${Date.now()}`;
+  localStorage.setItem("shil:activeProjectKey", projectKey);
+  upsertUserRecord("shil-projects", (item) => item.projectKey === projectKey, {
+    projectKey,
+    title,
+    status: "running",
+    domain,
+    currentStep: stepKey,
+    resumeUrl: domain === "solar" && resumeUrl === "/new-project/system" ? "/new-project/system/solar" : resumeUrl,
+    snapshot: { project, selectedPath, workflow: readWorkflowState() }
+  });
+}
+
 export function approveProjectStep(stepKey) {
   const state = readWorkflowState();
   writeWorkflowState({ ...state, [stepKey]: { approved: true, approvedAt: new Date().toISOString() } });
+  saveRunningProjectSnapshot(stepKey);
 }
 
 export function resetProjectWorkflow() {
