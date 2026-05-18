@@ -200,10 +200,11 @@ export default function SystemSettings() {
   const [reserveFactor, setReserveFactor] = useState(1.2);
   const [equipmentManualMode, setEquipmentManualMode] = useState(false);
   const [parameterManualMode, setParameterManualMode] = useState(false);
-  const [panelId, setPanelId] = useState(SHIL_SOLAR_PANELS.at(-1)?.id || "");
+  const [panelId, setPanelId] = useState(SHIL_SOLAR_PANELS.find((p) => p.powerW === 620)?.id || SHIL_SOLAR_PANELS[0]?.id || "");
   const [inverterId, setInverterId] = useState(SHIL_SOLAR_INVERTERS.find((i) => i.ratedPowerW >= 5000)?.id || SHIL_SOLAR_INVERTERS[0]?.id || "");
   const [batteryId, setBatteryId] = useState(SHIL_LITHIUM_BATTERIES.find((b) => b.nominalVoltage === 48 && b.capacityAh === 200)?.id || SHIL_LITHIUM_BATTERIES[0]?.id || "");
   const [panelExtraFactor, setPanelExtraFactor] = useState(1);
+  const [liveSaved, setLiveSaved] = useState(false);
   const [inverterExtraFactor, setInverterExtraFactor] = useState(1);
   const [batteryExtraFactor, setBatteryExtraFactor] = useState(1);
   const [warning, setWarning] = useState("");
@@ -227,7 +228,7 @@ export default function SystemSettings() {
 
   useEffect(() => {
     if (equipmentManualMode) return;
-    setPanelId(solarDesign.panel.id);
+    setPanelId(SHIL_SOLAR_PANELS.find((p) => p.powerW === 620)?.id || solarDesign.panel.id);
     setInverterId(solarDesign.inverter.id);
     setBatteryId(solarDesign.battery.battery.id);
   }, [equipmentManualMode, solarDesign.panel.id, solarDesign.inverter.id, solarDesign.battery.battery.id]);
@@ -238,25 +239,37 @@ export default function SystemSettings() {
     return () => clearTimeout(timer);
   }, [warning]);
 
+  useEffect(() => {
+    try {
+      localStorage.setItem("shil:solarSystemDesign:live", JSON.stringify(solarDesign));
+      localStorage.setItem("shil:systemSettingsDraft:live", JSON.stringify({ domain: "solar", ...settings, design: solarDesign }));
+      setLiveSaved(true);
+      const timer = setTimeout(() => setLiveSaved(false), 900);
+      return () => clearTimeout(timer);
+    } catch {
+      return undefined;
+    }
+  }, [solarDesign, settings]);
+
   const applySmart = () => {
     setEquipmentManualMode(false);
     setParameterManualMode(false);
     setPanelExtraFactor(1);
     setInverterExtraFactor(1);
     setBatteryExtraFactor(1);
-    setPanelId(solarDesign.panel.id);
+    setPanelId(SHIL_SOLAR_PANELS.find((p) => p.powerW === 620)?.id || solarDesign.panel.id);
     setInverterId(solarDesign.inverter.id);
     setBatteryId(solarDesign.battery.battery.id);
   };
 
   const confirmSolar = () => {
-    if (!solarDesign.valid) {
-      setWarning(solarDesign.nextBlockedReason || "پیکربندی با توان مصرفی همخوانی ندارد؛ علت خطا را اصلاح کنید.");
-      return;
-    }
+    const finalDesign = { ...solarDesign, confirmedAt: new Date().toISOString(), confirmedWithWarnings: !solarDesign.valid };
     approveProjectStep("system");
-    localStorage.setItem("shil:solarSystemDesign", JSON.stringify(solarDesign));
-    localStorage.setItem("shil:systemSettingsDraft", JSON.stringify({ domain: "solar", ...settings, design: solarDesign }));
+    localStorage.setItem("shil:solarSystemDesign", JSON.stringify(finalDesign));
+    localStorage.setItem("shil:systemSettingsDraft", JSON.stringify({ domain: "solar", ...settings, design: finalDesign }));
+    if (!solarDesign.valid) {
+      setWarning(solarDesign.nextBlockedReason || "پیکربندی با هشدار ثبت شد و در چکیده قابل بررسی است.");
+    }
     navigate("/new-project/summary/solar");
   };
 
@@ -287,11 +300,11 @@ export default function SystemSettings() {
 
         <div className="shil-section-card shil-config-block">
           <div className="shil-section-head"><h2>کنترل طراحی</h2><span>نوع اجرای اینورتر خورشیدی</span></div>
-          <DesignModeCards value={systemType} onChange={setSystemType} />
+          <DesignModeCards value={systemType} onChange={(nextType) => { setSystemType(nextType); setEquipmentManualMode(false); setWarning(`مدل طراحی ${nextType === "offgrid" ? "آفگرید" : nextType === "ongrid" ? "آنگرید" : "هیبرید"} در موتور محاسبات اعمال شد.`); }} />
         </div>
 
         <div className="shil-section-card shil-config-block">
-          <div className="shil-section-head"><h2>پارامترهای اثرگذار</h2><span>مستقیم در انتخاب تجهیزات</span></div>
+          <div className="shil-section-head"><h2>پارامترهای اثرگذار</h2><span>{parameterManualMode ? "حالت دستی فعال" : "اعمال هوشمند فعال"}</span></div>
           <div className="shil-form-grid shil-param-grid">
             <label><span>روزهای خودکفایی</span><input type="number" min="1" max="7" value={autonomyDays} onChange={(e) => { setParameterManualMode(true); setAutonomyDays(e.target.value); }} /></label>
             <label><span>ضریب اطمینان استاندارد</span><input type="number" step="0.05" min="1" value={reserveFactor} onChange={(e) => { setParameterManualMode(true); setReserveFactor(e.target.value); }} /></label>
@@ -301,6 +314,7 @@ export default function SystemSettings() {
             <button type="button" className={equipmentManualMode ? "shil-soft-button active" : "shil-soft-button"} onClick={() => setEquipmentManualMode(!equipmentManualMode)}>{equipmentManualMode ? "ورود دستی تجهیزات فعال" : "ورود دستی تجهیزات"}</button>
           </div>
           <p className="shil-muted-line">در حالت پیش‌فرض، روزهای خودکفایی و ضریب اطمینان استاندارد مستقیم روی موتور محاسبات وارپ می‌شوند؛ با ورود عدد جدید، همان لحظه حالت دستی پارامتر فعال و محاسبات دوباره انجام می‌شود.</p>
+          <p className="shil-muted-line">{liveSaved ? "ذخیره و اتصال زنده به موتور انجام شد." : `پنل پیش‌فرض موتور: ${solarDesign.panel.powerW} وات`}</p>
         </div>
 
         <div className="shil-system-banks-grid shil-system-banks-grid-final">
@@ -332,7 +346,7 @@ export default function SystemSettings() {
           />
           <BankSelect
             title="بانک پنل خورشیدی"
-            subtitle="400W تا 700W"
+            subtitle="پیش‌فرض 620W / دستی تا 700W"
             value={panelId}
             extraFactor={panelExtraFactor}
             onValue={(v) => { setEquipmentManualMode(true); setPanelId(v); }}

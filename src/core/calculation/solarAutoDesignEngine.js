@@ -22,7 +22,7 @@ function normalizeLoad(load = {}) {
 
 function choosePanel(panelId, panelPowerW) {
   if (panelId) return pickById(SHIL_SOLAR_PANELS, panelId) || SHIL_SOLAR_PANELS.at(-1);
-  const target = Number(panelPowerW || 700);
+  const target = Number(panelPowerW || 620);
   return [...SHIL_SOLAR_PANELS].sort((a, b) => Math.abs(a.powerW - target) - Math.abs(b.powerW - target))[0] || SHIL_SOLAR_PANELS.at(-1);
 }
 
@@ -152,10 +152,12 @@ export function runSolarAutoDesign({ load, environment, settings = {} }) {
   const soilingLoss = Number(environment?.soilingLossPercent || environment?.environmentAssessment?.soilingLossPercent || 5) / 100;
   const losses = clamp(0.86 - thermalLoss - soilingLoss, 0.55, 0.86);
 
-  const inverterPick = chooseInverter(designPowerW, designSurgeW, settings.systemVoltage, settings.inverterId);
+  const requestedSystemType = settings.systemType || "offgrid";
+  const smartSystemVoltage = requestedSystemType === "ongrid" ? 48 : requestedSystemType === "hybrid" ? 48 : settings.systemVoltage;
+  const inverterPick = chooseInverter(designPowerW, designSurgeW, smartSystemVoltage, settings.inverterId);
   const baseInverterCount = Math.max(1, Number(settings.inverterCount || inverterPick.parallelCount || 1));
   const inverterCount = Math.max(baseInverterCount, ceil(baseInverterCount * Math.max(1, Number(settings.inverterExtraFactor || 1))));
-  const panel = choosePanel(settings.panelId, settings.panelPowerW || 700);
+  const panel = choosePanel(settings.panelId, settings.panelPowerW || 620);
   const requiredBatteryWh = normalized.totalEnergyWh * autonomyDays;
   const batteryDesign = chooseBattery(inverterPick.inverter.dcVoltage, requiredBatteryWh, settings.batteryVoltage, settings.batteryId);
   const baseBatteryCount = Number(settings.batteryCount || batteryDesign.totalCount || 0);
@@ -192,7 +194,7 @@ export function runSolarAutoDesign({ load, environment, settings = {} }) {
     settings: {
       autonomyDays,
       reserveFactor,
-      systemType: settings.systemType || "offgrid",
+      systemType: requestedSystemType,
       manual: settings.manualMode || false,
       equipmentManual: settings.equipmentManualMode || false,
       parameterManual: settings.parameterManualMode || false,

@@ -17,7 +17,7 @@ export default function ProjectStepGuard({ children }) {
     };
   }, []);
 
-  const editable = !stepKey || canEditStep(stepKey, workflow);
+  const editable = !stepKey || stepKey === "system" || canEditStep(stepKey, workflow);
   const previous = stepKey ? getPreviousStep(stepKey) : null;
 
   return (
