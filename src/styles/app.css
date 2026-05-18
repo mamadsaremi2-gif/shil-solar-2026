@@ -575,3 +575,29 @@ p {
   color: #eaf8ff;
   font-weight: 800;
 }
+
+/* SHIL fixed confirmation bar for System Settings page - final patch */
+.shil-system-final-page{
+  padding-bottom:calc(var(--shil-footer-h, 86px) + env(safe-area-inset-bottom,0px) + 104px) !important;
+}
+.shil-system-final-page .shil-confirm-config-button{
+  position:fixed !important;
+  left:var(--shil-page-pad, 16px) !important;
+  right:var(--shil-page-pad, 16px) !important;
+  bottom:calc(var(--shil-footer-h, 86px) + env(safe-area-inset-bottom,0px) + 10px) !important;
+  width:auto !important;
+  max-width:calc(100vw - (2 * var(--shil-page-pad, 16px))) !important;
+  margin:0 auto !important;
+  z-index:1200 !important;
+  min-height:54px !important;
+  border-radius:20px !important;
+  touch-action:manipulation !important;
+}
+@media (min-width: 760px){
+  .shil-system-final-page .shil-confirm-config-button{
+    left:50% !important;
+    right:auto !important;
+    width:min(680px, calc(100vw - (2 * var(--shil-page-pad, 16px)))) !important;
+    transform:translateX(-50%) !important;
+  }
+}
