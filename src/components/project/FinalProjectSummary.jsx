@@ -55,8 +55,9 @@ export default function FinalProjectSummary() {
         <div>
           <h4>باتری</h4>
           <strong>
-            {result.battery.batteryKWh}kWh
+            {result.battery.batteryCount || result.battery.totalCount || "-"} عدد / {result.battery.voltageV || result.battery.unitVoltageV || "-"}V
           </strong>
+          <small>{result.battery.batteryAh || result.battery.capacityAh || result.battery.unitCapacityAh || "-"}Ah / {result.battery.batteryKWh || result.battery.grossEnergyKWh || "-"}kWh</small>
         </div>
 
       </div>

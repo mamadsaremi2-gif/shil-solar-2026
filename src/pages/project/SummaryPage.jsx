@@ -15,6 +15,26 @@ function fmt(value, fallback = "ثبت نشده") {
   return value;
 }
 
+
+function batterySpecText(bank = {}) {
+  const b = bank.battery || {};
+  const count = bank.totalCount || bank.count || "-";
+  const voltage = bank.unitVoltageV || bank.voltageV || b.nominalVoltage || b.voltageV || "-";
+  const ah = bank.unitCapacityAh || bank.capacityAh || b.capacityAh || "-";
+  const unitKWh = bank.unitEnergyKWh || (voltage !== "-" && ah !== "-" ? Math.round((Number(voltage) * Number(ah)) / 10) / 100 : "-");
+  const totalKWh = bank.grossEnergyKWh || (bank.grossEnergyWh ? Math.round(bank.grossEnergyWh / 10) / 100 : "-");
+  return `${count} عدد / ${voltage}V / ${ah}Ah / ${unitKWh}kWh هر باتری / ${totalKWh}kWh کل`;
+}
+
+function batteryNoteText(bank = {}) {
+  const series = bank.seriesCount || "-";
+  const parallel = bank.parallelCount || "-";
+  const bankVoltage = bank.bankVoltageV || "-";
+  const bankAh = bank.bankCurrentAh || bank.installedAh || "-";
+  const branchCurrent = bank.branchCurrentA ? ` / جریان شاخه ${bank.branchCurrentA}A` : "";
+  return `${series} سری × ${parallel} موازی / ولتاژ بانک ${bankVoltage}V / ظرفیت جریان ${bankAh}Ah${branchCurrent}`;
+}
+
 function SummaryBlock({ title, badge, children }) {
   return (
     <div className="shil-section-card shil-summary-block-card">
@@ -82,10 +102,13 @@ export default function SummaryPage() {
   const inverterCount = activeDesign?.inverter?.count || systemSettings?.inverterCount || "-";
   const inverterPower = activeDesign?.inverter?.powerW || activeDesign?.inverter?.ratedPowerW || systemSettings?.inverterPowerW || "-";
   const batteryCount = activeDesign?.battery?.totalCount || systemSettings?.batteryCount || "-";
-  const batteryVoltage = activeDesign?.battery?.battery?.voltageV || activeDesign?.battery?.battery?.nominalVoltage || activeDesign?.battery?.bankVoltageV || systemSettings?.batteryVoltageV || "-";
-  const batteryCapacity = activeDesign?.battery?.battery?.capacityAh || activeDesign?.battery?.capacityAh || systemSettings?.batteryCapacityAh || "-";
+  const batteryVoltage = activeDesign?.battery?.unitVoltageV || activeDesign?.battery?.battery?.voltageV || activeDesign?.battery?.battery?.nominalVoltage || activeDesign?.battery?.bankVoltageV || systemSettings?.batteryVoltageV || "-";
+  const batteryCapacity = activeDesign?.battery?.unitCapacityAh || activeDesign?.battery?.battery?.capacityAh || activeDesign?.battery?.capacityAh || systemSettings?.batteryCapacityAh || "-";
   const batterySeries = activeDesign?.battery?.seriesCount || systemSettings?.batterySeriesCount || "-";
   const batteryParallel = activeDesign?.battery?.parallelCount || systemSettings?.batteryParallelCount || "-";
+  const batteryUnitKWh = activeDesign?.battery?.unitEnergyKWh || "-";
+  const batteryTotalKWh = activeDesign?.battery?.grossEnergyKWh || (activeDesign?.battery?.grossEnergyWh ? Math.round(activeDesign.battery.grossEnergyWh / 10) / 100 : "-");
+  const batteryBankAh = activeDesign?.battery?.bankCurrentAh || activeDesign?.battery?.installedAh || "-";
   const requiredPower = activeDesign?.load?.designPeakW || activeDesign?.load?.totalPowerW || activeDesign?.requiredPowerW || loadResult?.designPowerW || loadResult?.peakPowerW || "در انتظار محاسبه";
 
   const transferSiteImage = () => {
@@ -111,7 +134,7 @@ export default function SummaryPage() {
       image: environmentImage,
       panel: { count: panelCount, powerW: panelPower, series: panelSeries, parallel: panelParallel },
       inverter: { count: inverterCount, powerW: inverterPower, title: solarDesign?.inverter?.title || systemSettings?.inverterId },
-      battery: { count: batteryCount, voltageV: batteryVoltage, capacityAh: batteryCapacity, series: batterySeries, parallel: batteryParallel },
+      battery: { count: batteryCount, voltageV: batteryVoltage, capacityAh: batteryCapacity, unitKWh: batteryUnitKWh, totalKWh: batteryTotalKWh, bankAh: batteryBankAh, series: batterySeries, parallel: batteryParallel },
       project,
       environment
     });
@@ -146,7 +169,7 @@ export default function SummaryPage() {
 
   const confirmSummary = () => {
     approveProjectStep("summary");
-    localStorage.setItem("shil:summaryDraft", JSON.stringify({ domain, method, project, environment, loadResult, systemSettings, solarDesign, emergencyDesign, aiPreviewRequested: !emergency && aiApplied, confirmedAt: new Date().toISOString() }));
+    localStorage.setItem("shil:summaryDraft", JSON.stringify({ domain, method, project, environment, loadResult, systemSettings, solarDesign, solarSizing: solarDesign?.solarSizing, emergencyDesign, aiPreviewRequested: !emergency && aiApplied, confirmedAt: new Date().toISOString() }));
     navigate(`/new-project/run/${domain}`, { state: { method, aiPreviewRequested: !emergency && aiApplied } });
   };
 
@@ -170,7 +193,8 @@ export default function SummaryPage() {
     { label: "نوع انتخاب", value: solarDesign?.inverter?.title || systemSettings?.inverterId || "انتخاب هوشمند", reason: "از بانک اینورتر خورشیدی مطابق نوع آفگرید، آنگرید یا هیبرید انتخاب می‌شود." }
   ];
   const batteryRows = aiResult?.tables?.battery || [
-    { label: "تعداد باتری", value: `${batteryCount} عدد`, reason: "برای تامین روزهای خودکفایی و ظرفیت ذخیره انرژی پروژه تعیین شده است." },
+    { label: "تعداد باتری", value: `${batteryCount} عدد`, reason: `مشخصات کامل بانک: ${batterySpecText(activeDesign?.battery)}` },
+    { label: "ولتاژ / جریان / انرژی", value: `${batteryVoltage}V / ${batteryCapacity}Ah / ${batteryUnitKWh}kWh`, reason: `ظرفیت کل بانک ${batteryTotalKWh}kWh و ظرفیت جریان بانک ${batteryBankAh}Ah است.` },
     { label: "ولتاژ / ظرفیت", value: `${batteryVoltage}V / ${batteryCapacity}Ah`, reason: "برای سازگاری با ولتاژ باس DC و ظرفیت ذخیره مورد نیاز انتخاب شده است." },
     { label: "آرایش سری", value: `${batterySeries} سری`, reason: "برای رسیدن به ولتاژ کاری بانک باتری محاسبه شده است." },
     { label: "آرایش موازی", value: `${batteryParallel} موازی`, reason: "برای افزایش ظرفیت Ah و پایداری ذخیره انرژی استفاده شده است." }
@@ -206,8 +230,9 @@ export default function SummaryPage() {
           <>
             <SummaryBlock title="پیکربندی برق اضطراری" badge={emergencyDesign?.valid ? "تأیید شده" : "کنترل‌شده"}>
               <SummaryItem label="اینورتر برق اضطراری" value={emergencyDesign?.inverter?.title} note={`${emergencyDesign?.inverter?.count || 1} عدد / ${emergencyDesign?.inverter?.ratedPowerW || "-"} وات`} />
-              <SummaryItem label="باتری منتخب" value={emergencyDesign?.battery?.battery?.title} note={`${batteryCount} عدد / ${batterySeries} سری × ${batteryParallel} موازی`} />
-              <SummaryItem label="ولتاژ بانک باتری" value={`${batteryVoltage} ولت`} />
+              <SummaryItem label="باتری منتخب" value={emergencyDesign?.battery?.battery?.title} note={batterySpecText(emergencyDesign?.battery)} />
+              <SummaryItem label="ولتاژ / جریان / انرژی باتری" value={`${batteryVoltage}V / ${batteryCapacity}Ah / ${batteryUnitKWh}kWh هر باتری`} note={`ظرفیت کل ${batteryTotalKWh}kWh / بانک ${batteryBankAh}Ah`} />
+              <SummaryItem label="آرایش بانک باتری" value={batteryNoteText(emergencyDesign?.battery)} />
               <SummaryItem label="انرژی مورد نیاز" value={emergencyDesign?.requiredEnergyWh ? `${Math.round(emergencyDesign.requiredEnergyWh / 1000)} kWh` : null} />
               <SummaryItem label="حفاظت باتری" value={`کلید DC ${emergencyDesign?.protection?.dcBreakerA || "-"}A`} />
               <SummaryItem label="حفاظت خروجی" value={`کلید AC ${emergencyDesign?.protection?.acBreakerA || "-"}A`} />
@@ -220,8 +245,14 @@ export default function SummaryPage() {
         ) : (
           <SummaryBlock title="پیکربندی سیستم" badge={solarDesign?.valid ? "تأیید شده" : "کنترل‌شده"}>
             <SummaryItem label="اینورتر" value={solarDesign?.inverter?.title || systemSettings?.inverterId} note={solarDesign?.inverter?.count ? `${solarDesign.inverter.count} عدد` : null} />
-            <SummaryItem label="باتری" value={solarDesign?.battery?.battery?.title || systemSettings?.batteryId} note={solarDesign?.battery?.totalCount ? `${solarDesign.battery.totalCount} عدد / ${solarDesign.battery.seriesCount} سری × ${solarDesign.battery.parallelCount} موازی` : null} />
-            <SummaryItem label="پنل خورشیدی" value={solarDesign?.panel?.title || systemSettings?.panelId} note={solarDesign?.pvArray?.panelCount ? `${solarDesign.pvArray.panelCount} عدد / ${solarDesign.pvArray.seriesCount} سری × ${solarDesign.pvArray.parallelCount} موازی` : null} />
+            <SummaryItem label="باتری" value={solarDesign?.battery?.battery?.title || systemSettings?.batteryId} note={solarDesign?.battery?.totalCount ? batterySpecText(solarDesign.battery) : null} />
+            <SummaryItem label="آرایش و جریان بانک باتری" value={solarDesign?.battery?.totalCount ? batteryNoteText(solarDesign.battery) : null} />
+            <SummaryItem label="توان پنل خورشیدی" value={solarDesign?.panel?.title || systemSettings?.panelId} note={solarDesign?.pvArray?.panelCount ? `${solarDesign.pvArray.panelCount} عدد / ${solarDesign.pvArray.seriesCount} سری × ${solarDesign.pvArray.parallelCount} موازی / امتیاز ${solarDesign?.panelPowerAnalysis?.score || "-"} از ۱۰۰` : null} />
+            <SummaryItem label="اعتبارسنجی پنل و MPPT" value={solarDesign?.panelPowerAnalysis?.levelLabel || "در انتظار محاسبه"} note={solarDesign?.panelPowerAnalysis?.status === "ok" ? "توان، انرژی، رشته‌بندی، جریان و محدوده MPPT تأیید شد" : solarDesign?.panelPowerAnalysis?.recommendations?.[0]} />
+            <SummaryItem label="توان آرایه PV" value={solarDesign?.panelPowerAnalysis?.array?.powerKW ? `${solarDesign.panelPowerAnalysis.array.powerKW} kW` : solarDesign?.solarSizing?.pArrayKW ? `${solarDesign.solarSizing.pArrayKW} kW` : null} note="P_array = N_panel × P_panel" />
+            <SummaryItem label="تولید روزانه قابل تأمین" value={solarDesign?.panelPowerAnalysis?.array?.dailyEnergyKWh ? `${solarDesign.panelPowerAnalysis.array.dailyEnergyKWh} kWh/day` : solarDesign?.solarSizing?.ePvDailyKWh ? `${solarDesign.solarSizing.ePvDailyKWh} kWh/day` : null} note="E_pv_daily = P_array × PSH × (1 - Loss_sys)" />
+            <SummaryItem label="درصد پوشش مصرف" value={solarDesign?.panelPowerAnalysis?.array?.coveragePercent ? `${solarDesign.panelPowerAnalysis.array.coveragePercent}%` : solarDesign?.solarSizing?.coveragePercent ? `${solarDesign.solarSizing.coveragePercent}%` : "در انتظار مصرف"} note={solarDesign?.solarSizing?.enoughDailyEnergy === false ? "مصرف بیشتر از تولید روزانه است" : "مقایسه با مصرف روزانه"} />
+            <SummaryItem label="ظرفیت باتری خودکفایی" value={solarDesign?.solarSizing?.eBatteryNeededKWh ? `${solarDesign.solarSizing.eBatteryNeededKWh} kWh` : null} note={solarDesign?.solarSizing?.batterySummary || (solarDesign?.solarSizing?.batteryCount ? `${solarDesign.solarSizing.batteryCount} عدد / ${solarDesign.solarSizing.batteryVoltageV || "-"}V / ${solarDesign.solarSizing.batteryCapacityAh || "-"}Ah / ${solarDesign.solarSizing.batteryUnitKWh || "-"}kWh هر باتری / ${solarDesign.solarSizing.batteryBankKWh || "-"}kWh کل` : "بر اساس DoD و راندمان")} />
             <SummaryItem label="فضای نصب" value={solarDesign?.space?.maintenanceAreaM2 ? `${solarDesign.space.maintenanceAreaM2} m²` : null} />
             <SummaryItem label="حفاظت" value={solarDesign?.protection ? `DC ${solarDesign.protection.dcBreakerA}A / AC ${solarDesign.protection.acBreakerA}A` : null} />
             <SummaryItem label="کابل" value={solarDesign?.protection ? `DC ${solarDesign.protection.dcCable} / BAT ${solarDesign.protection.batteryCable}` : null} />
@@ -245,7 +276,7 @@ export default function SummaryPage() {
                 {aiResult ? <div className="shil-ai-layer-status-grid"><div><span>نسخه AI Layer</span><strong>{aiResult.version}</strong></div><div><span>Confidence</span><strong>{aiResult.confidence}%</strong></div><div><span>سناریو</span><strong>{aiResult.installModeTitle}</strong></div><div><span>وضعیت</span><strong>{aiResult.serviceConnected ? "تصویر تولید شد" : "آماده خروجی"}</strong></div></div> : null}
                 <div className="shil-ai-preview-layout shil-ai-install-preview-layout">
                   <div className={(aiApplied ? "shil-ai-preview-visual ready shil-ai-install-visual" : "shil-ai-preview-visual shil-ai-install-visual") + (hasGeneratedVisual ? " generated" : "")}>{visualSrc ? <img src={visualSrc} alt="تصویر شبیه‌سازی محل نصب پروژه" /> : null}{!hasGeneratedVisual ? <><div className="shil-ai-sky" /><div className="shil-ai-roof">{Array.from({ length: Math.min(Number(panelCount) || 6, 12) }).map((_, index) => <span key={index} />)}</div></> : null}<strong>{hasGeneratedVisual ? "تصویر تولید شده توسط هوش مصنوعی" : aiApplied ? "خروجی آماده شد" : imageTransferred ? "تصویر منتقل شد؛ آماده اعمال" : "در انتظار افزودن تصویر محل نصب"}</strong></div>
-                  <div className="shil-ai-preview-facts shil-ai-install-facts"><div><span>سناریوی شبیه‌سازی</span><strong>{installationModes.find((item) => item.key === installMode)?.title}</strong></div><div><span>پنل خورشیدی</span><strong>{panelCount} عدد / {panelPower} وات</strong></div><div><span>آرایش پنل</span><strong>{panelSeries} سری × {panelParallel} موازی</strong></div><div><span>اینورتر</span><strong>{inverterCount} عدد / {inverterPower === "-" ? "ثبت نشده" : `${inverterPower} وات`}</strong></div><div><span>باتری</span><strong>{batteryCount} عدد</strong></div><div><span>آرایش باتری</span><strong>{batterySeries} سری × {batteryParallel} موازی</strong></div></div>
+                  <div className="shil-ai-preview-facts shil-ai-install-facts"><div><span>سناریوی شبیه‌سازی</span><strong>{installationModes.find((item) => item.key === installMode)?.title}</strong></div><div><span>پنل خورشیدی</span><strong>{panelCount} عدد / {panelPower} وات</strong></div><div><span>آرایش پنل</span><strong>{panelSeries} سری × {panelParallel} موازی</strong></div><div><span>اینورتر</span><strong>{inverterCount} عدد / {inverterPower === "-" ? "ثبت نشده" : `${inverterPower} وات`}</strong></div><div><span>باتری</span><strong>{batteryCount} عدد / {batteryVoltage}V / {batteryCapacity}Ah</strong></div><div><span>انرژی باتری</span><strong>{batteryUnitKWh}kWh هر باتری / {batteryTotalKWh}kWh کل</strong></div><div><span>آرایش باتری</span><strong>{batterySeries} سری × {batteryParallel} موازی / {batteryBankAh}Ah</strong></div></div>
                 </div>
                 <div className="shil-action-row shil-ai-apply-row"><button type="button" className="shil-primary-small" onClick={applyAiPreview} disabled={aiGenerating}>{aiGenerating ? "در حال تولید تصویر..." : "اعمال شبیه‌سازی هوش مصنوعی"}</button><span className="shil-muted-line">این مرحله اختیاری است و مانع ادامه پروژه نمی‌شود.</span></div>
                 {aiMessage ? <div className={aiApplied ? "shil-inline-success" : "shil-inline-warning"}>{aiMessage}</div> : null}

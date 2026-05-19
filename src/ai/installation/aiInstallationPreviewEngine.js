@@ -60,7 +60,8 @@ function buildInverterRows(inverter = {}) {
 function buildBatteryRows(battery = {}) {
   return [
     { label: "تعداد باتری", value: `${text(battery.count)} عدد`, reason: "برای تامین ذخیره انرژی و روزهای خودکفایی محاسبه شده است." },
-    { label: "ولتاژ / ظرفیت", value: `${text(battery.voltageV)}V / ${text(battery.capacityAh)}Ah`, reason: "برای سازگاری با باس DC و ظرفیت ذخیره مورد نیاز انتخاب شده است." },
+    { label: "ولتاژ / جریان / انرژی هر باتری", value: `${text(battery.voltageV)}V / ${text(battery.capacityAh)}Ah / ${text(battery.unitKWh)}kWh`, reason: "برای سازگاری با باس DC و ظرفیت ذخیره مورد نیاز انتخاب شده است." },
+    { label: "ظرفیت کل بانک باتری", value: `${text(battery.totalKWh)}kWh / ${text(battery.bankAh)}Ah`, reason: "ظرفیت نامی کل بانک باتری و ظرفیت جریان قابل نمایش در خروجی مهندسی است." },
     { label: "آرایش سری", value: `${text(battery.series)} سری`, reason: "برای رسیدن به ولتاژ کاری بانک باتری تعیین شده است." },
     { label: "آرایش موازی", value: `${text(battery.parallel)} موازی`, reason: "برای افزایش ظرفیت Ah و پایداری ذخیره انرژی استفاده می‌شود." },
   ];

@@ -601,3 +601,5 @@ p {
     transform:translateX(-50%) !important;
   }
 }
+
+.shil-diagnostic-list{display:grid;gap:10px;margin-top:12px}.shil-diagnostic-card{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.045);border-radius:16px;padding:11px 12px;line-height:1.8}.shil-diagnostic-card strong{display:block;color:#fff;font-size:13px;margin-bottom:4px}.shil-diagnostic-card p{margin:0;color:#d7f5f2;font-size:12px}.shil-diagnostic-card small{display:block;margin-top:6px;color:#bdebe8;font-size:11px}.shil-diagnostic-card.critical{border-color:rgba(248,113,113,.55);background:rgba(127,29,29,.28)}.shil-diagnostic-card.error{border-color:rgba(251,146,60,.5);background:rgba(124,45,18,.24)}.shil-diagnostic-card.warning{border-color:rgba(251,191,36,.45);background:rgba(113,63,18,.22)}

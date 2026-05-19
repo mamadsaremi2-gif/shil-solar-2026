@@ -77,6 +77,40 @@ function cableByCurrent(currentA) {
   return "6mm²";
 }
 
+
+function enrichBatteryBankInfo(bank, protectionData = {}) {
+  const unitVoltageV = num(bank?.battery?.nominalVoltage ?? bank?.battery?.voltageV, 0);
+  const unitCapacityAh = num(bank?.battery?.capacityAh, 0);
+  const seriesCount = Math.max(1, num(bank?.seriesCount, 1));
+  const parallelCount = Math.max(1, num(bank?.parallelCount, 1));
+  const totalCount = Math.max(0, num(bank?.totalCount, seriesCount * parallelCount));
+  const bankVoltageV = num(bank?.bankVoltageV, unitVoltageV * seriesCount);
+  const installedAh = unitCapacityAh * parallelCount;
+  const unitEnergyKWh = round((unitVoltageV * unitCapacityAh) / 1000, 2);
+  const grossEnergyKWh = round(num(bank?.grossEnergyWh, bankVoltageV * installedAh) / 1000, 2);
+  const usableEnergyKWh = round(num(bank?.usableEnergyWh, 0) / 1000, 2);
+  const branchCurrentA = round(num(protectionData?.batteryBranchCurrentA, 0), 1);
+  return {
+    ...bank,
+    voltageV: unitVoltageV,
+    capacityAh: unitCapacityAh,
+    unitVoltageV,
+    unitCapacityAh,
+    unitEnergyKWh,
+    totalCount,
+    seriesCount,
+    parallelCount,
+    bankVoltageV,
+    installedAh,
+    bankCurrentAh: installedAh,
+    grossEnergyKWh,
+    usableEnergyKWh,
+    branchCurrentA,
+    summaryLabel: `${totalCount.toLocaleString("fa-IR")} عدد / ${unitVoltageV}V / ${unitCapacityAh}Ah / ${unitEnergyKWh}kWh هر باتری / ${grossEnergyKWh}kWh کل`,
+    engineeringLabel: `${seriesCount.toLocaleString("fa-IR")} سری × ${parallelCount.toLocaleString("fa-IR")} موازی / ولتاژ بانک ${bankVoltageV}V / ظرفیت ${installedAh.toLocaleString("fa-IR")}Ah`
+  };
+}
+
 function protection(powerW, bankVoltage, batteryParallelCount) {
   const dcCurrentA = powerW / Math.max(12, bankVoltage) / 0.9;
   const acCurrentA = powerW / 220 / 0.9;
@@ -127,7 +161,8 @@ export function runEmergencyPowerDesign({ load = {}, settings = {} } = {}) {
   batteryFinal.usableEnergyWh = round(batteryDesign.stringUsableWh * batteryFinal.parallelCount, 0);
   batteryFinal.grossEnergyWh = batteryFinal.bankVoltageV * batteryFinal.battery.capacityAh * batteryFinal.parallelCount;
   const protections = protection(designPowerW, inverterPick.inverter.batteryVoltage, batteryFinal.parallelCount);
-  const validation = buildValidation({ load: normalized, designPowerW, designSurgeW, inverter: inverterPick.inverter, inverterCount, battery: batteryFinal, requiredEnergyWh });
+  const batteryReport = enrichBatteryBankInfo(batteryFinal, protections);
+  const validation = buildValidation({ load: normalized, designPowerW, designSurgeW, inverter: inverterPick.inverter, inverterCount, battery: batteryReport, requiredEnergyWh });
   const confidence = clamp(100 - validation.errors.length * 26 - validation.warnings.length * 9, 35, 100);
 
   return {
@@ -144,7 +179,7 @@ export function runEmergencyPowerDesign({ load = {}, settings = {} } = {}) {
       batteryExtraFactor: num(settings.batteryExtraFactor, 1)
     },
     inverter: { ...inverterPick.inverter, count: inverterCount, manual: inverterPick.manual },
-    battery: batteryFinal,
+    battery: batteryReport,
     requiredEnergyWh,
     protection: protections,
     validation,
@@ -153,7 +188,7 @@ export function runEmergencyPowerDesign({ load = {}, settings = {} } = {}) {
     banks: { inverters: EMERGENCY_INVERTER_BANK, batteries: SHIL_LITHIUM_BATTERIES },
     equipmentSchedule: [
       { group: "اینورتر برق اضطراری", qty: inverterCount, spec: `${inverterPick.inverter.ratedPowerW}W / ${inverterPick.inverter.batteryVoltage}V`, reason: "پوشش توان دائم و توان لحظه‌ای بارهای ضروری" },
-      { group: "باتری", qty: batteryFinal.totalCount, spec: `${batteryFinal.battery.nominalVoltage}V ${batteryFinal.battery.capacityAh}Ah`, reason: "تأمین زمان برق اضطراری مورد نیاز" },
+      { group: "باتری", qty: batteryReport.totalCount, spec: `${batteryReport.unitVoltageV}V / ${batteryReport.unitCapacityAh}Ah / ${batteryReport.unitEnergyKWh}kWh هر باتری / ${batteryReport.grossEnergyKWh}kWh کل`, reason: `${batteryReport.seriesCount} سری × ${batteryReport.parallelCount} موازی / جریان بانک ${batteryReport.bankCurrentAh}Ah` },
       { group: "حفاظت DC", qty: 1, spec: `${protections.dcBreakerA}A / ${protections.batteryCable}`, reason: "حفاظت بانک باتری و مسیر DC" },
       { group: "حفاظت AC", qty: 1, spec: `${protections.acBreakerA}A / ${protections.acCable}`, reason: "حفاظت خروجی برق اضطراری و جداسازی مدارها" }
     ],
@@ -161,7 +196,7 @@ export function runEmergencyPowerDesign({ load = {}, settings = {} } = {}) {
       `توان طراحی برق اضطراری با ضریب اطمینان ${reserveFactor} برابر، ${designPowerW} وات محاسبه شد.`,
       `زمان برق اضطراری مورد نیاز ${normalized.requiredEmergencyHours} ساعت در ظرفیت باتری لحاظ شد.`,
       `اینورتر برق اضطراری باید هم توان دائم و هم توان لحظه‌ای بارهای ضروری را پوشش دهد.`,
-      `آرایش باتری ${batteryFinal.seriesCount} سری × ${batteryFinal.parallelCount} موازی برای رسیدن به ولتاژ بانک و ظرفیت انرژی انتخاب شد.`,
+      `آرایش باتری ${batteryReport.summaryLabel} و ${batteryReport.engineeringLabel} برای رسیدن به ولتاژ بانک و ظرفیت انرژی انتخاب شد.`,
       `تجهیزات حفاظتی شامل حفاظت باتری، خروجی AC، ارتینگ، سرج ارستر و جداسازی مدارهای برق اضطراری در خروجی اجرا قرار گرفت.`
     ],
     nextBlockedReason: validation.errors[0] || ""

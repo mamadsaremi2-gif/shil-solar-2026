@@ -27,8 +27,8 @@ export default function EngineeringResultPanel() {
 
         <div>
           <h4>باتری</h4>
-          <strong>{result.battery.batteryAh} Ah</strong>
-          <p>{result.battery.batteryKWh} kWh</p>
+          <strong>{result.battery.batteryCount || result.battery.totalCount || "-"} عدد / {result.battery.voltageV || result.battery.unitVoltageV || "-"}V</strong>
+          <p>{result.battery.batteryAh || result.battery.capacityAh || result.battery.unitCapacityAh || "-"}Ah / {result.battery.batteryKWh || result.battery.grossEnergyKWh || "-"}kWh</p>
         </div>
 
         <div>

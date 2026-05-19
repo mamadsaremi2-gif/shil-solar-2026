@@ -7,8 +7,8 @@ import { readAdminDefaults, readAdminProjectPathCards } from "../../admin/adminS
 const fallbackOptions = [
   {
     key: "solar",
-    title: "اجرای پروژه با پنل خورشیدی",
-    description: "طراحی سیستم خورشیدی با پنل، باتری، اینورتر و حفاظت",
+    title: "توان پنل خورشیدی",
+    description: "محاسبه توان آرایه PV، تولید روزانه، پوشش مصرف و ظرفیت باتری",
     image: "/assets/shil/execution/solar-execution.svg",
     calculationDomain: "solar",
   },
@@ -112,7 +112,7 @@ export default function ProjectPath() {
           </div>
 
           <p className="shil-section-note">
-            بعد از تأیید مسیر خورشیدی وارد روش محاسبات می‌شوید؛ مسیر برق اضطراری مستقیم به چکیده اطلاعات می‌رود.
+            بعد از انتخاب «توان پنل خورشیدی»، ورودی‌ها مرحله‌به‌مرحله بین مصرف، شرایط محیطی، پنل، باتری و خروجی نهایی تقسیم می‌شوند.
           </p>
 
           <div className="shil-execution-grid shil-project-path-two-cards">

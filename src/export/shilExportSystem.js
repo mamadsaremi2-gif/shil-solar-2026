@@ -6,6 +6,25 @@ function safeText(value, fallback = "ثبت نشده") {
   return String(value);
 }
 
+
+function batterySpecText(bank = {}) {
+  const b = bank.battery || {};
+  const count = safeText(bank.totalCount || bank.count, "-");
+  const voltage = safeText(bank.unitVoltageV || bank.voltageV || b.nominalVoltage || b.voltageV, "-");
+  const ah = safeText(bank.unitCapacityAh || bank.capacityAh || b.capacityAh, "-");
+  const unitKWh = safeText(bank.unitEnergyKWh || (Number(voltage) && Number(ah) ? Math.round((Number(voltage) * Number(ah)) / 10) / 100 : "-"), "-");
+  const totalKWh = safeText(bank.grossEnergyKWh || (bank.grossEnergyWh ? Math.round(bank.grossEnergyWh / 10) / 100 : "-"), "-");
+  return `${count} عدد / ${voltage}V / ${ah}Ah / ${unitKWh}kWh هر باتری / ${totalKWh}kWh کل`;
+}
+
+function batteryNoteText(bank = {}) {
+  const series = safeText(bank.seriesCount, "-");
+  const parallel = safeText(bank.parallelCount, "-");
+  const bankVoltage = safeText(bank.bankVoltageV, "-");
+  const bankAh = safeText(bank.bankCurrentAh || bank.installedAh, "-");
+  return `${series} سری × ${parallel} موازی / ولتاژ بانک ${bankVoltage}V / ظرفیت جریان ${bankAh}Ah`;
+}
+
 function downloadBlob(blob, filename) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -34,14 +53,14 @@ export function buildFinalEngineeringDelivery({ domain, project = {}, summary = 
   const solarRows = [
     { item: "پنل خورشیدی", qty: safeText(solarDesign?.pvArray?.panelCount, "-") + " عدد", spec: `${safeText(solarDesign?.panel?.powerW, 620)} وات`, reason: `${safeText(solarDesign?.pvArray?.seriesCount, "-")} سری × ${safeText(solarDesign?.pvArray?.parallelCount, "-")} موازی برای تطابق توان و محدوده کاری` },
     { item: "اینورتر خورشیدی", qty: safeText(solarDesign?.inverter?.count, 1) + " عدد", spec: `${safeText(solarDesign?.inverter?.ratedPowerW, "-")} وات`, reason: "انتخاب‌شده بر اساس توان بار، سناریوی طراحی و ظرفیت توسعه آینده" },
-    { item: "باتری", qty: safeText(solarDesign?.battery?.totalCount, "-") + " عدد", spec: `${safeText(solarDesign?.battery?.voltageV, "-")} ولت`, reason: `${safeText(solarDesign?.battery?.seriesCount, "-")} سری × ${safeText(solarDesign?.battery?.parallelCount, "-")} موازی برای تأمین ظرفیت ذخیره` },
+    { item: "باتری", qty: safeText(solarDesign?.battery?.totalCount, "-") + " عدد", spec: batterySpecText(solarDesign?.battery), reason: `${batteryNoteText(solarDesign?.battery)} برای تأمین ظرفیت ذخیره` },
     { item: "حفاظت DC/AC", qty: "۱ مجموعه", spec: `DC ${safeText(solarDesign?.protection?.dcBreakerA, "-")}A / AC ${safeText(solarDesign?.protection?.acBreakerA, "-")}A`, reason: "حفاظت مدار، جداسازی، ارتینگ و محدودسازی خطا" },
     { item: "استراکچر و متعلقات نصب", qty: "بر اساس جانمایی", spec: "سقف / زمین / ترکیبی", reason: "مطابق محل نصب، جهت پنل و شرایط اجرای پروژه" }
   ];
 
   const emergencyRows = [
     { item: "اینورتر برق اضطراری", qty: safeText(result?.inverter?.count, 1) + " عدد", spec: `${safeText(result?.inverter?.ratedPowerW, "-")} وات`, reason: "پوشش توان دائم و توان لحظه‌ای بارهای ضروری" },
-    { item: "باتری منتخب", qty: safeText(result?.battery?.totalCount, "-") + " عدد", spec: `${safeText(result?.battery?.battery?.capacityAh, "-")}Ah`, reason: `${safeText(result?.battery?.seriesCount, "-")} سری × ${safeText(result?.battery?.parallelCount, "-")} موازی برای رسیدن به ولتاژ و ظرفیت مورد نیاز` },
+    { item: "باتری منتخب", qty: safeText(result?.battery?.totalCount, "-") + " عدد", spec: batterySpecText(result?.battery), reason: `${batteryNoteText(result?.battery)} برای رسیدن به ولتاژ و ظرفیت مورد نیاز` },
     { item: "زمان برق اضطراری مورد نیاز", qty: `${safeText(result?.settings?.requiredEmergencyHours, 2)} ساعت`, spec: "بر اساس بار ضروری", reason: "در ظرفیت باتری، ضریب اطمینان و عمق دشارژ لحاظ شده است" },
     { item: "تابلو و حفاظت برق اضطراری", qty: "۱ مجموعه", spec: `DC ${safeText(result?.protection?.dcBreakerA, "-")}A / AC ${safeText(result?.protection?.acBreakerA, "-")}A`, reason: "حفاظت باتری، خروجی AC، ارتینگ، کلید جداساز و حفاظت اضافه‌جریان" },
     { item: "کابل و متعلقات اجرا", qty: "طبق مسیر اجرا", spec: safeText(result?.cable?.recommendedSize, "محاسبه‌شده"), reason: "انتخاب بر اساس جریان، افت ولتاژ و طول مسیر" }

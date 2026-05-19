@@ -1,4 +1,10 @@
 import { SHIL_LITHIUM_BATTERIES, SHIL_SOLAR_INVERTERS, SHIL_SOLAR_PANELS, SHIL_SOLAR_PROTECTION_BANK } from "../../data/shilSolarBanks.js";
+import { runSolarSizing } from "./solarSizingEngine.js";
+import { runSolarProfessionalDiagnostics } from "./solarDiagnosticEngine.js";
+import { runSolarPanelPowerEngine } from "./solarPanelPowerEngine.js";
+import { runSystemScaleEngine } from "./systemScaleEngine.js";
+import { runUtilityElectricalEngine } from "./utilityElectricalEngine.js";
+import { runEnterpriseUtilityEngineeringEngine } from "./enterpriseUtilityEngineeringEngine.js";
 
 const num = (value, fallback = 0) => {
   if (value === null || value === undefined || value === "") return fallback;
@@ -111,9 +117,44 @@ function chooseBattery(systemVoltage, requiredUsableWh, preferredBatteryVoltage,
   };
 }
 
-function sizePvArray({ dailyWh, autonomyDays, panel, inverter, env, manualPanelCount, panelExtraFactor }) {
+
+function enrichBatteryBankInfo(bank, protection = {}) {
+  const unitVoltageV = num(bank?.battery?.nominalVoltage ?? bank?.battery?.voltageV, 0);
+  const unitCapacityAh = num(bank?.battery?.capacityAh, 0);
+  const seriesCount = Math.max(1, num(bank?.seriesCount, 1));
+  const parallelCount = Math.max(1, num(bank?.parallelCount, 1));
+  const totalCount = Math.max(0, num(bank?.totalCount, seriesCount * parallelCount));
+  const bankVoltageV = num(bank?.bankVoltageV, unitVoltageV * seriesCount);
+  const installedAh = unitCapacityAh * parallelCount;
+  const unitEnergyKWh = round((unitVoltageV * unitCapacityAh) / 1000, 2);
+  const grossEnergyKWh = round(num(bank?.grossEnergyWh, bankVoltageV * installedAh) / 1000, 2);
+  const usableEnergyKWh = round(num(bank?.usableEnergyWh, 0) / 1000, 2);
+  const branchCurrentA = round(num(protection?.batteryBranchCurrentA, 0), 1);
+  return {
+    ...bank,
+    voltageV: unitVoltageV,
+    capacityAh: unitCapacityAh,
+    unitVoltageV,
+    unitCapacityAh,
+    unitEnergyKWh,
+    totalCount,
+    seriesCount,
+    parallelCount,
+    bankVoltageV,
+    installedAh,
+    bankCurrentAh: installedAh,
+    grossEnergyKWh,
+    usableEnergyKWh,
+    branchCurrentA,
+    summaryLabel: `${totalCount.toLocaleString("fa-IR")} عدد / ${unitVoltageV}V / ${unitCapacityAh}Ah / ${unitEnergyKWh}kWh هر باتری / ${grossEnergyKWh}kWh کل`,
+    engineeringLabel: `${seriesCount.toLocaleString("fa-IR")} سری × ${parallelCount.toLocaleString("fa-IR")} موازی / ولتاژ بانک ${bankVoltageV}V / ظرفیت ${installedAh.toLocaleString("fa-IR")}Ah`
+  };
+}
+
+function sizePvArray({ dailyWh, autonomyDays, panel, inverter, env, manualPanelCount, panelExtraFactor, targetPvPowerW = 0 }) {
   const dailyProductionNeedWh = dailyWh * (autonomyDays > 1 ? 1.06 : 1);
-  const requiredPvW = dailyProductionNeedWh / Math.max(1, env.psh) / Math.max(0.52, env.effectiveEfficiency);
+  const energyBasedPvW = dailyProductionNeedWh / Math.max(1, env.psh) / Math.max(0.52, env.effectiveEfficiency);
+  const requiredPvW = Math.max(energyBasedPvW, num(targetPvPowerW, 0));
   const basePanelCount = manualPanelCount ? ceil(manualPanelCount) : ceil(requiredPvW / panel.powerW);
   const reservedPanelCount = ceil(basePanelCount * Math.max(1, num(panelExtraFactor, 1)));
 
@@ -209,30 +250,94 @@ export function runSolarAutoDesign({ load = {}, environment = {}, settings = {} 
   const systemType = settings.systemType || "offgrid";
   const autonomyDays = clamp(settings.autonomyDays, 0.5, 5) || 1;
   const reserveFactor = clamp(settings.reserveFactor, 1, 1.8) || 1.2;
-  const designPowerW = Math.ceil(normalized.totalPowerW * reserveFactor);
-  const designSurgeW = Math.ceil(normalized.surgePowerW * (systemType === "ongrid" ? 1 : 1.05));
+  const requestedPlantPowerW = Math.max(
+    num(settings.targetPlantPowerMW, 0) * 1_000_000,
+    num(settings.targetPlantPowerKW, 0) * 1000,
+    num(settings.targetDesignPowerW, 0)
+  );
+  const designPowerW = Math.ceil(Math.min(30_000_000, Math.max(normalized.totalPowerW * reserveFactor, requestedPlantPowerW)));
+  const designSurgeW = Math.ceil(Math.max(normalized.surgePowerW * (systemType === "ongrid" ? 1 : 1.05), designPowerW * (systemType === "ongrid" ? 1.02 : 1.08)));
   const systemVoltage = chooseSystemVoltage(designPowerW, systemType, settings.systemVoltage);
   const inverterPick = chooseInverter(designPowerW, designSurgeW, systemVoltage, settings.inverterId, systemType);
-  const inverterBaseCount = Math.max(1, num(settings.inverterCount, inverterPick.count));
-  const inverterCount = Math.max(inverterPick.count, ceil(inverterBaseCount * Math.max(1, num(settings.inverterExtraFactor, 1))));
+  const scalePreview = runSystemScaleEngine({ designPowerW, inverter: inverterPick.inverter, inverterCount: inverterPick.count, settings });
+  const inverterBaseCount = Math.max(1, num(settings.inverterCount, scalePreview.totalInverterCount || inverterPick.count));
+  const inverterCount = Math.max(scalePreview.totalInverterCount || inverterPick.count, ceil(inverterBaseCount * Math.max(1, num(settings.inverterExtraFactor, 1))));
+  const systemScale = runSystemScaleEngine({ designPowerW, inverter: inverterPick.inverter, inverterCount, settings });
   const { panel, manual: panelManual } = choosePanel(settings.panelId, settings.panelPowerW || 620);
   const requiredBatteryWh = systemType === "ongrid" ? 0 : Math.ceil(normalized.totalEnergyWh * autonomyDays / 0.94);
   const batteryDesign = chooseBattery(inverterPick.inverter.dcVoltage, Math.max(1, requiredBatteryWh), settings.batteryVoltage, settings.batteryId);
   const batteryBaseCount = Math.max(batteryDesign.totalCount, num(settings.batteryCount, batteryDesign.totalCount));
   const batteryTotalCount = Math.max(batteryDesign.totalCount, ceil(batteryBaseCount * Math.max(1, num(settings.batteryExtraFactor, 1))));
-  const pvArray = sizePvArray({ dailyWh: normalized.totalEnergyWh, autonomyDays, panel, inverter: inverterPick.inverter, env, manualPanelCount: settings.panelCount, panelExtraFactor: settings.panelExtraFactor });
+  const pvArray = sizePvArray({ dailyWh: normalized.totalEnergyWh, autonomyDays, panel, inverter: inverterPick.inverter, env, manualPanelCount: settings.panelCount, panelExtraFactor: settings.panelExtraFactor, targetPvPowerW: systemScale.targetDcPowerW });
   const batteryFinal = { ...batteryDesign, totalCount: batteryTotalCount, parallelCount: Math.max(batteryDesign.parallelCount, Math.ceil(batteryTotalCount / Math.max(1, batteryDesign.seriesCount))) };
   batteryFinal.usableEnergyWh = round(batteryDesign.stringUsableWh * batteryFinal.parallelCount, 0);
   batteryFinal.grossEnergyWh = batteryFinal.bankVoltageV * batteryFinal.battery.capacityAh * batteryFinal.parallelCount;
+  const solarSizing = runSolarSizing({
+    panelPowerW: panel.powerW,
+    panelCount: pvArray.panelCount,
+    peakSunHours: env.psh,
+    systemLossRatio: 1 - env.effectiveEfficiency,
+    dailyLoadWh: normalized.totalEnergyWh,
+    autonomyDays,
+    depthOfDischarge: batteryFinal.battery.usableDod || 0.9,
+    efficiency: batteryFinal.battery.efficiency || 0.94,
+    batteryUnitKWh: (batteryFinal.battery.energyWh || (batteryFinal.battery.nominalVoltage * batteryFinal.battery.capacityAh)) / 1000,
+    batteryUnitVoltageV: batteryFinal.battery.nominalVoltage,
+    batteryUnitCapacityAh: batteryFinal.battery.capacityAh
+  });
+  const panelPowerAnalysis = runSolarPanelPowerEngine({
+    panel,
+    pvArray,
+    inverter: inverterPick.inverter,
+    inverterCount,
+    env,
+    load: normalized,
+    solarSizing,
+    settings
+  });
+  const utilityElectrical = runUtilityElectricalEngine({
+    systemScale,
+    pvArray,
+    inverter: inverterPick.inverter,
+    inverterCount,
+    env,
+    settings
+  });
+  const enterpriseUtility = runEnterpriseUtilityEngineeringEngine({
+    utilityElectrical,
+    systemScale,
+    env,
+    settings
+  });
   const protection = sizeProtection({ designPowerW, inverter: inverterPick.inverter, inverterCount, pvArray, batteryDesign: batteryFinal });
-  const validation = buildValidation({ load: normalized, designPowerW, designSurgeW, inverter: inverterPick.inverter, inverterCount, battery: batteryFinal, requiredBatteryWh, pvArray, env });
-  const confidence = clamp(100 - validation.errors.length * 24 - validation.warnings.length * 8, 35, 100);
+  const batteryReport = enrichBatteryBankInfo(batteryFinal, protection);
+  const validation = buildValidation({ load: normalized, designPowerW, designSurgeW, inverter: inverterPick.inverter, inverterCount, battery: batteryReport, requiredBatteryWh, pvArray, env });
+  const diagnostics = runSolarProfessionalDiagnostics({
+    load: normalized,
+    env,
+    settings: { autonomyDays, systemType },
+    design: { designPowerW, designSurgeW, requiredBatteryWh, systemVoltage, requestedPlantPowerW },
+    panel,
+    inverter: inverterPick.inverter,
+    inverterCount,
+    pvArray,
+    battery: batteryReport,
+    protection,
+    solarSizing,
+    validation,
+    panelPowerAnalysis,
+    systemScale,
+    utilityElectrical,
+    enterpriseUtility
+  });
+  const confidence = clamp(Math.min(diagnostics.score, 100 - validation.errors.length * 18 - validation.warnings.length * 6), 20, 100);
 
   const explanations = [
     `مسیر طراحی ${PERSIAN_SYSTEM_LABEL[systemType] || "خورشیدی"} با توان طراحی ${designPowerW} وات و ضریب اطمینان ${reserveFactor} محاسبه شد.`,
+    `مقیاس پروژه ${systemScale.scaleLabel} است و روش تحلیل ${systemScale.designModeLabel} انتخاب شد.`,
     `پنل پیش‌فرض ${panel.powerW} وات است؛ اگر کاربر 700 وات را دستی انتخاب کند، تعداد و آرایش پنل با همان مقدار دوباره محاسبه می‌شود.`,
     `آرایش پنل ${pvArray.seriesCount} سری × ${pvArray.parallelCount} موازی انتخاب شد تا Vmp و Voc در بازه مجاز MPPT و ولتاژ DC بمانند.`,
-    `باتری ${batteryFinal.seriesCount} سری × ${batteryFinal.parallelCount} موازی انتخاب شد تا ولتاژ بانک و انرژی قابل استفاده پروژه تأمین شود.`,
+    `باتری ${batteryReport.summaryLabel} با آرایش ${batteryReport.engineeringLabel} انتخاب شد تا ولتاژ بانک و انرژی قابل استفاده پروژه تأمین شود.`,
     `ضرایب توسعه آینده روی تعداد نهایی تجهیزات اعمال شده‌اند: پنل ${num(settings.panelExtraFactor, 1)}، اینورتر ${num(settings.inverterExtraFactor, 1)}، باتری ${num(settings.batteryExtraFactor, 1)}.`
   ];
 
@@ -242,7 +347,7 @@ export function runSolarAutoDesign({ load = {}, environment = {}, settings = {} 
     confidence,
     label: PERSIAN_SYSTEM_LABEL[systemType] || "خورشیدی",
     load: normalized,
-    design: { designPowerW, designSurgeW, requiredBatteryWh, systemVoltage },
+    design: { designPowerW, designSurgeW, requiredBatteryWh, systemVoltage, requestedPlantPowerW },
     settings: {
       autonomyDays,
       reserveFactor,
@@ -252,12 +357,32 @@ export function runSolarAutoDesign({ load = {}, environment = {}, settings = {} 
       parameterManual: Boolean(settings.parameterManualMode),
       panelExtraFactor: num(settings.panelExtraFactor, 1),
       inverterExtraFactor: num(settings.inverterExtraFactor, 1),
-      batteryExtraFactor: num(settings.batteryExtraFactor, 1)
+      batteryExtraFactor: num(settings.batteryExtraFactor, 1),
+      projectScale: settings.projectScale || "auto",
+      targetPlantPowerMW: num(settings.targetPlantPowerMW, 0),
+      targetPlantPowerKW: num(settings.targetPlantPowerKW, 0),
+      powerBlockSizeKW: num(settings.powerBlockSizeKW, 0),
+      mvVoltageKV: num(settings.mvVoltageKV, 0),
+      blockStationMW: num(settings.blockStationMW, 0),
+      exportLimitMW: num(settings.exportLimitMW, 0),
+      groundCoverageRatio: num(settings.groundCoverageRatio, 0),
+      trackerMode: settings.trackerMode || "auto",
+      terrainSlopeDeg: num(settings.terrainSlopeDeg, 0),
+      usableLandPercent: num(settings.usableLandPercent, 0),
+      gridShortCircuitMVA: num(settings.gridShortCircuitMVA, 0),
+      estimatedMvFaultKA: num(settings.estimatedMvFaultKA, 0),
+      plantAvailabilityPercent: num(settings.plantAvailabilityPercent, 0),
+      annualDegradationPercent: num(settings.annualDegradationPercent, 0)
     },
     inverter: { ...inverterPick.inverter, count: inverterCount, parallelRequired: inverterCount > 1, manual: inverterPick.manual },
     panel,
     pvArray,
-    battery: batteryFinal,
+    solarSizing,
+    panelPowerAnalysis,
+    systemScale,
+    utilityElectrical,
+    enterpriseUtility,
+    battery: batteryReport,
     protection,
     space: {
       panelAreaM2: pvArray.areaM2,
@@ -266,13 +391,14 @@ export function runSolarAutoDesign({ load = {}, environment = {}, settings = {} 
     },
     losses: env,
     validation,
-    warnings: validation.warnings,
-    errors: validation.errors,
-    explanations,
+    diagnostics,
+    warnings: [...systemScale.warnings, ...validation.warnings, ...utilityElectrical.checks.filter((item) => item.level === "warning" && !item.ok).map((item) => item.message), ...enterpriseUtility.checks.filter((item) => item.level === "warning" && !item.ok).map((item) => item.message), ...panelPowerAnalysis.checks.filter((item) => item.level === "warning" && !item.ok).map((item) => item.message), ...diagnostics.items.filter((item) => item.severity === "warning").map((item) => item.message)],
+    errors: [...validation.errors, ...utilityElectrical.checks.filter((item) => item.level === "error" && !item.ok).map((item) => item.message), ...enterpriseUtility.checks.filter((item) => item.level === "error" && !item.ok).map((item) => item.message), ...panelPowerAnalysis.checks.filter((item) => item.level === "error" && !item.ok).map((item) => item.message), ...diagnostics.items.filter((item) => ["critical", "error"].includes(item.severity)).map((item) => item.message)],
+    explanations: [...explanations, ...systemScale.engineeringNotes, ...utilityElectrical.recommendations, ...enterpriseUtility.recommendations],
     equipmentSchedule: [
       { group: "پنل خورشیدی", qty: pvArray.panelCount, spec: `${panel.powerW}W / ${panel.type}`, reason: "تأمین انرژی روزانه و تطابق با محدوده MPPT" },
-      { group: "اینورتر خورشیدی", qty: inverterCount, spec: `${inverterPick.inverter.ratedPowerW}W / ${inverterPick.inverter.dcVoltage}V`, reason: "پوشش توان دائم و توان لحظه‌ای" },
-      { group: "باتری", qty: batteryFinal.totalCount, spec: `${batteryFinal.battery.nominalVoltage}V ${batteryFinal.battery.capacityAh}Ah`, reason: "تأمین روزهای خودکفایی و ظرفیت ذخیره" },
+      { group: systemScale.designMode === "block_based_power_plant" ? "بلوک نیروگاهی / اینورتر" : "اینورتر خورشیدی", qty: inverterCount, spec: `${inverterPick.inverter.ratedPowerW}W / ${inverterPick.inverter.dcVoltage}V`, reason: "پوشش توان دائم و توان لحظه‌ای" },
+      { group: "باتری", qty: batteryReport.totalCount, spec: `${batteryReport.unitVoltageV}V / ${batteryReport.unitCapacityAh}Ah / ${batteryReport.unitEnergyKWh}kWh هر باتری / ${batteryReport.grossEnergyKWh}kWh کل`, reason: `${batteryReport.seriesCount} سری × ${batteryReport.parallelCount} موازی / جریان بانک ${batteryReport.bankCurrentAh}Ah` },
       { group: "حفاظت", qty: 1, spec: `DC ${protection.dcBreakerA}A / AC ${protection.acBreakerA}A`, reason: "حفاظت خروجی، باتری، پنل، ارتینگ و سرج" }
     ],
     banks: { inverters: SHIL_SOLAR_INVERTERS, batteries: SHIL_LITHIUM_BATTERIES, panels: SHIL_SOLAR_PANELS },

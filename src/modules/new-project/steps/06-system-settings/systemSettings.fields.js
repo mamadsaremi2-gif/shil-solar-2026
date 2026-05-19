@@ -12,5 +12,11 @@ export const SYSTEM_SETTINGS_FIELDS = [
   "dcCableLength",
   "acCableLength",
   "batteryCableLength",
-  "futureDevelopmentPercent"
+  "futureDevelopmentPercent",
+  "projectScale",
+  "targetPlantPowerMW",
+  "targetPlantPowerKW",
+  "targetDesignPowerW",
+  "powerBlockSizeKW",
+  "dcAcRatio"
 ];

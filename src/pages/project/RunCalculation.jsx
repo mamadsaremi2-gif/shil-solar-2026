@@ -36,6 +36,26 @@ function runCore(domain) {
   } catch (error) { return { input: null, result: { status: "ready", note: "هسته اصلی متصل است؛ اجرای واقعی با دیتای پروژه در Runtime انجام می‌شود.", error: String(error?.message || error) } }; }
 }
 
+
+function batterySpecText(bank = {}) {
+  const b = bank.battery || {};
+  const count = bank.totalCount || bank.count || "-";
+  const voltage = bank.unitVoltageV || bank.voltageV || b.nominalVoltage || b.voltageV || "-";
+  const ah = bank.unitCapacityAh || bank.capacityAh || b.capacityAh || "-";
+  const unitKWh = bank.unitEnergyKWh || (voltage !== "-" && ah !== "-" ? Math.round((Number(voltage) * Number(ah)) / 10) / 100 : "-");
+  const totalKWh = bank.grossEnergyKWh || (bank.grossEnergyWh ? Math.round(bank.grossEnergyWh / 10) / 100 : "-");
+  return `${count} عدد / ${voltage}V / ${ah}Ah / ${unitKWh}kWh هر باتری / ${totalKWh}kWh کل`;
+}
+
+function batteryNoteText(bank = {}) {
+  const series = bank.seriesCount || "-";
+  const parallel = bank.parallelCount || "-";
+  const bankVoltage = bank.bankVoltageV || "-";
+  const bankAh = bank.bankCurrentAh || bank.installedAh || "-";
+  const branchCurrent = bank.branchCurrentA ? ` / جریان شاخه ${bank.branchCurrentA}A` : "";
+  return `${series} سری × ${parallel} موازی / ولتاژ بانک ${bankVoltage}V / ظرفیت جریان ${bankAh}Ah${branchCurrent}`;
+}
+
 function Row({ label, value, note }) { return <div><span>{label}</span><strong>{value || "ثبت نشده"}</strong>{note ? <small>{note}</small> : null}</div>; }
 function Table({ title, rows }) { return <div className="shil-ai-install-table-card"><h3>{title}</h3><div className="shil-ai-install-table"><div className="head"><span>تجهیز</span><span>تعداد / مشخصات</span><span>توضیح مهندسی</span></div>{rows.map((row) => <div key={row.label}><span>{row.label}</span><strong>{row.value}</strong><small>{row.note}</small></div>)}</div></div>; }
 
@@ -58,16 +78,24 @@ export default function RunCalculation() {
     [domain, project, summary, result, solarDesign, aiPreview]
   );
 
+  const engineeringDiagnostics = solarDesign?.diagnostics || result?.diagnostics || null;
+  const diagnosticItems = engineeringDiagnostics?.items || engineeringDiagnostics || [];
+  const actionDiagnostics = Array.isArray(diagnosticItems) ? diagnosticItems.filter((item) => ["critical", "error", "warning"].includes(item.severity)).slice(0, 8) : [];
+
   const panelRows = emergency ? [] : [
-    { label: "پنل خورشیدی", value: `${solarDesign?.pvArray?.panelCount || "-"} عدد / ${solarDesign?.panel?.powerW || 620} وات`, note: `${solarDesign?.pvArray?.seriesCount || "-"} سری × ${solarDesign?.pvArray?.parallelCount || "-"} موازی` },
+    { label: "توان پنل خورشیدی", value: `${solarDesign?.pvArray?.panelCount || "-"} عدد / ${solarDesign?.panel?.powerW || 620} وات`, note: `${solarDesign?.pvArray?.seriesCount || "-"} سری × ${solarDesign?.pvArray?.parallelCount || "-"} موازی` },
+    { label: "توان آرایه PV", value: `${solarDesign?.panelPowerAnalysis?.array?.powerKW || solarDesign?.solarSizing?.pArrayKW || "-"} kW`, note: `تولید روزانه: ${solarDesign?.panelPowerAnalysis?.array?.dailyEnergyKWh || solarDesign?.solarSizing?.ePvDailyKWh || "-"} kWh` },
+    { label: "اعتبارسنجی توان پنل", value: `${solarDesign?.panelPowerAnalysis?.score || "-"} از ۱۰۰`, note: solarDesign?.panelPowerAnalysis?.levelLabel || "کنترل توان، رشته، MPPT و جریان" },
+    { label: "پوشش مصرف", value: solarDesign?.panelPowerAnalysis?.array?.coveragePercent ? `${solarDesign.panelPowerAnalysis.array.coveragePercent}%` : solarDesign?.solarSizing?.coveragePercent ? `${solarDesign.solarSizing.coveragePercent}%` : "-", note: solarDesign?.panelPowerAnalysis?.array?.requiredAdditionalPanelsFor100 ? `نیازمند ${solarDesign.panelPowerAnalysis.array.requiredAdditionalPanelsFor100} پنل تکمیلی` : "مصرف روزانه پوشش داده می‌شود" },
+    { label: "باتری خودکفایی", value: `${solarDesign?.solarSizing?.eBatteryNeededKWh || "-"} kWh`, note: solarDesign?.solarSizing?.batterySummary || (solarDesign?.solarSizing?.batteryCount ? `${solarDesign.solarSizing.batteryCount} عدد / ${solarDesign.solarSizing.batteryVoltageV || "-"}V / ${solarDesign.solarSizing.batteryCapacityAh || "-"}Ah / ${solarDesign.solarSizing.batteryUnitKWh || "-"}kWh هر باتری / ${solarDesign.solarSizing.batteryBankKWh || "-"}kWh کل` : "محاسبه بر اساس DoD و راندمان") },
     { label: "اینورتر خورشیدی", value: `${solarDesign?.inverter?.count || "-"} عدد / ${solarDesign?.inverter?.ratedPowerW || "-"} وات`, note: "مطابق سناریوی آفگرید، آنگرید یا هیبرید" },
-    { label: "باتری", value: `${solarDesign?.battery?.totalCount || "-"} عدد`, note: `${solarDesign?.battery?.seriesCount || "-"} سری × ${solarDesign?.battery?.parallelCount || "-"} موازی` },
+    { label: "باتری", value: batterySpecText(solarDesign?.battery), note: batteryNoteText(solarDesign?.battery) },
     { label: "حفاظت DC/AC", value: `${solarDesign?.protection?.dcBreakerA || "-"}A / ${solarDesign?.protection?.acBreakerA || "-"}A`, note: "فیوز، بریکر، SPD و ارتینگ" }
   ];
 
   const emergencyRows = emergency ? [
     { label: "اینورتر برق اضطراری", value: `${result?.inverter?.count || 1} عدد / ${result?.inverter?.ratedPowerW || "-"} وات`, note: "پوشش توان دائم و توان لحظه‌ای بارهای ضروری" },
-    { label: "باتری منتخب", value: `${result?.battery?.totalCount || "-"} عدد / ${result?.battery?.battery?.capacityAh || "-"}Ah`, note: `${result?.battery?.seriesCount || "-"} سری × ${result?.battery?.parallelCount || "-"} موازی` },
+    { label: "باتری منتخب", value: batterySpecText(result?.battery), note: batteryNoteText(result?.battery) },
     { label: "زمان برق اضطراری مورد نیاز", value: `${result?.settings?.requiredEmergencyHours || 2} ساعت`, note: "در ظرفیت باتری و ضریب اطمینان لحاظ شده است" },
     { label: "سیستم حفاظتی", value: `DC ${result?.protection?.dcBreakerA || "-"}A / AC ${result?.protection?.acBreakerA || "-"}A`, note: "حفاظت باتری، خروجی AC، ارتینگ و جداسازی مدارهای اضطراری" }
   ] : [];
@@ -158,6 +186,28 @@ export default function RunCalculation() {
               <><span>پنل خورشیدی</span><b>→</b><span>MPPT / اینورتر</span><b>→</b><span>مصرف‌کننده</span><i>↓</i><span>بانک باتری</span></>
             )}
           </div>
+        </div>
+
+        <div className="shil-section-card">
+          <div className="shil-section-head"><h2>Diagnostic Engine حرفه‌ای</h2><span>{engineeringDiagnostics?.statusLabel || "Engineering Diagnostics"}</span></div>
+          <div className="shil-summary-grid">
+            <Row label="امتیاز سلامت طراحی" value={engineeringDiagnostics?.score ? `${engineeringDiagnostics.score} / 100` : "در انتظار محاسبه"} />
+            <Row label="خطای بحرانی" value={engineeringDiagnostics?.critical ?? 0} />
+            <Row label="خطای مهندسی" value={engineeringDiagnostics?.errors ?? 0} />
+            <Row label="هشدار" value={engineeringDiagnostics?.warnings ?? 0} />
+          </div>
+          {engineeringDiagnostics?.summary?.length ? <ul className="shil-engineering-list">{engineeringDiagnostics.summary.map((item) => <li key={item}>{item}</li>)}</ul> : null}
+          {actionDiagnostics.length ? (
+            <div className="shil-diagnostic-list">
+              {actionDiagnostics.map((item) => (
+                <div className={`shil-diagnostic-card ${item.severity}`} key={item.code}>
+                  <strong>{item.severityLabel} · {item.title}</strong>
+                  <p>{item.message}</p>
+                  {item.recommendation ? <small>پیشنهاد اصلاح مهندسی: {item.recommendation}</small> : null}
+                </div>
+              ))}
+            </div>
+          ) : <div className="shil-inline-success">طراحی از نظر Diagnostic Engine در وضعیت قابل قبول است.</div>}
         </div>
 
         <div className="shil-section-card">
