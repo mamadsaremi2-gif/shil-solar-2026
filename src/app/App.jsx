@@ -25,10 +25,12 @@ import SystemSettings from "../pages/project/SystemSettings.jsx";
 import SummaryPage from "../pages/project/SummaryPage.jsx";
 import RunCalculation from "../pages/project/RunCalculation.jsx";
 import UnderDevelopment from "../pages/project/UnderDevelopment.jsx";
+import UXFlowController from "../components/UXFlowController.jsx";
 
 export default function App() {
   return (
     <BrowserRouter>
+      <UXFlowController />
       <Routes>
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<LoginPage />} />
@@ -61,6 +63,7 @@ export default function App() {
         <Route path="/projects" element={<Projects />} />
         <Route path="/projects/running" element={<Projects view="running" />} />
         <Route path="/projects/final" element={<Projects view="final" />} />
+        <Route path="/projects/archived" element={<Projects view="archived" />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/feedback" element={<Feedback />} />
         <Route path="/scenarios" element={<Scenarios />} />

@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import InputMask from "react-input-mask";
 
 export default function PhoneMask() {

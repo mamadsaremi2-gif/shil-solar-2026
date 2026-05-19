@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { fakeMonthlySolarData } from "../../data/solarData.js";
 
 import {

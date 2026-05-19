@@ -1,0 +1,52 @@
+import React, { useEffect, useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
+import { captureCurrentProjectSnapshot } from "../workflow/uxFlowController.js";
+
+export default function UXFlowController() {
+  const location = useLocation();
+  const [toast, setToast] = useState(null);
+  const lastSavedPath = useRef("");
+  const debounceRef = useRef(null);
+
+  function softSave(pathname = window.location.pathname, showToast = false) {
+    const record = captureCurrentProjectSnapshot(pathname);
+    if (record && showToast && lastSavedPath.current !== pathname) {
+      lastSavedPath.current = pathname;
+      setToast({ text: "Ù¾Ø±ÙˆÚ˜Ù‡ Ø¯Ø± Ø¨Ø®Ø´ Ø¯Ø± Ø­Ø§Ù„ Ø§Ø¬Ø±Ø§ Ø°Ø®ÛŒØ±Ù‡ Ø´Ø¯", type: "success" });
+      window.setTimeout(() => setToast(null), 1600);
+    }
+    return record;
+  }
+
+  useEffect(() => {
+    softSave(location.pathname, true);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    const saveNow = () => softSave(window.location.pathname, false);
+    const debouncedSave = () => {
+      window.clearTimeout(debounceRef.current);
+      debounceRef.current = window.setTimeout(saveNow, 700);
+    };
+    const toastHandler = (event) => {
+      setToast({ text: event.detail?.message || "Ø§Ù†Ø¬Ø§Ù… Ø´Ø¯", type: event.detail?.type || "info" });
+      window.setTimeout(() => setToast(null), 1800);
+    };
+    window.addEventListener("beforeunload", saveNow);
+    window.addEventListener("visibilitychange", saveNow);
+    window.addEventListener("input", debouncedSave, true);
+    window.addEventListener("change", debouncedSave, true);
+    window.addEventListener("shil-ux-toast", toastHandler);
+    return () => {
+      window.clearTimeout(debounceRef.current);
+      window.removeEventListener("beforeunload", saveNow);
+      window.removeEventListener("visibilitychange", saveNow);
+      window.removeEventListener("input", debouncedSave, true);
+      window.removeEventListener("change", debouncedSave, true);
+      window.removeEventListener("shil-ux-toast", toastHandler);
+    };
+  }, []);
+
+  if (!toast) return null;
+  return <div className={`shil-ux-toast ${toast.type}`}>{toast.text}</div>;
+}

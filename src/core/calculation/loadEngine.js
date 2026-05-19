@@ -1,9 +1,9 @@
 export const METHOD_LABELS = {
-  equipment: "لیست تجهیزات",
-  profile: "پروفایل مصرف",
-  energy: "انرژی مورد نیاز",
-  power: "توان کل",
-  current: "جریان کل",
+  equipment: "Ù„ÛŒØ³Øª ØªØ¬Ù‡ÛŒØ²Ø§Øª",
+  profile: "Ù¾Ø±ÙˆÙØ§ÛŒÙ„ Ù…ØµØ±Ù",
+  energy: "Ø§Ù†Ø±Ú˜ÛŒ Ù…ÙˆØ±Ø¯ Ù†ÛŒØ§Ø²",
+  power: "ØªÙˆØ§Ù† Ú©Ù„",
+  current: "Ø¬Ø±ÛŒØ§Ù† Ú©Ù„",
 };
 
 function round(value, digits = 2) {
@@ -15,7 +15,7 @@ function detectMotorLoad(item = {}) {
   return item.isMotor === true ||
     item.type === "inductive" ||
     Number(item.startupFactor || item.surgeFactor || 1) > 1.7 ||
-    /پمپ|موتور|کمپرسور|کولر|فن|درب|کرکره|چیلر/i.test(String(item.title || ""));
+    /Ù¾Ù…Ù¾|Ù…ÙˆØªÙˆØ±|Ú©Ù…Ù¾Ø±Ø³ÙˆØ±|Ú©ÙˆÙ„Ø±|ÙÙ†|Ø¯Ø±Ø¨|Ú©Ø±Ú©Ø±Ù‡|Ú†ÛŒÙ„Ø±/i.test(String(item.title || ""));
 }
 
 export function normalizeLoadItem(item = {}) {
@@ -68,8 +68,8 @@ export function normalizeLoadItem(item = {}) {
     surgePowerW,
     currentA: round(runningCurrentA, 2),
     expertReason: isMotor
-      ? `بار موتوری؛ جریان راه‌اندازی ${hasSoftStarter ? "با سافت‌استارتر" : "بدون سافت‌استارتر"} برابر ${currentStartFactor} جریان نامی لحاظ شد.`
-      : `بار غیرموتوری؛ ضریب توان ${powerFactor} و ضریب همزمانی ${simultaneityFactor} پشت پرده اعمال شد.`,
+      ? `Ø¨Ø§Ø± Ù…ÙˆØªÙˆØ±ÛŒØ› Ø¬Ø±ÛŒØ§Ù† Ø±Ø§Ù‡â€ŒØ§Ù†Ø¯Ø§Ø²ÛŒ ${hasSoftStarter ? "Ø¨Ø§ Ø³Ø§ÙØªâ€ŒØ§Ø³ØªØ§Ø±ØªØ±" : "Ø¨Ø¯ÙˆÙ† Ø³Ø§ÙØªâ€ŒØ§Ø³ØªØ§Ø±ØªØ±"} Ø¨Ø±Ø§Ø¨Ø± ${currentStartFactor} Ø¬Ø±ÛŒØ§Ù† Ù†Ø§Ù…ÛŒ Ù„Ø­Ø§Ø¸ Ø´Ø¯.`
+      : `Ø¨Ø§Ø± ØºÛŒØ±Ù…ÙˆØªÙˆØ±ÛŒØ› Ø¶Ø±ÛŒØ¨ ØªÙˆØ§Ù† ${powerFactor} Ùˆ Ø¶Ø±ÛŒØ¨ Ù‡Ù…Ø²Ù…Ø§Ù†ÛŒ ${simultaneityFactor} Ù¾Ø´Øª Ù¾Ø±Ø¯Ù‡ Ø§Ø¹Ù…Ø§Ù„ Ø´Ø¯.`,
   };
 }
 
@@ -151,8 +151,8 @@ export function runLoadEngine(input = {}) {
     recommendedInverterW,
     recommendedBatteryWh,
     expertSummary: {
-      rule: "ضریب توان، ضریب همزمانی، ساعت پیش‌فرض و جریان راه‌اندازی پشت پرده اعمال شده‌اند.",
-      motorStartRule: "برای بارهای موتوری به‌صورت پیش‌فرض ۲.۵ برابر جریان نامی و در صورت فعال بودن سافت‌استارتر ۱.۲ برابر جریان نامی لحاظ می‌شود.",
+      rule: "Ø¶Ø±ÛŒØ¨ ØªÙˆØ§Ù†ØŒ Ø¶Ø±ÛŒØ¨ Ù‡Ù…Ø²Ù…Ø§Ù†ÛŒØŒ Ø³Ø§Ø¹Øª Ù¾ÛŒØ´â€ŒÙØ±Ø¶ Ùˆ Ø¬Ø±ÛŒØ§Ù† Ø±Ø§Ù‡â€ŒØ§Ù†Ø¯Ø§Ø²ÛŒ Ù¾Ø´Øª Ù¾Ø±Ø¯Ù‡ Ø§Ø¹Ù…Ø§Ù„ Ø´Ø¯Ù‡â€ŒØ§Ù†Ø¯.",
+      motorStartRule: "Ø¨Ø±Ø§ÛŒ Ø¨Ø§Ø±Ù‡Ø§ÛŒ Ù…ÙˆØªÙˆØ±ÛŒ Ø¨Ù‡â€ŒØµÙˆØ±Øª Ù¾ÛŒØ´â€ŒÙØ±Ø¶ Û².Ûµ Ø¨Ø±Ø§Ø¨Ø± Ø¬Ø±ÛŒØ§Ù† Ù†Ø§Ù…ÛŒ Ùˆ Ø¯Ø± ØµÙˆØ±Øª ÙØ¹Ø§Ù„ Ø¨ÙˆØ¯Ù† Ø³Ø§ÙØªâ€ŒØ§Ø³ØªØ§Ø±ØªØ± Û±.Û² Ø¨Ø±Ø§Ø¨Ø± Ø¬Ø±ÛŒØ§Ù† Ù†Ø§Ù…ÛŒ Ù„Ø­Ø§Ø¸ Ù…ÛŒâ€ŒØ´ÙˆØ¯.",
       transferredFields: ["totalPowerW", "totalEnergyWh", "acCurrentA", "startCurrentA", "surgePowerW", "selectedItems"],
     },
     nextEngine: domain === "emergency" ? "emergency-core" : "solar-core",
@@ -163,11 +163,11 @@ export function runLoadEngine(input = {}) {
 
 function buildLoadWarnings({ totalPowerW, totalEnergyWh, surgePowerW, selectedItems, domain }) {
   const warnings = [];
-  if (!selectedItems.length) warnings.push("هیچ تجهیزی انتخاب نشده؛ محاسبه فعلاً بر اساس سناریوی آماده انجام می‌شود.");
-  if (surgePowerW > totalPowerW * 2.5) warnings.push("توان راه‌اندازی بالا است؛ اینورتر باید برای پیک استارت بررسی شود.");
-  if (selectedItems.some((item) => item.isMotor && !item.hasSoftStarter)) warnings.push("برای تجهیزات موتوری بدون سافت‌استارتر، جریان راه‌اندازی ۲.۵ برابر جریان نامی لحاظ شده است.");
-  if (domain === "solar" && totalEnergyWh > 25000) warnings.push("انرژی روزانه بالا است؛ فضای نصب پنل و باتری باید دقیق کنترل شود.");
-  if (domain === "emergency" && totalPowerW > 8000) warnings.push("توان اضطراری سنگین است؛ بررسی سه‌فاز یا ژنراتور کمکی پیشنهاد می‌شود.");
+  if (!selectedItems.length) warnings.push("Ù‡ÛŒÚ† ØªØ¬Ù‡ÛŒØ²ÛŒ Ø§Ù†ØªØ®Ø§Ø¨ Ù†Ø´Ø¯Ù‡Ø› Ù…Ø­Ø§Ø³Ø¨Ù‡ ÙØ¹Ù„Ø§Ù‹ Ø¨Ø± Ø§Ø³Ø§Ø³ Ø³Ù†Ø§Ø±ÛŒÙˆÛŒ Ø¢Ù…Ø§Ø¯Ù‡ Ø§Ù†Ø¬Ø§Ù… Ù…ÛŒâ€ŒØ´ÙˆØ¯.");
+  if (surgePowerW > totalPowerW * 2.5) warnings.push("ØªÙˆØ§Ù† Ø±Ø§Ù‡â€ŒØ§Ù†Ø¯Ø§Ø²ÛŒ Ø¨Ø§Ù„Ø§ Ø§Ø³ØªØ› Ø§ÛŒÙ†ÙˆØ±ØªØ± Ø¨Ø§ÛŒØ¯ Ø¨Ø±Ø§ÛŒ Ù¾ÛŒÚ© Ø§Ø³ØªØ§Ø±Øª Ø¨Ø±Ø±Ø³ÛŒ Ø´ÙˆØ¯.");
+  if (selectedItems.some((item) => item.isMotor && !item.hasSoftStarter)) warnings.push("Ø¨Ø±Ø§ÛŒ ØªØ¬Ù‡ÛŒØ²Ø§Øª Ù…ÙˆØªÙˆØ±ÛŒ Ø¨Ø¯ÙˆÙ† Ø³Ø§ÙØªâ€ŒØ§Ø³ØªØ§Ø±ØªØ±ØŒ Ø¬Ø±ÛŒØ§Ù† Ø±Ø§Ù‡â€ŒØ§Ù†Ø¯Ø§Ø²ÛŒ Û².Ûµ Ø¨Ø±Ø§Ø¨Ø± Ø¬Ø±ÛŒØ§Ù† Ù†Ø§Ù…ÛŒ Ù„Ø­Ø§Ø¸ Ø´Ø¯Ù‡ Ø§Ø³Øª.");
+  if (domain === "solar" && totalEnergyWh > 25000) warnings.push("Ø§Ù†Ø±Ú˜ÛŒ Ø±ÙˆØ²Ø§Ù†Ù‡ Ø¨Ø§Ù„Ø§ Ø§Ø³ØªØ› ÙØ¶Ø§ÛŒ Ù†ØµØ¨ Ù¾Ù†Ù„ Ùˆ Ø¨Ø§ØªØ±ÛŒ Ø¨Ø§ÛŒØ¯ Ø¯Ù‚ÛŒÙ‚ Ú©Ù†ØªØ±Ù„ Ø´ÙˆØ¯.");
+  if (domain === "emergency" && totalPowerW > 8000) warnings.push("ØªÙˆØ§Ù† Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ Ø³Ù†Ú¯ÛŒÙ† Ø§Ø³ØªØ› Ø¨Ø±Ø±Ø³ÛŒ Ø³Ù‡â€ŒÙØ§Ø² ÛŒØ§ Ú˜Ù†Ø±Ø§ØªÙˆØ± Ú©Ù…Ú©ÛŒ Ù¾ÛŒØ´Ù†Ù‡Ø§Ø¯ Ù…ÛŒâ€ŒØ´ÙˆØ¯.");
   return warnings;
 }
 

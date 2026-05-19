@@ -1,4 +1,4 @@
-﻿export const deviceTypes = [
+export const deviceTypes = [
   {
     id: "inverter",
     title: "اینورتر خورشیدی",

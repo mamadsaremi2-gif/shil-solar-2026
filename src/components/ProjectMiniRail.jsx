@@ -25,7 +25,7 @@ export default function ProjectMiniRail() {
   }));
 
   return (
-    <div className="shil-project-mini-rail" aria-label="مراحل پروژه جدید">
+    <div className="shil-project-mini-rail" aria-label="Ù…Ø±Ø§Ø­Ù„ Ù¾Ø±ÙˆÚ˜Ù‡ Ø¬Ø¯ÛŒØ¯">
       <IosIconGrid items={items} gridClass="project-mini-rail-grid" />
     </div>
   );

@@ -5,7 +5,7 @@ import { projectSteps } from "../data/shilFlowConfig.jsx";
 
 export default function NewProject() {
   return (
-    <ShilPageShell title="پروژه جدید" className="shil-new-project-no-scroll">
+    <ShilPageShell title="Ù¾Ø±ÙˆÚ˜Ù‡ Ø¬Ø¯ÛŒØ¯" className="shil-new-project-no-scroll">
       <IosIconGrid items={projectSteps} gridClass="new-project-grid-3x3" />
     </ShilPageShell>
   );

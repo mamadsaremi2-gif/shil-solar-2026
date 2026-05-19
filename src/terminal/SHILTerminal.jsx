@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 
 import Terminal
 from "react-terminal-ui";

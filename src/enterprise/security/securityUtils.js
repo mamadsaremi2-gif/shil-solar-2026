@@ -1,4 +1,4 @@
-﻿import DOMPurify from "dompurify";
+import DOMPurify from "dompurify";
 
 export function sanitizeHTML(input = "") {
   return DOMPurify.sanitize(String(input));

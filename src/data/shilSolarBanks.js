@@ -1,14 +1,14 @@
 export const SHIL_SOLAR_PANELS = [
-  { id: "shil-pv-400", title: "SHIL پنل خورشیدی 400 وات", powerW: 400, vmp: 38.2, voc: 46.1, imp: 10.47, areaM2: 1.95, efficiency: 0.205, type: "Mono PERC" },
-  { id: "shil-pv-450", title: "SHIL پنل خورشیدی 450 وات", powerW: 450, vmp: 41.1, voc: 49.2, imp: 10.95, areaM2: 2.05, efficiency: 0.21, type: "Mono PERC" },
-  { id: "shil-pv-550", title: "SHIL پنل خورشیدی 550 وات", powerW: 550, vmp: 41.8, voc: 49.8, imp: 13.16, areaM2: 2.58, efficiency: 0.213, type: "Mono PERC" },
-  { id: "shil-pv-620", title: "SHIL پنل خورشیدی 620 وات", powerW: 620, vmp: 42.6, voc: 50.9, imp: 14.56, areaM2: 2.85, efficiency: 0.218, type: "N-Type" },
-  { id: "shil-pv-700", title: "SHIL پنل خورشیدی 700 وات", powerW: 700, vmp: 42.9, voc: 51.4, imp: 16.32, areaM2: 3.10, efficiency: 0.226, type: "N-Type TOPCon" }
+  { id: "shil-pv-400", title: "SHIL Ù¾Ù†Ù„ Ø®ÙˆØ±Ø´ÛŒØ¯ÛŒ 400 ÙˆØ§Øª", powerW: 400, vmp: 38.2, voc: 46.1, imp: 10.47, areaM2: 1.95, efficiency: 0.205, type: "Mono PERC" },
+  { id: "shil-pv-450", title: "SHIL Ù¾Ù†Ù„ Ø®ÙˆØ±Ø´ÛŒØ¯ÛŒ 450 ÙˆØ§Øª", powerW: 450, vmp: 41.1, voc: 49.2, imp: 10.95, areaM2: 2.05, efficiency: 0.21, type: "Mono PERC" },
+  { id: "shil-pv-550", title: "SHIL Ù¾Ù†Ù„ Ø®ÙˆØ±Ø´ÛŒØ¯ÛŒ 550 ÙˆØ§Øª", powerW: 550, vmp: 41.8, voc: 49.8, imp: 13.16, areaM2: 2.58, efficiency: 0.213, type: "Mono PERC" },
+  { id: "shil-pv-620", title: "SHIL Ù¾Ù†Ù„ Ø®ÙˆØ±Ø´ÛŒØ¯ÛŒ 620 ÙˆØ§Øª", powerW: 620, vmp: 42.6, voc: 50.9, imp: 14.56, areaM2: 2.85, efficiency: 0.218, type: "N-Type" },
+  { id: "shil-pv-700", title: "SHIL Ù¾Ù†Ù„ Ø®ÙˆØ±Ø´ÛŒØ¯ÛŒ 700 ÙˆØ§Øª", powerW: 700, vmp: 42.9, voc: 51.4, imp: 16.32, areaM2: 3.10, efficiency: 0.226, type: "N-Type TOPCon" }
 ];
 
 const inv = (kw, v, mpptMin, mpptMax, maxPv, parallel = true) => ({
   id: `shil-inv-${v}-${String(kw).replace('.', '-')}`,
-  title: `SHIL اینورتر خورشیدی ${kw} کیلووات / ${v} ولت`,
+  title: `SHIL Ø§ÛŒÙ†ÙˆØ±ØªØ± Ø®ÙˆØ±Ø´ÛŒØ¯ÛŒ ${kw} Ú©ÛŒÙ„ÙˆÙˆØ§Øª / ${v} ÙˆÙ„Øª`,
   ratedPowerW: Math.round(kw * 1000),
   surgePowerW: Math.round(kw * 1000 * 2),
   dcVoltage: v,
@@ -38,7 +38,7 @@ export const SHIL_SOLAR_INVERTERS = [
 
 const battery = (v, ah) => ({
   id: `shil-bat-${v}-${ah}`,
-  title: `SHIL باتری لیتیوم ${v} ولت ${ah} آمپر ساعت`,
+  title: `SHIL Ø¨Ø§ØªØ±ÛŒ Ù„ÛŒØªÛŒÙˆÙ… ${v} ÙˆÙ„Øª ${ah} Ø¢Ù…Ù¾Ø± Ø³Ø§Ø¹Øª`,
   nominalVoltage: v,
   minVoltage: v === 12 ? 11 : v === 24 ? 22 : 44,
   maxVoltage: v === 12 ? 13 : v === 24 ? 26 : 52,
@@ -55,7 +55,7 @@ export const SHIL_LITHIUM_BATTERIES = [
 ];
 
 export const SHIL_SOLAR_PROTECTION_BANK = {
-  dc: ["فیوز DC رشته پنل", "کلید قطع DC", "سرج ارستر DC Type 2", "جعبه کامباینر DC"],
-  ac: ["بریکر AC", "سرج ارستر AC Type 2", "کلید محافظ جان در صورت نیاز", "ارتینگ و همبندی"],
-  battery: ["فیوز باتری", "کلید قطع باتری", "کابلشو و باس‌بار مناسب جریان", "BMS / حفاظت باتری"]
+  dc: ["ÙÛŒÙˆØ² DC Ø±Ø´ØªÙ‡ Ù¾Ù†Ù„", "Ú©Ù„ÛŒØ¯ Ù‚Ø·Ø¹ DC", "Ø³Ø±Ø¬ Ø§Ø±Ø³ØªØ± DC Type 2", "Ø¬Ø¹Ø¨Ù‡ Ú©Ø§Ù…Ø¨Ø§ÛŒÙ†Ø± DC"],
+  ac: ["Ø¨Ø±ÛŒÚ©Ø± AC", "Ø³Ø±Ø¬ Ø§Ø±Ø³ØªØ± AC Type 2", "Ú©Ù„ÛŒØ¯ Ù…Ø­Ø§ÙØ¸ Ø¬Ø§Ù† Ø¯Ø± ØµÙˆØ±Øª Ù†ÛŒØ§Ø²", "Ø§Ø±ØªÛŒÙ†Ú¯ Ùˆ Ù‡Ù…Ø¨Ù†Ø¯ÛŒ"],
+  battery: ["ÙÛŒÙˆØ² Ø¨Ø§ØªØ±ÛŒ", "Ú©Ù„ÛŒØ¯ Ù‚Ø·Ø¹ Ø¨Ø§ØªØ±ÛŒ", "Ú©Ø§Ø¨Ù„Ø´Ùˆ Ùˆ Ø¨Ø§Ø³â€ŒØ¨Ø§Ø± Ù…Ù†Ø§Ø³Ø¨ Ø¬Ø±ÛŒØ§Ù†", "BMS / Ø­ÙØ§Ø¸Øª Ø¨Ø§ØªØ±ÛŒ"]
 };

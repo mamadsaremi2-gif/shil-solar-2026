@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { runEngineeringEngine } from "../../engineering/engine/runEngineeringEngine.js";
 
 export default function EngineeringResultPanel() {

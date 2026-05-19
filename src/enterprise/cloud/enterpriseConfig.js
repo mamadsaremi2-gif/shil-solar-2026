@@ -1,4 +1,4 @@
-﻿export const enterpriseConfig = {
+export const enterpriseConfig = {
   sentryDsn: import.meta.env.VITE_SENTRY_DSN || "",
   apiBaseUrl: import.meta.env.VITE_API_BASE_URL || "",
   realtimeUrl: import.meta.env.VITE_REALTIME_URL || "",

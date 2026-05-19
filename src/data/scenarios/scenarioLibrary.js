@@ -1,13 +1,13 @@
 const domainMeta = {
   solar: {
-    fa: "پروژه های انرژی خورشیدی",
+    fa: "Ù¾Ø±ÙˆÚ˜Ù‡ Ù‡Ø§ÛŒ Ø§Ù†Ø±Ú˜ÛŒ Ø®ÙˆØ±Ø´ÛŒØ¯ÛŒ",
     engine: "solar",
     baseLoadW: { light: 600, medium: 2200, heavy: 6500 },
     autonomyDays: { light: 1, medium: 1, heavy: 2 },
     backupHours: { light: 4, medium: 6, heavy: 10 },
   },
   emergency: {
-    fa: "پروژه های برق اضطراری",
+    fa: "Ù¾Ø±ÙˆÚ˜Ù‡ Ù‡Ø§ÛŒ Ø¨Ø±Ù‚ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ",
     engine: "emergency",
     baseLoadW: { light: 500, medium: 1800, heavy: 5000 },
     autonomyDays: { light: 1, medium: 2, heavy: 3 },
@@ -16,9 +16,9 @@ const domainMeta = {
 };
 
 export const levelMeta = {
-  light: { fa: "سبک", index: 1, factor: 1 },
-  medium: { fa: "متوسط", index: 2, factor: 1.8 },
-  heavy: { fa: "سنگین", index: 3, factor: 3.2 },
+  light: { fa: "Ø³Ø¨Ú©", index: 1, factor: 1 },
+  medium: { fa: "Ù…ØªÙˆØ³Ø·", index: 2, factor: 1.8 },
+  heavy: { fa: "Ø³Ù†Ú¯ÛŒÙ†", index: 3, factor: 3.2 },
 };
 
 const levelOrder = ["light", "medium", "heavy"];
@@ -40,13 +40,13 @@ function makeScenario(domain, level, serial) {
     levelKey: level,
     level: l.fa,
     category: d.fa,
-    title: `${d.fa} - سناریوی ${l.fa} ${serial}`,
-    description: `سناریوی آماده ${l.fa} برای ${d.fa} با ورودی استاندارد برای اتصال به شرایط محیطی، تجهیزات و موتور محاسباتی SHIL.`,
+    title: `${d.fa} - Ø³Ù†Ø§Ø±ÛŒÙˆÛŒ ${l.fa} ${serial}`,
+    description: `Ø³Ù†Ø§Ø±ÛŒÙˆÛŒ Ø¢Ù…Ø§Ø¯Ù‡ ${l.fa} Ø¨Ø±Ø§ÛŒ ${d.fa} Ø¨Ø§ ÙˆØ±ÙˆØ¯ÛŒ Ø§Ø³ØªØ§Ù†Ø¯Ø§Ø±Ø¯ Ø¨Ø±Ø§ÛŒ Ø§ØªØµØ§Ù„ Ø¨Ù‡ Ø´Ø±Ø§ÛŒØ· Ù…Ø­ÛŒØ·ÛŒØŒ ØªØ¬Ù‡ÛŒØ²Ø§Øª Ùˆ Ù…ÙˆØªÙˆØ± Ù…Ø­Ø§Ø³Ø¨Ø§ØªÛŒ SHIL.`,
     loadEstimate,
     dailyEnergyWh,
     backupHours: d.backupHours[level],
     autonomyDays: d.autonomyDays[level],
-    inverter: domain === "solar" ? "اینورتر خورشیدی" : "اینورتر برق اضطراری",
+    inverter: domain === "solar" ? "Ø§ÛŒÙ†ÙˆØ±ØªØ± Ø®ÙˆØ±Ø´ÛŒØ¯ÛŒ" : "Ø§ÛŒÙ†ÙˆØ±ØªØ± Ø¨Ø±Ù‚ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ",
     inverterRatedW,
     batteryType: domain === "solar" ? "Lithium / AGM" : "Lithium / AGM / Tubular",
     suggestedBattery: `48V ${batteryAh}Ah`,
@@ -62,8 +62,8 @@ function makeScenario(domain, level, serial) {
     },
     requiredEquipment: {
       recommendedItems: domain === "solar"
-        ? ["روشنایی", "یخچال", "پمپ", "مصرف کننده عمومی"]
-        : ["روشنایی اضطراری", "یخچال", "مودم/دوربین", "بار حیاتی"],
+        ? ["Ø±ÙˆØ´Ù†Ø§ÛŒÛŒ", "ÛŒØ®Ú†Ø§Ù„", "Ù¾Ù…Ù¾", "Ù…ØµØ±Ù Ú©Ù†Ù†Ø¯Ù‡ Ø¹Ù…ÙˆÙ…ÛŒ"]
+        : ["Ø±ÙˆØ´Ù†Ø§ÛŒÛŒ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ", "ÛŒØ®Ú†Ø§Ù„", "Ù…ÙˆØ¯Ù…/Ø¯ÙˆØ±Ø¨ÛŒÙ†", "Ø¨Ø§Ø± Ø­ÛŒØ§ØªÛŒ"],
       loadW: loadEstimate,
       dailyWh: dailyEnergyWh,
     },

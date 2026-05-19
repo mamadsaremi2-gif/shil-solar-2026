@@ -1,4 +1,4 @@
-﻿import axios from "axios";
+import axios from "axios";
 import { backendConfig } from "../config/backendConfig.js";
 
 export const apiClient = axios.create({

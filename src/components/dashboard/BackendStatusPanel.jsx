@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { Cloud, ShieldCheck, Database, UserCheck } from "lucide-react";
 import { useAuthStore } from "../../backend/auth/authStore.js";
 

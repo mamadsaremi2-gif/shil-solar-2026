@@ -1,4 +1,4 @@
-﻿import { useInView }
+import { useInView }
 from "react-intersection-observer";
 
 export function useReveal() {

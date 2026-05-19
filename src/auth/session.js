@@ -62,7 +62,7 @@ export function createSession({ role = "user", login = "", authType = "email", d
     userId,
     login: role === "guest" ? "guest" : normalizeLogin(login),
     authType,
-    displayName: displayName || (role === "guest" ? "کاربر مهمان" : login),
+    displayName: displayName || (role === "guest" ? "Ú©Ø§Ø±Ø¨Ø± Ù…Ù‡Ù…Ø§Ù†" : login),
     online: navigator.onLine,
     createdAt: new Date().toISOString(),
   };
@@ -130,4 +130,28 @@ export function upsertUserRecord(baseKey, matcher, patch) {
   };
   localStorage.setItem(key, JSON.stringify([nextRecord, ...list]));
   return nextRecord;
+}
+
+
+export function updateUserRecord(baseKey, matcher, updater) {
+  const session = getCurrentSession() || createSession({ role: "guest", authType: "guest" });
+  const key = getUserScopedKey(baseKey, session.userId);
+  const list = safeParse(localStorage.getItem(key), []);
+  const now = new Date().toISOString();
+  const next = list.map((item) => {
+    if (!matcher(item)) return item;
+    const patch = typeof updater === "function" ? updater(item) : updater;
+    return { ...item, ...patch, updatedAt: now };
+  });
+  localStorage.setItem(key, JSON.stringify(next));
+  return next;
+}
+
+export function deleteUserRecord(baseKey, matcher) {
+  const session = getCurrentSession() || createSession({ role: "guest", authType: "guest" });
+  const key = getUserScopedKey(baseKey, session.userId);
+  const list = safeParse(localStorage.getItem(key), []);
+  const next = list.filter((item) => !matcher(item));
+  localStorage.setItem(key, JSON.stringify(next));
+  return next;
 }

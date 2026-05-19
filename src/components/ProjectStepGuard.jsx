@@ -17,14 +17,16 @@ export default function ProjectStepGuard({ children }) {
     };
   }, []);
 
-  const editable = !stepKey || stepKey === "system" || canEditStep(stepKey, workflow);
+  const emergencyDomain = localStorage.getItem("shil:calculationDomain") === "emergency" || location.pathname.includes("/emergency");
+  const emergencySkippedSteps = emergencyDomain && ["summary", "run"].includes(stepKey) && Boolean(workflow.path?.approved);
+  const editable = !stepKey || stepKey === "system" || emergencySkippedSteps || canEditStep(stepKey, workflow);
   const previous = stepKey ? getPreviousStep(stepKey) : null;
 
   return (
     <div className={editable ? "" : "shil-readonly-mode"} aria-disabled={!editable}>
       {!editable ? (
         <div className="shil-readonly-notice">
-          این مرحله هنوز فقط قابل مشاهده است؛ ابتدا مرحله «{previous?.title || "قبلی"}» را تکمیل و تأیید کنید.
+          Ø§ÛŒÙ† Ù…Ø±Ø­Ù„Ù‡ Ù‡Ù†ÙˆØ² ÙÙ‚Ø· Ù‚Ø§Ø¨Ù„ Ù…Ø´Ø§Ù‡Ø¯Ù‡ Ø§Ø³ØªØ› Ø§Ø¨ØªØ¯Ø§ Ù…Ø±Ø­Ù„Ù‡ Â«{previous?.title || "Ù‚Ø¨Ù„ÛŒ"}Â» Ø±Ø§ ØªÚ©Ù…ÛŒÙ„ Ùˆ ØªØ£ÛŒÛŒØ¯ Ú©Ù†ÛŒØ¯.
         </div>
       ) : null}
       {children}

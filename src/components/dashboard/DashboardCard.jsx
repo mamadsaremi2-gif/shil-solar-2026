@@ -12,7 +12,7 @@ export default function DashboardCard({
   return (
     <motion.div whileTap={{ scale: 0.96 }} className={`dash-card-wrap ${tone}`}>
       <Link to={to} className="dash-card-v15">
-        <div className="dash-card-menu">•••</div>
+        <div className="dash-card-menu">â€¢â€¢â€¢</div>
 
         <div className="dash-icon-v15">
           {icon}

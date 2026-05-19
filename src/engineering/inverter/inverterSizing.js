@@ -1,4 +1,4 @@
-﻿export function calculateInverterSizing({
+export function calculateInverterSizing({
   peakLoadW = 0,
   surgeFactor = 1.3,
   safetyFactor = 1.15,

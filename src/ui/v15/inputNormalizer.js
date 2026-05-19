@@ -1,10 +1,10 @@
-const persianDigits = "۰۱۲۳۴۵۶۷۸۹";
-const arabicDigits = "٠١٢٣٤٥٦٧٨٩";
+const persianDigits = "Û°Û±Û²Û³Û´ÛµÛ¶Û·Û¸Û¹";
+const arabicDigits = "Ù Ù¡Ù¢Ù£Ù¤Ù¥Ù¦Ù§Ù¨Ù©";
 
 export function normalizeDigits(value = "") {
   return String(value)
-    .replace(/[۰-۹]/g, (d) => String(persianDigits.indexOf(d)))
-    .replace(/[٠-٩]/g, (d) => String(arabicDigits.indexOf(d)));
+    .replace(/[Û°-Û¹]/g, (d) => String(persianDigits.indexOf(d)))
+    .replace(/[Ù -Ù©]/g, (d) => String(arabicDigits.indexOf(d)));
 }
 
 export function normalizeEngineeringInput(value = "") {

@@ -1,18 +1,4 @@
-[
-  {
-    "key": "solar",
-    "title": "اجرای پروژه با پنل خورشیدی",
-    "description": "طراحی سیستم خورشیدی با پنل، باتری، اینورتر و حفاظت",
-    "image": "/assets/shil/execution/solar-execution.svg",
-    "calculationDomain": "solar",
-    "adminReplaceablePng": "/assets/shil/execution/solar-execution.png"
-  },
-  {
-    "key": "emergency",
-    "title": "اجرای پروژه با برق اضطراری",
-    "description": "طراحی سیستم پشتیبان با اینورتر و باتری",
-    "image": "/assets/shil/execution/emergency-inverter-battery.svg",
-    "calculationDomain": "emergency",
-    "adminReplaceablePng": "/assets/shil/execution/emergency-inverter-battery.png"
-  }
-]
+﻿{
+  "solar": "/assets/shil/execution/solar-execution.png",
+  "backup": "/assets/shil/execution/emergency-inverter-battery.png"
+}

@@ -1,4 +1,4 @@
-﻿import * as Tone
+import * as Tone
 from "tone";
 
 export async function startTone() {

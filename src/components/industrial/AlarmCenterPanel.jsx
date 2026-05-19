@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { AlertTriangle, ShieldCheck } from "lucide-react";
 import { useTelemetryStore } from "../../industrial/telemetry/telemetryStore.js";
 import { evaluateAlarms } from "../../industrial/alarms/alarmEngine.js";

@@ -1,4 +1,4 @@
-﻿export function createTelemetryEvent(type, payload = {}) {
+export function createTelemetryEvent(type, payload = {}) {
   return {
     type,
     payload,

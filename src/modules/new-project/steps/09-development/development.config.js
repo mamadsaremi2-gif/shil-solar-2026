@@ -1,4 +1,4 @@
 export const DEVELOPMENT_SLOT = {
   reserved: true,
-  title: "توسعه",
+  title: "ØªÙˆØ³Ø¹Ù‡",
 };

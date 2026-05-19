@@ -1,4 +1,4 @@
-﻿import WaveSurfer
+import WaveSurfer
 from "wavesurfer.js";
 
 export function createWave(

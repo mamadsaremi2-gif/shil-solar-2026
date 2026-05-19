@@ -1,4 +1,4 @@
-﻿export function runLocalAIRecommendation(project = {}) {
+export function runLocalAIRecommendation(project = {}) {
   const dailyEnergyWh =
     project.dailyEnergyWh || 12500;
 

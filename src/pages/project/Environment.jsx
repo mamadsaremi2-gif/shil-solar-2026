@@ -7,11 +7,11 @@ import { analyzeEnvironmentForEngineering } from "../../core/environment/environ
 import { approveProjectStep } from "../../workflow/projectWorkflow.js";
 
 const installTypes = [
-  { key: "urban", label: "شهری", humidityOffset: 0, soiling: 3, description: "محیط معمول شهری با ریسک متوسط گردوغبار" },
-  { key: "industrial", label: "صنعتی", humidityOffset: 0, soiling: 7, description: "گردوغبار، دوده و آلودگی صنعتی بیشتر" },
-  { key: "coastal", label: "ساحلی", humidityOffset: 18, soiling: 5, description: "رطوبت و خوردگی بالا؛ نیازمند IP و پوشش بهتر" },
-  { key: "mountain", label: "کوهستانی", humidityOffset: -8, soiling: 2, description: "هوای خشک‌تر، دمای پایین‌تر و کنترل ولتاژ سرمایی" },
-  { key: "desert", label: "کویری", humidityOffset: -14, soiling: 8, description: "تابش بالا، گردوغبار زیاد و نیاز به برنامه شست‌وشو" },
+  { key: "urban", label: "Ø´Ù‡Ø±ÛŒ", humidityOffset: 0, soiling: 3, description: "Ù…Ø­ÛŒØ· Ù…Ø¹Ù…ÙˆÙ„ Ø´Ù‡Ø±ÛŒ Ø¨Ø§ Ø±ÛŒØ³Ú© Ù…ØªÙˆØ³Ø· Ú¯Ø±Ø¯ÙˆØºØ¨Ø§Ø±" },
+  { key: "industrial", label: "ØµÙ†Ø¹ØªÛŒ", humidityOffset: 0, soiling: 7, description: "Ú¯Ø±Ø¯ÙˆØºØ¨Ø§Ø±ØŒ Ø¯ÙˆØ¯Ù‡ Ùˆ Ø¢Ù„ÙˆØ¯Ú¯ÛŒ ØµÙ†Ø¹ØªÛŒ Ø¨ÛŒØ´ØªØ±" },
+  { key: "coastal", label: "Ø³Ø§Ø­Ù„ÛŒ", humidityOffset: 18, soiling: 5, description: "Ø±Ø·ÙˆØ¨Øª Ùˆ Ø®ÙˆØ±Ø¯Ú¯ÛŒ Ø¨Ø§Ù„Ø§Ø› Ù†ÛŒØ§Ø²Ù…Ù†Ø¯ IP Ùˆ Ù¾ÙˆØ´Ø´ Ø¨Ù‡ØªØ±" },
+  { key: "mountain", label: "Ú©ÙˆÙ‡Ø³ØªØ§Ù†ÛŒ", humidityOffset: -8, soiling: 2, description: "Ù‡ÙˆØ§ÛŒ Ø®Ø´Ú©â€ŒØªØ±ØŒ Ø¯Ù…Ø§ÛŒ Ù¾Ø§ÛŒÛŒÙ†â€ŒØªØ± Ùˆ Ú©Ù†ØªØ±Ù„ ÙˆÙ„ØªØ§Ú˜ Ø³Ø±Ù…Ø§ÛŒÛŒ" },
+  { key: "desert", label: "Ú©ÙˆÛŒØ±ÛŒ", humidityOffset: -14, soiling: 8, description: "ØªØ§Ø¨Ø´ Ø¨Ø§Ù„Ø§ØŒ Ú¯Ø±Ø¯ÙˆØºØ¨Ø§Ø± Ø²ÛŒØ§Ø¯ Ùˆ Ù†ÛŒØ§Ø² Ø¨Ù‡ Ø¨Ø±Ù†Ø§Ù…Ù‡ Ø´Ø³Øªâ€ŒÙˆØ´Ùˆ" },
 ];
 
 const isfahan = getDefaultIranCity();
@@ -79,7 +79,7 @@ export default function Environment() {
   const navigate = useNavigate();
   const { domain = localStorage.getItem("shil:scenarioDomain") || "solar" } = useParams();
 
-  const [city, setCity] = useState(isfahan?.name || "اصفهان");
+  const [city, setCity] = useState(isfahan?.name || "Ø§ØµÙÙ‡Ø§Ù†");
   const [selectedCity, setSelectedCity] = useState(isfahan || null);
   const [manualOverride, setManualOverride] = useState(false);
   const [address, setAddress] = useState("");
@@ -123,7 +123,7 @@ export default function Environment() {
   const assessment = useMemo(() => analyzeEnvironmentForEngineering({
     domain,
     city,
-    province: selectedCity?.province || "اصفهان",
+    province: selectedCity?.province || "Ø§ØµÙÙ‡Ø§Ù†",
     address,
     gpsMode,
     latitude: latitude === "" ? null : Number(latitude),
@@ -203,19 +203,19 @@ export default function Environment() {
 
   const requestCurrentLocation = () => {
     if (!navigator.geolocation) {
-      setGpsStatus("مرورگر این دستگاه GPS را پشتیبانی نمی‌کند.");
+      setGpsStatus("Ù…Ø±ÙˆØ±Ú¯Ø± Ø§ÛŒÙ† Ø¯Ø³ØªÚ¯Ø§Ù‡ GPS Ø±Ø§ Ù¾Ø´ØªÛŒØ¨Ø§Ù†ÛŒ Ù†Ù…ÛŒâ€ŒÚ©Ù†Ø¯.");
       return;
     }
 
-    setGpsStatus("در حال دریافت موقعیت دستگاه...");
+    setGpsStatus("Ø¯Ø± Ø­Ø§Ù„ Ø¯Ø±ÛŒØ§ÙØª Ù…ÙˆÙ‚Ø¹ÛŒØª Ø¯Ø³ØªÚ¯Ø§Ù‡...");
     navigator.geolocation.getCurrentPosition(
       (position) => {
         setGpsMode("manual");
         setLatitude(String(position.coords.latitude));
         setLongitude(String(position.coords.longitude));
-        setGpsStatus(`موقعیت دستگاه ثبت شد. دقت تقریبی: ${Math.round(position.coords.accuracy || 0)} متر`);
+        setGpsStatus(`Ù…ÙˆÙ‚Ø¹ÛŒØª Ø¯Ø³ØªÚ¯Ø§Ù‡ Ø«Ø¨Øª Ø´Ø¯. Ø¯Ù‚Øª ØªÙ‚Ø±ÛŒØ¨ÛŒ: ${Math.round(position.coords.accuracy || 0)} Ù…ØªØ±`);
       },
-      () => setGpsStatus("دسترسی به موقعیت داده نشد یا دریافت GPS ناموفق بود."),
+      () => setGpsStatus("Ø¯Ø³ØªØ±Ø³ÛŒ Ø¨Ù‡ Ù…ÙˆÙ‚Ø¹ÛŒØª Ø¯Ø§Ø¯Ù‡ Ù†Ø´Ø¯ ÛŒØ§ Ø¯Ø±ÛŒØ§ÙØª GPS Ù†Ø§Ù…ÙˆÙÙ‚ Ø¨ÙˆØ¯."),
       { enableHighAccuracy: true, timeout: 9000, maximumAge: 60000 }
     );
   };
@@ -225,21 +225,21 @@ export default function Environment() {
     const lng = longitude === "" ? null : Number(longitude);
 
     if (!city.trim()) {
-      setValidationMessage("نام شهر پروژه باید وارد یا از پیشنهادها انتخاب شود.");
+      setValidationMessage("Ù†Ø§Ù… Ø´Ù‡Ø± Ù¾Ø±ÙˆÚ˜Ù‡ Ø¨Ø§ÛŒØ¯ ÙˆØ§Ø±Ø¯ ÛŒØ§ Ø§Ø² Ù¾ÛŒØ´Ù†Ù‡Ø§Ø¯Ù‡Ø§ Ø§Ù†ØªØ®Ø§Ø¨ Ø´ÙˆØ¯.");
       return;
     }
     if (lat !== null && (lat < 24 || lat > 40)) {
-      setValidationMessage("عرض جغرافیایی واردشده خارج از بازه معمول ایران است.");
+      setValidationMessage("Ø¹Ø±Ø¶ Ø¬ØºØ±Ø§ÙÛŒØ§ÛŒÛŒ ÙˆØ§Ø±Ø¯Ø´Ø¯Ù‡ Ø®Ø§Ø±Ø¬ Ø§Ø² Ø¨Ø§Ø²Ù‡ Ù…Ø¹Ù…ÙˆÙ„ Ø§ÛŒØ±Ø§Ù† Ø§Ø³Øª.");
       return;
     }
     if (lng !== null && (lng < 43 || lng > 64)) {
-      setValidationMessage("طول جغرافیایی واردشده خارج از بازه معمول ایران است.");
+      setValidationMessage("Ø·ÙˆÙ„ Ø¬ØºØ±Ø§ÙÛŒØ§ÛŒÛŒ ÙˆØ§Ø±Ø¯Ø´Ø¯Ù‡ Ø®Ø§Ø±Ø¬ Ø§Ø² Ø¨Ø§Ø²Ù‡ Ù…Ø¹Ù…ÙˆÙ„ Ø§ÛŒØ±Ø§Ù† Ø§Ø³Øª.");
       return;
     }
 
     const environmentDraft = {
       domain,
-      province: selectedCity?.province || "اصفهان",
+      province: selectedCity?.province || "Ø§ØµÙÙ‡Ø§Ù†",
       city,
       address,
       gpsMode,
@@ -276,61 +276,61 @@ export default function Environment() {
 
   return (
     <ShilPageShell
-      title="شرایط محیطی"
-      backLabel="بازگشت"
-      nextLabel="تایید مرحله"
-      prevLabel="مرحله قبل"
-      draftLabel="ذخیره"
+      title="Ø´Ø±Ø§ÛŒØ· Ù…Ø­ÛŒØ·ÛŒ"
+      backLabel="Ø¨Ø§Ø²Ú¯Ø´Øª"
+      nextLabel="ØªØ§ÛŒÛŒØ¯ Ù…Ø±Ø­Ù„Ù‡"
+      prevLabel="Ù…Ø±Ø­Ù„Ù‡ Ù‚Ø¨Ù„"
+      draftLabel="Ø°Ø®ÛŒØ±Ù‡"
       scrollXVisible
     >
       <ProjectMiniRail />
       <div className="shil-env-page">
         <section className="shil-env-card shil-env-map-card">
-          <h3 className="shil-section-title">نقشه سیستم گرمایشی ایران</h3>
+          <h3 className="shil-section-title">Ù†Ù‚Ø´Ù‡ Ø³ÛŒØ³ØªÙ… Ú¯Ø±Ù…Ø§ÛŒØ´ÛŒ Ø§ÛŒØ±Ø§Ù†</h3>
           <div className="shil-map-container"><img src="/assets/shil/map/iran-heatmap.webp" alt="Iran heating system map" /></div>
-          <small className="shil-env-hint">این نقشه بلافاصله بعد از مسیر مراحل نمایش داده می‌شود تا کاربر قبل از ورود اطلاعات، دید اقلیمی اولیه داشته باشد.</small>
+          <small className="shil-env-hint">Ø§ÛŒÙ† Ù†Ù‚Ø´Ù‡ Ø¨Ù„Ø§ÙØ§ØµÙ„Ù‡ Ø¨Ø¹Ø¯ Ø§Ø² Ù…Ø³ÛŒØ± Ù…Ø±Ø§Ø­Ù„ Ù†Ù…Ø§ÛŒØ´ Ø¯Ø§Ø¯Ù‡ Ù…ÛŒâ€ŒØ´ÙˆØ¯ ØªØ§ Ú©Ø§Ø±Ø¨Ø± Ù‚Ø¨Ù„ Ø§Ø² ÙˆØ±ÙˆØ¯ Ø§Ø·Ù„Ø§Ø¹Ø§ØªØŒ Ø¯ÛŒØ¯ Ø§Ù‚Ù„ÛŒÙ…ÛŒ Ø§ÙˆÙ„ÛŒÙ‡ Ø¯Ø§Ø´ØªÙ‡ Ø¨Ø§Ø´Ø¯.</small>
         </section>
 
         <section className="shil-env-card">
-          <h3 className="shil-section-title">موقعیت پروژه</h3>
+          <h3 className="shil-section-title">Ù…ÙˆÙ‚Ø¹ÛŒØª Ù¾Ø±ÙˆÚ˜Ù‡</h3>
 
           <div className="shil-form-grid">
             <div className="shil-field">
-              <label>شهر پروژه</label>
+              <label>Ø´Ù‡Ø± Ù¾Ø±ÙˆÚ˜Ù‡</label>
               <SmartCityInput
                 value={city}
                 onChange={(value) => { setCity(value); setManualOverride(false); }}
                 onPick={pickCity}
-                placeholder="اول اسم شهر را بزن؛ مثلاً اص، شی، ته، تب..."
+                placeholder="Ø§ÙˆÙ„ Ø§Ø³Ù… Ø´Ù‡Ø± Ø±Ø§ Ø¨Ø²Ù†Ø› Ù…Ø«Ù„Ø§Ù‹ Ø§ØµØŒ Ø´ÛŒØŒ ØªÙ‡ØŒ ØªØ¨..."
               />
               <small className="shil-env-hint">
-                استان جداگانه لازم نیست؛ انتخاب شهر، استان و داده‌های اقلیمی را خودکار وارد می‌کند. پیش‌فرض سیستم اصفهان است.
+                Ø§Ø³ØªØ§Ù† Ø¬Ø¯Ø§Ú¯Ø§Ù†Ù‡ Ù„Ø§Ø²Ù… Ù†ÛŒØ³ØªØ› Ø§Ù†ØªØ®Ø§Ø¨ Ø´Ù‡Ø±ØŒ Ø§Ø³ØªØ§Ù† Ùˆ Ø¯Ø§Ø¯Ù‡â€ŒÙ‡Ø§ÛŒ Ø§Ù‚Ù„ÛŒÙ…ÛŒ Ø±Ø§ Ø®ÙˆØ¯Ú©Ø§Ø± ÙˆØ§Ø±Ø¯ Ù…ÛŒâ€ŒÚ©Ù†Ø¯. Ù¾ÛŒØ´â€ŒÙØ±Ø¶ Ø³ÛŒØ³ØªÙ… Ø§ØµÙÙ‡Ø§Ù† Ø§Ø³Øª.
               </small>
             </div>
 
             <div className="shil-field">
-              <label>آدرس پروژه</label>
+              <label>Ø¢Ø¯Ø±Ø³ Ù¾Ø±ÙˆÚ˜Ù‡</label>
               <input
                 className="shil-input"
                 value={address}
                 onChange={(event) => setAddress(event.target.value)}
-                placeholder="اختیاری؛ مثلاً شهرک صنعتی، پشت‌بام، مزرعه، ویلا..."
+                placeholder="Ø§Ø®ØªÛŒØ§Ø±ÛŒØ› Ù…Ø«Ù„Ø§Ù‹ Ø´Ù‡Ø±Ú© ØµÙ†Ø¹ØªÛŒØŒ Ù¾Ø´Øªâ€ŒØ¨Ø§Ù…ØŒ Ù…Ø²Ø±Ø¹Ù‡ØŒ ÙˆÛŒÙ„Ø§..."
               />
             </div>
 
             <div className="shil-field">
-              <label>مختصات GPS</label>
+              <label>Ù…Ø®ØªØµØ§Øª GPS</label>
               <div className="shil-gps-toggle">
-                <button type="button" className={gpsMode === "auto" ? "active" : ""} onClick={() => setGpsMode("auto")}>از شهر</button>
-                <button type="button" className={gpsMode === "manual" ? "active" : ""} onClick={() => setGpsMode("manual")}>دستی</button>
-                <button type="button" onClick={requestCurrentLocation}>GPS دستگاه</button>
+                <button type="button" className={gpsMode === "auto" ? "active" : ""} onClick={() => setGpsMode("auto")}>Ø§Ø² Ø´Ù‡Ø±</button>
+                <button type="button" className={gpsMode === "manual" ? "active" : ""} onClick={() => setGpsMode("manual")}>Ø¯Ø³ØªÛŒ</button>
+                <button type="button" onClick={requestCurrentLocation}>GPS Ø¯Ø³ØªÚ¯Ø§Ù‡</button>
               </div>
               <div className="shil-gps-manual-grid">
                 <input className="shil-input" value={latitude} onChange={(event) => { setGpsMode("manual"); setLatitude(event.target.value); }} placeholder="Latitude" inputMode="decimal" />
                 <input className="shil-input" value={longitude} onChange={(event) => { setGpsMode("manual"); setLongitude(event.target.value); }} placeholder="Longitude" inputMode="decimal" />
               </div>
               <small className="shil-env-hint">
-                {gpsStatus || (selectedCity ? `موقعیت پیش‌فرض: ${selectedCity.name}، ${selectedCity.province}` : "شهر را از پیشنهادها انتخاب کن یا GPS دستگاه را بزن.")}
+                {gpsStatus || (selectedCity ? `Ù…ÙˆÙ‚Ø¹ÛŒØª Ù¾ÛŒØ´â€ŒÙØ±Ø¶: ${selectedCity.name}ØŒ ${selectedCity.province}` : "Ø´Ù‡Ø± Ø±Ø§ Ø§Ø² Ù¾ÛŒØ´Ù†Ù‡Ø§Ø¯Ù‡Ø§ Ø§Ù†ØªØ®Ø§Ø¨ Ú©Ù† ÛŒØ§ GPS Ø¯Ø³ØªÚ¯Ø§Ù‡ Ø±Ø§ Ø¨Ø²Ù†.")}
               </small>
             </div>
           </div>
@@ -338,23 +338,23 @@ export default function Environment() {
 
         <section className="shil-env-card">
           <div className="shil-section-row">
-            <h3 className="shil-section-title">داده‌های اقلیمی</h3>
-            <button type="button" className="shil-mini-action" onClick={restoreCityClimate}>بازگشت به اقلیم شهر</button>
+            <h3 className="shil-section-title">Ø¯Ø§Ø¯Ù‡â€ŒÙ‡Ø§ÛŒ Ø§Ù‚Ù„ÛŒÙ…ÛŒ</h3>
+            <button type="button" className="shil-mini-action" onClick={restoreCityClimate}>Ø¨Ø§Ø²Ú¯Ø´Øª Ø¨Ù‡ Ø§Ù‚Ù„ÛŒÙ… Ø´Ù‡Ø±</button>
           </div>
 
           <div className="shil-manual-climate-grid">
-            <div className="shil-field"><label>دمای میانگین °C</label><input className="shil-input" value={manualClimate.temperature} onChange={(event) => updateClimate("temperature", event.target.value)} inputMode="decimal" /></div>
-            <div className="shil-field"><label>حداقل دما °C</label><input className="shil-input" value={manualClimate.temperatureMinC} onChange={(event) => updateClimate("temperatureMinC", event.target.value)} inputMode="decimal" /></div>
-            <div className="shil-field"><label>حداکثر دما °C</label><input className="shil-input" value={manualClimate.temperatureMaxC} onChange={(event) => updateClimate("temperatureMaxC", event.target.value)} inputMode="decimal" /></div>
-            <div className="shil-field"><label>ارتفاع از سطح دریا m</label><input className="shil-input" value={manualClimate.altitude} onChange={(event) => updateClimate("altitude", event.target.value)} inputMode="decimal" /></div>
-            <div className="shil-field"><label>رطوبت %</label><input className="shil-input" value={manualClimate.humidity} onChange={(event) => updateClimate("humidity", event.target.value)} inputMode="decimal" /></div>
-            <div className="shil-field"><label>ساعت آفتابی مؤثر</label><input className="shil-input" value={manualClimate.peakSunHours} onChange={(event) => updateClimate("peakSunHours", event.target.value)} inputMode="decimal" disabled={domain !== "solar"} /></div>
+            <div className="shil-field"><label>Ø¯Ù…Ø§ÛŒ Ù…ÛŒØ§Ù†Ú¯ÛŒÙ† Â°C</label><input className="shil-input" value={manualClimate.temperature} onChange={(event) => updateClimate("temperature", event.target.value)} inputMode="decimal" /></div>
+            <div className="shil-field"><label>Ø­Ø¯Ø§Ù‚Ù„ Ø¯Ù…Ø§ Â°C</label><input className="shil-input" value={manualClimate.temperatureMinC} onChange={(event) => updateClimate("temperatureMinC", event.target.value)} inputMode="decimal" /></div>
+            <div className="shil-field"><label>Ø­Ø¯Ø§Ú©Ø«Ø± Ø¯Ù…Ø§ Â°C</label><input className="shil-input" value={manualClimate.temperatureMaxC} onChange={(event) => updateClimate("temperatureMaxC", event.target.value)} inputMode="decimal" /></div>
+            <div className="shil-field"><label>Ø§Ø±ØªÙØ§Ø¹ Ø§Ø² Ø³Ø·Ø­ Ø¯Ø±ÛŒØ§ m</label><input className="shil-input" value={manualClimate.altitude} onChange={(event) => updateClimate("altitude", event.target.value)} inputMode="decimal" /></div>
+            <div className="shil-field"><label>Ø±Ø·ÙˆØ¨Øª %</label><input className="shil-input" value={manualClimate.humidity} onChange={(event) => updateClimate("humidity", event.target.value)} inputMode="decimal" /></div>
+            <div className="shil-field"><label>Ø³Ø§Ø¹Øª Ø¢ÙØªØ§Ø¨ÛŒ Ù…Ø¤Ø«Ø±</label><input className="shil-input" value={manualClimate.peakSunHours} onChange={(event) => updateClimate("peakSunHours", event.target.value)} inputMode="decimal" disabled={domain !== "solar"} /></div>
           </div>
-          <small className="shil-env-hint">{manualOverride ? "داده‌ها در حالت ویرایش دستی هستند." : "داده‌ها از بانک هوشمند شهر انتخاب‌شده آمده‌اند."}</small>
+          <small className="shil-env-hint">{manualOverride ? "Ø¯Ø§Ø¯Ù‡â€ŒÙ‡Ø§ Ø¯Ø± Ø­Ø§Ù„Øª ÙˆÛŒØ±Ø§ÛŒØ´ Ø¯Ø³ØªÛŒ Ù‡Ø³ØªÙ†Ø¯." : "Ø¯Ø§Ø¯Ù‡â€ŒÙ‡Ø§ Ø§Ø² Ø¨Ø§Ù†Ú© Ù‡ÙˆØ´Ù…Ù†Ø¯ Ø´Ù‡Ø± Ø§Ù†ØªØ®Ø§Ø¨â€ŒØ´Ø¯Ù‡ Ø¢Ù…Ø¯Ù‡â€ŒØ§Ù†Ø¯."}</small>
         </section>
 
         <section className="shil-env-card">
-          <h3 className="shil-section-title">شرایط نصب</h3>
+          <h3 className="shil-section-title">Ø´Ø±Ø§ÛŒØ· Ù†ØµØ¨</h3>
           <div className="shil-install-scroll">
             {installTypes.map((item) => (
               <button key={item.key} type="button" className={`shil-install-chip ${installType === item.key ? "active" : ""}`} onClick={() => setInstallType(item.key)}>
@@ -366,11 +366,11 @@ export default function Environment() {
 
           <div className="shil-upload-grid shil-install-upload-grid">
             <div className="shil-upload-box shil-smart-upload-box">
-              <span>آپلود جهت‌نما</span>
-              <small>اپ به‌صورت هوشمند می‌پرسد آیا می‌خواهی اسکرین جهت‌نما را از گالری انتخاب کنی یا فعلاً بعداً اضافه شود.</small>
+              <span>Ø¢Ù¾Ù„ÙˆØ¯ Ø¬Ù‡Øªâ€ŒÙ†Ù…Ø§</span>
+              <small>Ø§Ù¾ Ø¨Ù‡â€ŒØµÙˆØ±Øª Ù‡ÙˆØ´Ù…Ù†Ø¯ Ù…ÛŒâ€ŒÙ¾Ø±Ø³Ø¯ Ø¢ÛŒØ§ Ù…ÛŒâ€ŒØ®ÙˆØ§Ù‡ÛŒ Ø§Ø³Ú©Ø±ÛŒÙ† Ø¬Ù‡Øªâ€ŒÙ†Ù…Ø§ Ø±Ø§ Ø§Ø² Ú¯Ø§Ù„Ø±ÛŒ Ø§Ù†ØªØ®Ø§Ø¨ Ú©Ù†ÛŒ ÛŒØ§ ÙØ¹Ù„Ø§Ù‹ Ø¨Ø¹Ø¯Ø§Ù‹ Ø§Ø¶Ø§ÙÙ‡ Ø´ÙˆØ¯.</small>
               <div className="shil-upload-choice-row">
-                <button type="button" className={compassUploadChoice === "gallery" ? "active" : ""} onClick={() => setCompassUploadChoice("gallery")}>انتخاب از گالری</button>
-                <button type="button" className={compassUploadChoice === "later" ? "active" : ""} onClick={() => setCompassUploadChoice("later")}>بعداً</button>
+                <button type="button" className={compassUploadChoice === "gallery" ? "active" : ""} onClick={() => setCompassUploadChoice("gallery")}>Ø§Ù†ØªØ®Ø§Ø¨ Ø§Ø² Ú¯Ø§Ù„Ø±ÛŒ</button>
+                <button type="button" className={compassUploadChoice === "later" ? "active" : ""} onClick={() => setCompassUploadChoice("later")}>Ø¨Ø¹Ø¯Ø§Ù‹</button>
               </div>
               {compassUploadChoice === "gallery" ? (
                 <input type="file" accept="image/*" onChange={handleCompassUpload} />
@@ -379,8 +379,8 @@ export default function Environment() {
             </div>
 
             <label className="shil-upload-box">
-              <span>تصاویر محل نصب</span>
-              <small>با توجه به وسعت اجرای پروژه، چند عکس از بام، محوطه، سایه‌اندازها، مسیر کابل و موانع آپلود کن.</small>
+              <span>ØªØµØ§ÙˆÛŒØ± Ù…Ø­Ù„ Ù†ØµØ¨</span>
+              <small>Ø¨Ø§ ØªÙˆØ¬Ù‡ Ø¨Ù‡ ÙˆØ³Ø¹Øª Ø§Ø¬Ø±Ø§ÛŒ Ù¾Ø±ÙˆÚ˜Ù‡ØŒ Ú†Ù†Ø¯ Ø¹Ú©Ø³ Ø§Ø² Ø¨Ø§Ù…ØŒ Ù…Ø­ÙˆØ·Ù‡ØŒ Ø³Ø§ÛŒÙ‡â€ŒØ§Ù†Ø¯Ø§Ø²Ù‡Ø§ØŒ Ù…Ø³ÛŒØ± Ú©Ø§Ø¨Ù„ Ùˆ Ù…ÙˆØ§Ù†Ø¹ Ø¢Ù¾Ù„ÙˆØ¯ Ú©Ù†.</small>
               <input type="file" accept="image/*" multiple onChange={handleSiteUpload} />
               {sitePreviews.length ? (
                 <div className="shil-site-preview-grid">
@@ -392,41 +392,41 @@ export default function Environment() {
         </section>
 
         <section className="shil-env-card">
-          <h3 className="shil-section-title">تحلیل مهندسی خودکار</h3>
+          <h3 className="shil-section-title">ØªØ­Ù„ÛŒÙ„ Ù…Ù‡Ù†Ø¯Ø³ÛŒ Ø®ÙˆØ¯Ú©Ø§Ø±</h3>
           <div className="shil-climate-grid">
-            <div className="shil-climate-box"><span>زاویه پیشنهادی پنل</span><strong>{assessment.recommendedTiltDeg}°</strong></div>
-            <div className="shil-climate-box"><span>جهت پیشنهادی</span><strong>{assessment.recommendedAzimuthDeg}° جنوب</strong></div>
-            <div className="shil-climate-box"><span>افت حرارتی</span><strong>{assessment.thermalDeratePercent}%</strong></div>
-            <div className="shil-climate-box"><span>ریسک خوردگی</span><strong>{assessment.corrosionRisk}</strong></div>
-            <div className="shil-climate-box"><span>درجه حفاظت</span><strong>{assessment.recommendedIngressProtection}</strong></div>
-            <div className="shil-climate-box"><span>وضعیت بررسی</span><strong>{assessment.status === "ready" ? "آماده" : "نیازمند بازبینی"}</strong></div>
+            <div className="shil-climate-box"><span>Ø²Ø§ÙˆÛŒÙ‡ Ù¾ÛŒØ´Ù†Ù‡Ø§Ø¯ÛŒ Ù¾Ù†Ù„</span><strong>{assessment.recommendedTiltDeg}Â°</strong></div>
+            <div className="shil-climate-box"><span>Ø¬Ù‡Øª Ù¾ÛŒØ´Ù†Ù‡Ø§Ø¯ÛŒ</span><strong>{assessment.recommendedAzimuthDeg}Â° Ø¬Ù†ÙˆØ¨</strong></div>
+            <div className="shil-climate-box"><span>Ø§ÙØª Ø­Ø±Ø§Ø±ØªÛŒ</span><strong>{assessment.thermalDeratePercent}%</strong></div>
+            <div className="shil-climate-box"><span>Ø±ÛŒØ³Ú© Ø®ÙˆØ±Ø¯Ú¯ÛŒ</span><strong>{assessment.corrosionRisk}</strong></div>
+            <div className="shil-climate-box"><span>Ø¯Ø±Ø¬Ù‡ Ø­ÙØ§Ø¸Øª</span><strong>{assessment.recommendedIngressProtection}</strong></div>
+            <div className="shil-climate-box"><span>ÙˆØ¶Ø¹ÛŒØª Ø¨Ø±Ø±Ø³ÛŒ</span><strong>{assessment.status === "ready" ? "Ø¢Ù…Ø§Ø¯Ù‡" : "Ù†ÛŒØ§Ø²Ù…Ù†Ø¯ Ø¨Ø§Ø²Ø¨ÛŒÙ†ÛŒ"}</strong></div>
           </div>
           {assessment.warnings.length ? (
             <div className="shil-warning-list">
               {assessment.warnings.map((item, index) => <p key={index}>{item}</p>)}
             </div>
-          ) : <small className="shil-env-hint">هیچ هشدار محیطی جدی ثبت نشده است.</small>}
+          ) : <small className="shil-env-hint">Ù‡ÛŒÚ† Ù‡Ø´Ø¯Ø§Ø± Ù…Ø­ÛŒØ·ÛŒ Ø¬Ø¯ÛŒ Ø«Ø¨Øª Ù†Ø´Ø¯Ù‡ Ø§Ø³Øª.</small>}
         </section>
 
         <section className="shil-env-card">
-          <h3 className="shil-section-title">خلاصه</h3>
+          <h3 className="shil-section-title">Ø®Ù„Ø§ØµÙ‡</h3>
           <div className="shil-climate-grid">
-            <div className="shil-climate-box"><span>شهر</span><strong>{city || "اصفهان"}</strong></div>
-            <div className="shil-climate-box"><span>استان</span><strong>{selectedCity?.province || "اصفهان"}</strong></div>
-            <div className="shil-climate-box"><span>دمای میانگین</span><strong>{climate.temperature}°C</strong></div>
-            <div className="shil-climate-box"><span>بازه دمایی</span><strong>{climate.temperatureMinC} تا {climate.temperatureMaxC}°C</strong></div>
-            <div className="shil-climate-box"><span>ارتفاع</span><strong>{climate.altitude}m</strong></div>
-            <div className="shil-climate-box"><span>رطوبت</span><strong>{climate.humidity}%</strong></div>
-            <div className="shil-climate-box"><span>ساعت آفتابی</span><strong>{climate.peakSunHours}</strong></div>
-            <div className="shil-climate-box"><span>ضریب آلودگی</span><strong>{activeInstallType.soiling}%</strong></div>
-            <div className="shil-climate-box"><span>تصاویر محل نصب</span><strong>{siteAttachments.length} فایل</strong></div>
-            <div className="shil-climate-box"><span>جهت‌نما</span><strong>{compassAttachment ? "ثبت شد" : "ثبت نشده"}</strong></div>
-            <div className="shil-climate-box"><span>منبع داده</span><strong>{manualOverride ? "ویرایش دستی" : "بانک شهر"}</strong></div>
+            <div className="shil-climate-box"><span>Ø´Ù‡Ø±</span><strong>{city || "Ø§ØµÙÙ‡Ø§Ù†"}</strong></div>
+            <div className="shil-climate-box"><span>Ø§Ø³ØªØ§Ù†</span><strong>{selectedCity?.province || "Ø§ØµÙÙ‡Ø§Ù†"}</strong></div>
+            <div className="shil-climate-box"><span>Ø¯Ù…Ø§ÛŒ Ù…ÛŒØ§Ù†Ú¯ÛŒÙ†</span><strong>{climate.temperature}Â°C</strong></div>
+            <div className="shil-climate-box"><span>Ø¨Ø§Ø²Ù‡ Ø¯Ù…Ø§ÛŒÛŒ</span><strong>{climate.temperatureMinC} ØªØ§ {climate.temperatureMaxC}Â°C</strong></div>
+            <div className="shil-climate-box"><span>Ø§Ø±ØªÙØ§Ø¹</span><strong>{climate.altitude}m</strong></div>
+            <div className="shil-climate-box"><span>Ø±Ø·ÙˆØ¨Øª</span><strong>{climate.humidity}%</strong></div>
+            <div className="shil-climate-box"><span>Ø³Ø§Ø¹Øª Ø¢ÙØªØ§Ø¨ÛŒ</span><strong>{climate.peakSunHours}</strong></div>
+            <div className="shil-climate-box"><span>Ø¶Ø±ÛŒØ¨ Ø¢Ù„ÙˆØ¯Ú¯ÛŒ</span><strong>{activeInstallType.soiling}%</strong></div>
+            <div className="shil-climate-box"><span>ØªØµØ§ÙˆÛŒØ± Ù…Ø­Ù„ Ù†ØµØ¨</span><strong>{siteAttachments.length} ÙØ§ÛŒÙ„</strong></div>
+            <div className="shil-climate-box"><span>Ø¬Ù‡Øªâ€ŒÙ†Ù…Ø§</span><strong>{compassAttachment ? "Ø«Ø¨Øª Ø´Ø¯" : "Ø«Ø¨Øª Ù†Ø´Ø¯Ù‡"}</strong></div>
+            <div className="shil-climate-box"><span>Ù…Ù†Ø¨Ø¹ Ø¯Ø§Ø¯Ù‡</span><strong>{manualOverride ? "ÙˆÛŒØ±Ø§ÛŒØ´ Ø¯Ø³ØªÛŒ" : "Ø¨Ø§Ù†Ú© Ø´Ù‡Ø±"}</strong></div>
           </div>
         </section>
 
         {validationMessage ? <div className="shil-env-error">{validationMessage}</div> : null}
-        <button type="button" className="shil-primary-wide" onClick={confirmEnvironment}>تأیید شرایط محیطی و ادامه به انتخاب مسیر پروژه</button>
+        <button type="button" className="shil-primary-wide" onClick={confirmEnvironment}>ØªØ£ÛŒÛŒØ¯ Ø´Ø±Ø§ÛŒØ· Ù…Ø­ÛŒØ·ÛŒ Ùˆ Ø§Ø¯Ø§Ù…Ù‡ Ø¨Ù‡ Ø§Ù†ØªØ®Ø§Ø¨ Ù…Ø³ÛŒØ± Ù¾Ø±ÙˆÚ˜Ù‡</button>
       </div>
     </ShilPageShell>
   );

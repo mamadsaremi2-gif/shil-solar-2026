@@ -5,9 +5,9 @@ import { LayoutGrid, FolderOpen, PlusSquare } from "lucide-react";
 export default function DashboardBottomNav() {
   const location = useLocation();
   const items = [
-    { to: "/", label: "داشبورد", icon: <LayoutGrid size={22} /> },
-    { to: "/projects", label: "پروژه‌ها", icon: <FolderOpen size={22} /> },
-    { to: "/new-project", label: "پروژه جدید", icon: <PlusSquare size={22} /> },
+    { to: "/", label: "Ø¯Ø§Ø´Ø¨ÙˆØ±Ø¯", icon: <LayoutGrid size={22} /> },
+    { to: "/projects", label: "Ù¾Ø±ÙˆÚ˜Ù‡â€ŒÙ‡Ø§", icon: <FolderOpen size={22} /> },
+    { to: "/new-project", label: "Ù¾Ø±ÙˆÚ˜Ù‡ Ø¬Ø¯ÛŒØ¯", icon: <PlusSquare size={22} /> },
   ];
   return (
     <nav className="bottom-nav-v15">

@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { Wifi, Cpu, BatteryCharging, Zap } from "lucide-react";
 import { useTelemetryStore } from "../../industrial/telemetry/telemetryStore.js";
 

@@ -11,16 +11,16 @@ function readDraft(key) {
 const EXECUTION_OPTIONS = [
   {
     key: "solar",
-    title: "اجرای پروژه با پنل خورشیدی",
-    subtitle: "طراحی سیستم خورشیدی با پنل، باتری، اینورتر و حفاظت",
+    title: "Ø§Ø¬Ø±Ø§ÛŒ Ù¾Ø±ÙˆÚ˜Ù‡ Ø¨Ø§ Ù¾Ù†Ù„ Ø®ÙˆØ±Ø´ÛŒØ¯ÛŒ",
+    subtitle: "Ø·Ø±Ø§Ø­ÛŒ Ø³ÛŒØ³ØªÙ… Ø®ÙˆØ±Ø´ÛŒØ¯ÛŒ Ø¨Ø§ Ù¾Ù†Ù„ØŒ Ø¨Ø§ØªØ±ÛŒØŒ Ø§ÛŒÙ†ÙˆØ±ØªØ± Ùˆ Ø­ÙØ§Ø¸Øª",
     image: "/assets/shil/execution/solar-execution.svg",
     next: "/new-project/system/solar",
     engineLabel: "Solar Engineering Core",
   },
   {
     key: "emergency",
-    title: "اجرای پروژه با برق اضطراری",
-    subtitle: "طراحی سیستم پشتیبان با اینورتر و باتری",
+    title: "Ø§Ø¬Ø±Ø§ÛŒ Ù¾Ø±ÙˆÚ˜Ù‡ Ø¨Ø§ Ø¨Ø±Ù‚ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ",
+    subtitle: "Ø·Ø±Ø§Ø­ÛŒ Ø³ÛŒØ³ØªÙ… Ù¾Ø´ØªÛŒØ¨Ø§Ù† Ø¨Ø§ Ø§ÛŒÙ†ÙˆØ±ØªØ± Ùˆ Ø¨Ø§ØªØ±ÛŒ",
     image: "/assets/shil/execution/emergency-inverter-battery.svg",
     next: "/new-project/system/emergency",
     engineLabel: "Emergency Battery Inverter Core",
@@ -40,7 +40,7 @@ export default function ExecutionMethod() {
 
   const confirm = () => {
     if (!selectedOption) {
-      setWarning("لطفاً روش اجرای پروژه را انتخاب کنید.");
+      setWarning("Ù„Ø·ÙØ§Ù‹ Ø±ÙˆØ´ Ø§Ø¬Ø±Ø§ÛŒ Ù¾Ø±ÙˆÚ˜Ù‡ Ø±Ø§ Ø§Ù†ØªØ®Ø§Ø¨ Ú©Ù†ÛŒØ¯.");
       return;
     }
 
@@ -59,19 +59,19 @@ export default function ExecutionMethod() {
   };
 
   return (
-    <EngineeringPageShell title="نوع اجرای پروژه">
+    <EngineeringPageShell title="Ù†ÙˆØ¹ Ø§Ø¬Ø±Ø§ÛŒ Ù¾Ø±ÙˆÚ˜Ù‡">
       <section className="shil-card-stack shil-execution-method-page">
         <div className="shil-section-card">
           <div className="shil-section-head">
-            <h2>روش اجرای پروژه را انتخاب کنید</h2>
+            <h2>Ø±ÙˆØ´ Ø§Ø¬Ø±Ø§ÛŒ Ù¾Ø±ÙˆÚ˜Ù‡ Ø±Ø§ Ø§Ù†ØªØ®Ø§Ø¨ Ú©Ù†ÛŒØ¯</h2>
             <span>Decision Gateway</span>
           </div>
 
           <div className="shil-summary-grid">
-            <div><span>شهر</span><strong>{environment?.city || "اصفهان"}</strong></div>
-            <div><span>توان مرجع</span><strong>{load?.totalPowerW ? `${load.totalPowerW} W` : "در انتظار محاسبه"}</strong></div>
-            <div><span>انرژی روزانه</span><strong>{load?.totalEnergyKWh ? `${load.totalEnergyKWh} kWh` : "در انتظار محاسبه"}</strong></div>
-            <div><span>مرحله بعد</span><strong>طراحی سیستم انتخاب‌شده</strong></div>
+            <div><span>Ø´Ù‡Ø±</span><strong>{environment?.city || "Ø§ØµÙÙ‡Ø§Ù†"}</strong></div>
+            <div><span>ØªÙˆØ§Ù† Ù…Ø±Ø¬Ø¹</span><strong>{load?.totalPowerW ? `${load.totalPowerW} W` : "Ø¯Ø± Ø§Ù†ØªØ¸Ø§Ø± Ù…Ø­Ø§Ø³Ø¨Ù‡"}</strong></div>
+            <div><span>Ø§Ù†Ø±Ú˜ÛŒ Ø±ÙˆØ²Ø§Ù†Ù‡</span><strong>{load?.totalEnergyKWh ? `${load.totalEnergyKWh} kWh` : "Ø¯Ø± Ø§Ù†ØªØ¸Ø§Ø± Ù…Ø­Ø§Ø³Ø¨Ù‡"}</strong></div>
+            <div><span>Ù…Ø±Ø­Ù„Ù‡ Ø¨Ø¹Ø¯</span><strong>Ø·Ø±Ø§Ø­ÛŒ Ø³ÛŒØ³ØªÙ… Ø§Ù†ØªØ®Ø§Ø¨â€ŒØ´Ø¯Ù‡</strong></div>
           </div>
 
           <div className="shil-execution-grid">
@@ -86,10 +86,10 @@ export default function ExecutionMethod() {
                   aria-pressed={active}
                 >
                   <img src={option.image} alt="" className="shil-execution-image" />
-                  <span className="shil-execution-check">{active ? "✓" : ""}</span>
+                  <span className="shil-execution-check">{active ? "âœ“" : ""}</span>
                   <h3>{option.title}</h3>
                   <p>{option.subtitle}</p>
-                  <small>{option.key === "emergency" ? "نام نمایشی کاربر: برق اضطراری با اینورتر و باتری" : "مناسب برای آفگرید، هیبرید و آنگرید"}</small>
+                  <small>{option.key === "emergency" ? "Ù†Ø§Ù… Ù†Ù…Ø§ÛŒØ´ÛŒ Ú©Ø§Ø±Ø¨Ø±: Ø¨Ø±Ù‚ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ Ø¨Ø§ Ø§ÛŒÙ†ÙˆØ±ØªØ± Ùˆ Ø¨Ø§ØªØ±ÛŒ" : "Ù…Ù†Ø§Ø³Ø¨ Ø¨Ø±Ø§ÛŒ Ø¢ÙÚ¯Ø±ÛŒØ¯ØŒ Ù‡ÛŒØ¨Ø±ÛŒØ¯ Ùˆ Ø¢Ù†Ú¯Ø±ÛŒØ¯"}</small>
                 </button>
               );
             })}
@@ -98,7 +98,7 @@ export default function ExecutionMethod() {
           {warning ? <div className="shil-inline-warning">{warning}</div> : null}
 
           <button type="button" className="shil-primary-wide" onClick={confirm} disabled={!selectedOption}>
-            تأیید مرحله و ادامه
+            ØªØ£ÛŒÛŒØ¯ Ù…Ø±Ø­Ù„Ù‡ Ùˆ Ø§Ø¯Ø§Ù…Ù‡
           </button>
         </div>
       </section>

@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 
 const items = [
   { title: "PV Yield", value: "58 kWh", level: 88 },

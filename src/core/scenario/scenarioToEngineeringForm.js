@@ -12,7 +12,7 @@ export function scenarioToEngineeringForm(scenario, environment = {}, equipment 
     source: "ready-scenario",
     designDomain: domain,
     project: {
-      title: scenario?.title || "سناریوی آماده SHIL",
+      title: scenario?.title || "Ø³Ù†Ø§Ø±ÛŒÙˆÛŒ Ø¢Ù…Ø§Ø¯Ù‡ SHIL",
       scenario: isSolar ? "offgrid" : "emergency",
       location: [environment?.province, environment?.city, environment?.address].filter(Boolean).join(" - "),
       dailyEnergyWh,
@@ -41,7 +41,7 @@ export function scenarioToEngineeringForm(scenario, environment = {}, equipment 
       latitude: environment?.latitude ?? null,
       longitude: environment?.longitude ?? null,
       installType: environment?.installType || "urban",
-      installTypeLabel: environment?.installTypeLabel || "شهری",
+      installTypeLabel: environment?.installTypeLabel || "Ø´Ù‡Ø±ÛŒ",
       recommendedTiltDeg: Number(environment?.engineeringAssessment?.recommendedTiltDeg ?? 0),
       recommendedAzimuthDeg: Number(environment?.engineeringAssessment?.recommendedAzimuthDeg ?? 180),
       thermalDeratePercent: Number(environment?.engineeringAssessment?.thermalDeratePercent ?? 0),
@@ -82,7 +82,7 @@ export function scenarioToEngineeringForm(scenario, environment = {}, equipment 
       mpptMinVoltage: isSolar ? 120 : 0,
       mpptMaxVoltage: isSolar ? 450 : 0,
       efficiency: isSolar ? 0.95 : 0.92,
-      type: scenario?.inverter || (isSolar ? "اینورتر خورشیدی" : "اینورتر برق اضطراری"),
+      type: scenario?.inverter || (isSolar ? "Ø§ÛŒÙ†ÙˆØ±ØªØ± Ø®ÙˆØ±Ø´ÛŒØ¯ÛŒ" : "Ø§ÛŒÙ†ÙˆØ±ØªØ± Ø¨Ø±Ù‚ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ"),
     },
     cable: {
       lengthM: Number(equipment?.cableLengthM || 20),

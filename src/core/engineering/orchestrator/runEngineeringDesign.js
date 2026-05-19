@@ -56,8 +56,8 @@ function finalizeResult(result, startedAt) {
 
 function buildAdvisorMessages(result, validation) {
   const messages = [];
-  if ((result.warnings || []).length) messages.push({ level: "warning", text: "برخی Engineها هنوز خروجی قطعی ندارند یا اختیاری اجرا شده‌اند." });
-  if (validation.grade === "invalid-input") messages.push({ level: "error", text: "ورودی‌ها قبل از محاسبه باید اصلاح شوند." });
+  if ((result.warnings || []).length) messages.push({ level: "warning", text: "Ø¨Ø±Ø®ÛŒ EngineÙ‡Ø§ Ù‡Ù†ÙˆØ² Ø®Ø±ÙˆØ¬ÛŒ Ù‚Ø·Ø¹ÛŒ Ù†Ø¯Ø§Ø±Ù†Ø¯ ÛŒØ§ Ø§Ø®ØªÛŒØ§Ø±ÛŒ Ø§Ø¬Ø±Ø§ Ø´Ø¯Ù‡â€ŒØ§Ù†Ø¯." });
+  if (validation.grade === "invalid-input") messages.push({ level: "error", text: "ÙˆØ±ÙˆØ¯ÛŒâ€ŒÙ‡Ø§ Ù‚Ø¨Ù„ Ø§Ø² Ù…Ø­Ø§Ø³Ø¨Ù‡ Ø¨Ø§ÛŒØ¯ Ø§ØµÙ„Ø§Ø­ Ø´ÙˆÙ†Ø¯." });
   return messages;
 }
 

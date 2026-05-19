@@ -5,14 +5,14 @@ import { getScenarioList, levelMeta } from "../data/scenarios/scenarioLibrary.js
 import { scenarioToEngineeringForm } from "../core/scenario/scenarioToEngineeringForm.js";
 
 const domainLabels = {
-  solar: "سناریوهای آماده انرژی های خورشیدی",
-  emergency: "سناریوهای آماده برق اضطراری",
+  solar: "Ø³Ù†Ø§Ø±ÛŒÙˆÙ‡Ø§ÛŒ Ø¢Ù…Ø§Ø¯Ù‡ Ø§Ù†Ø±Ú˜ÛŒ Ù‡Ø§ÛŒ Ø®ÙˆØ±Ø´ÛŒØ¯ÛŒ",
+  emergency: "Ø³Ù†Ø§Ø±ÛŒÙˆÙ‡Ø§ÛŒ Ø¢Ù…Ø§Ø¯Ù‡ Ø¨Ø±Ù‚ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ",
 };
 
 const levelLabels = {
-  light: "سبک",
-  medium: "متوسط",
-  heavy: "سنگین",
+  light: "Ø³Ø¨Ú©",
+  medium: "Ù…ØªÙˆØ³Ø·",
+  heavy: "Ø³Ù†Ú¯ÛŒÙ†",
 };
 
 export default function Scenarios() {
@@ -36,14 +36,14 @@ export default function Scenarios() {
 
   if (!domain) {
     return (
-      <ShilPageShell title="سناریوهای آماده">
+      <ShilPageShell title="Ø³Ù†Ø§Ø±ÛŒÙˆÙ‡Ø§ÛŒ Ø¢Ù…Ø§Ø¯Ù‡">
         <div className="shil-scenario-hub">
           <button onClick={() => navigate("/scenarios/solar")} className="shil-big-route-card">
-            سناریوهای آماده انرژی های خورشیدی
+            Ø³Ù†Ø§Ø±ÛŒÙˆÙ‡Ø§ÛŒ Ø¢Ù…Ø§Ø¯Ù‡ Ø§Ù†Ø±Ú˜ÛŒ Ù‡Ø§ÛŒ Ø®ÙˆØ±Ø´ÛŒØ¯ÛŒ
           </button>
 
           <button onClick={() => navigate("/scenarios/emergency")} className="shil-big-route-card">
-            سناریوهای آماده برق اضطراری
+            Ø³Ù†Ø§Ø±ÛŒÙˆÙ‡Ø§ÛŒ Ø¢Ù…Ø§Ø¯Ù‡ Ø¨Ø±Ù‚ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ
           </button>
         </div>
       </ShilPageShell>
@@ -52,18 +52,18 @@ export default function Scenarios() {
 
   if (domain && !level) {
     return (
-      <ShilPageShell title={domainLabels[domain] || "سناریوهای آماده"}>
+      <ShilPageShell title={domainLabels[domain] || "Ø³Ù†Ø§Ø±ÛŒÙˆÙ‡Ø§ÛŒ Ø¢Ù…Ø§Ø¯Ù‡"}>
         <div className="shil-scenario-hub">
           <button onClick={() => navigate(`/scenarios/${domain}/light`)} className="shil-big-route-card">
-            سبک<br /><small>100 سناریوی اختصاصی</small>
+            Ø³Ø¨Ú©<br /><small>100 Ø³Ù†Ø§Ø±ÛŒÙˆÛŒ Ø§Ø®ØªØµØ§ØµÛŒ</small>
           </button>
 
           <button onClick={() => navigate(`/scenarios/${domain}/medium`)} className="shil-big-route-card">
-            متوسط<br /><small>100 سناریوی اختصاصی</small>
+            Ù…ØªÙˆØ³Ø·<br /><small>100 Ø³Ù†Ø§Ø±ÛŒÙˆÛŒ Ø§Ø®ØªØµØ§ØµÛŒ</small>
           </button>
 
           <button onClick={() => navigate(`/scenarios/${domain}/heavy`)} className="shil-big-route-card">
-            سنگین<br /><small>100 سناریوی اختصاصی</small>
+            Ø³Ù†Ú¯ÛŒÙ†<br /><small>100 Ø³Ù†Ø§Ø±ÛŒÙˆÛŒ Ø§Ø®ØªØµØ§ØµÛŒ</small>
           </button>
         </div>
       </ShilPageShell>
@@ -79,15 +79,15 @@ export default function Scenarios() {
             <p>{scenario.description}</p>
 
             <div className="shil-scenario-detail-grid">
-              <span>نوع پروژه</span><strong>{scenario.category}</strong>
-              <span>سطح</span><strong>{scenario.level}</strong>
-              <span>توان تقریبی</span><strong>{scenario.loadEstimate} W</strong>
-              <span>انرژی روزانه</span><strong>{scenario.dailyEnergyWh} Wh</strong>
-              <span>هسته محاسباتی</span><strong>{scenario.calculationEngine === "solar" ? "Solar Core" : "Emergency Core"}</strong>
-              <span>اینورتر</span><strong>{scenario.inverter}</strong>
-              <span>نوع باتری</span><strong>{scenario.batteryType}</strong>
-              <span>باتری پیشنهادی</span><strong>{scenario.suggestedBattery}</strong>
-              <span>تعداد پنل</span><strong>{scenario.suggestedPanels}</strong>
+              <span>Ù†ÙˆØ¹ Ù¾Ø±ÙˆÚ˜Ù‡</span><strong>{scenario.category}</strong>
+              <span>Ø³Ø·Ø­</span><strong>{scenario.level}</strong>
+              <span>ØªÙˆØ§Ù† ØªÙ‚Ø±ÛŒØ¨ÛŒ</span><strong>{scenario.loadEstimate} W</strong>
+              <span>Ø§Ù†Ø±Ú˜ÛŒ Ø±ÙˆØ²Ø§Ù†Ù‡</span><strong>{scenario.dailyEnergyWh} Wh</strong>
+              <span>Ù‡Ø³ØªÙ‡ Ù…Ø­Ø§Ø³Ø¨Ø§ØªÛŒ</span><strong>{scenario.calculationEngine === "solar" ? "Solar Core" : "Emergency Core"}</strong>
+              <span>Ø§ÛŒÙ†ÙˆØ±ØªØ±</span><strong>{scenario.inverter}</strong>
+              <span>Ù†ÙˆØ¹ Ø¨Ø§ØªØ±ÛŒ</span><strong>{scenario.batteryType}</strong>
+              <span>Ø¨Ø§ØªØ±ÛŒ Ù¾ÛŒØ´Ù†Ù‡Ø§Ø¯ÛŒ</span><strong>{scenario.suggestedBattery}</strong>
+              <span>ØªØ¹Ø¯Ø§Ø¯ Ù¾Ù†Ù„</span><strong>{scenario.suggestedPanels}</strong>
             </div>
 
             <button
@@ -95,7 +95,7 @@ export default function Scenarios() {
               type="button"
               onClick={() => selectScenario(scenario)}
             >
-              انتخاب سناریو و ادامه به شرایط محیطی
+              Ø§Ù†ØªØ®Ø§Ø¨ Ø³Ù†Ø§Ø±ÛŒÙˆ Ùˆ Ø§Ø¯Ø§Ù…Ù‡ Ø¨Ù‡ Ø´Ø±Ø§ÛŒØ· Ù…Ø­ÛŒØ·ÛŒ
             </button>
           </article>
         ))}
