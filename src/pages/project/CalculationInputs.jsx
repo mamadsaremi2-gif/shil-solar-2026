@@ -137,25 +137,25 @@ export default function CalculationInputs() {
   };
 
   return (
-    <ShilPageShell title={METHOD_LABELS[method] || "ÙˆØ±ÙˆØ¯ÛŒ Ù…Ø­Ø§Ø³Ø¨Ø§Øª"}>
+    <ShilPageShell title={METHOD_LABELS[method] || "ورودی محاسبات"}>
       <ProjectMiniRail />
       <div className="shil-equipment-page">
         <section className="shil-env-card">
-          <h3 className="shil-section-title">Ø²Ù…ÛŒÙ†Ù‡ Ù…Ø­Ø§Ø³Ø¨Ø§Øª</h3>
+          <h3 className="shil-section-title">زمینه محاسبات</h3>
           <div className="shil-summary-grid">
-            <div><span>Ø±ÙˆØ´</span><strong>{METHOD_LABELS[method] || method}</strong></div>
-            <div><span>Ù‡Ø³ØªÙ‡</span><strong>{domain === "emergency" ? "Ø¨Ø±Ù‚ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ" : "Ø®ÙˆØ±Ø´ÛŒØ¯ÛŒ"}</strong></div>
-            <div><span>Ø³Ù†Ø§Ø±ÛŒÙˆ</span><strong>{scenario?.title || "Ø¯Ø³ØªÛŒ"}</strong></div>
-            <div><span>Ø´Ù‡Ø±</span><strong>{environment?.city || "Ø§ØµÙÙ‡Ø§Ù†"}</strong></div>
+            <div><span>روش</span><strong>{METHOD_LABELS[method] || method}</strong></div>
+            <div><span>هسته</span><strong>{domain === "emergency" ? "برق اضطراری" : "خورشیدی"}</strong></div>
+            <div><span>سناریو</span><strong>{scenario?.title || "دستی"}</strong></div>
+            <div><span>شهر</span><strong>{environment?.city || "اصفهان"}</strong></div>
           </div>
         </section>
 
         {method === "equipment" || method === "profile" ? (
           <section className="shil-env-card shil-equipment-picker-card">
-            <h3 className="shil-section-title">Ù„ÛŒØ³Øª ØªØ¬Ù‡ÛŒØ²Ø§Øª</h3>
+            <h3 className="shil-section-title">لیست تجهیزات</h3>
             <button type="button" className="shil-equipment-field" onClick={() => setIsEquipmentPickerOpen((v) => !v)}>
-              <span>Ø§Ù†ØªØ®Ø§Ø¨ Ø§Ø² Ø¨Ø§Ù†Ú© Û²ÛµÛ° ØªØ¬Ù‡ÛŒØ²</span>
-              <strong>{selectedItems.length ? `${selectedItems.length} ØªØ¬Ù‡ÛŒØ² Ø§Ù†ØªØ®Ø§Ø¨ Ø´Ø¯Ù‡` : "Ø¨Ø§Ø² Ú©Ø±Ø¯Ù† Ù„ÛŒØ³Øª"}</strong>
+              <span>انتخاب از بانک ۲۵۰ تجهیز</span>
+              <strong>{selectedItems.length ? `${selectedItems.length} تجهیز انتخاب شده` : "باز کردن لیست"}</strong>
             </button>
 
             {isEquipmentPickerOpen ? (
@@ -164,7 +164,7 @@ export default function CalculationInputs() {
                   className="shil-input"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Ø¬Ø³ØªØ¬Ùˆ: Ù¾Ù…Ù¾ØŒ Ø±ÙˆØ´Ù†Ø§ÛŒÛŒØŒ Ú©ÙˆÙ„Ø±ØŒ Ø³Ø±ÙˆØ±..."
+                  placeholder="جستجو: پمپ، روشنایی، کولر، سرور..."
                 />
                 <div className="shil-equipment-scroll-list">
                   {items.map((item) => {
@@ -178,58 +178,58 @@ export default function CalculationInputs() {
                         onClick={() => toggleItem(item)}
                       >
                         <strong>{item.title}</strong>
-                        <span>{item.ratedPowerW}W Â· {item.usageHoursPerDay}h Â· {isMotor ? "Ù…ÙˆØªÙˆØ±ÛŒ" : "Ù…ØµØ±ÙÛŒ"}</span>
+                        <span>{item.ratedPowerW}W · {item.usageHoursPerDay}h · {isMotor ? "موتوری" : "مصرفی"}</span>
                       </button>
                     );
                   })}
                 </div>
                 <button type="button" className="shil-secondary-wide" onClick={() => setIsEquipmentPickerOpen(false)}>
-                  Ø¨Ø³ØªÙ† Ù„ÛŒØ³Øª ØªØ¬Ù‡ÛŒØ²Ø§Øª
+                  بستن لیست تجهیزات
                 </button>
               </div>
             ) : null}
 
             <div className="shil-equipment-actions">
               <button type="button" className="shil-secondary-wide" onClick={applySmartDetails}>
-                Ø§Ø¹Ù…Ø§Ù„ Ù‡ÙˆØ´Ù…Ù†Ø¯
+                اعمال هوشمند
               </button>
               <button type="button" className="shil-secondary-wide" onClick={() => setShowExpert((v) => !v)}>
-                {showExpert ? "Ø®Ù„Ø§ØµÙ‡ Ø³Ø§Ø¯Ù‡" : "Ù†Ù…Ø§ÛŒØ´ Ø¬Ø²Ø¦ÛŒØ§Øª ØªØ®ØµØµÛŒ"}
+                {showExpert ? "خلاصه ساده" : "نمایش جزئیات تخصصی"}
               </button>
             </div>
 
-            <p className="shil-muted-note">Ø§Ù†ØªØ®Ø§Ø¨ ØªØ¬Ù‡ÛŒØ²Ø§Øª ÙÙ‚Ø· Ø¯Ø§Ø®Ù„ Ù‡Ù…ÛŒÙ† ÙÛŒÙ„Ø¯ Ø§Ù†Ø¬Ø§Ù… Ù…ÛŒâ€ŒØ´ÙˆØ¯Ø› Ø¨Ø§ Ø¬Ø³ØªØ¬Ùˆ ÛŒØ§ Ø§Ø³Ú©Ø±ÙˆÙ„ Ø§Ù†ØªØ®Ø§Ø¨ Ú©Ù†ØŒ Ø³Ù¾Ø³ Ù„ÛŒØ³Øª Ø±Ø§ Ø¨Ø¨Ù†Ø¯ Ùˆ ØªØ¬Ù‡ÛŒØ²Ø§Øª Ø§Ù†ØªØ®Ø§Ø¨ÛŒ Ø±Ø§ Ø§ØµÙ„Ø§Ø­ Ú©Ù†.</p>
+            <p className="shil-muted-note">انتخاب تجهیزات فقط داخل همین فیلد انجام می‌شود؛ با جستجو یا اسکرول انتخاب کن، سپس لیست را ببند و تجهیزات انتخابی را اصلاح کن.</p>
           </section>
         ) : null}
 
         {method !== "equipment" ? (
           <section className="shil-env-card">
-            <h3 className="shil-section-title">ÙˆØ±ÙˆØ¯ÛŒ Ù…Ø³ØªÙ‚ÛŒÙ… Ø±ÙˆØ´ Ø§Ù†ØªØ®Ø§Ø¨â€ŒØ´Ø¯Ù‡</h3>
+            <h3 className="shil-section-title">ورودی مستقیم روش انتخاب‌شده</h3>
             <div className="shil-form-grid">
-              {method === "energy" ? <label>Ø§Ù†Ø±Ú˜ÛŒ Ø±ÙˆØ²Ø§Ù†Ù‡ kWh<input className="shil-input" value={manualEnergyKWh} onChange={(e) => setManualEnergyKWh(e.target.value)} placeholder="Ù…Ø«Ù„Ø§Ù‹ 12.5" inputMode="decimal" /></label> : null}
-              {method === "power" ? <label>ØªÙˆØ§Ù† Ú©Ù„ W<input className="shil-input" value={manualPowerW} onChange={(e) => setManualPowerW(e.target.value)} placeholder="Ù…Ø«Ù„Ø§Ù‹ 3500" inputMode="numeric" /></label> : null}
-              {method === "current" ? <label>Ø¬Ø±ÛŒØ§Ù† Ú©Ù„ A<input className="shil-input" value={manualCurrentA} onChange={(e) => setManualCurrentA(e.target.value)} placeholder="Ù…Ø«Ù„Ø§Ù‹ 16" inputMode="decimal" /></label> : null}
-              <label>ÙˆÙ„ØªØ§Ú˜ AC<input className="shil-input" value={manualVoltage} onChange={(e) => setManualVoltage(e.target.value)} inputMode="numeric" /></label>
-              <label>Ø³Ø§Ø¹Øª Ø§Ø³ØªÙØ§Ø¯Ù‡ / Ø²Ù…Ø§Ù† Ø¨Ø±Ù‚ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ Ù…ÙˆØ±Ø¯ Ù†Ø¸Ø±<input className="shil-input" value={manualHours} onChange={(e) => setManualHours(e.target.value)} inputMode="decimal" /></label>
+              {method === "energy" ? <label>انرژی روزانه kWh<input className="shil-input" value={manualEnergyKWh} onChange={(e) => setManualEnergyKWh(e.target.value)} placeholder="مثلاً 12.5" inputMode="decimal" /></label> : null}
+              {method === "power" ? <label>توان کل W<input className="shil-input" value={manualPowerW} onChange={(e) => setManualPowerW(e.target.value)} placeholder="مثلاً 3500" inputMode="numeric" /></label> : null}
+              {method === "current" ? <label>جریان کل A<input className="shil-input" value={manualCurrentA} onChange={(e) => setManualCurrentA(e.target.value)} placeholder="مثلاً 16" inputMode="decimal" /></label> : null}
+              <label>ولتاژ AC<input className="shil-input" value={manualVoltage} onChange={(e) => setManualVoltage(e.target.value)} inputMode="numeric" /></label>
+              <label>ساعت استفاده / زمان برق اضطراری مورد نظر<input className="shil-input" value={manualHours} onChange={(e) => setManualHours(e.target.value)} inputMode="decimal" /></label>
             </div>
           </section>
         ) : null}
 
         <section className="shil-env-card">
-          <h3 className="shil-section-title">Ø®Ø±ÙˆØ¬ÛŒ Ø²Ù†Ø¯Ù‡ Ù…ÙˆØªÙˆØ± Ø¨Ø§Ø±</h3>
+          <h3 className="shil-section-title">خروجی زنده موتور بار</h3>
           <div className="shil-summary-grid">
-            <div><span>ØªØ¹Ø¯Ø§Ø¯ ØªØ¬Ù‡ÛŒØ²Ø§Øª</span><strong>{enginePreview.selectedCount || "Auto"}</strong></div>
-            <div><span>ØªÙˆØ§Ù† Ú©Ù„</span><strong>{enginePreview.totalPowerW} W</strong></div>
-            <div><span>Ø§Ù†Ø±Ú˜ÛŒ Ø±ÙˆØ²Ø§Ù†Ù‡</span><strong>{enginePreview.totalEnergyKWh} kWh</strong></div>
-            <div><span>Ø¬Ø±ÛŒØ§Ù† AC</span><strong>{enginePreview.acCurrentA} A</strong></div>
-            <div><span>Ø¬Ø±ÛŒØ§Ù† Ø±Ø§Ù‡â€ŒØ§Ù†Ø¯Ø§Ø²ÛŒ</span><strong>{enginePreview.startCurrentA} A</strong></div>
-            <div><span>Ù¾ÛŒÚ© Ø§Ø³ØªØ§Ø±Øª</span><strong>{enginePreview.surgePowerW} W</strong></div>
-            <div><span>Ù…ÙˆØªÙˆØ±ÛŒ/Ø³Ø§ÙØª</span><strong>{enginePreview.motorCount || 0}/{enginePreview.softStarterCount || 0}</strong></div>
-            <div><span>Ø¨Ø§ØªØ±ÛŒ Ù…Ø±Ø¬Ø¹</span><strong>{Math.round(enginePreview.recommendedBatteryWh / 1000)} kWh</strong></div>
+            <div><span>تعداد تجهیزات</span><strong>{enginePreview.selectedCount || "Auto"}</strong></div>
+            <div><span>توان کل</span><strong>{enginePreview.totalPowerW} W</strong></div>
+            <div><span>انرژی روزانه</span><strong>{enginePreview.totalEnergyKWh} kWh</strong></div>
+            <div><span>جریان AC</span><strong>{enginePreview.acCurrentA} A</strong></div>
+            <div><span>جریان راه‌اندازی</span><strong>{enginePreview.startCurrentA} A</strong></div>
+            <div><span>پیک استارت</span><strong>{enginePreview.surgePowerW} W</strong></div>
+            <div><span>موتوری/سافت</span><strong>{enginePreview.motorCount || 0}/{enginePreview.softStarterCount || 0}</strong></div>
+            <div><span>باتری مرجع</span><strong>{Math.round(enginePreview.recommendedBatteryWh / 1000)} kWh</strong></div>
           </div>
           {showExpert ? (
             <div className="shil-expert-box">
-              <strong>Ù…Ù†Ø·Ù‚ Ù¾Ø´Øª Ù¾Ø±Ø¯Ù‡:</strong>
+              <strong>منطق پشت پرده:</strong>
               <p>{enginePreview.expertSummary?.rule}</p>
               <p>{enginePreview.expertSummary?.motorStartRule}</p>
             </div>
@@ -243,21 +243,21 @@ export default function CalculationInputs() {
 
         {method === "profile" ? (
           <section className="shil-env-card">
-            <h3 className="shil-section-title">Ù¾Ø±ÙˆÙØ§ÛŒÙ„ Ù…ØµØ±Ù ØªØ®Ù…ÛŒÙ†ÛŒ</h3>
+            <h3 className="shil-section-title">پروفایل مصرف تخمینی</h3>
             <div className="shil-summary-grid">
-              <div><span>ØµØ¨Ø­</span><strong>{Math.round(enginePreview.loadProfile.buckets.morning / 1000)} kWh</strong></div>
-              <div><span>Ø¸Ù‡Ø±</span><strong>{Math.round(enginePreview.loadProfile.buckets.noon / 1000)} kWh</strong></div>
-              <div><span>Ø¹ØµØ±</span><strong>{Math.round(enginePreview.loadProfile.buckets.evening / 1000)} kWh</strong></div>
-              <div><span>Ø´Ø¨</span><strong>{Math.round(enginePreview.loadProfile.buckets.night / 1000)} kWh</strong></div>
+              <div><span>صبح</span><strong>{Math.round(enginePreview.loadProfile.buckets.morning / 1000)} kWh</strong></div>
+              <div><span>ظهر</span><strong>{Math.round(enginePreview.loadProfile.buckets.noon / 1000)} kWh</strong></div>
+              <div><span>عصر</span><strong>{Math.round(enginePreview.loadProfile.buckets.evening / 1000)} kWh</strong></div>
+              <div><span>شب</span><strong>{Math.round(enginePreview.loadProfile.buckets.night / 1000)} kWh</strong></div>
             </div>
           </section>
         ) : null}
 
         {method === "equipment" || method === "profile" ? (
           <section className="shil-selected-equipment-list">
-            <h3 className="shil-section-title">ØªØ¬Ù‡ÛŒØ²Ø§Øª Ø§Ù†ØªØ®Ø§Ø¨ÛŒ</h3>
+            <h3 className="shil-section-title">تجهیزات انتخابی</h3>
             {!selectedItems.length ? (
-              <div className="shil-empty-selection">Ù‡Ù†ÙˆØ² ØªØ¬Ù‡ÛŒØ²ÛŒ Ø§Ù†ØªØ®Ø§Ø¨ Ù†Ø´Ø¯Ù‡ Ø§Ø³Øª.</div>
+              <div className="shil-empty-selection">هنوز تجهیزی انتخاب نشده است.</div>
             ) : selectedItems.map((item) => {
               const override = itemOverrides[item.id] || {};
               const preview = enginePreview.selectedItems?.find((x) => x.id === item.id);
@@ -267,33 +267,33 @@ export default function CalculationInputs() {
                   <div className="shil-selected-equipment-head">
                     <div>
                       <strong>{item.title}</strong>
-                      <span>{item.category} | {isMotor ? "Ù…ÙˆØªÙˆØ±ÛŒ" : "Ù…Ù‚Ø§ÙˆÙ…ØªÛŒ/Ø§Ù„Ú©ØªØ±ÙˆÙ†ÛŒÚ©ÛŒ"}</span>
+                      <span>{item.category} | {isMotor ? "موتوری" : "مقاومتی/الکترونیکی"}</span>
                     </div>
-                    <button type="button" className="shil-remove-equipment" onClick={() => toggleItem(item)}>Ø­Ø°Ù</button>
+                    <button type="button" className="shil-remove-equipment" onClick={() => toggleItem(item)}>حذف</button>
                   </div>
                   <div className="shil-equipment-controls">
-                    <label>ØªØ¹Ø¯Ø§Ø¯<input className="shil-input" value={override.quantity ?? item.quantity ?? 1} onChange={(e) => patchOverride(item.id, { quantity: e.target.value })} inputMode="numeric" /></label>
-                    <label>Ø³Ø§Ø¹Øª Ù…ØµØ±Ù<input className="shil-input" value={override.usageHoursPerDay ?? item.usageHoursPerDay} onChange={(e) => patchOverride(item.id, { usageHoursPerDay: e.target.value })} inputMode="decimal" /></label>
+                    <label>تعداد<input className="shil-input" value={override.quantity ?? item.quantity ?? 1} onChange={(e) => patchOverride(item.id, { quantity: e.target.value })} inputMode="numeric" /></label>
+                    <label>ساعت مصرف<input className="shil-input" value={override.usageHoursPerDay ?? item.usageHoursPerDay} onChange={(e) => patchOverride(item.id, { usageHoursPerDay: e.target.value })} inputMode="decimal" /></label>
                     {showExpert ? (
                       <>
-                        <label>Ø¶Ø±ÛŒØ¨ Ù‡Ù…Ø²Ù…Ø§Ù†ÛŒ<input className="shil-input" value={override.simultaneityFactor ?? item.simultaneityFactor ?? item.diversityFactor ?? 1} onChange={(e) => patchOverride(item.id, { simultaneityFactor: e.target.value })} inputMode="decimal" /></label>
-                        <label>Ø±Ø§Ù†Ø¯Ù…Ø§Ù†/PF<input className="shil-input" value={override.powerFactor ?? item.powerFactor ?? 0.95} onChange={(e) => patchOverride(item.id, { powerFactor: e.target.value })} inputMode="decimal" /></label>
+                        <label>ضریب همزمانی<input className="shil-input" value={override.simultaneityFactor ?? item.simultaneityFactor ?? item.diversityFactor ?? 1} onChange={(e) => patchOverride(item.id, { simultaneityFactor: e.target.value })} inputMode="decimal" /></label>
+                        <label>راندمان/PF<input className="shil-input" value={override.powerFactor ?? item.powerFactor ?? 0.95} onChange={(e) => patchOverride(item.id, { powerFactor: e.target.value })} inputMode="decimal" /></label>
                       </>
                     ) : null}
                     {isMotor ? (
                       <label className="shil-check-row">
                         <input type="checkbox" checked={Boolean(override.hasSoftStarter)} onChange={(e) => patchOverride(item.id, { hasSoftStarter: e.target.checked })} />
-                        Ø³Ø§ÙØªâ€ŒØ§Ø³ØªØ§Ø±ØªØ± Ø¯Ø§Ø±Ø¯Ø› Ø¬Ø±ÛŒØ§Ù† Ø±Ø§Ù‡â€ŒØ§Ù†Ø¯Ø§Ø²ÛŒ Ø§Ø² Û².ÛµÃ— Ø¨Ù‡ Û±.Û²Ã— Ø¬Ø±ÛŒØ§Ù† Ù†Ø§Ù…ÛŒ Ú©Ø§Ù‡Ø´ ÛŒØ§Ø¨Ø¯
+                        سافت‌استارتر دارد؛ جریان راه‌اندازی از ۲.۵× به ۱.۲× جریان نامی کاهش یابد
                       </label>
                     ) : showExpert ? (
-                      <div className="shil-load-kind-note">Ù†ÙˆØ¹ Ø¨Ø§Ø±: Ù…Ù‚Ø§ÙˆÙ…ØªÛŒ/Ø§Ù„Ú©ØªØ±ÙˆÙ†ÛŒÚ©ÛŒ</div>
+                      <div className="shil-load-kind-note">نوع بار: مقاومتی/الکترونیکی</div>
                     ) : null}
                     {showExpert && preview ? (
                       <div className="shil-expert-mini">
-                        <span>Ø¬Ø±ÛŒØ§Ù† Ù†Ø§Ù…ÛŒ: {preview.nominalCurrentA} A</span>
-                        <span>Ø¬Ø±ÛŒØ§Ù† Ú©Ø§Ø±Ú©Ø±Ø¯: {preview.runningCurrentA} A</span>
-                        <span>Ø¬Ø±ÛŒØ§Ù† Ø±Ø§Ù‡â€ŒØ§Ù†Ø¯Ø§Ø²ÛŒ: {preview.startCurrentA} A</span>
-                        <span>Ø¶Ø±ÛŒØ¨ Ø§Ø³ØªØ§Ø±Øª: Ã—{preview.currentStartFactor}</span>
+                        <span>جریان نامی: {preview.nominalCurrentA} A</span>
+                        <span>جریان کارکرد: {preview.runningCurrentA} A</span>
+                        <span>جریان راه‌اندازی: {preview.startCurrentA} A</span>
+                        <span>ضریب استارت: ×{preview.currentStartFactor}</span>
                         <small>{preview.expertReason}</small>
                       </div>
                     ) : null}
@@ -305,7 +305,7 @@ export default function CalculationInputs() {
         ) : null}
 
         <button type="button" className="shil-primary-wide" onClick={confirmLoad}>
-          ØªØ£ÛŒÛŒØ¯ Ø§Ø·Ù„Ø§Ø¹Ø§Øª Ùˆ ÙˆØ±ÙˆØ¯ Ø¨Ù‡ Ù¾ÛŒÚ©Ø±Ø¨Ù†Ø¯ÛŒ ØªÙ†Ø¸ÛŒÙ…Ø§Øª
+          تأیید اطلاعات و ورود به پیکربندی تنظیمات
         </button>
       </div>
     </ShilPageShell>

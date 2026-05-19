@@ -12,7 +12,7 @@ export default function UXFlowController() {
     const record = captureCurrentProjectSnapshot(pathname);
     if (record && showToast && lastSavedPath.current !== pathname) {
       lastSavedPath.current = pathname;
-      setToast({ text: "Ù¾Ø±ÙˆÚ˜Ù‡ Ø¯Ø± Ø¨Ø®Ø´ Ø¯Ø± Ø­Ø§Ù„ Ø§Ø¬Ø±Ø§ Ø°Ø®ÛŒØ±Ù‡ Ø´Ø¯", type: "success" });
+      setToast({ text: "پروژه در بخش در حال اجرا ذخیره شد", type: "success" });
       window.setTimeout(() => setToast(null), 1600);
     }
     return record;
@@ -29,7 +29,7 @@ export default function UXFlowController() {
       debounceRef.current = window.setTimeout(saveNow, 700);
     };
     const toastHandler = (event) => {
-      setToast({ text: event.detail?.message || "Ø§Ù†Ø¬Ø§Ù… Ø´Ø¯", type: event.detail?.type || "info" });
+      setToast({ text: event.detail?.message || "انجام شد", type: event.detail?.type || "info" });
       window.setTimeout(() => setToast(null), 1800);
     };
     window.addEventListener("beforeunload", saveNow);

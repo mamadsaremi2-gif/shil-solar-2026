@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { Database, Wifi, WifiOff, RefreshCcw, Download } from "lucide-react";
 
 import { useDataLayerStore } from "../../data-layer/offline/dataLayerStore.js";

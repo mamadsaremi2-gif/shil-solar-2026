@@ -1,4 +1,4 @@
-export const scenarioCategories = {
+﻿export const scenarioCategories = {
 
   solar: {
     title: "سناریوهای انرژی خورشیدی",

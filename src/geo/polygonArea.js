@@ -1,4 +1,4 @@
-import * as turf from "@turf/turf";
+﻿import * as turf from "@turf/turf";
 
 export function createPolygonArea(
   coordinates

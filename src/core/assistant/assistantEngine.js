@@ -1,4 +1,4 @@
-export function assistantSuggest(project) {
+﻿export function assistantSuggest(project) {
 
   const suggestions = [];
 

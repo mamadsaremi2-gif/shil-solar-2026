@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { FixedSizeList } from "react-window";
 
 export default function VirtualizedList({

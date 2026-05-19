@@ -62,7 +62,7 @@ export const formRegistry = {
     fields: [
       { name: "lengthM", label: "Length m", type: FIELD_TYPES.NUMBER, min: 0 },
       { name: "currentA", label: "Current A", type: FIELD_TYPES.NUMBER, min: 0 },
-      { name: "crossSectionMm2", label: "Cross-section mmÂ²", type: FIELD_TYPES.NUMBER, min: 0 },
+      { name: "crossSectionMm2", label: "Cross-section mm²", type: FIELD_TYPES.NUMBER, min: 0 },
       { name: "material", label: "Material", type: FIELD_TYPES.SELECT, options: ["copper", "aluminum"] }
     ]
   }

@@ -1,4 +1,4 @@
-import localforage from "localforage";
+﻿import localforage from "localforage";
 
 export const offlineStore =
   localforage.createInstance({

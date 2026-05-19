@@ -1,3 +1,3 @@
 export function toEnglishDigits(value) {
-  return String(value || "").replace(/[Û°-Û¹]/g, (d) => "Û°Û±Û²Û³Û´ÛµÛ¶Û·Û¸Û¹".indexOf(d));
+  return String(value || "").replace(/[۰-۹]/g, (d) => "۰۱۲۳۴۵۶۷۸۹".indexOf(d));
 }

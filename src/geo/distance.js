@@ -1,4 +1,4 @@
-import { getDistance }
+﻿import { getDistance }
 from "geolib";
 
 export function calculateDistance(

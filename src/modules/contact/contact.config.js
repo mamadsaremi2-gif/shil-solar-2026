@@ -1,5 +1,5 @@
 export const CONTACT_CONFIG = {
-  title: "Ø§Ø±ØªØ¨Ø§Ø· Ø¨Ø§ Ù…Ø§",
+  title: "ارتباط با ما",
   showEmail: true,
   showPhone: true,
   showWebsite: true,

@@ -1,4 +1,4 @@
-export function preloadCriticalAssets() {
+﻿export function preloadCriticalAssets() {
   const assets = [
     "/",
     "/index.html",

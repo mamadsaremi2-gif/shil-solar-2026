@@ -1,4 +1,4 @@
-export function calculatePanels(energyWh, sunHours, panelPower) {
+﻿export function calculatePanels(energyWh, sunHours, panelPower) {
   const energy = Number(energyWh || 0);
   const hours = Number(sunHours || 5);
   const power = Number(panelPower || 585);

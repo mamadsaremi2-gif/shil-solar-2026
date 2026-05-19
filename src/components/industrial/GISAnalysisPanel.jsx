@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { MapPinned, Ruler, Compass } from "lucide-react";
 import { estimateTilt } from "../../industrial/gis/siteAnalysis.js";
 

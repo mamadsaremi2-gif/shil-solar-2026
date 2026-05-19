@@ -1,4 +1,4 @@
-export function evaluateAlarms(data = {}) {
+﻿export function evaluateAlarms(data = {}) {
   const alarms = [];
 
   if ((data.temperature || 0) > 65) {

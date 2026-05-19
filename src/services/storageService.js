@@ -1,4 +1,4 @@
-export function saveProject(data) {
+﻿export function saveProject(data) {
   const projects = JSON.parse(localStorage.getItem("shil-projects") || "[]");
 
   const project = {

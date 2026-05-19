@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { Activity, CheckCircle2, ShieldCheck, RotateCcw } from "lucide-react";
 
 import { APP_VERSION } from "../../ops/version/appVersion.js";

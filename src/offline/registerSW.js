@@ -1,4 +1,4 @@
-import { Workbox }
+﻿import { Workbox }
 from "workbox-window";
 
 export function registerSW() {

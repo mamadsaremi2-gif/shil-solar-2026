@@ -4,12 +4,12 @@ import { IRAN_CITIES } from "../data/seed/iranCities.js";
 function normalizePersian(value = "") {
   return String(value || "")
     .trim()
-    .replace(/ÙŠ/g, "ÛŒ")
-    .replace(/Ùƒ/g, "Ú©")
-    .replace(/Û€/g, "Ù‡")
-    .replace(/Ø©/g, "Ù‡")
-    .replace(/Ø¤/g, "Ùˆ")
-    .replace(/Ø£|Ø¥|Ø¢/g, "Ø§")
+    .replace(/ي/g, "ی")
+    .replace(/ك/g, "ک")
+    .replace(/ۀ/g, "ه")
+    .replace(/ة/g, "ه")
+    .replace(/ؤ/g, "و")
+    .replace(/أ|إ|آ/g, "ا")
     .replace(/\s+/g, " ");
 }
 
@@ -26,14 +26,14 @@ export function findIranCityByName(city = "", province = "") {
 }
 
 export function getDefaultIranCity() {
-  return findIranCityByName("Ø§ØµÙÙ‡Ø§Ù†", "Ø§ØµÙÙ‡Ø§Ù†") || IRAN_CITIES[0];
+  return findIranCityByName("اصفهان", "اصفهان") || IRAN_CITIES[0];
 }
 
 export default function SmartCityInput({
   value = "",
   onChange = () => {},
   onPick = () => {},
-  placeholder = "Ù†Ø§Ù… Ø´Ù‡Ø± Ø±Ø§ ÙˆØ§Ø±Ø¯ Ú©Ù†Ø› Ù…Ø«Ù„Ø§Ù‹ Ø§ØµÙÙ‡Ø§Ù†",
+  placeholder = "نام شهر را وارد کن؛ مثلاً اصفهان",
   name = "city",
 }) {
   const [focused, setFocused] = useState(false);
@@ -43,9 +43,9 @@ export default function SmartCityInput({
     const scored = IRAN_CITIES.map((item) => {
       const city = normalizePersian(item.name);
       const province = normalizePersian(item.province);
-      const label = `${item.name}ØŒ ${item.province}`;
+      const label = `${item.name}، ${item.province}`;
 
-      if (!query) return { item, score: item.name === "Ø§ØµÙÙ‡Ø§Ù†" ? 0 : 50, label };
+      if (!query) return { item, score: item.name === "اصفهان" ? 0 : 50, label };
       if (city === query) return { item, score: 0, label };
       if (city.startsWith(query)) return { item, score: 1, label };
       if (city.includes(query)) return { item, score: 2, label };

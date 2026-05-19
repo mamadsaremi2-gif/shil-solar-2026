@@ -7,15 +7,15 @@ import { readAdminDefaults, readAdminProjectPathCards } from "../../admin/adminS
 const fallbackOptions = [
   {
     key: "solar",
-    title: "Ø§Ø¬Ø±Ø§ÛŒ Ù¾Ø±ÙˆÚ˜Ù‡ Ø¨Ø§ Ù¾Ù†Ù„ Ø®ÙˆØ±Ø´ÛŒØ¯ÛŒ",
-    description: "Ø·Ø±Ø§Ø­ÛŒ Ø³ÛŒØ³ØªÙ… Ø®ÙˆØ±Ø´ÛŒØ¯ÛŒ Ø¨Ø§ Ù¾Ù†Ù„ØŒ Ø¨Ø§ØªØ±ÛŒØŒ Ø§ÛŒÙ†ÙˆØ±ØªØ± Ùˆ Ø­ÙØ§Ø¸Øª",
+    title: "اجرای پروژه با پنل خورشیدی",
+    description: "طراحی سیستم خورشیدی با پنل، باتری، اینورتر و حفاظت",
     image: "/assets/shil/execution/solar-execution.svg",
     calculationDomain: "solar",
   },
   {
     key: "emergency",
-    title: "Ø§Ø¬Ø±Ø§ÛŒ Ù¾Ø±ÙˆÚ˜Ù‡ Ø¨Ø§ Ø¨Ø±Ù‚ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ",
-    description: "Ø·Ø±Ø§Ø­ÛŒ Ø³ÛŒØ³ØªÙ… Ù¾Ø´ØªÛŒØ¨Ø§Ù† Ø¨Ø§ Ø§ÛŒÙ†ÙˆØ±ØªØ± Ùˆ Ø¨Ø§ØªØ±ÛŒ",
+    title: "اجرای پروژه با برق اضطراری",
+    description: "طراحی سیستم پشتیبان با اینورتر و باتری",
     image: "/assets/shil/execution/emergency-inverter-battery.svg",
     calculationDomain: "emergency",
   },
@@ -70,7 +70,7 @@ export default function ProjectPath() {
 
   const confirm = () => {
     if (!selectedOption) {
-      setWarning("Ù„Ø·ÙØ§Ù‹ ÛŒÚ©ÛŒ Ø§Ø² Ù…Ø³ÛŒØ±Ù‡Ø§ÛŒ Ù¾Ø±ÙˆÚ˜Ù‡ Ø±Ø§ Ø§Ù†ØªØ®Ø§Ø¨ Ú©Ù†ÛŒØ¯.");
+      setWarning("لطفاً یکی از مسیرهای پروژه را انتخاب کنید.");
       return;
     }
 
@@ -92,10 +92,10 @@ export default function ProjectPath() {
       approveProjectStep("method");
       approveProjectStep("inputs");
       approveProjectStep("system");
-      localStorage.setItem("shil:selectedCalculationMethod", JSON.stringify({ key: "emergency", title: "Ø¨Ø±Ù‚ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ" }));
+      localStorage.setItem("shil:selectedCalculationMethod", JSON.stringify({ key: "emergency", title: "برق اضطراری" }));
       const adminDefaults = readAdminDefaults();
       localStorage.setItem("shil:emergencyPowerSettings", JSON.stringify({ requiredEmergencyHours: adminDefaults.emergencyRequiredHours || 2, safetyFactor: adminDefaults.emergencySafetyFactor || 1.25, autoMode: true }));
-      navigate("/new-project/summary/emergency", { state: { method: "Ø¨Ø±Ù‚ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ" } });
+      navigate("/new-project/summary/emergency", { state: { method: "برق اضطراری" } });
       return;
     }
 
@@ -103,16 +103,16 @@ export default function ProjectPath() {
   };
 
   return (
-    <EngineeringPageShell title="Ø§Ù†ØªØ®Ø§Ø¨ Ù…Ø³ÛŒØ± Ù¾Ø±ÙˆÚ˜Ù‡">
+    <EngineeringPageShell title="انتخاب مسیر پروژه">
       <section className="shil-card-stack">
         <div className="shil-section-card">
           <div className="shil-section-head">
-            <h2>Ù…Ø³ÛŒØ± Ù¾Ø±ÙˆÚ˜Ù‡ Ø±Ø§ Ø§Ù†ØªØ®Ø§Ø¨ Ú©Ù†ÛŒØ¯</h2>
+            <h2>مسیر پروژه را انتخاب کنید</h2>
             <span>Project Path</span>
           </div>
 
           <p className="shil-section-note">
-            Ø¨Ø¹Ø¯ Ø§Ø² ØªØ£ÛŒÛŒØ¯ Ù…Ø³ÛŒØ± Ø®ÙˆØ±Ø´ÛŒØ¯ÛŒ ÙˆØ§Ø±Ø¯ Ø±ÙˆØ´ Ù…Ø­Ø§Ø³Ø¨Ø§Øª Ù…ÛŒâ€ŒØ´ÙˆÛŒØ¯Ø› Ù…Ø³ÛŒØ± Ø¨Ø±Ù‚ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ Ù…Ø³ØªÙ‚ÛŒÙ… Ø¨Ù‡ Ú†Ú©ÛŒØ¯Ù‡ Ø§Ø·Ù„Ø§Ø¹Ø§Øª Ù…ÛŒâ€ŒØ±ÙˆØ¯.
+            بعد از تأیید مسیر خورشیدی وارد روش محاسبات می‌شوید؛ مسیر برق اضطراری مستقیم به چکیده اطلاعات می‌رود.
           </p>
 
           <div className="shil-execution-grid shil-project-path-two-cards">
@@ -124,7 +124,7 @@ export default function ProjectPath() {
                 onClick={() => { setSelected(option.key); setWarning(""); }}
               >
                 {option.image ? <img src={option.image} alt="" className="shil-execution-image" /> : null}
-                <span className="shil-execution-check">{selected === option.key ? "âœ“" : ""}</span>
+                <span className="shil-execution-check">{selected === option.key ? "✓" : ""}</span>
                 <h3>{option.title}</h3>
                 <p>{option.description}</p>
               </button>
@@ -132,7 +132,7 @@ export default function ProjectPath() {
           </div>
 
           {warning ? <div className="shil-inline-warning">{warning}</div> : null}
-          <button type="button" className="shil-primary-wide" onClick={confirm}>ØªØ£ÛŒÛŒØ¯ Ù…Ø³ÛŒØ± Ù¾Ø±ÙˆÚ˜Ù‡</button>
+          <button type="button" className="shil-primary-wide" onClick={confirm}>تأیید مسیر پروژه</button>
         </div>
       </section>
     </EngineeringPageShell>

@@ -1,4 +1,4 @@
-export function calculatePanels(
+﻿export function calculatePanels(
   energy,
   sunHours,
   panelPower

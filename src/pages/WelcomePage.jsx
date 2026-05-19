@@ -11,7 +11,7 @@ export default function WelcomePage() {
       />
 
       <Link className="shil-primary-entry shil-welcome-entry-button" to="/dashboard">
-        ÙˆØ±ÙˆØ¯ Ø¨Ù‡ Ø¯Ø§Ø´Ø¨ÙˆØ±Ø¯
+        ورود به داشبورد
       </Link>
     </main>
   );

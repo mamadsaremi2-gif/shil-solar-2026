@@ -22,17 +22,17 @@ const options = [
 
   {
     value: "solar",
-    label: "Ø®ÙˆØ±Ø´ÛŒØ¯ÛŒ",
+    label: "خورشیدی",
   },
 
   {
     value: "hybrid",
-    label: "Ù‡ÛŒØ¨Ø±ÛŒØ¯",
+    label: "هیبرید",
   },
 
   {
     value: "backup",
-    label: "Ø¨Ø±Ù‚ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ",
+    label: "برق اضطراری",
   },
 
 ];
@@ -97,48 +97,48 @@ export default function AdvancedProjectForm() {
       </div>
 
       <FormSection
-        title="Ø§Ø·Ù„Ø§Ø¹Ø§Øª Ù¾Ø±ÙˆÚ˜Ù‡"
+        title="اطلاعات پروژه"
         subtitle="Project Information"
       >
 
         <InputField
-          label="Ù†Ø§Ù… Ù¾Ø±ÙˆÚ˜Ù‡"
+          label="نام پروژه"
           error={errors.projectName?.message}
         >
 
           <input
             {...register("projectName")}
-            placeholder="Ù…Ø«Ù„Ø§Ù‹ Ù†ÛŒØ±ÙˆÚ¯Ø§Ù‡ Ø®ÙˆØ±Ø´ÛŒØ¯ÛŒ"
+            placeholder="مثلاً نیروگاه خورشیدی"
           />
 
         </InputField>
 
         <InputField
-          label="Ù†Ø§Ù… Ú©Ø§Ø±ÙØ±Ù…Ø§"
+          label="نام کارفرما"
           error={errors.clientName?.message}
         >
 
           <input
             {...register("clientName")}
-            placeholder="Ù†Ø§Ù… Ø´Ø®Øµ ÛŒØ§ Ø´Ø±Ú©Øª"
+            placeholder="نام شخص یا شرکت"
           />
 
         </InputField>
 
         <InputField
-          label="Ø´Ù‡Ø± Ù¾Ø±ÙˆÚ˜Ù‡"
+          label="شهر پروژه"
           error={errors.city?.message}
         >
 
           <input
             {...register("city")}
-            placeholder="Ù…Ø«Ù„Ø§Ù‹ Ø´ÛŒØ±Ø§Ø²"
+            placeholder="مثلاً شیراز"
           />
 
         </InputField>
 
         <InputField
-          label="Ù†ÙˆØ¹ Ù¾Ø±ÙˆÚ˜Ù‡"
+          label="نوع پروژه"
           error={errors.projectType?.message}
         >
 
@@ -157,12 +157,12 @@ export default function AdvancedProjectForm() {
       </FormSection>
 
       <FormSection
-        title="Ù¾Ø§Ø±Ø§Ù…ØªØ±Ù‡Ø§ÛŒ Ø§Ù†Ø±Ú˜ÛŒ"
+        title="پارامترهای انرژی"
         subtitle="Energy Parameters"
       >
 
         <InputField
-          label="Ù…ØµØ±Ù Ø±ÙˆØ²Ø§Ù†Ù‡"
+          label="مصرف روزانه"
           error={errors.dailyEnergy?.message}
         >
 
@@ -175,7 +175,7 @@ export default function AdvancedProjectForm() {
         </InputField>
 
         <InputField
-          label="ØªÙˆØ§Ù† Ù„Ø­Ø¸Ù‡â€ŒØ§ÛŒ"
+          label="توان لحظه‌ای"
           error={errors.peakLoad?.message}
         >
 
@@ -188,7 +188,7 @@ export default function AdvancedProjectForm() {
         </InputField>
 
         <InputField
-          label="ÙˆÙ„ØªØ§Ú˜ Ø¨Ø§ØªØ±ÛŒ"
+          label="ولتاژ باتری"
         >
 
           <select
@@ -212,7 +212,7 @@ export default function AdvancedProjectForm() {
         </InputField>
 
         <InputField
-          label="Ø²Ù…Ø§Ù† Ø¨Ø±Ù‚ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ Ù…ÙˆØ±Ø¯ Ù†ÛŒØ§Ø²"
+          label="زمان برق اضطراری مورد نیاز"
           error={errors.backupHours?.message}
         >
 
@@ -227,18 +227,18 @@ export default function AdvancedProjectForm() {
       </FormSection>
 
       <FormSection
-        title="ØªÙˆØ¶ÛŒØ­Ø§Øª Ù¾Ø±ÙˆÚ˜Ù‡"
+        title="توضیحات پروژه"
         subtitle="Technical Notes"
       >
 
         <InputField
-          label="ÛŒØ§Ø¯Ø¯Ø§Ø´Øª ÙÙ†ÛŒ"
+          label="یادداشت فنی"
         >
 
           <textarea
             rows="6"
             {...register("notes")}
-            placeholder="Ø´Ø±Ø§ÛŒØ· Ù¾Ø±ÙˆÚ˜Ù‡..."
+            placeholder="شرایط پروژه..."
           />
 
         </InputField>
@@ -250,7 +250,7 @@ export default function AdvancedProjectForm() {
         className="advanced-submit-v15"
       >
 
-        Ø°Ø®ÛŒØ±Ù‡ Ùˆ Ø§Ø¹ØªØ¨Ø§Ø±Ø³Ù†Ø¬ÛŒ ÙØ±Ù…
+        ذخیره و اعتبارسنجی فرم
 
       </button>
 

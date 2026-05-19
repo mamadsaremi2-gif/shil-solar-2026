@@ -9,14 +9,14 @@ export async function generateAIInstallationImage(previewPayload, options = {}) 
   const imageDataUrl = previewPayload?.image?.src || previewPayload?.image?.dataUrl || "";
 
   if (!previewPayload?.prompt) {
-    return { ok: false, serviceVersion: SHIL_AI_IMAGE_SERVICE_VERSION, error: "Ù¾Ø±Ø§Ù…Ù¾Øª ØªÙˆÙ„ÛŒØ¯ ØªØµÙˆÛŒØ± Ø¢Ù…Ø§Ø¯Ù‡ Ù†ÛŒØ³Øª." };
+    return { ok: false, serviceVersion: SHIL_AI_IMAGE_SERVICE_VERSION, error: "پرامپت تولید تصویر آماده نیست." };
   }
 
   if (!isDataImage(imageDataUrl)) {
     return {
       ok: false,
       serviceVersion: SHIL_AI_IMAGE_SERVICE_VERSION,
-      error: "Ø¨Ø±Ø§ÛŒ ØªÙˆÙ„ÛŒØ¯ ØªØµÙˆÛŒØ± ÙˆØ§Ù‚Ø¹ÛŒØŒ Ø¹Ú©Ø³ Ù…Ø­Ù„ Ù†ØµØ¨ Ø¨Ø§ÛŒØ¯ Ø¨Ù‡ ØµÙˆØ±Øª ÙØ§ÛŒÙ„/ØªØµÙˆÛŒØ± Ø¯Ø§Ø®Ù„ Ø§Ù¾ Ø«Ø¨Øª Ø´Ø¯Ù‡ Ø¨Ø§Ø´Ø¯ØŒ Ù†Ù‡ ÙÙ‚Ø· Ù…Ø³ÛŒØ± Ù…ØªÙ†ÛŒ.",
+      error: "برای تولید تصویر واقعی، عکس محل نصب باید به صورت فایل/تصویر داخل اپ ثبت شده باشد، نه فقط مسیر متنی.",
     };
   }
 
@@ -40,7 +40,7 @@ export async function generateAIInstallationImage(previewPayload, options = {}) 
     return {
       ok: false,
       serviceVersion: SHIL_AI_IMAGE_SERVICE_VERSION,
-      error: error?.message || "Ø§Ø±ØªØ¨Ø§Ø· Ø¨Ø§ Ø³Ø±ÙˆÛŒØ³ ØªÙˆÙ„ÛŒØ¯ ØªØµÙˆÛŒØ± Ø¨Ø±Ù‚Ø±Ø§Ø± Ù†Ø´Ø¯.",
+      error: error?.message || "ارتباط با سرویس تولید تصویر برقرار نشد.",
     };
   }
 }

@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { CheckCircle2, ClipboardCheck } from "lucide-react";
 import { installerChecklist } from "../../industrial/installer/installerChecklist.js";
 

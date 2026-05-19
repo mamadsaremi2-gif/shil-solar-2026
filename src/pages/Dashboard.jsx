@@ -20,7 +20,7 @@ export default function Dashboard() {
   }, []);
 
   const items = useMemo(
-    () => dashboardItems.map((item) => item.title === "Ø®Ø±ÙˆØ¬"
+    () => dashboardItems.map((item) => item.title === "خروج"
       ? {
           ...item,
           onClick: () => {
@@ -37,7 +37,7 @@ export default function Dashboard() {
       <div className="shil-master-bg shil-dashboard-bg" />
       <div className="shil-online-chip" data-online={online ? "true" : "false"}>
         <span />
-        {online ? "Ú©Ø§Ø±Ø¨Ø± Ø¢Ù†Ù„Ø§ÛŒÙ† Ø§Ø³Øª" : "Ú©Ø§Ø±Ø¨Ø± Ø¢ÙÙ„Ø§ÛŒÙ† Ø§Ø³Øª"}
+        {online ? "کاربر آنلاین است" : "کاربر آفلاین است"}
       </div>
       <IosIconGrid items={items} gridClass="dashboard-icons" />
     </div>

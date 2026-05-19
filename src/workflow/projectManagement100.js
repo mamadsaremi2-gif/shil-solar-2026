@@ -28,7 +28,7 @@ function getDomain() {
 
 function getTitle(domain) {
   const project = safeParse("shil:projectInfoDraft", {});
-  return project.projectName || project.name || project.title || (domain === "emergency" ? "Ù¾Ø±ÙˆÚ˜Ù‡ Ø¨Ø±Ù‚ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ" : "Ù¾Ø±ÙˆÚ˜Ù‡ Ø®ÙˆØ±Ø´ÛŒØ¯ÛŒ");
+  return project.projectName || project.name || project.title || (domain === "emergency" ? "پروژه برق اضطراری" : "پروژه خورشیدی");
 }
 
 function normalizeResumeUrl(pathname, domain, step) {

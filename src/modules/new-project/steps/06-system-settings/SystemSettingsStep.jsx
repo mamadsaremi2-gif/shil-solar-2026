@@ -13,20 +13,20 @@ export function SystemSettingsStep({ value = {} }) {
     <div className="shil-card-stack shil-system-settings-mini shil-system-settings-redirect">
       <div className="shil-section-card">
         <div className="shil-section-head">
-          <h2>ØªÙ†Ø¸ÛŒÙ…Ø§Øª Ø³ÛŒØ³ØªÙ…</h2>
-          <span>Ù…Ø³ÛŒØ± Ø¬Ø¯ÛŒØ¯ ÙØ¹Ø§Ù„</span>
+          <h2>تنظیمات سیستم</h2>
+          <span>مسیر جدید فعال</span>
         </div>
         <p className="shil-muted-text">
-          Ø¨Ø§Ù†Ú©â€ŒÙ‡Ø§ÛŒ Ù¾Ù†Ù„ Ø®ÙˆØ±Ø´ÛŒØ¯ÛŒØŒ Ø§ÛŒÙ†ÙˆØ±ØªØ± Ø®ÙˆØ±Ø´ÛŒØ¯ÛŒ Ùˆ Ø¨Ø§ØªØ±ÛŒ Ø§Ø² Ø§ÛŒÙ† Ù…Ø±Ø­Ù„Ù‡ Ù‚Ø¯ÛŒÙ…ÛŒ Ø­Ø°Ù Ø´Ø¯Ù†Ø¯ Ùˆ Ù†Ø³Ø®Ù‡ Ù†Ù‡Ø§ÛŒÛŒ ÙÙ‚Ø· Ø¯Ø± ØµÙØ­Ù‡ Ø§ØµÙ„ÛŒ ØªÙ†Ø¸ÛŒÙ…Ø§Øª Ø³ÛŒØ³ØªÙ… Ù…Ø¯ÛŒØ±ÛŒØª Ù…ÛŒâ€ŒØ´ÙˆØ¯.
+          بانک‌های پنل خورشیدی، اینورتر خورشیدی و باتری از این مرحله قدیمی حذف شدند و نسخه نهایی فقط در صفحه اصلی تنظیمات سیستم مدیریت می‌شود.
         </p>
         <div className="shil-result-grid">
-          <div><span>Ø§ÛŒÙ†ÙˆØ±ØªØ± Ù¾ÛŒØ´Ù†Ù‡Ø§Ø¯ÛŒ</span><strong>{design.inverter?.title || "â€”"}</strong></div>
-          <div><span>Ø¨Ø§ØªØ±ÛŒ Ù¾ÛŒØ´Ù†Ù‡Ø§Ø¯ÛŒ</span><strong>{design.battery?.battery?.title || "â€”"}</strong></div>
-          <div><span>Ù¾Ù†Ù„ Ù¾ÛŒØ´Ù†Ù‡Ø§Ø¯ÛŒ</span><strong>{design.panel?.title || "â€”"}</strong></div>
-          <div><span>ÙˆØ¶Ø¹ÛŒØª</span><strong>{design.valid ? "Ø¢Ù…Ø§Ø¯Ù‡ ØªØ§ÛŒÛŒØ¯" : "Ù†ÛŒØ§Ø²Ù…Ù†Ø¯ ØªÚ©Ù…ÛŒÙ„ Ø¯Ø§Ø¯Ù‡"}</strong></div>
+          <div><span>اینورتر پیشنهادی</span><strong>{design.inverter?.title || "—"}</strong></div>
+          <div><span>باتری پیشنهادی</span><strong>{design.battery?.battery?.title || "—"}</strong></div>
+          <div><span>پنل پیشنهادی</span><strong>{design.panel?.title || "—"}</strong></div>
+          <div><span>وضعیت</span><strong>{design.valid ? "آماده تایید" : "نیازمند تکمیل داده"}</strong></div>
         </div>
         <Link className="shil-primary-action" to="/new-project/system/solar">
-          ÙˆØ±ÙˆØ¯ Ø¨Ù‡ ØªÙ†Ø¸ÛŒÙ…Ø§Øª Ù†Ù‡Ø§ÛŒÛŒ Ø³ÛŒØ³ØªÙ…
+          ورود به تنظیمات نهایی سیستم
         </Link>
       </div>
     </div>

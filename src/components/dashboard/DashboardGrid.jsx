@@ -1,7 +1,7 @@
 import React from "react";
 import DashboardCard from "./DashboardCard.jsx";
 
-// Ø¢ÛŒÚ©ÙˆÙ†â€ŒÙ‡Ø§ÛŒ Ù†Ø¦ÙˆÙ†ÛŒ Ø¨Ù‡â€ŒØµÙˆØ±Øª Ú©Ø§Ù…Ù¾ÙˆÙ†Ù†Øª React
+// آیکون‌های نئونی به‌صورت کامپوننت React
 import {
   NeonProjects,
   NeonNewProject,
@@ -15,43 +15,43 @@ const dashboardItems = [
   {
     to: "/projects",
     icon: <NeonProjects />,
-    title: "Ù¾Ø±ÙˆÚ˜Ù‡â€ŒÙ‡Ø§",
-    subtitle: "Ø¬Ø§Ø±ÛŒ Ùˆ Ù†Ù‡Ø§ÛŒÛŒ",
+    title: "پروژه‌ها",
+    subtitle: "جاری و نهایی",
     tone: "cyan",
   },
   {
     to: "/new-project",
     icon: <NeonNewProject />,
-    title: "Ù¾Ø±ÙˆÚ˜Ù‡ Ø¬Ø¯ÛŒØ¯",
-    subtitle: "Ù…Ø³ÛŒØ± Û¸ Ù…Ø±Ø­Ù„Ù‡â€ŒØ§ÛŒ",
+    title: "پروژه جدید",
+    subtitle: "مسیر ۸ مرحله‌ای",
     tone: "blue",
   },
   {
     to: "/scenarios",
     icon: <NeonScenarios />,
-    title: "Ø³Ù†Ø§Ø±ÛŒÙˆÙ‡Ø§ÛŒ Ø¢Ù…Ø§Ø¯Ù‡",
-    subtitle: "Ø®ÙˆØ±Ø´ÛŒØ¯ÛŒ Ùˆ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ",
+    title: "سناریوهای آماده",
+    subtitle: "خورشیدی و اضطراری",
     tone: "amber",
   },
   {
     to: "/contact",
     icon: <NeonContact />,
-    title: "Ø§Ø±ØªØ¨Ø§Ø· Ø¨Ø§ Ù…Ø§",
-    subtitle: "Ø±Ø§Ù‡â€ŒÙ‡Ø§ÛŒ ØªÙ…Ø§Ø³",
+    title: "ارتباط با ما",
+    subtitle: "راه‌های تماس",
     tone: "purple",
   },
   {
     to: "/feedback",
     icon: <NeonFeedback />,
-    title: "Ø¨Ø§Ø²Ø®ÙˆØ±Ø¯ Ú©Ø§Ø±Ø¨Ø±",
-    subtitle: "Ø«Ø¨Øª Ù…Ø´Ú©Ù„/Ù¾ÛŒØ´Ù†Ù‡Ø§Ø¯",
+    title: "بازخورد کاربر",
+    subtitle: "ثبت مشکل/پیشنهاد",
     tone: "pink",
   },
   {
     to: "/assistant",
     icon: <NeonAssistant />,
-    title: "Ø¯Ø³ØªÛŒØ§Ø± Ù‡ÙˆØ´Ù…Ù†Ø¯",
-    subtitle: "Ú©Ù†ØªØ±Ù„ Ù…Ù‡Ù†Ø¯Ø³ÛŒ",
+    title: "دستیار هوشمند",
+    subtitle: "کنترل مهندسی",
     tone: "violet",
   },
 ];
@@ -60,8 +60,8 @@ export default function DashboardGrid() {
   return (
     <section className="dash-panel-v15">
       <div className="dash-section-head">
-        <h2>Ø¯Ø³ØªØ±Ø³ÛŒ Ø³Ø±ÛŒØ¹</h2>
-        <span>Û²Ã—Û³</span>
+        <h2>دسترسی سریع</h2>
+        <span>۲×۳</span>
       </div>
 
       <div className="dash-grid-v15">

@@ -1,4 +1,4 @@
-export const installerChecklist = [
+﻿export const installerChecklist = [
   {
     id: "gps",
     title: "ثبت موقعیت GPS",

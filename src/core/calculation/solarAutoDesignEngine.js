@@ -2,7 +2,7 @@ import { SHIL_LITHIUM_BATTERIES, SHIL_SOLAR_INVERTERS, SHIL_SOLAR_PANELS, SHIL_S
 
 const num = (value, fallback = 0) => {
   if (value === null || value === undefined || value === "") return fallback;
-  const normalized = String(value).replace(/[Û°-Û¹]/g, (d) => "Û°Û±Û²Û³Û´ÛµÛ¶Û·Û¸Û¹".indexOf(d)).replace(/[Ù -Ù©]/g, (d) => "Ù Ù¡Ù¢Ù£Ù¤Ù¥Ù¦Ù§Ù¨Ù©".indexOf(d));
+  const normalized = String(value).replace(/[۰-۹]/g, (d) => "۰۱۲۳۴۵۶۷۸۹".indexOf(d)).replace(/[٠-٩]/g, (d) => "٠١٢٣٤٥٦٧٨٩".indexOf(d));
   const n = Number(normalized);
   return Number.isFinite(n) ? n : fallback;
 };
@@ -12,9 +12,9 @@ const clamp = (value, min, max) => Math.min(max, Math.max(min, num(value, min)))
 const pickById = (items, id) => items.find((item) => item.id === id);
 
 const PERSIAN_SYSTEM_LABEL = {
-  offgrid: "Ø¢ÙÚ¯Ø±ÛŒØ¯",
-  ongrid: "Ø¢Ù†Ú¯Ø±ÛŒØ¯",
-  hybrid: "Ù‡ÛŒØ¨Ø±ÛŒØ¯"
+  offgrid: "آفگرید",
+  ongrid: "آنگرید",
+  hybrid: "هیبرید"
 };
 
 function normalizeLoad(load = {}) {
@@ -105,7 +105,7 @@ function chooseBattery(systemVoltage, requiredUsableWh, preferredBatteryVoltage,
     nominalBankVoltage: battery.nominalVoltage * seriesCount,
     grossEnergyWh,
     usableEnergyWh,
-    voltageRange: `${battery.minVoltage * seriesCount} ØªØ§ ${battery.maxVoltage * seriesCount} ÙˆÙ„Øª`,
+    voltageRange: `${battery.minVoltage * seriesCount} تا ${battery.maxVoltage * seriesCount} ولت`,
     stringUsableWh: round(usableStringWh, 0),
     manual: Boolean(manual)
   };
@@ -147,14 +147,14 @@ function sizePvArray({ dailyWh, autonomyDays, panel, inverter, env, manualPanelC
 }
 
 function cableByCurrent(currentA, dc = true) {
-  if (currentA > 220) return dc ? "95mmÂ² ÛŒØ§ Ø¨Ø§Ø³â€ŒØ¨Ø§Ø± Ø·Ø±Ø§Ø­ÛŒâ€ŒØ´Ø¯Ù‡" : "70mmÂ²";
-  if (currentA > 160) return "70mmÂ²";
-  if (currentA > 120) return "50mmÂ²";
-  if (currentA > 80) return "35mmÂ²";
-  if (currentA > 50) return "25mmÂ²";
-  if (currentA > 32) return "16mmÂ²";
-  if (currentA > 20) return "10mmÂ²";
-  return dc ? "6mmÂ²" : "4mmÂ²";
+  if (currentA > 220) return dc ? "95mm² یا باس‌بار طراحی‌شده" : "70mm²";
+  if (currentA > 160) return "70mm²";
+  if (currentA > 120) return "50mm²";
+  if (currentA > 80) return "35mm²";
+  if (currentA > 50) return "25mm²";
+  if (currentA > 32) return "16mm²";
+  if (currentA > 20) return "10mm²";
+  return dc ? "6mm²" : "4mm²";
 }
 
 function sizeProtection({ designPowerW, inverter, inverterCount, pvArray, batteryDesign }) {
@@ -171,17 +171,17 @@ function sizeProtection({ designPowerW, inverter, inverterCount, pvArray, batter
     dcCable: cableByCurrent(dcCurrentA, true),
     acCable: cableByCurrent(acCurrentA, false),
     batteryCable: cableByCurrent(batteryBranchCurrentA, true),
-    pvCable: pvArray.totalCurrentA > 45 ? "10mmÂ²" : "6mmÂ²",
+    pvCable: pvArray.totalCurrentA > 45 ? "10mm²" : "6mm²",
     pvFuseA,
     dcBreakerA,
     acBreakerA,
     inverterParallel: inverterCount,
     protectionItems: SHIL_SOLAR_PROTECTION_BANK,
     report: [
-      `Ø¬Ø±ÛŒØ§Ù† DC Ø§ÛŒÙ†ÙˆØ±ØªØ± Ø­Ø¯ÙˆØ¯ ${round(dcCurrentA, 1)} Ø¢Ù…Ù¾Ø± Ø§Ø³ØªØ› Ú©Ø§Ø¨Ù„ ${cableByCurrent(dcCurrentA, true)} Ø¨Ø§ Ø¯Ø±Ù†Ø¸Ø±Ú¯Ø±ÙØªÙ† Ø¬Ø±ÛŒØ§Ù† Ùˆ Ø§ÙØª ÙˆÙ„ØªØ§Ú˜ Ù¾ÛŒØ´Ù†Ù‡Ø§Ø¯ Ø´Ø¯.`,
-      `Ø¬Ø±ÛŒØ§Ù† AC Ø®Ø±ÙˆØ¬ÛŒ Ø­Ø¯ÙˆØ¯ ${round(acCurrentA, 1)} Ø¢Ù…Ù¾Ø± Ø§Ø³ØªØ› Ø¨Ø±ÛŒÚ©Ø± ${acBreakerA} Ø¢Ù…Ù¾Ø± Ùˆ Ú©Ø§Ø¨Ù„ ${cableByCurrent(acCurrentA, false)} Ø¨Ø±Ø§ÛŒ Ø®Ø±ÙˆØ¬ÛŒ Ù¾ÛŒØ´Ù†Ù‡Ø§Ø¯ Ø´Ø¯.`,
-      `ÙÛŒÙˆØ² Ù‡Ø± Ø±Ø´ØªÙ‡ Ù¾Ù†Ù„ ${pvFuseA} Ø¢Ù…Ù¾Ø± Ø§Ø³ØªØ› Ù…Ù‚Ø¯Ø§Ø± Ø¨Ø± Ø§Ø³Ø§Ø³ Ø¶Ø±ÛŒØ¨ 1.56 Ø¬Ø±ÛŒØ§Ù† Ù¾Ù†Ù„ Ø§Ù†ØªØ®Ø§Ø¨ Ø´Ø¯.`,
-      `Ú©Ø§Ø¨Ù„ Ø¨Ø§ØªØ±ÛŒ Ø¨Ø± Ø§Ø³Ø§Ø³ Ø¬Ø±ÛŒØ§Ù† Ø´Ø§Ø®Ù‡ Ø¨Ø§ØªØ±ÛŒ ${round(batteryBranchCurrentA, 1)} Ø¢Ù…Ù¾Ø± Ø§Ù†ØªØ®Ø§Ø¨ Ø´Ø¯.`
+      `جریان DC اینورتر حدود ${round(dcCurrentA, 1)} آمپر است؛ کابل ${cableByCurrent(dcCurrentA, true)} با درنظرگرفتن جریان و افت ولتاژ پیشنهاد شد.`,
+      `جریان AC خروجی حدود ${round(acCurrentA, 1)} آمپر است؛ بریکر ${acBreakerA} آمپر و کابل ${cableByCurrent(acCurrentA, false)} برای خروجی پیشنهاد شد.`,
+      `فیوز هر رشته پنل ${pvFuseA} آمپر است؛ مقدار بر اساس ضریب 1.56 جریان پنل انتخاب شد.`,
+      `کابل باتری بر اساس جریان شاخه باتری ${round(batteryBranchCurrentA, 1)} آمپر انتخاب شد.`
     ]
   };
 }
@@ -189,15 +189,15 @@ function sizeProtection({ designPowerW, inverter, inverterCount, pvArray, batter
 function buildValidation({ load, designPowerW, designSurgeW, inverter, inverterCount, battery, requiredBatteryWh, pvArray, env }) {
   const checks = [];
   const push = (key, ok, level, message, fix = "") => checks.push({ key, ok, level: ok ? "ok" : level, message, fix });
-  push("load", load.totalPowerW > 0 && load.totalEnergyWh > 0, "error", "Ø§Ø·Ù„Ø§Ø¹Ø§Øª ØªÙˆØ§Ù† Ùˆ Ø§Ù†Ø±Ú˜ÛŒ Ù…ØµØ±ÙÛŒ Ù…Ø¹ØªØ¨Ø± Ø§Ø³Øª.", "Ø±ÙˆØ´ Ù…Ø­Ø§Ø³Ø¨Ù‡ Ø¨Ø§Ø± Ø±Ø§ ØªÚ©Ù…ÛŒÙ„ Ú©Ù†ÛŒØ¯.");
-  push("inverter-power", inverter.ratedPowerW * inverterCount >= designPowerW, "error", "ØªÙˆØ§Ù† Ù†Ø§Ù…ÛŒ Ø§ÛŒÙ†ÙˆØ±ØªØ± ØªÙˆØ§Ù† Ø·Ø±Ø§Ø­ÛŒ Ø±Ø§ Ù¾ÙˆØ´Ø´ Ù…ÛŒâ€ŒØ¯Ù‡Ø¯.", "Ù…Ø¯Ù„ Ø¨Ø§Ù„Ø§ØªØ± ÛŒØ§ ØªØ¹Ø¯Ø§Ø¯ Ø§ÛŒÙ†ÙˆØ±ØªØ± Ø¨ÛŒØ´ØªØ± Ø§Ù†ØªØ®Ø§Ø¨ Ø´ÙˆØ¯.");
-  push("inverter-surge", inverter.surgePowerW * inverterCount >= designSurgeW, "warning", "ØªÙˆØ§Ù† Ù„Ø­Ø¸Ù‡â€ŒØ§ÛŒ Ø§ÛŒÙ†ÙˆØ±ØªØ± Ø¨Ø±Ø§ÛŒ Ø±Ø§Ù‡â€ŒØ§Ù†Ø¯Ø§Ø²ÛŒ Ø¨Ø§Ø±Ù‡Ø§ Ú©Ø§ÙÛŒ Ø§Ø³Øª.", "Ø¨Ø§Ø± Ù…ÙˆØªÙˆØ±ÛŒ ÛŒØ§ Ø³Ø§ÙØªâ€ŒØ§Ø³ØªØ§Ø±ØªØ± Ø±Ø§ Ø¨Ø§Ø²Ø¨ÛŒÙ†ÛŒ Ú©Ù†ÛŒØ¯.");
-  push("battery-energy", battery.usableEnergyWh >= requiredBatteryWh, "error", "Ø¸Ø±ÙÛŒØª Ù‚Ø§Ø¨Ù„ Ø§Ø³ØªÙØ§Ø¯Ù‡ Ø¨Ø§ØªØ±ÛŒ Ø§Ù†Ø±Ú˜ÛŒ Ù…ÙˆØ±Ø¯ Ù†ÛŒØ§Ø² Ø±Ø§ Ù¾ÙˆØ´Ø´ Ù…ÛŒâ€ŒØ¯Ù‡Ø¯.", "ØªØ¹Ø¯Ø§Ø¯ Ù…ÙˆØ§Ø²ÛŒ Ø¨Ø§ØªØ±ÛŒ Ø§ÙØ²Ø§ÛŒØ´ ÛŒØ§Ø¨Ø¯.");
-  push("battery-voltage", battery.bankVoltageV >= inverter.batteryMinVoltage && battery.bankVoltageV <= inverter.batteryMaxVoltage, "error", "ÙˆÙ„ØªØ§Ú˜ Ø¨Ø§Ù†Ú© Ø¨Ø§ØªØ±ÛŒ Ø¨Ø§ ÙˆØ±ÙˆØ¯ÛŒ Ø§ÛŒÙ†ÙˆØ±ØªØ± Ø³Ø§Ø²Ú¯Ø§Ø± Ø§Ø³Øª.", "Ø¢Ø±Ø§ÛŒØ´ Ø³Ø±ÛŒ Ø¨Ø§ØªØ±ÛŒ Ø§ØµÙ„Ø§Ø­ Ø´ÙˆØ¯.");
-  push("mppt-vmp", pvArray.hotStringVmp >= inverter.mpptMinV && pvArray.stringVmp <= inverter.mpptMaxV, "warning", "ÙˆÙ„ØªØ§Ú˜ Ú©Ø§Ø±ÛŒ Ø±Ø´ØªÙ‡ Ù¾Ù†Ù„ Ø¯Ø§Ø®Ù„ Ù…Ø­Ø¯ÙˆØ¯Ù‡ MPPT Ø§Ø³Øª.", "ØªØ¹Ø¯Ø§Ø¯ Ø³Ø±ÛŒ Ù¾Ù†Ù„ Ø§ØµÙ„Ø§Ø­ Ø´ÙˆØ¯.");
-  push("mppt-voc", pvArray.coldStringVoc <= (inverter.maxDcVoltage || inverter.mpptMaxV), "error", "ÙˆÙ„ØªØ§Ú˜ Ù…Ø¯Ø§Ø± Ø¨Ø§Ø² Ø³Ø±Ø¯ Ù¾Ù†Ù„ Ø§Ø² Ø³Ù‚Ù Ù…Ø¬Ø§Ø² DC Ø¹Ø¨ÙˆØ± Ù†Ù…ÛŒâ€ŒÚ©Ù†Ø¯.", "ØªØ¹Ø¯Ø§Ø¯ Ø³Ø±ÛŒ Ù¾Ù†Ù„ Ú©Ø§Ù‡Ø´ ÛŒØ§Ø¨Ø¯.");
-  push("pv-power", pvArray.arrayPowerW <= inverter.maxPvPowerW * inverterCount, "warning", "ØªÙˆØ§Ù† Ø¢Ø±Ø§ÛŒÙ‡ Ù¾Ù†Ù„ Ø¨Ø§ Ø³Ù‚Ù ÙˆØ±ÙˆØ¯ÛŒ PV Ø§ÛŒÙ†ÙˆØ±ØªØ± Ø³Ø§Ø²Ú¯Ø§Ø± Ø§Ø³Øª.", "Ù…Ø¯Ù„ Ø§ÛŒÙ†ÙˆØ±ØªØ± ÛŒØ§ ØªØ¹Ø¯Ø§Ø¯ ÙˆØ±ÙˆØ¯ÛŒ MPPT Ø¨Ø§Ø²Ø¨ÛŒÙ†ÛŒ Ø´ÙˆØ¯.");
-  push("climate", env.effectiveEfficiency >= 0.55, "warning", "ØªÙ„ÙØ§Øª Ù…Ø­ÛŒØ·ÛŒ Ø¯Ø± Ø¨Ø§Ø²Ù‡ Ù‚Ø§Ø¨Ù„ Ø·Ø±Ø§Ø­ÛŒ Ø§Ø³Øª.", "Ø³Ø§ÛŒÙ‡â€ŒØ§Ù†Ø¯Ø§Ø²ÛŒØŒ Ø¯Ù…Ø§ ÛŒØ§ Ø¢Ù„ÙˆØ¯Ú¯ÛŒ Ø³Ø·Ø­ Ù¾Ù†Ù„ Ø¨Ø§Ø²Ø¨ÛŒÙ†ÛŒ Ø´ÙˆØ¯.");
+  push("load", load.totalPowerW > 0 && load.totalEnergyWh > 0, "error", "اطلاعات توان و انرژی مصرفی معتبر است.", "روش محاسبه بار را تکمیل کنید.");
+  push("inverter-power", inverter.ratedPowerW * inverterCount >= designPowerW, "error", "توان نامی اینورتر توان طراحی را پوشش می‌دهد.", "مدل بالاتر یا تعداد اینورتر بیشتر انتخاب شود.");
+  push("inverter-surge", inverter.surgePowerW * inverterCount >= designSurgeW, "warning", "توان لحظه‌ای اینورتر برای راه‌اندازی بارها کافی است.", "بار موتوری یا سافت‌استارتر را بازبینی کنید.");
+  push("battery-energy", battery.usableEnergyWh >= requiredBatteryWh, "error", "ظرفیت قابل استفاده باتری انرژی مورد نیاز را پوشش می‌دهد.", "تعداد موازی باتری افزایش یابد.");
+  push("battery-voltage", battery.bankVoltageV >= inverter.batteryMinVoltage && battery.bankVoltageV <= inverter.batteryMaxVoltage, "error", "ولتاژ بانک باتری با ورودی اینورتر سازگار است.", "آرایش سری باتری اصلاح شود.");
+  push("mppt-vmp", pvArray.hotStringVmp >= inverter.mpptMinV && pvArray.stringVmp <= inverter.mpptMaxV, "warning", "ولتاژ کاری رشته پنل داخل محدوده MPPT است.", "تعداد سری پنل اصلاح شود.");
+  push("mppt-voc", pvArray.coldStringVoc <= (inverter.maxDcVoltage || inverter.mpptMaxV), "error", "ولتاژ مدار باز سرد پنل از سقف مجاز DC عبور نمی‌کند.", "تعداد سری پنل کاهش یابد.");
+  push("pv-power", pvArray.arrayPowerW <= inverter.maxPvPowerW * inverterCount, "warning", "توان آرایه پنل با سقف ورودی PV اینورتر سازگار است.", "مدل اینورتر یا تعداد ورودی MPPT بازبینی شود.");
+  push("climate", env.effectiveEfficiency >= 0.55, "warning", "تلفات محیطی در بازه قابل طراحی است.", "سایه‌اندازی، دما یا آلودگی سطح پنل بازبینی شود.");
   const errors = checks.filter((c) => c.level === "error" && !c.ok).map((c) => c.fix || c.message);
   const warnings = checks.filter((c) => c.level === "warning" && !c.ok).map((c) => c.fix || c.message);
   return { checks, errors, warnings };
@@ -229,18 +229,18 @@ export function runSolarAutoDesign({ load = {}, environment = {}, settings = {} 
   const confidence = clamp(100 - validation.errors.length * 24 - validation.warnings.length * 8, 35, 100);
 
   const explanations = [
-    `Ù…Ø³ÛŒØ± Ø·Ø±Ø§Ø­ÛŒ ${PERSIAN_SYSTEM_LABEL[systemType] || "Ø®ÙˆØ±Ø´ÛŒØ¯ÛŒ"} Ø¨Ø§ ØªÙˆØ§Ù† Ø·Ø±Ø§Ø­ÛŒ ${designPowerW} ÙˆØ§Øª Ùˆ Ø¶Ø±ÛŒØ¨ Ø§Ø·Ù…ÛŒÙ†Ø§Ù† ${reserveFactor} Ù…Ø­Ø§Ø³Ø¨Ù‡ Ø´Ø¯.`,
-    `Ù¾Ù†Ù„ Ù¾ÛŒØ´â€ŒÙØ±Ø¶ ${panel.powerW} ÙˆØ§Øª Ø§Ø³ØªØ› Ø§Ú¯Ø± Ú©Ø§Ø±Ø¨Ø± 700 ÙˆØ§Øª Ø±Ø§ Ø¯Ø³ØªÛŒ Ø§Ù†ØªØ®Ø§Ø¨ Ú©Ù†Ø¯ØŒ ØªØ¹Ø¯Ø§Ø¯ Ùˆ Ø¢Ø±Ø§ÛŒØ´ Ù¾Ù†Ù„ Ø¨Ø§ Ù‡Ù…Ø§Ù† Ù…Ù‚Ø¯Ø§Ø± Ø¯ÙˆØ¨Ø§Ø±Ù‡ Ù…Ø­Ø§Ø³Ø¨Ù‡ Ù…ÛŒâ€ŒØ´ÙˆØ¯.`,
-    `Ø¢Ø±Ø§ÛŒØ´ Ù¾Ù†Ù„ ${pvArray.seriesCount} Ø³Ø±ÛŒ Ã— ${pvArray.parallelCount} Ù…ÙˆØ§Ø²ÛŒ Ø§Ù†ØªØ®Ø§Ø¨ Ø´Ø¯ ØªØ§ Vmp Ùˆ Voc Ø¯Ø± Ø¨Ø§Ø²Ù‡ Ù…Ø¬Ø§Ø² MPPT Ùˆ ÙˆÙ„ØªØ§Ú˜ DC Ø¨Ù…Ø§Ù†Ù†Ø¯.`,
-    `Ø¨Ø§ØªØ±ÛŒ ${batteryFinal.seriesCount} Ø³Ø±ÛŒ Ã— ${batteryFinal.parallelCount} Ù…ÙˆØ§Ø²ÛŒ Ø§Ù†ØªØ®Ø§Ø¨ Ø´Ø¯ ØªØ§ ÙˆÙ„ØªØ§Ú˜ Ø¨Ø§Ù†Ú© Ùˆ Ø§Ù†Ø±Ú˜ÛŒ Ù‚Ø§Ø¨Ù„ Ø§Ø³ØªÙØ§Ø¯Ù‡ Ù¾Ø±ÙˆÚ˜Ù‡ ØªØ£Ù…ÛŒÙ† Ø´ÙˆØ¯.`,
-    `Ø¶Ø±Ø§ÛŒØ¨ ØªÙˆØ³Ø¹Ù‡ Ø¢ÛŒÙ†Ø¯Ù‡ Ø±ÙˆÛŒ ØªØ¹Ø¯Ø§Ø¯ Ù†Ù‡Ø§ÛŒÛŒ ØªØ¬Ù‡ÛŒØ²Ø§Øª Ø§Ø¹Ù…Ø§Ù„ Ø´Ø¯Ù‡â€ŒØ§Ù†Ø¯: Ù¾Ù†Ù„ ${num(settings.panelExtraFactor, 1)}ØŒ Ø§ÛŒÙ†ÙˆØ±ØªØ± ${num(settings.inverterExtraFactor, 1)}ØŒ Ø¨Ø§ØªØ±ÛŒ ${num(settings.batteryExtraFactor, 1)}.`
+    `مسیر طراحی ${PERSIAN_SYSTEM_LABEL[systemType] || "خورشیدی"} با توان طراحی ${designPowerW} وات و ضریب اطمینان ${reserveFactor} محاسبه شد.`,
+    `پنل پیش‌فرض ${panel.powerW} وات است؛ اگر کاربر 700 وات را دستی انتخاب کند، تعداد و آرایش پنل با همان مقدار دوباره محاسبه می‌شود.`,
+    `آرایش پنل ${pvArray.seriesCount} سری × ${pvArray.parallelCount} موازی انتخاب شد تا Vmp و Voc در بازه مجاز MPPT و ولتاژ DC بمانند.`,
+    `باتری ${batteryFinal.seriesCount} سری × ${batteryFinal.parallelCount} موازی انتخاب شد تا ولتاژ بانک و انرژی قابل استفاده پروژه تأمین شود.`,
+    `ضرایب توسعه آینده روی تعداد نهایی تجهیزات اعمال شده‌اند: پنل ${num(settings.panelExtraFactor, 1)}، اینورتر ${num(settings.inverterExtraFactor, 1)}، باتری ${num(settings.batteryExtraFactor, 1)}.`
   ];
 
   return {
     valid: validation.errors.length === 0,
     method: "solar-engineering-logic-100",
     confidence,
-    label: PERSIAN_SYSTEM_LABEL[systemType] || "Ø®ÙˆØ±Ø´ÛŒØ¯ÛŒ",
+    label: PERSIAN_SYSTEM_LABEL[systemType] || "خورشیدی",
     load: normalized,
     design: { designPowerW, designSurgeW, requiredBatteryWh, systemVoltage },
     settings: {
@@ -262,7 +262,7 @@ export function runSolarAutoDesign({ load = {}, environment = {}, settings = {} 
     space: {
       panelAreaM2: pvArray.areaM2,
       maintenanceAreaM2: pvArray.maintenanceAreaM2,
-      note: "ÙØ¶Ø§ Ø´Ø§Ù…Ù„ Ø³Ø·Ø­ Ù¾Ù†Ù„â€ŒÙ‡Ø§ Ø¨Ù‡â€ŒØ¹Ù„Ø§ÙˆÙ‡ Ø­Ø¯ÙˆØ¯ 25Ùª Ù…Ø³ÛŒØ± Ø¯Ø³ØªØ±Ø³ÛŒØŒ ÙØ§ØµÙ„Ù‡ Ø³Ø±ÙˆÛŒØ³ Ùˆ Ù†Ú¯Ù‡Ø¯Ø§Ø±ÛŒ Ø§Ø³Øª."
+      note: "فضا شامل سطح پنل‌ها به‌علاوه حدود 25٪ مسیر دسترسی، فاصله سرویس و نگهداری است."
     },
     losses: env,
     validation,
@@ -270,10 +270,10 @@ export function runSolarAutoDesign({ load = {}, environment = {}, settings = {} 
     errors: validation.errors,
     explanations,
     equipmentSchedule: [
-      { group: "Ù¾Ù†Ù„ Ø®ÙˆØ±Ø´ÛŒØ¯ÛŒ", qty: pvArray.panelCount, spec: `${panel.powerW}W / ${panel.type}`, reason: "ØªØ£Ù…ÛŒÙ† Ø§Ù†Ø±Ú˜ÛŒ Ø±ÙˆØ²Ø§Ù†Ù‡ Ùˆ ØªØ·Ø§Ø¨Ù‚ Ø¨Ø§ Ù…Ø­Ø¯ÙˆØ¯Ù‡ MPPT" },
-      { group: "Ø§ÛŒÙ†ÙˆØ±ØªØ± Ø®ÙˆØ±Ø´ÛŒØ¯ÛŒ", qty: inverterCount, spec: `${inverterPick.inverter.ratedPowerW}W / ${inverterPick.inverter.dcVoltage}V`, reason: "Ù¾ÙˆØ´Ø´ ØªÙˆØ§Ù† Ø¯Ø§Ø¦Ù… Ùˆ ØªÙˆØ§Ù† Ù„Ø­Ø¸Ù‡â€ŒØ§ÛŒ" },
-      { group: "Ø¨Ø§ØªØ±ÛŒ", qty: batteryFinal.totalCount, spec: `${batteryFinal.battery.nominalVoltage}V ${batteryFinal.battery.capacityAh}Ah`, reason: "ØªØ£Ù…ÛŒÙ† Ø±ÙˆØ²Ù‡Ø§ÛŒ Ø®ÙˆØ¯Ú©ÙØ§ÛŒÛŒ Ùˆ Ø¸Ø±ÙÛŒØª Ø°Ø®ÛŒØ±Ù‡" },
-      { group: "Ø­ÙØ§Ø¸Øª", qty: 1, spec: `DC ${protection.dcBreakerA}A / AC ${protection.acBreakerA}A`, reason: "Ø­ÙØ§Ø¸Øª Ø®Ø±ÙˆØ¬ÛŒØŒ Ø¨Ø§ØªØ±ÛŒØŒ Ù¾Ù†Ù„ØŒ Ø§Ø±ØªÛŒÙ†Ú¯ Ùˆ Ø³Ø±Ø¬" }
+      { group: "پنل خورشیدی", qty: pvArray.panelCount, spec: `${panel.powerW}W / ${panel.type}`, reason: "تأمین انرژی روزانه و تطابق با محدوده MPPT" },
+      { group: "اینورتر خورشیدی", qty: inverterCount, spec: `${inverterPick.inverter.ratedPowerW}W / ${inverterPick.inverter.dcVoltage}V`, reason: "پوشش توان دائم و توان لحظه‌ای" },
+      { group: "باتری", qty: batteryFinal.totalCount, spec: `${batteryFinal.battery.nominalVoltage}V ${batteryFinal.battery.capacityAh}Ah`, reason: "تأمین روزهای خودکفایی و ظرفیت ذخیره" },
+      { group: "حفاظت", qty: 1, spec: `DC ${protection.dcBreakerA}A / AC ${protection.acBreakerA}A`, reason: "حفاظت خروجی، باتری، پنل، ارتینگ و سرج" }
     ],
     banks: { inverters: SHIL_SOLAR_INVERTERS, batteries: SHIL_LITHIUM_BATTERIES, panels: SHIL_SOLAR_PANELS },
     nextBlockedReason: validation.errors[0] || ""

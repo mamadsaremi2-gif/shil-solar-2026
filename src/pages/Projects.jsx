@@ -11,18 +11,18 @@ import {
 } from "../workflow/projectManagement100.js";
 
 const STEP_TITLES = {
-  info: "Ø§Ø·Ù„Ø§Ø¹Ø§Øª Ù¾Ø±ÙˆÚ˜Ù‡",
-  environment: "Ø´Ø±Ø§ÛŒØ· Ù…Ø­ÛŒØ·ÛŒ",
-  path: "Ø§Ù†ØªØ®Ø§Ø¨ Ù…Ø³ÛŒØ±",
-  method: "Ø±ÙˆØ´ Ù…Ø­Ø§Ø³Ø¨Ø§Øª",
-  inputs: "ÙˆØ±ÙˆØ¯ÛŒ Ù…Ø­Ø§Ø³Ø¨Ø§Øª",
-  system: "ØªÙ†Ø¸ÛŒÙ…Ø§Øª Ø³ÛŒØ³ØªÙ…",
-  summary: "Ú†Ú©ÛŒØ¯Ù‡ Ø§Ø·Ù„Ø§Ø¹Ø§Øª",
-  run: "Ø§Ø¬Ø±Ø§ÛŒ Ù…Ø­Ø§Ø³Ø¨Ø§Øª",
+  info: "اطلاعات پروژه",
+  environment: "شرایط محیطی",
+  path: "انتخاب مسیر",
+  method: "روش محاسبات",
+  inputs: "ورودی محاسبات",
+  system: "تنظیمات سیستم",
+  summary: "چکیده اطلاعات",
+  run: "اجرای محاسبات",
 };
 
 function formatDate(value) {
-  if (!value) return "Ø¨Ø¯ÙˆÙ† ØªØ§Ø±ÛŒØ®";
+  if (!value) return "بدون تاریخ";
   try {
     return new Intl.DateTimeFormat("fa-IR", { dateStyle: "short", timeStyle: "short" }).format(new Date(value));
   } catch {
@@ -31,7 +31,7 @@ function formatDate(value) {
 }
 
 function domainLabel(domain) {
-  return domain === "emergency" ? "Ø¨Ø±Ù‚ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ" : "Ø®ÙˆØ±Ø´ÛŒØ¯ÛŒ";
+  return domain === "emergency" ? "برق اضطراری" : "خورشیدی";
 }
 
 function ProjectCard({ row, type, onRefresh }) {
@@ -50,29 +50,29 @@ function ProjectCard({ row, type, onRefresh }) {
     <article className={`shil-project-manager-card ${isFinal ? "is-final" : "is-running"}`}>
       <Link className="shil-project-manager-main" to={row.resumeUrl || "/new-project/info"}>
         <div className="shil-project-manager-topline">
-          <strong>{row.title || "Ù¾Ø±ÙˆÚ˜Ù‡ Ø¨Ø¯ÙˆÙ† Ø¹Ù†ÙˆØ§Ù†"}</strong>
-          <span>{isFinal ? "Ù†Ù‡Ø§ÛŒÛŒ" : isArchived ? "Ø¢Ø±Ø´ÛŒÙˆ" : "Ø¯Ø± Ø­Ø§Ù„ Ø§Ø¬Ø±Ø§"}</span>
+          <strong>{row.title || "پروژه بدون عنوان"}</strong>
+          <span>{isFinal ? "نهایی" : isArchived ? "آرشیو" : "در حال اجرا"}</span>
         </div>
         <div className="shil-project-manager-meta">
           <span>{domainLabel(row.domain)}</span>
-          <span>{STEP_TITLES[row.currentStep] || "Ù…Ø±Ø­Ù„Ù‡ Ù†Ø§Ù…Ø´Ø®Øµ"}</span>
+          <span>{STEP_TITLES[row.currentStep] || "مرحله نامشخص"}</span>
           <span>{formatDate(row.updatedAt || row.lastVisitedAt || row.createdAt)}</span>
         </div>
-        <p>{isFinal ? "Ù¾Ø±ÙˆÚ˜Ù‡ ØªÚ©Ù…ÛŒÙ„ Ø´Ø¯Ù‡ Ùˆ Ø¢Ù…Ø§Ø¯Ù‡ Ø®Ø±ÙˆØ¬ÛŒ Ù…Ù‡Ù†Ø¯Ø³ÛŒ Ø§Ø³Øª." : "Ø§Ø² Ø¢Ø®Ø±ÛŒÙ† Ù…Ø±Ø­Ù„Ù‡ Ø°Ø®ÛŒØ±Ù‡â€ŒØ´Ø¯Ù‡ Ø§Ø¯Ø§Ù…Ù‡ Ø¨Ø¯Ù‡."}</p>
+        <p>{isFinal ? "پروژه تکمیل شده و آماده خروجی مهندسی است." : "از آخرین مرحله ذخیره‌شده ادامه بده."}</p>
       </Link>
       <div className="shil-project-manager-actions">
-        <button type="button" onClick={() => navigate(row.resumeUrl || "/new-project/info")}>{isFinal ? "Ù…Ø´Ø§Ù‡Ø¯Ù‡ Ø®Ø±ÙˆØ¬ÛŒ" : "Ø§Ø¯Ø§Ù…Ù‡ Ù¾Ø±ÙˆÚ˜Ù‡"}</button>
-        <button type="button" onClick={(event) => runAction(event, () => exportManagedProject(row))}><Download size={16} /> Ø®Ø±ÙˆØ¬ÛŒ JSON</button>
-        {!isFinal && !isArchived ? <button type="button" onClick={(event) => runAction(event, () => archiveManagedProject(row.projectKey))}><Archive size={16} /> Ø¢Ø±Ø´ÛŒÙˆ</button> : null}
-        {isArchived ? <button type="button" onClick={(event) => runAction(event, () => restoreManagedProject(row.projectKey))}><RotateCcw size={16} /> Ø¨Ø§Ø²Ú¯Ø±Ø¯Ø§Ù†ÛŒ</button> : null}
-        <button type="button" className="danger" onClick={(event) => runAction(event, () => deleteManagedProject(row.projectKey))}><Trash2 size={16} /> Ø­Ø°Ù</button>
+        <button type="button" onClick={() => navigate(row.resumeUrl || "/new-project/info")}>{isFinal ? "مشاهده خروجی" : "ادامه پروژه"}</button>
+        <button type="button" onClick={(event) => runAction(event, () => exportManagedProject(row))}><Download size={16} /> خروجی JSON</button>
+        {!isFinal && !isArchived ? <button type="button" onClick={(event) => runAction(event, () => archiveManagedProject(row.projectKey))}><Archive size={16} /> آرشیو</button> : null}
+        {isArchived ? <button type="button" onClick={(event) => runAction(event, () => restoreManagedProject(row.projectKey))}><RotateCcw size={16} /> بازگردانی</button> : null}
+        <button type="button" className="danger" onClick={(event) => runAction(event, () => deleteManagedProject(row.projectKey))}><Trash2 size={16} /> حذف</button>
       </div>
     </article>
   );
 }
 
 function ProjectList({ type }) {
-  const title = type === "final" ? "Ù¾Ø±ÙˆÚ˜Ù‡â€ŒÙ‡Ø§ÛŒ Ù†Ù‡Ø§ÛŒÛŒ" : type === "archived" ? "Ø¢Ø±Ø´ÛŒÙˆ Ù¾Ø±ÙˆÚ˜Ù‡â€ŒÙ‡Ø§" : "Ù¾Ø±ÙˆÚ˜Ù‡â€ŒÙ‡Ø§ÛŒ Ø¯Ø± Ø­Ø§Ù„ Ø§Ø¬Ø±Ø§";
+  const title = type === "final" ? "پروژه‌های نهایی" : type === "archived" ? "آرشیو پروژه‌ها" : "پروژه‌های در حال اجرا";
   const [rows, setRows] = useState([]);
   const refresh = () => setRows(listManagedProjects(type));
 
@@ -93,8 +93,8 @@ function ProjectList({ type }) {
         {rows.map((row) => <ProjectCard key={row.projectKey || row.id} row={row} type={type} onRefresh={refresh} />)}
         {!rows.length ? (
           <article className="shil-mini-project-card">
-            <strong>Ù‡Ù†ÙˆØ² Ù¾Ø±ÙˆÚ˜Ù‡â€ŒØ§ÛŒ Ø«Ø¨Øª Ù†Ø´Ø¯Ù‡ Ø§Ø³Øª</strong>
-            <span>ÙˆÙ‚ØªÛŒ Ú©Ø§Ø±Ø¨Ø± Ù‡Ø± Ù…Ø±Ø­Ù„Ù‡â€ŒØ§ÛŒ Ø±Ø§ Ø´Ø±ÙˆØ¹ Ú©Ù†Ø¯ØŒ Ù¾Ø±ÙˆÚ˜Ù‡ Ø¨Ù‡â€ŒØµÙˆØ±Øª Ø®ÙˆØ¯Ú©Ø§Ø± Ø§ÛŒÙ†Ø¬Ø§ Ø°Ø®ÛŒØ±Ù‡ Ù…ÛŒâ€ŒØ´ÙˆØ¯.</span>
+            <strong>هنوز پروژه‌ای ثبت نشده است</strong>
+            <span>وقتی کاربر هر مرحله‌ای را شروع کند، پروژه به‌صورت خودکار اینجا ذخیره می‌شود.</span>
           </article>
         ) : null}
       </section>
@@ -105,11 +105,11 @@ function ProjectList({ type }) {
 export default function Projects({ view }) {
   if (view) return <ProjectList type={view} />;
   return (
-    <ShilPageShell title="Ù…Ø¯ÛŒØ±ÛŒØª Ù¾Ø±ÙˆÚ˜Ù‡â€ŒÙ‡Ø§">
+    <ShilPageShell title="مدیریت پروژه‌ها">
       <section className="shil-two-card-grid">
-        <Link to="/projects/running" className="shil-nav-card"><Clock3 size={48} /><h3>Ù¾Ø±ÙˆÚ˜Ù‡â€ŒÙ‡Ø§ÛŒ Ø¯Ø± Ø­Ø§Ù„ Ø§Ø¬Ø±Ø§</h3><p>Ø§Ø¯Ø§Ù…Ù‡ Ø§Ø² Ø¢Ø®Ø±ÛŒÙ† Ù…Ø±Ø­Ù„Ù‡ Ø°Ø®ÛŒØ±Ù‡â€ŒØ´Ø¯Ù‡</p></Link>
-        <Link to="/projects/final" className="shil-nav-card"><CheckCircle2 size={48} /><h3>Ù¾Ø±ÙˆÚ˜Ù‡â€ŒÙ‡Ø§ÛŒ Ù†Ù‡Ø§ÛŒÛŒ</h3><p>Ø®Ø±ÙˆØ¬ÛŒâ€ŒÙ‡Ø§ Ùˆ Ú¯Ø²Ø§Ø±Ø´â€ŒÙ‡Ø§ÛŒ ØªÚ©Ù…ÛŒÙ„â€ŒØ´Ø¯Ù‡</p></Link>
-        <Link to="/projects/archived" className="shil-nav-card"><Archive size={48} /><h3>Ø¢Ø±Ø´ÛŒÙˆ Ù¾Ø±ÙˆÚ˜Ù‡â€ŒÙ‡Ø§</h3><p>Ù¾Ø±ÙˆÚ˜Ù‡â€ŒÙ‡Ø§ÛŒ Ú©Ù†Ø§Ø± Ú¯Ø°Ø§Ø´ØªÙ‡â€ŒØ´Ø¯Ù‡</p></Link>
+        <Link to="/projects/running" className="shil-nav-card"><Clock3 size={48} /><h3>پروژه‌های در حال اجرا</h3><p>ادامه از آخرین مرحله ذخیره‌شده</p></Link>
+        <Link to="/projects/final" className="shil-nav-card"><CheckCircle2 size={48} /><h3>پروژه‌های نهایی</h3><p>خروجی‌ها و گزارش‌های تکمیل‌شده</p></Link>
+        <Link to="/projects/archived" className="shil-nav-card"><Archive size={48} /><h3>آرشیو پروژه‌ها</h3><p>پروژه‌های کنار گذاشته‌شده</p></Link>
       </section>
     </ShilPageShell>
   );

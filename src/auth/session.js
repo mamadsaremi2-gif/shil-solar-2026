@@ -62,7 +62,7 @@ export function createSession({ role = "user", login = "", authType = "email", d
     userId,
     login: role === "guest" ? "guest" : normalizeLogin(login),
     authType,
-    displayName: displayName || (role === "guest" ? "Ú©Ø§Ø±Ø¨Ø± Ù…Ù‡Ù…Ø§Ù†" : login),
+    displayName: displayName || (role === "guest" ? "کاربر مهمان" : login),
     online: navigator.onLine,
     createdAt: new Date().toISOString(),
   };

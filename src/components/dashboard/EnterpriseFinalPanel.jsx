@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { BrainCircuit, TrendingUp, ShieldAlert } from "lucide-react";
 import { forecastEnergy } from "../../enterprise/ai/energyForecast.js";
 

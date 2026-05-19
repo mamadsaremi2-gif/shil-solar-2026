@@ -3,7 +3,7 @@ import { ERROR_CODES } from "./errorCodes.js";
 
 export function normalizeError(error, fallbackCode = ERROR_CODES.ENGINE_FAILED) {
   if (error instanceof AppError) return error;
-  return new AppError(error?.message || "Ø®Ø·Ø§ÛŒ Ù¾ÛŒØ´â€ŒØ¨ÛŒÙ†ÛŒâ€ŒÙ†Ø´Ø¯Ù‡ Ø±Ø® Ø¯Ø§Ø¯.", {
+  return new AppError(error?.message || "خطای پیش‌بینی‌نشده رخ داد.", {
     code: fallbackCode,
     cause: error,
     recoverable: true,

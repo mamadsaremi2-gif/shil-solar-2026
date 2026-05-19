@@ -1,14 +1,14 @@
 import { upsertUserRecord } from "../auth/session.js";
 
 export const PROJECT_STEP_ORDER = [
-  { key: "info", route: "/new-project/info", title: "Ø§Ø·Ù„Ø§Ø¹Ø§Øª Ù¾Ø±ÙˆÚ˜Ù‡" },
-  { key: "environment", route: "/new-project/environment", title: "Ø´Ø±Ø§ÛŒØ· Ù…Ø­ÛŒØ·ÛŒ" },
-  { key: "path", route: "/new-project/path", title: "Ø§Ù†ØªØ®Ø§Ø¨ Ù…Ø³ÛŒØ± Ù¾Ø±ÙˆÚ˜Ù‡" },
-  { key: "method", route: "/new-project/method", title: "Ø±ÙˆØ´ ÙˆØ±ÙˆØ¯ Ø¯ÛŒØªØ§" },
-  { key: "inputs", route: "/new-project/inputs", title: "ÙˆØ±ÙˆØ¯ÛŒ Ù…Ø­Ø§Ø³Ø¨Ø§Øª" },
-  { key: "system", route: "/new-project/system", title: "ØªÙ†Ø¸ÛŒÙ…Ø§Øª Ø³ÛŒØ³ØªÙ…" },
-  { key: "summary", route: "/new-project/summary", title: "Ú†Ú©ÛŒØ¯Ù‡ Ø§Ø·Ù„Ø§Ø¹Ø§Øª" },
-  { key: "run", route: "/new-project/run", title: "Ø§Ø¬Ø±Ø§ÛŒ Ù…Ø­Ø§Ø³Ø¨Ø§Øª" },
+  { key: "info", route: "/new-project/info", title: "اطلاعات پروژه" },
+  { key: "environment", route: "/new-project/environment", title: "شرایط محیطی" },
+  { key: "path", route: "/new-project/path", title: "انتخاب مسیر پروژه" },
+  { key: "method", route: "/new-project/method", title: "روش ورود دیتا" },
+  { key: "inputs", route: "/new-project/inputs", title: "ورودی محاسبات" },
+  { key: "system", route: "/new-project/system", title: "تنظیمات سیستم" },
+  { key: "summary", route: "/new-project/summary", title: "چکیده اطلاعات" },
+  { key: "run", route: "/new-project/run", title: "اجرای محاسبات" },
 ];
 
 const STORAGE_KEY = "shil-project-workflow-v2";
@@ -36,7 +36,7 @@ function saveRunningProjectSnapshot(stepKey) {
   const project = safeParseLocal("shil:projectInfoDraft", {});
   const selectedPath = safeParseLocal("shil:selectedProjectPath", {});
   const domain = localStorage.getItem("shil:calculationDomain") || selectedPath.calculationDomain || "solar";
-  const title = project.projectName || project.name || (domain === "emergency" ? "Ù¾Ø±ÙˆÚ˜Ù‡ Ø¨Ø±Ù‚ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ" : "Ù¾Ø±ÙˆÚ˜Ù‡ Ø®ÙˆØ±Ø´ÛŒØ¯ÛŒ");
+  const title = project.projectName || project.name || (domain === "emergency" ? "پروژه برق اضطراری" : "پروژه خورشیدی");
   const resumeUrl = domain === "emergency" && stepKey === "path" ? "/new-project/summary/emergency" : (PROJECT_STEP_ORDER.find((step) => step.key === stepKey)?.route || "/new-project/info");
   const projectKey = localStorage.getItem("shil:activeProjectKey") || `draft-${Date.now()}`;
   localStorage.setItem("shil:activeProjectKey", projectKey);

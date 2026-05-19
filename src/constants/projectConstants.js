@@ -1,4 +1,4 @@
-export const PROJECT_TYPES = [
+﻿export const PROJECT_TYPES = [
   "آنگرید",
   "آفگرید",
   "هیبرید",

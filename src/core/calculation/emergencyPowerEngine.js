@@ -2,7 +2,7 @@ import { SHIL_LITHIUM_BATTERIES, SHIL_SOLAR_PROTECTION_BANK } from "../../data/s
 
 const num = (value, fallback = 0) => {
   if (value === null || value === undefined || value === "") return fallback;
-  const normalized = String(value).replace(/[Û°-Û¹]/g, (d) => "Û°Û±Û²Û³Û´ÛµÛ¶Û·Û¸Û¹".indexOf(d)).replace(/[Ù -Ù©]/g, (d) => "Ù Ù¡Ù¢Ù£Ù¤Ù¥Ù¦Ù§Ù¨Ù©".indexOf(d));
+  const normalized = String(value).replace(/[۰-۹]/g, (d) => "۰۱۲۳۴۵۶۷۸۹".indexOf(d)).replace(/[٠-٩]/g, (d) => "٠١٢٣٤٥٦٧٨٩".indexOf(d));
   const n = Number(normalized);
   return Number.isFinite(n) ? n : fallback;
 };
@@ -11,12 +11,12 @@ const ceil = (value) => Math.max(1, Math.ceil(num(value, 0)));
 const clamp = (value, min, max) => Math.min(max, Math.max(min, num(value, min)));
 
 const EMERGENCY_INVERTER_BANK = [
-  { id: "emergency-inv-1k-24", title: "Ø§ÛŒÙ†ÙˆØ±ØªØ± Ø¨Ø±Ù‚ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ 1 Ú©ÛŒÙ„ÙˆÙˆØ§Øª / 24 ÙˆÙ„Øª", ratedPowerW: 1000, surgePowerW: 2000, batteryVoltage: 24, efficiency: 0.9, parallelCapable: false },
-  { id: "emergency-inv-2k-24", title: "Ø§ÛŒÙ†ÙˆØ±ØªØ± Ø¨Ø±Ù‚ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ 2 Ú©ÛŒÙ„ÙˆÙˆØ§Øª / 24 ÙˆÙ„Øª", ratedPowerW: 2000, surgePowerW: 4000, batteryVoltage: 24, efficiency: 0.91, parallelCapable: false },
-  { id: "emergency-inv-3k-48", title: "Ø§ÛŒÙ†ÙˆØ±ØªØ± Ø¨Ø±Ù‚ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ 3 Ú©ÛŒÙ„ÙˆÙˆØ§Øª / 48 ÙˆÙ„Øª", ratedPowerW: 3000, surgePowerW: 6000, batteryVoltage: 48, efficiency: 0.92, parallelCapable: true },
-  { id: "emergency-inv-5k-48", title: "Ø§ÛŒÙ†ÙˆØ±ØªØ± Ø¨Ø±Ù‚ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ 5 Ú©ÛŒÙ„ÙˆÙˆØ§Øª / 48 ÙˆÙ„Øª", ratedPowerW: 5000, surgePowerW: 10000, batteryVoltage: 48, efficiency: 0.93, parallelCapable: true },
-  { id: "emergency-inv-8k-48", title: "Ø§ÛŒÙ†ÙˆØ±ØªØ± Ø¨Ø±Ù‚ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ 8 Ú©ÛŒÙ„ÙˆÙˆØ§Øª / 48 ÙˆÙ„Øª", ratedPowerW: 8000, surgePowerW: 16000, batteryVoltage: 48, efficiency: 0.93, parallelCapable: true },
-  { id: "emergency-inv-10k-48", title: "Ø§ÛŒÙ†ÙˆØ±ØªØ± Ø¨Ø±Ù‚ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ 10 Ú©ÛŒÙ„ÙˆÙˆØ§Øª / 48 ÙˆÙ„Øª", ratedPowerW: 10000, surgePowerW: 20000, batteryVoltage: 48, efficiency: 0.93, parallelCapable: true }
+  { id: "emergency-inv-1k-24", title: "اینورتر برق اضطراری 1 کیلووات / 24 ولت", ratedPowerW: 1000, surgePowerW: 2000, batteryVoltage: 24, efficiency: 0.9, parallelCapable: false },
+  { id: "emergency-inv-2k-24", title: "اینورتر برق اضطراری 2 کیلووات / 24 ولت", ratedPowerW: 2000, surgePowerW: 4000, batteryVoltage: 24, efficiency: 0.91, parallelCapable: false },
+  { id: "emergency-inv-3k-48", title: "اینورتر برق اضطراری 3 کیلووات / 48 ولت", ratedPowerW: 3000, surgePowerW: 6000, batteryVoltage: 48, efficiency: 0.92, parallelCapable: true },
+  { id: "emergency-inv-5k-48", title: "اینورتر برق اضطراری 5 کیلووات / 48 ولت", ratedPowerW: 5000, surgePowerW: 10000, batteryVoltage: 48, efficiency: 0.93, parallelCapable: true },
+  { id: "emergency-inv-8k-48", title: "اینورتر برق اضطراری 8 کیلووات / 48 ولت", ratedPowerW: 8000, surgePowerW: 16000, batteryVoltage: 48, efficiency: 0.93, parallelCapable: true },
+  { id: "emergency-inv-10k-48", title: "اینورتر برق اضطراری 10 کیلووات / 48 ولت", ratedPowerW: 10000, surgePowerW: 20000, batteryVoltage: 48, efficiency: 0.93, parallelCapable: true }
 ];
 
 function normalizeLoad(load = {}) {
@@ -67,14 +67,14 @@ function chooseBattery(bankVoltage, requiredUsableWh, manualBatteryId) {
 }
 
 function cableByCurrent(currentA) {
-  if (currentA > 220) return "95mmÂ² ÛŒØ§ Ø¨Ø§Ø³â€ŒØ¨Ø§Ø± Ø·Ø±Ø§Ø­ÛŒâ€ŒØ´Ø¯Ù‡";
-  if (currentA > 160) return "70mmÂ²";
-  if (currentA > 120) return "50mmÂ²";
-  if (currentA > 80) return "35mmÂ²";
-  if (currentA > 50) return "25mmÂ²";
-  if (currentA > 32) return "16mmÂ²";
-  if (currentA > 20) return "10mmÂ²";
-  return "6mmÂ²";
+  if (currentA > 220) return "95mm² یا باس‌بار طراحی‌شده";
+  if (currentA > 160) return "70mm²";
+  if (currentA > 120) return "50mm²";
+  if (currentA > 80) return "35mm²";
+  if (currentA > 50) return "25mm²";
+  if (currentA > 32) return "16mm²";
+  if (currentA > 20) return "10mm²";
+  return "6mm²";
 }
 
 function protection(powerW, bankVoltage, batteryParallelCount) {
@@ -90,9 +90,9 @@ function protection(powerW, bankVoltage, batteryParallelCount) {
     dcBreakerA: Math.ceil(dcCurrentA * 1.25 / 10) * 10,
     acBreakerA: Math.ceil(acCurrentA * 1.25 / 10) * 10,
     items: {
-      inverter: ["Ú©Ù„ÛŒØ¯ ÙˆØ±ÙˆØ¯ÛŒ Ø§ÛŒÙ†ÙˆØ±ØªØ± Ø¨Ø±Ù‚ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ", "Ú©Ù„ÛŒØ¯ Ø®Ø±ÙˆØ¬ÛŒ Ø¨Ø±Ù‚ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ", "Ø­ÙØ§Ø¸Øª Ø§Ø¶Ø§ÙÙ‡â€ŒØ¨Ø§Ø±", "Ø­ÙØ§Ø¸Øª Ø§ØªØµØ§Ù„ Ú©ÙˆØªØ§Ù‡"],
+      inverter: ["کلید ورودی اینورتر برق اضطراری", "کلید خروجی برق اضطراری", "حفاظت اضافه‌بار", "حفاظت اتصال کوتاه"],
       battery: SHIL_SOLAR_PROTECTION_BANK.battery,
-      earthing: ["Ø§Ø±ØªÛŒÙ†Ú¯ Ùˆ Ù‡Ù…Ø¨Ù†Ø¯ÛŒ", "Ø³Ø±Ø¬ Ø§Ø±Ø³ØªØ± AC", "Ø¨Ø±Ú†Ø³Ø¨â€ŒÚ¯Ø°Ø§Ø±ÛŒ Ù…Ø¯Ø§Ø±Ù‡Ø§ÛŒ Ø¨Ø±Ù‚ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ", "Ø¬Ø¯Ø§Ø³Ø§Ø²ÛŒ Ù…Ø¯Ø§Ø±Ù‡Ø§ÛŒ Ø¶Ø±ÙˆØ±ÛŒ Ø§Ø² Ù…Ø¯Ø§Ø±Ù‡Ø§ÛŒ Ø¹Ø§Ø¯ÛŒ"]
+      earthing: ["ارتینگ و همبندی", "سرج ارستر AC", "برچسب‌گذاری مدارهای برق اضطراری", "جداسازی مدارهای ضروری از مدارهای عادی"]
     }
   };
 }
@@ -100,12 +100,12 @@ function protection(powerW, bankVoltage, batteryParallelCount) {
 function buildValidation({ load, designPowerW, designSurgeW, inverter, inverterCount, battery, requiredEnergyWh }) {
   const checks = [];
   const push = (key, ok, level, message, fix = "") => checks.push({ key, ok, level: ok ? "ok" : level, message, fix });
-  push("load", load.totalPowerW > 0, "error", "ØªÙˆØ§Ù† Ø¨Ø§Ø±Ù‡Ø§ÛŒ Ø¶Ø±ÙˆØ±ÛŒ Ù…Ø¹ØªØ¨Ø± Ø§Ø³Øª.", "Ø¨Ø§Ø±Ù‡Ø§ÛŒ Ø¶Ø±ÙˆØ±ÛŒ Ø±Ø§ Ø¯ÙˆØ¨Ø§Ø±Ù‡ Ø«Ø¨Øª Ú©Ù†ÛŒØ¯.");
-  push("hours", load.requiredEmergencyHours > 0, "error", "Ø²Ù…Ø§Ù† Ø¨Ø±Ù‚ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ Ù…ÙˆØ±Ø¯ Ù†ÛŒØ§Ø² Ø«Ø¨Øª Ø´Ø¯Ù‡ Ø§Ø³Øª.", "Ø²Ù…Ø§Ù† Ø¨Ø±Ù‚ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ Ù…ÙˆØ±Ø¯ Ù†ÛŒØ§Ø² Ø±Ø§ ÙˆØ§Ø±Ø¯ Ú©Ù†ÛŒØ¯.");
-  push("inverter-power", inverter.ratedPowerW * inverterCount >= designPowerW, "error", "ØªÙˆØ§Ù† Ø¯Ø§Ø¦Ù… Ø§ÛŒÙ†ÙˆØ±ØªØ± Ø¨Ø±Ù‚ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ Ú©Ø§ÙÛŒ Ø§Ø³Øª.", "Ù…Ø¯Ù„ Ø¨Ø²Ø±Ú¯â€ŒØªØ± ÛŒØ§ ØªØ¹Ø¯Ø§Ø¯ Ø¨ÛŒØ´ØªØ± Ø§Ù†ØªØ®Ø§Ø¨ Ø´ÙˆØ¯.");
-  push("inverter-surge", inverter.surgePowerW * inverterCount >= designSurgeW, "warning", "ØªÙˆØ§Ù† Ù„Ø­Ø¸Ù‡â€ŒØ§ÛŒ Ø¨Ø±Ø§ÛŒ Ø±Ø§Ù‡â€ŒØ§Ù†Ø¯Ø§Ø²ÛŒ Ø¨Ø§Ø±Ù‡Ø§ÛŒ Ø¶Ø±ÙˆØ±ÛŒ Ú©Ø§ÙÛŒ Ø§Ø³Øª.", "Ø¨Ø§Ø±Ù‡Ø§ÛŒ Ù…ÙˆØªÙˆØ±ÛŒ ÛŒØ§ Ø¶Ø±ÛŒØ¨ Ø±Ø§Ù‡â€ŒØ§Ù†Ø¯Ø§Ø²ÛŒ Ø¨Ø§Ø²Ø¨ÛŒÙ†ÛŒ Ø´ÙˆØ¯.");
-  push("parallel", inverterCount === 1 || inverter.parallelCapable, "error", "Ø§ÙØ²Ø§ÛŒØ´ ØªØ¹Ø¯Ø§Ø¯ Ø§ÛŒÙ†ÙˆØ±ØªØ± Ø¨Ø§ Ù‚Ø§Ø¨Ù„ÛŒØª Ù…ÙˆØ§Ø²ÛŒâ€ŒØ³Ø§Ø²ÛŒ Ø³Ø§Ø²Ú¯Ø§Ø± Ø§Ø³Øª.", "Ø§Ø² Ù…Ø¯Ù„ Ø¯Ø§Ø±Ø§ÛŒ Ù‚Ø§Ø¨Ù„ÛŒØª Ù…ÙˆØ§Ø²ÛŒ Ø§Ø³ØªÙØ§Ø¯Ù‡ Ø´ÙˆØ¯.");
-  push("battery", battery.usableEnergyWh >= requiredEnergyWh, "error", "Ø¸Ø±ÙÛŒØª Ù‚Ø§Ø¨Ù„ Ø§Ø³ØªÙØ§Ø¯Ù‡ Ø¨Ø§ØªØ±ÛŒ Ø²Ù…Ø§Ù† Ø¨Ø±Ù‚ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ Ù…ÙˆØ±Ø¯ Ù†ÛŒØ§Ø² Ø±Ø§ Ù¾ÙˆØ´Ø´ Ù…ÛŒâ€ŒØ¯Ù‡Ø¯.", "ØªØ¹Ø¯Ø§Ø¯ Ù…ÙˆØ§Ø²ÛŒ Ø¨Ø§ØªØ±ÛŒ Ø§ÙØ²Ø§ÛŒØ´ ÛŒØ§Ø¨Ø¯.");
+  push("load", load.totalPowerW > 0, "error", "توان بارهای ضروری معتبر است.", "بارهای ضروری را دوباره ثبت کنید.");
+  push("hours", load.requiredEmergencyHours > 0, "error", "زمان برق اضطراری مورد نیاز ثبت شده است.", "زمان برق اضطراری مورد نیاز را وارد کنید.");
+  push("inverter-power", inverter.ratedPowerW * inverterCount >= designPowerW, "error", "توان دائم اینورتر برق اضطراری کافی است.", "مدل بزرگ‌تر یا تعداد بیشتر انتخاب شود.");
+  push("inverter-surge", inverter.surgePowerW * inverterCount >= designSurgeW, "warning", "توان لحظه‌ای برای راه‌اندازی بارهای ضروری کافی است.", "بارهای موتوری یا ضریب راه‌اندازی بازبینی شود.");
+  push("parallel", inverterCount === 1 || inverter.parallelCapable, "error", "افزایش تعداد اینورتر با قابلیت موازی‌سازی سازگار است.", "از مدل دارای قابلیت موازی استفاده شود.");
+  push("battery", battery.usableEnergyWh >= requiredEnergyWh, "error", "ظرفیت قابل استفاده باتری زمان برق اضطراری مورد نیاز را پوشش می‌دهد.", "تعداد موازی باتری افزایش یابد.");
   const errors = checks.filter((c) => c.level === "error" && !c.ok).map((c) => c.fix || c.message);
   const warnings = checks.filter((c) => c.level === "warning" && !c.ok).map((c) => c.fix || c.message);
   return { checks, errors, warnings };
@@ -133,7 +133,7 @@ export function runEmergencyPowerDesign({ load = {}, settings = {} } = {}) {
   return {
     valid: validation.errors.length === 0,
     method: "emergency-power-engineering-logic-100",
-    label: "Ø¨Ø±Ù‚ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ",
+    label: "برق اضطراری",
     confidence,
     load: normalized,
     design: { designPowerW, designSurgeW, requiredEnergyWh },
@@ -152,17 +152,17 @@ export function runEmergencyPowerDesign({ load = {}, settings = {} } = {}) {
     errors: validation.errors,
     banks: { inverters: EMERGENCY_INVERTER_BANK, batteries: SHIL_LITHIUM_BATTERIES },
     equipmentSchedule: [
-      { group: "Ø§ÛŒÙ†ÙˆØ±ØªØ± Ø¨Ø±Ù‚ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ", qty: inverterCount, spec: `${inverterPick.inverter.ratedPowerW}W / ${inverterPick.inverter.batteryVoltage}V`, reason: "Ù¾ÙˆØ´Ø´ ØªÙˆØ§Ù† Ø¯Ø§Ø¦Ù… Ùˆ ØªÙˆØ§Ù† Ù„Ø­Ø¸Ù‡â€ŒØ§ÛŒ Ø¨Ø§Ø±Ù‡Ø§ÛŒ Ø¶Ø±ÙˆØ±ÛŒ" },
-      { group: "Ø¨Ø§ØªØ±ÛŒ", qty: batteryFinal.totalCount, spec: `${batteryFinal.battery.nominalVoltage}V ${batteryFinal.battery.capacityAh}Ah`, reason: "ØªØ£Ù…ÛŒÙ† Ø²Ù…Ø§Ù† Ø¨Ø±Ù‚ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ Ù…ÙˆØ±Ø¯ Ù†ÛŒØ§Ø²" },
-      { group: "Ø­ÙØ§Ø¸Øª DC", qty: 1, spec: `${protections.dcBreakerA}A / ${protections.batteryCable}`, reason: "Ø­ÙØ§Ø¸Øª Ø¨Ø§Ù†Ú© Ø¨Ø§ØªØ±ÛŒ Ùˆ Ù…Ø³ÛŒØ± DC" },
-      { group: "Ø­ÙØ§Ø¸Øª AC", qty: 1, spec: `${protections.acBreakerA}A / ${protections.acCable}`, reason: "Ø­ÙØ§Ø¸Øª Ø®Ø±ÙˆØ¬ÛŒ Ø¨Ø±Ù‚ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ Ùˆ Ø¬Ø¯Ø§Ø³Ø§Ø²ÛŒ Ù…Ø¯Ø§Ø±Ù‡Ø§" }
+      { group: "اینورتر برق اضطراری", qty: inverterCount, spec: `${inverterPick.inverter.ratedPowerW}W / ${inverterPick.inverter.batteryVoltage}V`, reason: "پوشش توان دائم و توان لحظه‌ای بارهای ضروری" },
+      { group: "باتری", qty: batteryFinal.totalCount, spec: `${batteryFinal.battery.nominalVoltage}V ${batteryFinal.battery.capacityAh}Ah`, reason: "تأمین زمان برق اضطراری مورد نیاز" },
+      { group: "حفاظت DC", qty: 1, spec: `${protections.dcBreakerA}A / ${protections.batteryCable}`, reason: "حفاظت بانک باتری و مسیر DC" },
+      { group: "حفاظت AC", qty: 1, spec: `${protections.acBreakerA}A / ${protections.acCable}`, reason: "حفاظت خروجی برق اضطراری و جداسازی مدارها" }
     ],
     explanations: [
-      `ØªÙˆØ§Ù† Ø·Ø±Ø§Ø­ÛŒ Ø¨Ø±Ù‚ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ Ø¨Ø§ Ø¶Ø±ÛŒØ¨ Ø§Ø·Ù…ÛŒÙ†Ø§Ù† ${reserveFactor} Ø¨Ø±Ø§Ø¨Ø±ØŒ ${designPowerW} ÙˆØ§Øª Ù…Ø­Ø§Ø³Ø¨Ù‡ Ø´Ø¯.`,
-      `Ø²Ù…Ø§Ù† Ø¨Ø±Ù‚ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ Ù…ÙˆØ±Ø¯ Ù†ÛŒØ§Ø² ${normalized.requiredEmergencyHours} Ø³Ø§Ø¹Øª Ø¯Ø± Ø¸Ø±ÙÛŒØª Ø¨Ø§ØªØ±ÛŒ Ù„Ø­Ø§Ø¸ Ø´Ø¯.`,
-      `Ø§ÛŒÙ†ÙˆØ±ØªØ± Ø¨Ø±Ù‚ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ Ø¨Ø§ÛŒØ¯ Ù‡Ù… ØªÙˆØ§Ù† Ø¯Ø§Ø¦Ù… Ùˆ Ù‡Ù… ØªÙˆØ§Ù† Ù„Ø­Ø¸Ù‡â€ŒØ§ÛŒ Ø¨Ø§Ø±Ù‡Ø§ÛŒ Ø¶Ø±ÙˆØ±ÛŒ Ø±Ø§ Ù¾ÙˆØ´Ø´ Ø¯Ù‡Ø¯.`,
-      `Ø¢Ø±Ø§ÛŒØ´ Ø¨Ø§ØªØ±ÛŒ ${batteryFinal.seriesCount} Ø³Ø±ÛŒ Ã— ${batteryFinal.parallelCount} Ù…ÙˆØ§Ø²ÛŒ Ø¨Ø±Ø§ÛŒ Ø±Ø³ÛŒØ¯Ù† Ø¨Ù‡ ÙˆÙ„ØªØ§Ú˜ Ø¨Ø§Ù†Ú© Ùˆ Ø¸Ø±ÙÛŒØª Ø§Ù†Ø±Ú˜ÛŒ Ø§Ù†ØªØ®Ø§Ø¨ Ø´Ø¯.`,
-      `ØªØ¬Ù‡ÛŒØ²Ø§Øª Ø­ÙØ§Ø¸ØªÛŒ Ø´Ø§Ù…Ù„ Ø­ÙØ§Ø¸Øª Ø¨Ø§ØªØ±ÛŒØŒ Ø®Ø±ÙˆØ¬ÛŒ ACØŒ Ø§Ø±ØªÛŒÙ†Ú¯ØŒ Ø³Ø±Ø¬ Ø§Ø±Ø³ØªØ± Ùˆ Ø¬Ø¯Ø§Ø³Ø§Ø²ÛŒ Ù…Ø¯Ø§Ø±Ù‡Ø§ÛŒ Ø¨Ø±Ù‚ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ Ø¯Ø± Ø®Ø±ÙˆØ¬ÛŒ Ø§Ø¬Ø±Ø§ Ù‚Ø±Ø§Ø± Ú¯Ø±ÙØª.`
+      `توان طراحی برق اضطراری با ضریب اطمینان ${reserveFactor} برابر، ${designPowerW} وات محاسبه شد.`,
+      `زمان برق اضطراری مورد نیاز ${normalized.requiredEmergencyHours} ساعت در ظرفیت باتری لحاظ شد.`,
+      `اینورتر برق اضطراری باید هم توان دائم و هم توان لحظه‌ای بارهای ضروری را پوشش دهد.`,
+      `آرایش باتری ${batteryFinal.seriesCount} سری × ${batteryFinal.parallelCount} موازی برای رسیدن به ولتاژ بانک و ظرفیت انرژی انتخاب شد.`,
+      `تجهیزات حفاظتی شامل حفاظت باتری، خروجی AC، ارتینگ، سرج ارستر و جداسازی مدارهای برق اضطراری در خروجی اجرا قرار گرفت.`
     ],
     nextBlockedReason: validation.errors[0] || ""
   };

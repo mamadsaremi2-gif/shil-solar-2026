@@ -5,9 +5,9 @@ export function ShilHeader({ title = "SHIL" }) {
   const navigate = useNavigate();
   return (
     <header className="shil-fixed-header">
-      <button type="button" onClick={() => navigate(-1)} className="shil-header-action">Ø¨Ø§Ø²Ú¯Ø´Øª</button>
+      <button type="button" onClick={() => navigate(-1)} className="shil-header-action">بازگشت</button>
       <div className="shil-header-title">{title}</div>
-      <Link to="/dashboard" className="shil-header-action">Ø¯Ø§Ø´Ø¨ÙˆØ±Ø¯</Link>
+      <Link to="/dashboard" className="shil-header-action">داشبورد</Link>
     </header>
   );
 }
@@ -15,10 +15,10 @@ export function ShilHeader({ title = "SHIL" }) {
 export function ShilFooter({ compact = false }) {
   return (
     <footer className="shil-fixed-footer">
-      <Link to="/dashboard">Ø®Ø§Ù†Ù‡</Link>
-      {!compact ? <Link to="/new-project">Ù¾Ø±ÙˆÚ˜Ù‡ Ø¬Ø¯ÛŒØ¯</Link> : null}
-      {!compact ? <Link to="/projects">Ù¾Ø±ÙˆÚ˜Ù‡â€ŒÙ‡Ø§</Link> : null}
-      <Link to="/contact">Ø§Ø±ØªØ¨Ø§Ø·</Link>
+      <Link to="/dashboard">خانه</Link>
+      {!compact ? <Link to="/new-project">پروژه جدید</Link> : null}
+      {!compact ? <Link to="/projects">پروژه‌ها</Link> : null}
+      <Link to="/contact">ارتباط</Link>
     </footer>
   );
 }

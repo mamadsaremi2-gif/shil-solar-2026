@@ -1,4 +1,4 @@
-export const fakeMonthlySolarData = [
+﻿export const fakeMonthlySolarData = [
   { month: "فروردین", value: 5.2 },
   { month: "اردیبهشت", value: 6.1 },
   { month: "خرداد", value: 7.4 },

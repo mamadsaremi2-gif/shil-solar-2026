@@ -26,7 +26,7 @@ export default function ProjectStepGuard({ children }) {
     <div className={editable ? "" : "shil-readonly-mode"} aria-disabled={!editable}>
       {!editable ? (
         <div className="shil-readonly-notice">
-          Ø§ÛŒÙ† Ù…Ø±Ø­Ù„Ù‡ Ù‡Ù†ÙˆØ² ÙÙ‚Ø· Ù‚Ø§Ø¨Ù„ Ù…Ø´Ø§Ù‡Ø¯Ù‡ Ø§Ø³ØªØ› Ø§Ø¨ØªØ¯Ø§ Ù…Ø±Ø­Ù„Ù‡ Â«{previous?.title || "Ù‚Ø¨Ù„ÛŒ"}Â» Ø±Ø§ ØªÚ©Ù…ÛŒÙ„ Ùˆ ØªØ£ÛŒÛŒØ¯ Ú©Ù†ÛŒØ¯.
+          این مرحله هنوز فقط قابل مشاهده است؛ ابتدا مرحله «{previous?.title || "قبلی"}» را تکمیل و تأیید کنید.
         </div>
       ) : null}
       {children}
