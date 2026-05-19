@@ -2,6 +2,7 @@ export const METHOD_LABELS = {
   equipment: "لیست تجهیزات",
   profile: "پروفایل مصرف",
   energy: "انرژی مورد نیاز",
+  solar_panel_power: "توان پنل خورشیدی",
   power: "توان کل",
   current: "جریان کل",
 };

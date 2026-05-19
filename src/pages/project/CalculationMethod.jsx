@@ -7,6 +7,7 @@ const fallbackMethodCards = [
   { key: "equipment", title: "لیست تجهیزات", badge: "Equipment" },
   { key: "profile", title: "پروفایل مصرف", badge: "Profile" },
   { key: "energy", title: "انرژی روزانه", badge: "kWh/day" },
+  { key: "solar_panel_power", title: "توان پنل خورشیدی", badge: "PV W" },
   { key: "power", title: "توان کل", badge: "W / kW" },
   { key: "current", title: "جریان کل", badge: "A" },
 ];
@@ -22,7 +23,7 @@ function normalizeCards(cards) {
   if (!Array.isArray(cards) || cards.length === 0) return fallbackMethodCards;
   return cards
     .filter((item) => item && item.key && item.title)
-    .slice(0, 5)
+    .slice(0, 6)
     .map((item) => ({
       key: String(item.key),
       title: String(item.title),

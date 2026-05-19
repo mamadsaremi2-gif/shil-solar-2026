@@ -29,6 +29,7 @@ export const inputMethods = [
   { key: "equipment", title: "لیست تجهیزات", description: "ورود مصرف‌کننده‌ها به صورت موردی" },
   { key: "power", title: "توان کل", description: "شروع طراحی از توان کل پروژه" },
   { key: "current", title: "جریان کل", description: "شروع طراحی از جریان کل" },
+  { key: "solar_panel_power", title: "توان پنل خورشیدی", description: "شروع طراحی از توان و تعداد پنل خورشیدی" },
   { key: "profile", title: "پروفایل مصرف", description: "ورود الگوی مصرف مرحله‌ای" },
   { key: "energy", title: "انرژی مورد نیاز", description: "شروع طراحی از انرژی مورد نیاز" },
 ];

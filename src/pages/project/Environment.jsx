@@ -375,16 +375,32 @@ export default function Environment() {
               {compassUploadChoice === "gallery" ? (
                 <input type="file" accept="image/*" onChange={handleCompassUpload} />
               ) : null}
-              {compassPreview ? <img src={compassPreview} alt="Compass preview" /> : null}
+              {compassPreview ? (
+                <div className="shil-orientation-frame" aria-label="پیش‌نمایش جهت‌نما با محورهای جغرافیایی">
+                  <div className="shil-orientation-label shil-orientation-north">شمال 0°<small>ورودی اصلی جهت</small></div>
+                  <div className="shil-orientation-label shil-orientation-east">شرق 90°<small>لبه راست محل نصب</small></div>
+                  <div className="shil-orientation-label shil-orientation-south">جنوب 180°<small>جهت بهینه پنل</small></div>
+                  <div className="shil-orientation-label shil-orientation-west">غرب 270°<small>لبه چپ محل نصب</small></div>
+                  <div className="shil-orientation-image-shell">
+                    <img src={compassPreview} alt="Compass preview" />
+                  </div>
+                </div>
+              ) : null}
+              <small className="shil-orientation-note">تصویر جهت‌نما با کادر کامل و بدون برش نمایش داده می‌شود تا شمال، جنوب، شرق و غرب محل نصب قابل مقایسه باشد.</small>
             </div>
 
-            <label className="shil-upload-box">
+            <label className="shil-upload-box shil-site-upload-box">
               <span>تصاویر محل نصب</span>
-              <small>با توجه به وسعت اجرای پروژه، چند عکس از بام، محوطه، سایه‌اندازها، مسیر کابل و موانع آپلود کن.</small>
+              <small>با توجه به وسعت اجرای پروژه، چند عکس از بام، محوطه، سایه‌اندازها، مسیر کابل و موانع آپلود کن. پیش‌نمایش عکس‌ها ۱۰۰٪ و بدون برش نمایش داده می‌شود.</small>
               <input type="file" accept="image/*" multiple onChange={handleSiteUpload} />
               {sitePreviews.length ? (
-                <div className="shil-site-preview-grid">
-                  {sitePreviews.map((src, index) => <img key={index} src={src} alt={`Site preview ${index + 1}`} />)}
+                <div className="shil-site-preview-grid shil-site-preview-contain-grid">
+                  {sitePreviews.map((src, index) => (
+                    <figure key={index} className="shil-site-preview-card">
+                      <img src={src} alt={`Site preview ${index + 1}`} />
+                      <figcaption>نمای کامل محل نصب {index + 1}</figcaption>
+                    </figure>
+                  ))}
                 </div>
               ) : null}
             </label>
