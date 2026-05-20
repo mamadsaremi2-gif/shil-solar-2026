@@ -116,7 +116,7 @@ function buildScenarioEquipmentOverrides(scenario, items) {
 export default function CalculationInputs() {
   const navigate = useNavigate();
   const params = useParams();
-  const domain = params.domain || localStorage.getItem("shil:scenarioDomain") || "solar";
+  const domain = params.domain || localStorage.getItem("shil:calculationDomain") || localStorage.getItem("shil:scenarioDomain") || "solar";
   const method = params.method || localStorage.getItem("shil:calculationMethod") || "equipment";
 
   const [query, setQuery] = useState("");

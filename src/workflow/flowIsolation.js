@@ -92,11 +92,22 @@ export function isUtilityGatewayActive() {
   return getWorkflowMode() === FLOW_MODES.UTILITY && safeGet("shil:utilityGatewayActive") === "true";
 }
 
-export function getFlowSafeRedirect(pathname = "") {
+function hasScenarioEquipmentIntent(search = "") {
+  const params = new URLSearchParams(String(search || "").replace(/^\?/, ""));
+  return params.get("from") === "scenario" || Boolean(params.get("scenarioId")) || params.get("scenarioFlow") === "1";
+}
+
+export function getFlowSafeRedirect(pathname = "", search = "") {
   const mode = getWorkflowMode();
-  const isScenarioEquipmentRoute = pathname.includes("/new-project/input/") && pathname.endsWith("/equipment");
+  const isEquipmentInputRoute = pathname.includes("/new-project/input/") && pathname.endsWith("/equipment");
+  const isScenarioEquipmentRoute = isEquipmentInputRoute && hasScenarioEquipmentIntent(search);
   const isUtilityRoute = pathname.includes("/new-project/system/utility") || pathname.includes("/new-project/utility");
 
+  // مسیر «لیست تجهیزات» دو کاربرد دارد:
+  // 1) روش محاسبات دستی برای پروژه جدید معمولی
+  // 2) لیست تجهیزات سناریوی آماده بعد از شرایط محیطی
+  // قبلاً هر مسیر equipment به عنوان سناریو تشخیص داده می‌شد و پروژه دستی را
+  // اشتباه به صفحه انتخاب مسیر برمی‌گرداند. فقط وقتی query واقعاً سناریویی است Guard فعال می‌شود.
   if (isScenarioEquipmentRoute && mode !== FLOW_MODES.SCENARIO) {
     return "/new-project/path?guard=scenario-equipment-blocked";
   }

@@ -8,7 +8,7 @@ export default function WorkflowRouteGuard() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const redirect = getFlowSafeRedirect(location.pathname);
+    const redirect = getFlowSafeRedirect(location.pathname, location.search);
     if (!redirect) return;
 
     if (redirect.includes("scenario-equipment-blocked")) {
@@ -18,7 +18,7 @@ export default function WorkflowRouteGuard() {
       showUxToast("مسیر نیروگاهی فقط از کارت مستقل نیروگاهی فعال می‌شود.", "warning");
     }
     navigate(redirect, { replace: true });
-  }, [location.pathname, navigate]);
+  }, [location.pathname, location.search, navigate]);
 
   return null;
 }

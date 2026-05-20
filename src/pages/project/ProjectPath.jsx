@@ -100,7 +100,11 @@ export default function ProjectPath() {
     localStorage.setItem("shil:selectedProjectPath", JSON.stringify(selectedOption));
     localStorage.setItem("shil:executionMethod", selectedOption.key);
     localStorage.setItem("shil:calculationDomain", domain);
-    localStorage.setItem("shil:scenarioDomain", domain);
+    if (domain === "utility") {
+      localStorage.setItem("shil:scenarioDomain", "utility");
+    } else {
+      localStorage.removeItem("shil:scenarioDomain");
+    }
 
     if (domain === "future") {
       navigate("/new-project/future");
