@@ -1,8 +1,13 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { startManualProjectFlow } from "../../workflow/flowIsolation.js";
 import EngineeringPageShell from "../../components/EngineeringPageShell.jsx";
 import StepConfirmLink from "../../components/StepConfirmLink.jsx";
 
 export default function ProjectInfo() {
+  useEffect(() => {
+    startManualProjectFlow();
+  }, []);
+
   return (
     <EngineeringPageShell title="اطلاعات پروژه">
       <section className="shil-card-stack">

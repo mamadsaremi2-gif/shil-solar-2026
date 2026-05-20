@@ -70,6 +70,8 @@ export default function RunCalculation() {
   const project = readDraft("shil:projectInfoDraft", {});
   const summary = readDraft("shil:summaryDraft", {});
   const solarDesign = readDraft("shil:solarSystemDesign", summary?.solarDesign || {});
+  const solarPanelPowerInput = readDraft("shil:solarPanelPowerInput", {});
+  const isSolarPanelPowerRoute = !emergency && (localStorage.getItem("shil:calculationMethod") === "solar_panel_power" || Boolean(solarPanelPowerInput?.selectedPanelId));
   const aiPreview = readDraft("shil:aiInstallationPreview", null);
   const projectTitle = project.projectName || project.name || (emergency ? "پروژه برق اضطراری" : "پروژه خورشیدی");
   const projectKey = localStorage.getItem("shil:activeProjectKey") || `final-${Date.now()}`;
@@ -82,7 +84,15 @@ export default function RunCalculation() {
   const diagnosticItems = engineeringDiagnostics?.items || engineeringDiagnostics || [];
   const actionDiagnostics = Array.isArray(diagnosticItems) ? diagnosticItems.filter((item) => ["critical", "error", "warning"].includes(item.severity)).slice(0, 8) : [];
 
-  const panelRows = emergency ? [] : [
+  const panelRows = emergency ? [] : (isSolarPanelPowerRoute ? [
+    { label: "توان کل پنل‌ها", value: `${Math.round(((solarPanelPowerInput?.totalPanelPowerW || solarDesign?.pvArray?.arrayPowerW || 0) / 1000) * 100) / 100} kW`, note: "از تعداد پنل و توان هر پنل" },
+    { label: "تولید خام روزانه", value: solarPanelPowerInput?.rawDailyEnergyKWh ? `${solarPanelPowerInput.rawDailyEnergyKWh} kWh` : "-", note: "قبل از اعمال تلفات" },
+    { label: "تولید واقعی با تلفات", value: solarPanelPowerInput?.generatedDailyKWh ? `${solarPanelPowerInput.generatedDailyKWh} kWh` : `${solarDesign?.panelPowerAnalysis?.array?.dailyEnergyKWh || "-"} kWh`, note: "پس از اعمال PSH، راندمان و تلفات" },
+    { label: "اینورتر خورشیدی", value: `${solarDesign?.inverter?.count || "-"} عدد / ${solarDesign?.inverter?.ratedPowerW || "-"} وات`, note: `${solarDesign?.inverterTopology?.mpptPerInverter || 1} MPPT برای هر اینورتر` },
+    { label: "تقسیم پنل", value: Array.isArray(solarPanelPowerInput?.inverterPanelDistribution) ? `${solarPanelPowerInput.inverterPanelDistribution.join(" / ")} پنل` : "تک اینورتر", note: "مطابق تقسیم هوشمند/دستی کاربر" },
+    { label: "باتری", value: solarDesign?.settings?.autonomyDays > 0 ? batterySpecText(solarDesign?.battery) : "باتری انتخاب نشده", note: solarDesign?.batteryScope === "all" ? "اعمال برای همه اینورترها" : solarDesign?.batteryScope ? `اعمال برای اینورتر ${solarDesign.batteryScope}` : "بدون خودکفایی" },
+    { label: "حفاظت DC/AC", value: `${solarDesign?.protection?.dcBreakerA || "-"}A / ${solarDesign?.protection?.acBreakerA || "-"}A`, note: "مطابق اینورتر، MPPT، کابل و تقسیم پنل" }
+  ] : [
     { label: "توان پنل خورشیدی", value: `${solarDesign?.pvArray?.panelCount || "-"} عدد / ${solarDesign?.panel?.powerW || 620} وات`, note: `${solarDesign?.pvArray?.seriesCount || "-"} سری × ${solarDesign?.pvArray?.parallelCount || "-"} موازی` },
     { label: "توان آرایه PV", value: `${solarDesign?.panelPowerAnalysis?.array?.powerKW || solarDesign?.solarSizing?.pArrayKW || "-"} kW`, note: `تولید روزانه: ${solarDesign?.panelPowerAnalysis?.array?.dailyEnergyKWh || solarDesign?.solarSizing?.ePvDailyKWh || "-"} kWh` },
     { label: "اعتبارسنجی توان پنل", value: `${solarDesign?.panelPowerAnalysis?.score || "-"} از ۱۰۰`, note: solarDesign?.panelPowerAnalysis?.levelLabel || "کنترل توان، رشته، MPPT و جریان" },
@@ -91,7 +101,7 @@ export default function RunCalculation() {
     { label: "اینورتر خورشیدی", value: `${solarDesign?.inverter?.count || "-"} عدد / ${solarDesign?.inverter?.ratedPowerW || "-"} وات`, note: "مطابق سناریوی آفگرید، آنگرید یا هیبرید" },
     { label: "باتری", value: batterySpecText(solarDesign?.battery), note: batteryNoteText(solarDesign?.battery) },
     { label: "حفاظت DC/AC", value: `${solarDesign?.protection?.dcBreakerA || "-"}A / ${solarDesign?.protection?.acBreakerA || "-"}A`, note: "فیوز، بریکر، SPD و ارتینگ" }
-  ];
+  ]);
 
   const emergencyRows = emergency ? [
     { label: "اینورتر برق اضطراری", value: `${result?.inverter?.count || 1} عدد / ${result?.inverter?.ratedPowerW || "-"} وات`, note: "پوشش توان دائم و توان لحظه‌ای بارهای ضروری" },

@@ -3,8 +3,19 @@ import { useNavigate, useParams } from "react-router-dom";
 import ShilPageShell from "../../components/ShilPageShell";
 import ProjectMiniRail from "../../components/ProjectMiniRail.jsx";
 import SmartCityInput, { findIranCityByName, getDefaultIranCity } from "../../components/SmartCityInput";
-import { analyzeEnvironmentForEngineering } from "../../core/environment/environmentAssessment.js";
+import { analyzeEnvironmentForEngineering, estimateRecommendedTilt, normalizePersianNumber } from "../../core/environment/environmentAssessment.js";
 import { approveProjectStep } from "../../workflow/projectWorkflow.js";
+import { clearScenarioFlow, isScenarioFlowFor } from "../../workflow/flowIsolation.js";
+
+const directionOptions = [
+  { key: "north", label: "شمال", deg: 0 },
+  { key: "east", label: "شرق", deg: 90 },
+  { key: "south", label: "جنوب", deg: 180 },
+  { key: "west", label: "غرب", deg: 270 },
+];
+const defaultDirectionSlots = { north: "north", east: "east", south: "south", west: "west" };
+function toNumberInput(value, fallback = 0) { const n = Number(normalizePersianNumber(value)); return Number.isFinite(n) ? n : fallback; }
+function normalizeDeg(value) { const n = toNumberInput(value, 180); return ((n % 360) + 360) % 360; }
 
 const installTypes = [
   { key: "urban", label: "شهری", humidityOffset: 0, soiling: 3, description: "محیط معمول شهری با ریسک متوسط گردوغبار" },
@@ -95,6 +106,9 @@ export default function Environment() {
   const [compassUploadChoice, setCompassUploadChoice] = useState("ask");
   const [gpsStatus, setGpsStatus] = useState("");
   const [validationMessage, setValidationMessage] = useState("");
+  const [installTiltDeg, setInstallTiltDeg] = useState(String(estimateRecommendedTilt(defaultClimate.latitude)));
+  const [installAzimuthDeg, setInstallAzimuthDeg] = useState("180");
+  const [directionSlots, setDirectionSlots] = useState(defaultDirectionSlots);
 
   const activeInstallType = installTypes.find((item) => item.key === installType) || installTypes[0];
 
@@ -106,6 +120,7 @@ export default function Environment() {
     if (gpsMode === "auto") {
       setLatitude(String(nextClimate.latitude ?? ""));
       setLongitude(String(nextClimate.longitude ?? ""));
+      setInstallTiltDeg(String(estimateRecommendedTilt(nextClimate.latitude)));
     }
   }, [city, selectedCity, domain, installType, gpsMode, manualOverride]);
 
@@ -137,10 +152,14 @@ export default function Environment() {
     humidity: climate.humidity,
     peakSunHours: climate.peakSunHours,
     soilingLossPercent: activeInstallType.soiling,
+    wiringLossPercent: 3,
+    selectedTiltDeg: toNumberInput(installTiltDeg, estimateRecommendedTilt(latitude)),
+    selectedAzimuthDeg: normalizeDeg(installAzimuthDeg),
+    directionSlots,
     compassAttachment,
     siteAttachments,
     siteAttachment: siteAttachments[0] || null,
-  }), [domain, city, selectedCity, address, gpsMode, latitude, longitude, activeInstallType, climate, compassAttachment, siteAttachments]);
+  }), [domain, city, selectedCity, address, gpsMode, latitude, longitude, activeInstallType, climate, installTiltDeg, installAzimuthDeg, directionSlots, compassAttachment, siteAttachments]);
 
   const pickCity = (item) => {
     if (!item) return;
@@ -167,6 +186,8 @@ export default function Environment() {
     setManualClimate(nextClimate);
     setLatitude(String(nextClimate.latitude ?? ""));
     setLongitude(String(nextClimate.longitude ?? ""));
+    setInstallTiltDeg(String(estimateRecommendedTilt(nextClimate.latitude)));
+    setInstallAzimuthDeg("180");
   };
 
   const readPreview = (file, setter) => {
@@ -256,6 +277,15 @@ export default function Environment() {
       soilingLossPercent: activeInstallType.soiling,
       recommendedTiltDeg: assessment.recommendedTiltDeg,
       recommendedAzimuthDeg: assessment.recommendedAzimuthDeg,
+      selectedTiltDeg: assessment.selectedTiltDeg,
+      selectedAzimuthDeg: assessment.selectedAzimuthDeg,
+      directionSlots,
+      orientationLossPercent: assessment.orientationLossPercent,
+      tiltLossPercent: assessment.tiltLossPercent,
+      totalOrientationLossPercent: assessment.totalOrientationLossPercent,
+      orientationEfficiency: assessment.orientationEfficiency,
+      totalLossPercent: assessment.totalLossPercent,
+      effectiveEfficiency: assessment.effectiveEfficiency,
       thermalDeratePercent: assessment.thermalDeratePercent,
       recommendedIngressProtection: assessment.recommendedIngressProtection,
       corrosionRisk: assessment.corrosionRisk,
@@ -271,6 +301,26 @@ export default function Environment() {
     localStorage.setItem("shil:environmentDraft", JSON.stringify(environmentDraft));
     approveProjectStep("environment");
     localStorage.setItem("shil:environmentAssessment", JSON.stringify(assessment));
+
+    const urlParams = new URLSearchParams(window.location.search || "");
+    const scenarioFlowActive = urlParams.get("from") === "scenario" && isScenarioFlowFor(domain);
+    const selectedScenario = (() => {
+      try { return JSON.parse(localStorage.getItem("shil:selectedScenario") || "null"); }
+      catch { return null; }
+    })();
+
+    if (scenarioFlowActive && ["solar", "emergency"].includes(domain) && selectedScenario?.id) {
+      const scenarioDomain = selectedScenario.domain || domain;
+      localStorage.setItem("shil:calculationMethod", "equipment");
+      localStorage.setItem("shil:scenarioNextStep", `${scenarioDomain}-equipment-list`);
+      localStorage.setItem("shil:scenarioEquipmentBranch", scenarioDomain);
+      navigate(`/new-project/input/${scenarioDomain}/equipment?from=scenario&scenarioId=${selectedScenario.id}&after=environment`);
+      return;
+    }
+
+    if (urlParams.get("from") !== "scenario") {
+      clearScenarioFlow();
+    }
     navigate(`/new-project/path?domain=${domain}&from=environment`);
   };
 
@@ -364,6 +414,12 @@ export default function Environment() {
           </div>
           <small className="shil-env-hint">{activeInstallType.description}</small>
 
+          <div className="shil-manual-climate-grid shil-orientation-input-grid">
+            <div className="shil-field"><label>جهت نصب پنل °</label><input className="shil-input" value={installAzimuthDeg} onChange={(event) => setInstallAzimuthDeg(event.target.value)} inputMode="decimal" placeholder="پیش‌فرض ۱۸۰ جنوب" /><small className="shil-env-hint">۰ شمال، ۹۰ شرق، ۱۸۰ جنوب، ۲۷۰ غرب؛ این عدد در راندمان و تلفات اعمال می‌شود.</small></div>
+            <div className="shil-field"><label>زاویه نصب پنل °</label><input className="shil-input" value={installTiltDeg} onChange={(event) => setInstallTiltDeg(event.target.value)} inputMode="decimal" placeholder={`پیشنهادی ${assessment.recommendedTiltDeg}°`} /><small className="shil-env-hint">عدد دستی کاربر جایگزین زاویه پیشنهادی و وارد موتور محاسبات می‌شود.</small></div>
+          </div>
+          <div className="shil-climate-grid shil-orientation-factor-grid"><div className="shil-climate-box"><span>افت جهت</span><strong>{assessment.orientationLossPercent}%</strong></div><div className="shil-climate-box"><span>افت زاویه</span><strong>{assessment.tiltLossPercent}%</strong></div><div className="shil-climate-box"><span>ضریب جهت/زاویه</span><strong>{Math.round((assessment.orientationEfficiency || 1) * 100)}%</strong></div><div className="shil-climate-box"><span>راندمان نهایی محیطی</span><strong>{Math.round((assessment.effectiveEfficiency || 1) * 100)}%</strong></div></div>
+
           <div className="shil-upload-grid shil-install-upload-grid">
             <div className="shil-upload-box shil-smart-upload-box">
               <span>آپلود جهت‌نما</span>
@@ -377,10 +433,14 @@ export default function Environment() {
               ) : null}
               {compassPreview ? (
                 <div className="shil-orientation-frame" aria-label="پیش‌نمایش جهت‌نما با محورهای جغرافیایی">
-                  <div className="shil-orientation-label shil-orientation-north">شمال 0°<small>ورودی اصلی جهت</small></div>
-                  <div className="shil-orientation-label shil-orientation-east">شرق 90°<small>لبه راست محل نصب</small></div>
-                  <div className="shil-orientation-label shil-orientation-south">جنوب 180°<small>جهت بهینه پنل</small></div>
-                  <div className="shil-orientation-label shil-orientation-west">غرب 270°<small>لبه چپ محل نصب</small></div>
+                  {Object.entries({ north: "ورودی اصلی جهت", east: "لبه راست محل نصب", south: "جهت بهینه پنل", west: "لبه چپ محل نصب" }).map(([slot, hint]) => (
+                    <label key={slot} className={`shil-orientation-label shil-orientation-${slot}`}>
+                      <select className="shil-orientation-select" value={directionSlots[slot]} onChange={(event) => setDirectionSlots((prev) => ({ ...prev, [slot]: event.target.value }))}>
+                        {directionOptions.map((item) => <option key={item.key} value={item.key}>{item.label} {item.deg}°</option>)}
+                      </select>
+                      <small>{hint}</small>
+                    </label>
+                  ))}
                   <div className="shil-orientation-image-shell">
                     <img src={compassPreview} alt="Compass preview" />
                   </div>
@@ -411,8 +471,11 @@ export default function Environment() {
           <h3 className="shil-section-title">تحلیل مهندسی خودکار</h3>
           <div className="shil-climate-grid">
             <div className="shil-climate-box"><span>زاویه پیشنهادی پنل</span><strong>{assessment.recommendedTiltDeg}°</strong></div>
+            <div className="shil-climate-box"><span>زاویه اعمال‌شده</span><strong>{assessment.selectedTiltDeg}°</strong></div>
             <div className="shil-climate-box"><span>جهت پیشنهادی</span><strong>{assessment.recommendedAzimuthDeg}° جنوب</strong></div>
+            <div className="shil-climate-box"><span>جهت اعمال‌شده</span><strong>{assessment.selectedAzimuthDeg}°</strong></div>
             <div className="shil-climate-box"><span>افت حرارتی</span><strong>{assessment.thermalDeratePercent}%</strong></div>
+            <div className="shil-climate-box"><span>افت جهت/زاویه</span><strong>{assessment.totalOrientationLossPercent}%</strong></div>
             <div className="shil-climate-box"><span>ریسک خوردگی</span><strong>{assessment.corrosionRisk}</strong></div>
             <div className="shil-climate-box"><span>درجه حفاظت</span><strong>{assessment.recommendedIngressProtection}</strong></div>
             <div className="shil-climate-box"><span>وضعیت بررسی</span><strong>{assessment.status === "ready" ? "آماده" : "نیازمند بازبینی"}</strong></div>
@@ -434,6 +497,9 @@ export default function Environment() {
             <div className="shil-climate-box"><span>ارتفاع</span><strong>{climate.altitude}m</strong></div>
             <div className="shil-climate-box"><span>رطوبت</span><strong>{climate.humidity}%</strong></div>
             <div className="shil-climate-box"><span>ساعت آفتابی</span><strong>{climate.peakSunHours}</strong></div>
+            <div className="shil-climate-box"><span>جهت نصب</span><strong>{assessment.selectedAzimuthDeg}°</strong></div>
+            <div className="shil-climate-box"><span>زاویه نصب</span><strong>{assessment.selectedTiltDeg}°</strong></div>
+            <div className="shil-climate-box"><span>تلفات جهت/زاویه</span><strong>{assessment.totalOrientationLossPercent}%</strong></div>
             <div className="shil-climate-box"><span>ضریب آلودگی</span><strong>{activeInstallType.soiling}%</strong></div>
             <div className="shil-climate-box"><span>تصاویر محل نصب</span><strong>{siteAttachments.length} فایل</strong></div>
             <div className="shil-climate-box"><span>جهت‌نما</span><strong>{compassAttachment ? "ثبت شد" : "ثبت نشده"}</strong></div>
@@ -442,7 +508,7 @@ export default function Environment() {
         </section>
 
         {validationMessage ? <div className="shil-env-error">{validationMessage}</div> : null}
-        <button type="button" className="shil-primary-wide" onClick={confirmEnvironment}>تأیید شرایط محیطی و ادامه به انتخاب مسیر پروژه</button>
+        <button type="button" className="shil-primary-wide" onClick={confirmEnvironment}>تأیید شرایط محیطی و ادامه</button>
       </div>
     </ShilPageShell>
   );

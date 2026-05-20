@@ -104,6 +104,8 @@ export function runLoadEngine(input = {}) {
   const domain = input.domain || localStorage.getItem("shil:scenarioDomain") || "solar";
   const method = input.method || "equipment";
   const voltageAC = Number(input.voltageAC ?? 220) || 220;
+  const phaseAC = input.phaseAC || (voltageAC >= 380 ? "three" : "single");
+  const powerFactorAC = Number(input.powerFactorAC ?? 0.95) || 0.95;
   const dcBusVoltage = Number(input.dcBusVoltage ?? (domain === "solar" ? 48 : 24)) || 48;
   const selectedItems = (input.selectedItems || []).map(normalizeLoadItem);
   const scenario = input.scenario || null;
@@ -119,7 +121,8 @@ export function runLoadEngine(input = {}) {
   const totalPowerW = Math.round(Number(input.manualPowerW || 0) || equipmentPowerW || fallbackPowerW);
   const totalEnergyWh = Math.round(Number(input.manualEnergyWh || 0) || equipmentEnergyWh || (totalPowerW * fallbackHours));
   const surgePowerW = Math.round(Number(input.manualSurgeW || 0) || equipmentSurgeW || (totalPowerW * 1.6));
-  const acCurrentA = selectedItems.length ? round(totalRunningCurrentA, 2) : round(totalPowerW / voltageAC, 2);
+  const fallbackCurrentA = phaseAC === "three" ? totalPowerW / (Math.sqrt(3) * voltageAC * powerFactorAC) : totalPowerW / (voltageAC * powerFactorAC);
+  const acCurrentA = selectedItems.length ? round(totalRunningCurrentA, 2) : round(fallbackCurrentA, 2);
   const startCurrentA = selectedItems.length ? round(totalStartCurrentA, 2) : round(acCurrentA * 1.6, 2);
   const dcCurrentA = round(totalPowerW / dcBusVoltage, 2);
   const loadProfile = input.loadProfile || buildLoadProfile(selectedItems, input);
@@ -144,6 +147,8 @@ export function runLoadEngine(input = {}) {
     dcCurrentA,
     startCurrentA,
     voltageAC,
+    phaseAC,
+    powerFactorAC,
     dcBusVoltage,
     motorCount,
     softStarterCount,
@@ -169,6 +174,7 @@ function buildLoadWarnings({ totalPowerW, totalEnergyWh, surgePowerW, selectedIt
   if (selectedItems.some((item) => item.isMotor && !item.hasSoftStarter)) warnings.push("برای تجهیزات موتوری بدون سافت‌استارتر، جریان راه‌اندازی ۲.۵ برابر جریان نامی لحاظ شده است.");
   if (domain === "solar" && totalEnergyWh > 25000) warnings.push("انرژی روزانه بالا است؛ فضای نصب پنل و باتری باید دقیق کنترل شود.");
   if (domain === "emergency" && totalPowerW > 8000) warnings.push("توان اضطراری سنگین است؛ بررسی سه‌فاز یا ژنراتور کمکی پیشنهاد می‌شود.");
+  if (totalPowerW > 30000) warnings.push("توان مسیر از ۳۰kW عبور کرده است؛ بلوک چنداینورتری/نیروگاهی در پیکربندی سیستم فعال می‌شود.");
   return warnings;
 }
 
@@ -181,6 +187,8 @@ export function persistLoadEngineResult(payload) {
     totalPowerW: result.totalPowerW,
     totalDailyWh: result.totalEnergyWh,
     totalCurrentA: result.totalCurrentA,
+    voltageAC: result.voltageAC,
+    phaseAC: result.phaseAC,
     startCurrentA: result.startCurrentA,
     surgePowerW: result.surgePowerW,
     expertSummary: result.expertSummary,

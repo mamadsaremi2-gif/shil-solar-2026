@@ -155,8 +155,9 @@ function sizePvArray({ dailyWh, autonomyDays, panel, inverter, env, manualPanelC
   const dailyProductionNeedWh = dailyWh * (autonomyDays > 1 ? 1.06 : 1);
   const energyBasedPvW = dailyProductionNeedWh / Math.max(1, env.psh) / Math.max(0.52, env.effectiveEfficiency);
   const requiredPvW = Math.max(energyBasedPvW, num(targetPvPowerW, 0));
-  const basePanelCount = manualPanelCount ? ceil(manualPanelCount) : ceil(requiredPvW / panel.powerW);
-  const reservedPanelCount = ceil(basePanelCount * Math.max(1, num(panelExtraFactor, 1)));
+  const manualCount = manualPanelCount ? ceil(manualPanelCount) : 0;
+  const basePanelCount = manualCount || ceil(requiredPvW / panel.powerW);
+  const reservedPanelCount = manualCount || ceil(basePanelCount * Math.max(1, num(panelExtraFactor, 1)));
 
   const tempRiseVocFactor = 1 + Math.max(0, 25 - env.minTempC) * 0.0028;
   const coldVoc = panel.voc * tempRiseVocFactor;
@@ -167,7 +168,7 @@ function sizePvArray({ dailyWh, autonomyDays, panel, inverter, env, manualPanelC
   const maxSeries = Math.max(minSeries, Math.min(maxSeriesByMppt, maxSeriesByDc));
   const targetSeries = clamp(Math.round(((inverter.mpptMinV + inverter.mpptMaxV) / 2) / Math.max(1, panel.vmp)), minSeries, maxSeries);
   const parallelCount = ceil(reservedPanelCount / targetSeries);
-  const panelCount = targetSeries * parallelCount;
+  const panelCount = manualCount || (targetSeries * parallelCount);
   return {
     requiredPvW: round(requiredPvW, 0),
     basePanelCount,
@@ -198,9 +199,9 @@ function cableByCurrent(currentA, dc = true) {
   return dc ? "6mm²" : "4mm²";
 }
 
-function sizeProtection({ designPowerW, inverter, inverterCount, pvArray, batteryDesign }) {
+function sizeProtection({ designPowerW, inverter, inverterCount, pvArray, batteryDesign, outputAcVoltage = 220, outputPhase = "single" }) {
   const dcCurrentA = designPowerW / Math.max(12, inverter.dcVoltage) / 0.92;
-  const acCurrentA = designPowerW / 220 / 0.9;
+  const acCurrentA = outputPhase === "three" ? designPowerW / (Math.sqrt(3) * Math.max(1, outputAcVoltage) * 0.9) : designPowerW / Math.max(1, outputAcVoltage) / 0.9;
   const batteryBranchCurrentA = dcCurrentA / Math.max(1, batteryDesign.parallelCount);
   const pvFuseA = Math.ceil(pvArray.stringCurrentA * 1.56 / 5) * 5;
   const dcBreakerA = Math.ceil(dcCurrentA * 1.25 / 10) * 10;
@@ -227,6 +228,86 @@ function sizeProtection({ designPowerW, inverter, inverterCount, pvArray, batter
   };
 }
 
+
+function buildInverterMpptTopology({ pvArray = {}, panel = {}, inverter = {}, inverterCount = 1, mpptCount = 1, panelDistribution = [], outputAcVoltage = 220, outputPhase = "single" }) {
+  const invCount = Math.max(1, Math.round(num(inverterCount, 1)));
+  const mpptPerInverter = Math.max(1, Math.round(num(mpptCount, 1)));
+  const totalMppt = invCount * mpptPerInverter;
+  const totalPanels = Math.max(0, Math.round(num(pvArray.panelCount, 0)));
+  const totalStrings = Math.max(1, Math.round(num(pvArray.parallelCount, 1)));
+  const stringsPerInverter = Math.max(1, Math.ceil(totalStrings / invCount));
+  const stringsPerMppt = Math.max(1, Math.ceil(totalStrings / totalMppt));
+  const basePanelsPerInverter = invCount > 0 ? Math.floor(totalPanels / invCount) : totalPanels;
+  const panelRemainder = invCount > 0 ? totalPanels % invCount : 0;
+  const normalizedPanelDistribution = Array.from({ length: invCount }, (_, index) => {
+    const manual = Number(panelDistribution[index]);
+    if (Number.isFinite(manual) && manual >= 0) return Math.round(manual);
+    return basePanelsPerInverter + (index < panelRemainder ? 1 : 0);
+  });
+  const panelsPerInverter = invCount > 0 ? Math.ceil(totalPanels / invCount) : totalPanels;
+  const panelsPerMppt = totalMppt > 0 ? Math.ceil(totalPanels / totalMppt) : totalPanels;
+  const inverterPowerW = num(inverter.ratedPowerW, 0);
+  const pvPowerPerInverterW = round(num(pvArray.arrayPowerW, 0) / invCount, 0);
+  const pvPowerPerMpptW = round(num(pvArray.arrayPowerW, 0) / totalMppt, 0);
+  const stringCurrentA = num(pvArray.stringCurrentA, num(panel.imp, 0));
+  const mpptCurrentA = round(stringCurrentA * stringsPerMppt, 2);
+  const inverterDcCurrentA = round(stringCurrentA * stringsPerInverter, 2);
+  const acCurrentPerInverterA = round(inverterPowerW / Math.max(1, num(outputAcVoltage, 220)) / (outputPhase === "three" ? Math.sqrt(3) * 0.9 : 0.9), 2);
+  const protectionPerInverter = {
+    dcCombiner: totalStrings > invCount ? "کلمپ/کامباینر DC برای هر اینورتر" : "ورودی مستقیم PV به اینورتر",
+    stringFuseA: Math.ceil(stringCurrentA * 1.56 / 5) * 5,
+    mpptBreakerA: Math.ceil(mpptCurrentA * 1.25 / 5) * 5,
+    acBreakerA: Math.ceil(acCurrentPerInverterA * 1.25 / 5) * 5,
+    dcCable: cableByCurrent(inverterDcCurrentA, true),
+    acCable: cableByCurrent(acCurrentPerInverterA, false),
+  };
+  const rows = Array.from({ length: invCount }, (_, index) => {
+    const panelsForInverter = normalizedPanelDistribution[index] ?? panelsPerInverter;
+    const pvPowerForInverterW = panelsForInverter * num(panel.powerW, 0);
+    const stringsForInverter = Math.max(1, Math.ceil(panelsForInverter / Math.max(1, num(pvArray.seriesCount, 1))));
+    const panelsPerLocalMppt = Math.max(0, Math.ceil(panelsForInverter / mpptPerInverter));
+    const stringsPerLocalMppt = Math.max(1, Math.ceil(stringsForInverter / mpptPerInverter));
+    return {
+    inverterNo: index + 1,
+    mpptCount: mpptPerInverter,
+    panelsApprox: panelsForInverter,
+    stringsApprox: stringsForInverter,
+    pvPowerKW: round(pvPowerForInverterW / 1000, 2),
+    acPowerKW: round(inverterPowerW / 1000, 2),
+    mppt: Array.from({ length: mpptPerInverter }, (_, mpptIndex) => ({
+      mpptNo: mpptIndex + 1,
+      stringsApprox: stringsPerLocalMppt,
+      panelsApprox: panelsPerLocalMppt,
+      pvPowerKW: round((panelsPerLocalMppt * num(panel.powerW, 0)) / 1000, 2),
+      currentA: mpptCurrentA,
+    }))
+  };
+  });
+  return {
+    active: invCount > 1 || mpptPerInverter > 1,
+    inverterCount: invCount,
+    mpptPerInverter,
+    totalMppt,
+    stringsPerInverter,
+    stringsPerMppt,
+    panelsPerInverter,
+    panelsPerMppt,
+    panelDistribution: normalizedPanelDistribution,
+    pvPowerPerInverterKW: round(pvPowerPerInverterW / 1000, 2),
+    pvPowerPerMpptKW: round(pvPowerPerMpptW / 1000, 2),
+    mpptCurrentA,
+    inverterDcCurrentA,
+    acCurrentPerInverterA,
+    protectionPerInverter,
+    rows,
+    notes: [
+      `آرایه PV بین ${invCount.toLocaleString("fa-IR")} اینورتر تقسیم شد؛ سهم تقریبی هر اینورتر ${round(pvPowerPerInverterW / 1000, 2)}kW است.`,
+      `برای هر اینورتر ${mpptPerInverter.toLocaleString("fa-IR")} MPPT ثبت شده و هر MPPT حدود ${stringsPerMppt.toLocaleString("fa-IR")} رشته را پوشش می‌دهد.`,
+      `حفاظت پیشنهادی هر اینورتر: فیوز رشته ${protectionPerInverter.stringFuseA}A، بریکر MPPT ${protectionPerInverter.mpptBreakerA}A، بریکر AC ${protectionPerInverter.acBreakerA}A.`
+    ]
+  };
+}
+
 function buildValidation({ load, designPowerW, designSurgeW, inverter, inverterCount, battery, requiredBatteryWh, pvArray, env }) {
   const checks = [];
   const push = (key, ok, level, message, fix = "") => checks.push({ key, ok, level: ok ? "ok" : level, message, fix });
@@ -248,7 +329,7 @@ export function runSolarAutoDesign({ load = {}, environment = {}, settings = {} 
   const normalized = normalizeLoad(load);
   const env = normalizeEnvironment(environment);
   const systemType = settings.systemType || "offgrid";
-  const autonomyDays = clamp(settings.autonomyDays, 0.5, 5) || 1;
+  const autonomyDays = clamp(num(settings.autonomyDays, 0), 0, 5);
   const reserveFactor = clamp(settings.reserveFactor, 1, 1.8) || 1.2;
   const requestedPlantPowerW = Math.max(
     num(settings.targetPlantPowerMW, 0) * 1_000_000,
@@ -257,14 +338,19 @@ export function runSolarAutoDesign({ load = {}, environment = {}, settings = {} 
   );
   const designPowerW = Math.ceil(Math.min(30_000_000, Math.max(normalized.totalPowerW * reserveFactor, requestedPlantPowerW)));
   const designSurgeW = Math.ceil(Math.max(normalized.surgePowerW * (systemType === "ongrid" ? 1 : 1.05), designPowerW * (systemType === "ongrid" ? 1.02 : 1.08)));
-  const systemVoltage = chooseSystemVoltage(designPowerW, systemType, settings.systemVoltage);
-  const inverterPick = chooseInverter(designPowerW, designSurgeW, systemVoltage, settings.inverterId, systemType);
+  const requestedInverterCount = Math.max(1, Math.round(num(settings.inverterCount, 1)));
+  const inverterDesignPowerW = requestedInverterCount > 1 ? Math.ceil(designPowerW / requestedInverterCount) : designPowerW;
+  const inverterDesignSurgeW = requestedInverterCount > 1 ? Math.ceil(designSurgeW / requestedInverterCount) : designSurgeW;
+  const systemVoltage = chooseSystemVoltage(inverterDesignPowerW, systemType, settings.systemVoltage);
+  const inverterPick = chooseInverter(inverterDesignPowerW, inverterDesignSurgeW, systemVoltage, settings.inverterId, systemType);
   const scalePreview = runSystemScaleEngine({ designPowerW, inverter: inverterPick.inverter, inverterCount: inverterPick.count, settings });
-  const inverterBaseCount = Math.max(1, num(settings.inverterCount, scalePreview.totalInverterCount || inverterPick.count));
+  const inverterBaseCount = Math.max(requestedInverterCount, num(settings.inverterCount, scalePreview.totalInverterCount || inverterPick.count));
   const inverterCount = Math.max(scalePreview.totalInverterCount || inverterPick.count, ceil(inverterBaseCount * Math.max(1, num(settings.inverterExtraFactor, 1))));
+  const mpptCountPerInverter = Math.max(1, Math.round(num(settings.mpptCountPerInverter, 1)));
   const systemScale = runSystemScaleEngine({ designPowerW, inverter: inverterPick.inverter, inverterCount, settings });
   const { panel, manual: panelManual } = choosePanel(settings.panelId, settings.panelPowerW || 620);
-  const requiredBatteryWh = systemType === "ongrid" ? 0 : Math.ceil(normalized.totalEnergyWh * autonomyDays / 0.94);
+  const batteryRequired = settings.batteryRequired === false ? false : (systemType !== "ongrid" && autonomyDays > 0);
+  const requiredBatteryWh = batteryRequired ? Math.ceil(normalized.totalEnergyWh * autonomyDays / 0.94) : 0;
   const batteryDesign = chooseBattery(inverterPick.inverter.dcVoltage, Math.max(1, requiredBatteryWh), settings.batteryVoltage, settings.batteryId);
   const batteryBaseCount = Math.max(batteryDesign.totalCount, num(settings.batteryCount, batteryDesign.totalCount));
   const batteryTotalCount = Math.max(batteryDesign.totalCount, ceil(batteryBaseCount * Math.max(1, num(settings.batteryExtraFactor, 1))));
@@ -309,7 +395,8 @@ export function runSolarAutoDesign({ load = {}, environment = {}, settings = {} 
     env,
     settings
   });
-  const protection = sizeProtection({ designPowerW, inverter: inverterPick.inverter, inverterCount, pvArray, batteryDesign: batteryFinal });
+  const protection = sizeProtection({ designPowerW, inverter: inverterPick.inverter, inverterCount, pvArray, batteryDesign: batteryFinal, outputAcVoltage: num(settings.outputAcVoltage, 220), outputPhase: settings.outputPhase || ((num(settings.outputAcVoltage, 220) >= 380) ? "three" : "single") });
+  const inverterTopology = buildInverterMpptTopology({ pvArray, panel, inverter: inverterPick.inverter, inverterCount, mpptCount: mpptCountPerInverter, panelDistribution: settings.inverterPanelDistribution || [], outputAcVoltage: num(settings.outputAcVoltage, 220), outputPhase: settings.outputPhase || ((num(settings.outputAcVoltage, 220) >= 380) ? "three" : "single") });
   const batteryReport = enrichBatteryBankInfo(batteryFinal, protection);
   const validation = buildValidation({ load: normalized, designPowerW, designSurgeW, inverter: inverterPick.inverter, inverterCount, battery: batteryReport, requiredBatteryWh, pvArray, env });
   const diagnostics = runSolarProfessionalDiagnostics({
@@ -326,6 +413,7 @@ export function runSolarAutoDesign({ load = {}, environment = {}, settings = {} 
     solarSizing,
     validation,
     panelPowerAnalysis,
+    inverterTopology,
     systemScale,
     utilityElectrical,
     enterpriseUtility
@@ -337,8 +425,10 @@ export function runSolarAutoDesign({ load = {}, environment = {}, settings = {} 
     `مقیاس پروژه ${systemScale.scaleLabel} است و روش تحلیل ${systemScale.designModeLabel} انتخاب شد.`,
     `پنل پیش‌فرض ${panel.powerW} وات است؛ اگر کاربر 700 وات را دستی انتخاب کند، تعداد و آرایش پنل با همان مقدار دوباره محاسبه می‌شود.`,
     `آرایش پنل ${pvArray.seriesCount} سری × ${pvArray.parallelCount} موازی انتخاب شد تا Vmp و Voc در بازه مجاز MPPT و ولتاژ DC بمانند.`,
-    `باتری ${batteryReport.summaryLabel} با آرایش ${batteryReport.engineeringLabel} انتخاب شد تا ولتاژ بانک و انرژی قابل استفاده پروژه تأمین شود.`,
-    `ضرایب توسعه آینده روی تعداد نهایی تجهیزات اعمال شده‌اند: پنل ${num(settings.panelExtraFactor, 1)}، اینورتر ${num(settings.inverterExtraFactor, 1)}، باتری ${num(settings.batteryExtraFactor, 1)}.`
+    batteryRequired ? `باتری ${batteryReport.summaryLabel} با آرایش ${batteryReport.engineeringLabel} انتخاب شد تا ولتاژ بانک و انرژی قابل استفاده پروژه تأمین شود.` : "در این مسیر، نیاز باتری توسط کاربر اعلام نشده و محاسبه باتری به حالت غیرفعال/مرجع منتقل شد.",
+    `مسیر خروجی AC برابر ${num(settings.outputAcVoltage, normalized.voltageAC || 220)} ولت و حالت ${settings.outputPhase || normalized.phaseAC || "single"} به موتور جامع منتقل شد.`,
+    `تعداد MPPT هر اینورتر ${mpptCountPerInverter} در نظر گرفته شد و استرینگ‌ها، کابل و حفاظت بر اساس تقسیم بین اینورترها محاسبه شدند.`,
+    `در مسیر توان پنل خورشیدی، تعداد پنل از ورودی کاربر حفظ می‌شود و ضریب‌های توسعه آینده به صورت ورودی مستقل روی بانک‌ها اعمال نمی‌شوند؛ انتخاب اینورتر بر اساس ضریب راه‌اندازی انجام می‌شود.`
   ];
 
   return {
@@ -372,13 +462,18 @@ export function runSolarAutoDesign({ load = {}, environment = {}, settings = {} 
       gridShortCircuitMVA: num(settings.gridShortCircuitMVA, 0),
       estimatedMvFaultKA: num(settings.estimatedMvFaultKA, 0),
       plantAvailabilityPercent: num(settings.plantAvailabilityPercent, 0),
-      annualDegradationPercent: num(settings.annualDegradationPercent, 0)
+      annualDegradationPercent: num(settings.annualDegradationPercent, 0),
+      outputAcVoltage: num(settings.outputAcVoltage, normalized.voltageAC || 220),
+      outputPhase: settings.outputPhase || normalized.phaseAC || ((num(settings.outputAcVoltage, normalized.voltageAC || 220) >= 380) ? "three" : "single"),
+      batteryRequired,
+      mpptCountPerInverter
     },
     inverter: { ...inverterPick.inverter, count: inverterCount, parallelRequired: inverterCount > 1, manual: inverterPick.manual },
     panel,
     pvArray,
     solarSizing,
     panelPowerAnalysis,
+    inverterTopology,
     systemScale,
     utilityElectrical,
     enterpriseUtility,

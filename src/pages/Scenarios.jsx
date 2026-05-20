@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import ShilPageShell from "../components/ShilPageShell.jsx";
 import { getScenarioList, levelMeta } from "../data/scenarios/scenarioLibrary.js";
 import { scenarioToEngineeringForm } from "../core/scenario/scenarioToEngineeringForm.js";
+import { startScenarioFlow } from "../workflow/flowIsolation.js";
 
 const domainLabels = {
   solar: "سناریوهای آماده انرژی های خورشیدی",
@@ -26,11 +27,8 @@ export default function Scenarios() {
 
   const selectScenario = (scenario) => {
     const form = scenarioToEngineeringForm(scenario);
-    localStorage.setItem("shil:selectedScenario", JSON.stringify(scenario));
-    localStorage.setItem("shil:scenarioDomain", scenario.domain);
-    localStorage.setItem("shil:scenarioLevel", scenario.levelKey);
+    startScenarioFlow(scenario);
     localStorage.setItem("shil:engineeringFormDraft", JSON.stringify(form));
-    localStorage.setItem("shil:scenarioFlowActive", "true");
     navigate(`/new-project/environment/${scenario.domain}?from=scenario&scenarioId=${scenario.id}`);
   };
 

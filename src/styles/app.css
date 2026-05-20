@@ -603,3 +603,46 @@ p {
 }
 
 .shil-diagnostic-list{display:grid;gap:10px;margin-top:12px}.shil-diagnostic-card{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.045);border-radius:16px;padding:11px 12px;line-height:1.8}.shil-diagnostic-card strong{display:block;color:#fff;font-size:13px;margin-bottom:4px}.shil-diagnostic-card p{margin:0;color:#d7f5f2;font-size:12px}.shil-diagnostic-card small{display:block;margin-top:6px;color:#bdebe8;font-size:11px}.shil-diagnostic-card.critical{border-color:rgba(248,113,113,.55);background:rgba(127,29,29,.28)}.shil-diagnostic-card.error{border-color:rgba(251,146,60,.5);background:rgba(124,45,18,.24)}.shil-diagnostic-card.warning{border-color:rgba(251,191,36,.45);background:rgba(113,63,18,.22)}
+
+/* SHIL Full Offline PWA status */
+.shil-offline-badge {
+  position: fixed;
+  left: max(10px, env(safe-area-inset-left));
+  bottom: max(10px, env(safe-area-inset-bottom));
+  z-index: 9999;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 10px;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: 999px;
+  background: rgba(2, 6, 23, 0.78);
+  color: #e5f3ff;
+  font-size: 11px;
+  line-height: 1;
+  backdrop-filter: blur(10px);
+  pointer-events: none;
+}
+
+.shil-offline-badge.is-online {
+  opacity: 0.58;
+}
+
+.shil-offline-badge.is-offline {
+  border-color: rgba(245, 158, 11, 0.42);
+  color: #fde68a;
+  opacity: 1;
+}
+
+.shil-offline-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #22c55e;
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.85);
+}
+
+.shil-offline-badge.is-offline .shil-offline-dot {
+  background: #f59e0b;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.85);
+}

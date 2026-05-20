@@ -14,5 +14,13 @@
     "image": "/assets/shil/execution/emergency-inverter-battery.svg",
     "calculationDomain": "emergency",
     "adminReplaceablePng": "/assets/shil/execution/emergency-inverter-battery.png"
+  },
+  {
+    "key": "utility",
+    "title": "نیروگاهی",
+    "description": "درگاه مستقل طراحی نیروگاه خورشیدی بالای ۳۰kW تا ظرفیت‌های MW؛ شامل بلوک‌بندی، MV، ترانس و Grid Study مقدماتی",
+    "image": "/assets/shil/execution/solar-execution.svg",
+    "calculationDomain": "utility",
+    "adminReplaceablePng": "/assets/shil/execution/solar-execution.png"
   }
 ]

@@ -26,11 +26,15 @@ import SummaryPage from "../pages/project/SummaryPage.jsx";
 import RunCalculation from "../pages/project/RunCalculation.jsx";
 import UnderDevelopment from "../pages/project/UnderDevelopment.jsx";
 import UXFlowController from "../components/UXFlowController.jsx";
+import OfflineStatusBadge from "../components/offline/OfflineStatusBadge.jsx";
+import WorkflowRouteGuard from "../components/WorkflowRouteGuard.jsx";
 
 export default function App() {
   return (
     <BrowserRouter>
       <UXFlowController />
+      <OfflineStatusBadge />
+      <WorkflowRouteGuard />
       <Routes>
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<LoginPage />} />

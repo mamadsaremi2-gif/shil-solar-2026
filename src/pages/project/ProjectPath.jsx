@@ -1,23 +1,34 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { approveProjectStep } from "../../workflow/projectWorkflow.js";
+import { clearScenarioFlow, startUtilityGateway, setWorkflowMode, FLOW_MODES } from "../../workflow/flowIsolation.js";
 import EngineeringPageShell from "../../components/EngineeringPageShell.jsx";
 import { readAdminDefaults, readAdminProjectPathCards } from "../../admin/adminStore.js";
 
 const fallbackOptions = [
   {
     key: "solar",
-    title: "توان پنل خورشیدی",
-    description: "محاسبه توان آرایه PV، تولید روزانه، پوشش مصرف و ظرفیت باتری",
+    title: "برق خورشیدی با پنل",
+    description: "طراحی خورشیدی معمولی با پنل، باتری، اینورتر و خروجی مهندسی تا محدوده سبک/متوسط",
     image: "/assets/shil/execution/solar-execution.svg",
     calculationDomain: "solar",
+    order: 1,
   },
   {
     key: "emergency",
-    title: "اجرای پروژه با برق اضطراری",
-    description: "طراحی سیستم پشتیبان با اینورتر و باتری",
+    title: "برق اضطراری",
+    description: "طراحی سیستم پشتیبان با اینورتر، باتری و زمان برق اضطراری مورد نیاز",
     image: "/assets/shil/execution/emergency-inverter-battery.svg",
     calculationDomain: "emergency",
+    order: 2,
+  },
+  {
+    key: "utility",
+    title: "نیروگاهی",
+    description: "درگاه مستقل طراحی نیروگاه خورشیدی بالای ۳۰kW تا ظرفیت‌های MW، شامل بلوک‌بندی، MV، ترانس و Grid Study مقدماتی",
+    image: "/assets/shil/execution/solar-execution.svg",
+    calculationDomain: "utility",
+    order: 3,
   },
 ];
 
@@ -25,6 +36,8 @@ function normalizeCards(cards) {
   if (!Array.isArray(cards)) return fallbackOptions;
   const safeCards = cards
     .filter((item) => item && item.key && item.title && item.active !== false)
+    .filter((item) => !["future", "development", "under-development", "coming-soon"].includes(String(item.key || "").toLowerCase()))
+    .filter((item) => !/در حال توسعه|توسعه/.test(String(item.title || "")))
     .map((item) => ({
       key: String(item.key),
       title: String(item.title),
@@ -34,7 +47,11 @@ function normalizeCards(cards) {
       order: Number(item.order || 99),
     }));
 
-  return safeCards.length ? safeCards.sort((a, b) => a.order - b.order) : fallbackOptions;
+  const base = safeCards.length ? safeCards : fallbackOptions;
+  const withoutDev = base.filter((item) => !["future", "development", "under-development", "coming-soon"].includes(String(item.key || "").toLowerCase()) && !/در حال توسعه|توسعه/.test(String(item.title || "")));
+  const hasUtility = withoutDev.some((item) => item.calculationDomain === "utility" || item.key === "utility");
+  const withUtility = hasUtility ? withoutDev : [...withoutDev, fallbackOptions.find((item) => item.key === "utility")].filter(Boolean);
+  return withUtility.sort((a, b) => (Number(a.order || 99) - Number(b.order || 99)));
 }
 
 export default function ProjectPath() {
@@ -76,6 +93,8 @@ export default function ProjectPath() {
 
     const domain = selectedOption.calculationDomain || selectedOption.key;
 
+    clearScenarioFlow();
+    setWorkflowMode(domain === "utility" ? FLOW_MODES.UTILITY : FLOW_MODES.MANUAL);
     approveProjectStep("path");
     localStorage.setItem("shil:projectPath", selectedOption.key);
     localStorage.setItem("shil:selectedProjectPath", JSON.stringify(selectedOption));
@@ -88,14 +107,22 @@ export default function ProjectPath() {
       return;
     }
 
-    if (domain === "emergency") {
+    if (domain === "utility") {
       approveProjectStep("method");
       approveProjectStep("inputs");
-      approveProjectStep("system");
+      localStorage.setItem("shil:selectedCalculationMethod", JSON.stringify({ key: "utility_scale", title: "نیروگاهی" }));
+      localStorage.setItem("shil:calculationMethod", "utility_scale");
+      startUtilityGateway("project-path");
+      navigate("/new-project/system/utility?from=project-path&gateway=utility");
+      return;
+    }
+
+    if (domain === "emergency") {
       localStorage.setItem("shil:selectedCalculationMethod", JSON.stringify({ key: "emergency", title: "برق اضطراری" }));
+      localStorage.setItem("shil:calculationMethod", "equipment");
       const adminDefaults = readAdminDefaults();
       localStorage.setItem("shil:emergencyPowerSettings", JSON.stringify({ requiredEmergencyHours: adminDefaults.emergencyRequiredHours || 2, safetyFactor: adminDefaults.emergencySafetyFactor || 1.25, autoMode: true }));
-      navigate("/new-project/summary/emergency", { state: { method: "برق اضطراری" } });
+      navigate("/new-project/emergency?domain=emergency&from=project-path", { state: { method: "برق اضطراری" } });
       return;
     }
 
@@ -112,7 +139,7 @@ export default function ProjectPath() {
           </div>
 
           <p className="shil-section-note">
-            بعد از انتخاب «توان پنل خورشیدی»، ورودی‌ها مرحله‌به‌مرحله بین مصرف، شرایط محیطی، پنل، باتری و خروجی نهایی تقسیم می‌شوند.
+            مسیرهای معمولی مرحله‌به‌مرحله پیش می‌روند. طراحی نیروگاهی از کارت مستقل «نیروگاهی» شروع می‌شود تا منطق MW داخل مسیر پنل یا برق اضطراری شلوغی ایجاد نکند.
           </p>
 
           <div className="shil-execution-grid shil-project-path-two-cards">

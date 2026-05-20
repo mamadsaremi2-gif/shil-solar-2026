@@ -18,6 +18,16 @@ const optionTitle = (item) => item?.title || "-";
 const faNumber = (value) => Number(value || 0).toLocaleString("fa-IR");
 const kw = (w) => `${faNumber(Math.round(Number(w || 0) / 100) / 10)} کیلووات`;
 const mw = (w) => `${faNumber(Math.round(Number(w || 0) / 10000) / 100)} مگاوات`;
+const normalizePersianInput = (value) => String(value ?? "")
+  .replace(/[۰-۹]/g, (d) => "۰۱۲۳۴۵۶۷۸۹".indexOf(d))
+  .replace(/[٠-٩]/g, (d) => "٠١٢٣٤٥٦٧٨٩".indexOf(d))
+  .replace(/٫/g, ".")
+  .replace(/٬|,/g, "")
+  .trim();
+const toNumber = (value, fallback = 0) => {
+  const n = Number(normalizePersianInput(value));
+  return Number.isFinite(n) ? n : fallback;
+};
 
 
 function batterySpecText(bank = {}) {
@@ -72,7 +82,7 @@ function DesignModeCards({ value, onChange }) {
   );
 }
 
-function BankSelect({ title, subtitle, value, extraFactor, onValue, onExtraFactor, items, renderMeta, renderReason, smartValue, smartTitle }) {
+function BankSelect({ title, subtitle, value, onValue, items, renderMeta, renderReason, smartValue, smartTitle }) {
   const selected = items.find((item) => item.id === value);
   return (
     <div className="shil-bank-card shil-bank-card-final shil-bank-collapsed-field">
@@ -99,10 +109,6 @@ function BankSelect({ title, subtitle, value, extraFactor, onValue, onExtraFacto
             </select>
           </label>
 
-          <label className="shil-bank-field shil-bank-count-field">
-            <span>ضریب اضافه کردن</span>
-            <input type="number" step="0.05" min="1" value={extraFactor} onChange={(e) => onExtraFactor(e.target.value)} />
-          </label>
         </div>
       </DetailsToggle>
 
@@ -180,41 +186,48 @@ function ConfigurationLinkedDetails({ design }) {
   );
 }
 
-function ResultTable({ design }) {
+function ResultTable({ design, solarPanelPowerInput = {}, batteryScope = "none" }) {
+  const input = solarPanelPowerInput || {};
+  const rawDaily = input.rawDailyEnergyKWh || (input.totalPanelPowerW && input.psh ? Math.round((input.totalPanelPowerW / 1000) * input.psh * 100) / 100 : null);
+  const usableDaily = input.generatedDailyKWh || input.usableDailyEnergyKWh || design.panelPowerAnalysis?.array?.dailyEnergyKWh || design.solarSizing?.ePvDailyKWh;
+  const panelDistribution = Array.isArray(input.inverterPanelDistribution) && input.inverterPanelDistribution.length
+    ? input.inverterPanelDistribution.join(" / ")
+    : (design.inverterTopology?.panelDistribution || []).join(" / ");
+  const inputPanelCount = toNumber(input.panelCount, design.pvArray?.panelCount || 0);
+  const inputPanelPowerW = toNumber(input.panelPowerW || design.panel?.powerW, design.panel?.powerW || 0);
+  const inputTotalPowerW = toNumber(input.totalPanelPowerW, inputPanelCount * inputPanelPowerW || design.pvArray?.arrayPowerW || 0);
+  const effectivePowerW = toNumber(input.effectivePanelPowerW, inputTotalPowerW * Math.max(0, Math.min(1, (100 - toNumber(input.lossPercent, 0)) / 100)));
   const rows = [
-    ["نوع اجرا", design.settings.systemType === "offgrid" ? "آفگرید" : design.settings.systemType === "hybrid" ? "هیبرید" : "آنگرید", "نوع اینورتر و ساختار نهایی طراحی"],
-    ["توان طراحی", `${faNumber(design.design.designPowerW)}W`, `${kw(design.design.designPowerW)} مبنای انتخاب اینورتر`],
-    ["مقیاس پروژه", `${design.systemScale?.scaleLabel || "-"} / ${design.systemScale?.designModeLabel || "-"}`, design.systemScale?.targetPowerMW >= 1 ? `${design.systemScale.targetPowerMW}MW AC / ${design.systemScale.targetDcPowerMW}MW DC` : `${design.systemScale?.targetPowerKW || "-"}kW`],
-    ["بلوک‌بندی نیروگاهی", design.systemScale?.designMode === "block_based_power_plant" ? `${faNumber(design.systemScale.blockCount)} بلوک × ${design.systemScale.actualBlockPowerMW}MW` : "نیاز ندارد", design.systemScale?.designMode === "block_based_power_plant" ? `${faNumber(design.systemScale.inverterPerBlock)} اینورتر در هر بلوک / ${faNumber(design.systemScale.totalInverterCount)} کل` : "حالت اینورتر تکی یا موازی"],
-    ["اینورتر", `${optionTitle(design.inverter)} / ${faNumber(design.inverter.count)} عدد`, design.inverter.parallelRequired ? "نیازمند کارکرد موازی" : "پوشش مستقیم توان"],
-    ["باتری", `${design.battery.battery.title} / ${batterySpecText(design.battery)}`, `${batteryNoteText(design.battery)} / بازه ${design.battery.voltageRange}`],
-    ["توان پنل خورشیدی", `${design.panel.title} / ${faNumber(design.pvArray.panelCount)} عدد`, `${faNumber(design.pvArray.seriesCount)} سری × ${faNumber(design.pvArray.parallelCount)} موازی / ${faNumber(design.pvArray.arrayPowerW)}W`],
-    ["تولید روزانه پنل", `${design.panelPowerAnalysis?.array?.dailyEnergyKWh || design.solarSizing?.ePvDailyKWh || "-"} kWh/day`, design.panelPowerAnalysis?.array?.coveragePercent ? `پوشش مهندسی مصرف: ${design.panelPowerAnalysis.array.coveragePercent}%` : "پس از ثبت مصرف روزانه محاسبه می‌شود"],
-    ["اعتبارسنجی توان پنل", `${design.panelPowerAnalysis?.levelLabel || "-"} / ${design.panelPowerAnalysis?.score || "-"} از ۱۰۰`, "کنترل توان، انرژی روزانه، رشته‌بندی، MPPT، جریان و فضای نصب"],
-    ["باتری خودکفایی", `${design.solarSizing?.eBatteryNeededKWh || "-"} kWh`, design.solarSizing?.batterySummary || (design.solarSizing?.batteryCount ? `${faNumber(design.solarSizing.batteryCount)} عدد / ${design.solarSizing.batteryVoltageV || "-"}V / ${design.solarSizing.batteryCapacityAh || "-"}Ah / ${design.solarSizing.batteryUnitKWh || "-"}kWh هر باتری / ${design.solarSizing.batteryBankKWh || "-"}kWh کل` : "بر اساس DoD و راندمان محاسبه می‌شود")],
-    ["فضای نصب", `${design.space.maintenanceAreaM2} m²`, design.space.note],
-    ["حفاظت", `DC ${design.protection.dcBreakerA}A / AC ${design.protection.acBreakerA}A`, "بر اساس جریان کاری، ضریب اطمینان و حفاظت اضافه‌بار"],
-    ["کابل", `DC ${design.protection.dcCable}`, `PV ${design.protection.pvCable} / باتری ${design.protection.batteryCable}`]
+    ["توان پایه پنل‌ها", `${faNumber(inputTotalPowerW)} W`],
+    ["توان موثر پس از تلفات", `${faNumber(effectivePowerW)} W`],
+    ["ضریب راه‌اندازی", `${design.settings.reserveFactor || 1.2}`],
+    ["توان نهایی طراحی", `${faNumber(design.design.designPowerW)} W`],
+    ["اینورتر", `${optionTitle(design.inverter)} / ${faNumber(design.inverter.count)} عدد`],
+    ["تعداد MPPT", `${faNumber(design.inverterTopology?.mpptPerInverter || 1)} برای هر اینورتر`],
+    ["پنل خورشیدی", `${design.panel.title} / ${faNumber(inputPanelCount || design.pvArray.panelCount)} عدد`],
+    ["تقسیم پنل بین اینورترها", panelDistribution || "تک اینورتر"],
+    ["تولید خام روزانه", rawDaily ? `${rawDaily} kWh` : "-"],
+    ["تولید واقعی با تلفات", usableDaily ? `${usableDaily} kWh` : "-"],
+    ["باتری", toNumber(design.settings.autonomyDays, 0) > 0 ? `${batterySpecText(design.battery)} / ${batteryScope === "all" ? "اعمال برای همه اینورترها" : batteryScope === "none" ? "انتخاب نشده" : `اعمال برای اینورتر ${batteryScope}`}` : "انتخاب نشده"],
+    ["حفاظت", `DC ${design.protection.dcBreakerA}A / AC ${design.protection.acBreakerA}A`],
+    ["کابل", `DC ${design.protection.dcCable} / PV ${design.protection.pvCable}`]
   ];
 
   return (
     <div className="shil-result-table shil-result-table-final" role="table" aria-label="نتیجه پیکربندی سیستم">
       <div className="shil-result-row shil-result-header" role="row">
         <span>بخش</span>
-        <strong>مقدار محاسبه‌شده</strong>
-        <small>دلیل / اثر در محاسبات</small>
+        <strong>نتیجه نهایی</strong>
       </div>
-      {rows.map(([name, value, reason]) => (
+      {rows.map(([name, value]) => (
         <div className="shil-result-row" role="row" key={name}>
           <span>{name}</span>
           <strong>{value}</strong>
-          <small>{reason}</small>
         </div>
       ))}
     </div>
   );
 }
-
 
 function PanelPowerProCard({ design }) {
   const analysis = design.panelPowerAnalysis || {};
@@ -300,16 +313,64 @@ function PanelPowerProCard({ design }) {
   );
 }
 
+
+function InverterMpptTopologyCard({ design, mpptCount, onMpptCount, enabled }) {
+  const topology = design.inverterTopology || {};
+  if (!enabled) return null;
+  return (
+    <div className="shil-section-card shil-config-block shil-inverter-mppt-card">
+      <div className="shil-section-head">
+        <h2>تقسیم اینورتر و MPPT</h2>
+        <span>{topology.inverterCount || design.inverter?.count || 1} اینورتر / {topology.totalMppt || 1} MPPT</span>
+      </div>
+      <div className="shil-form-grid shil-param-grid">
+        <label><span>تعداد MPPT هر اینورتر</span><input type="number" min="1" max="12" value={mpptCount} onChange={(e) => onMpptCount(e.target.value)} /></label>
+      </div>
+      <div className="shil-summary-grid shil-solar-sizing-preview">
+        <div><span>سهم توان هر اینورتر</span><strong>{topology.pvPowerPerInverterKW || "-"} kW</strong></div>
+        <div><span>پنل تقریبی هر اینورتر</span><strong>{faNumber(topology.panelsPerInverter || 0)} عدد</strong></div>
+        <div><span>رشته هر اینورتر</span><strong>{faNumber(topology.stringsPerInverter || 0)} رشته</strong></div>
+        <div><span>رشته هر MPPT</span><strong>{faNumber(topology.stringsPerMppt || 0)} رشته</strong></div>
+        <div><span>جریان هر MPPT</span><strong>{topology.mpptCurrentA || "-"} A</strong></div>
+        <div><span>بریکر AC هر اینورتر</span><strong>{topology.protectionPerInverter?.acBreakerA || "-"} A</strong></div>
+      </div>
+      {topology.rows?.length ? (
+        <DetailsToggle title="جدول تقسیم پنل‌ها بین اینورتر و MPPT" attached>
+          <div className="shil-result-table shil-result-table-final" role="table" aria-label="تقسیم MPPT">
+            <div className="shil-result-row shil-result-header" role="row"><span>اینورتر</span><strong>تقسیم پنل و توان</strong><small>MPPT و حفاظت</small></div>
+            {topology.rows.map((row) => (
+              <div className="shil-result-row" role="row" key={row.inverterNo}>
+                <span>اینورتر {faNumber(row.inverterNo)}</span>
+                <strong>{faNumber(row.panelsApprox)} پنل / {row.pvPowerKW}kW</strong>
+                <small>{faNumber(row.mpptCount)} MPPT / حدود {faNumber(row.stringsApprox)} رشته / بریکر AC {topology.protectionPerInverter?.acBreakerA || "-"}A</small>
+              </div>
+            ))}
+          </div>
+          <div className="shil-expert-box">
+            {(topology.notes || []).map((note) => <div key={note}><span>MPPT</span><strong>{note}</strong></div>)}
+          </div>
+        </DetailsToggle>
+      ) : null}
+    </div>
+  );
+}
+
 export default function SystemSettings() {
   const { domain = "solar" } = useParams();
   const navigate = useNavigate();
   const emergency = domain === "emergency";
+  const utilityGateway = domain === "utility";
   const load = useMemo(() => readDraft("shil:loadEngineResult", {}), []);
   const environment = useMemo(() => readDraft("shil:environmentDraft", {}), []);
+  const solarPanelPowerInput = useMemo(() => readDraft("shil:solarPanelPowerInput", {}), []);
+  const calculationMethod = localStorage.getItem("shil:calculationMethod") || "";
+  const isSolarPanelPowerRoute = calculationMethod === "solar_panel_power" || Boolean(solarPanelPowerInput?.selectedPanelId);
 
   const [systemType, setSystemType] = useState("offgrid");
-  const [autonomyDays, setAutonomyDays] = useState(1);
+  const [autonomyDays, setAutonomyDays] = useState(isSolarPanelPowerRoute ? 0 : 1);
   const [reserveFactor, setReserveFactor] = useState(1.2);
+  const [batteryRequired, setBatteryRequired] = useState(!isSolarPanelPowerRoute);
+  const [batteryScope, setBatteryScope] = useState("none");
   const [equipmentManualMode, setEquipmentManualMode] = useState(false);
   const [parameterManualMode, setParameterManualMode] = useState(false);
   const [panelId, setPanelId] = useState(SHIL_SOLAR_PANELS.find((p) => p.powerW === 620)?.id || SHIL_SOLAR_PANELS[0]?.id || "");
@@ -319,7 +380,7 @@ export default function SystemSettings() {
   const [liveSaved, setLiveSaved] = useState(false);
   const [inverterExtraFactor, setInverterExtraFactor] = useState(1);
   const [batteryExtraFactor, setBatteryExtraFactor] = useState(1);
-  const [projectScale, setProjectScale] = useState("auto");
+  const [projectScale, setProjectScale] = useState(() => domain === "utility" ? (localStorage.getItem("shil:projectScale") || "utility") : "auto");
   const [targetPlantPowerMW, setTargetPlantPowerMW] = useState("");
   const [powerBlockSizeKW, setPowerBlockSizeKW] = useState("");
   const [mvVoltageKV, setMvVoltageKV] = useState("");
@@ -333,45 +394,59 @@ export default function SystemSettings() {
   const [estimatedMvFaultKA, setEstimatedMvFaultKA] = useState("");
   const [plantAvailabilityPercent, setPlantAvailabilityPercent] = useState("");
   const [annualDegradationPercent, setAnnualDegradationPercent] = useState("");
+  const [mpptCountPerInverter, setMpptCountPerInverter] = useState("1");
   const [warning, setWarning] = useState("");
 
   const settings = useMemo(() => ({
     systemType,
-    autonomyDays: Number(autonomyDays) || 1,
-    reserveFactor: Number(reserveFactor) || 1.2,
-    panelId: equipmentManualMode ? panelId : undefined,
+    autonomyDays: toNumber(autonomyDays, isSolarPanelPowerRoute ? 0 : 1),
+    reserveFactor: toNumber(reserveFactor, 1.2),
+    panelId: equipmentManualMode ? panelId : (solarPanelPowerInput?.selectedPanelId || undefined),
     inverterId: equipmentManualMode ? inverterId : undefined,
-    batteryId: equipmentManualMode ? batteryId : undefined,
-    panelExtraFactor: Number(panelExtraFactor) || 1,
-    inverterExtraFactor: Number(inverterExtraFactor) || 1,
-    batteryExtraFactor: Number(batteryExtraFactor) || 1,
+    batteryId: equipmentManualMode ? batteryId : (solarPanelPowerInput?.batteryId || undefined),
+    panelCount: toNumber(solarPanelPowerInput?.panelCount, 0) || undefined,
+    inverterCount: toNumber(solarPanelPowerInput?.inverterSplitCount, 0) || undefined,
+    outputAcVoltage: toNumber(solarPanelPowerInput?.acVoltageRoute || load?.voltageAC || 220, 220),
+    outputPhase: toNumber(solarPanelPowerInput?.acVoltageRoute || load?.voltageAC || 220, 220) >= 380 ? "three" : "single",
+    batteryRequired: isSolarPanelPowerRoute ? toNumber(autonomyDays, 0) > 0 : Boolean(batteryRequired),
+    batteryScope,
+    inverterPanelDistribution: Array.isArray(solarPanelPowerInput?.inverterPanelDistribution) ? solarPanelPowerInput.inverterPanelDistribution : undefined,
+    mpptCountPerInverter: Math.max(1, Math.round(toNumber(mpptCountPerInverter, 1))),
+    panelExtraFactor: isSolarPanelPowerRoute ? 1 : toNumber(panelExtraFactor, 1),
+    inverterExtraFactor: isSolarPanelPowerRoute ? 1 : toNumber(inverterExtraFactor, 1),
+    batteryExtraFactor: isSolarPanelPowerRoute ? 1 : toNumber(batteryExtraFactor, 1),
     projectScale,
-    targetPlantPowerMW: Number(targetPlantPowerMW) || 0,
-    powerBlockSizeKW: Number(powerBlockSizeKW) || 0,
-    mvVoltageKV: Number(mvVoltageKV) || 0,
-    blockStationMW: Number(blockStationMW) || 0,
-    exportLimitMW: Number(exportLimitMW) || 0,
-    groundCoverageRatio: Number(groundCoverageRatio) || 0,
+    targetPlantPowerMW: toNumber(targetPlantPowerMW, 0),
+    powerBlockSizeKW: toNumber(powerBlockSizeKW, 0),
+    mvVoltageKV: toNumber(mvVoltageKV, 0),
+    blockStationMW: toNumber(blockStationMW, 0),
+    exportLimitMW: toNumber(exportLimitMW, 0),
+    groundCoverageRatio: toNumber(groundCoverageRatio, 0),
     trackerMode,
-    terrainSlopeDeg: Number(terrainSlopeDeg) || 0,
-    usableLandPercent: Number(usableLandPercent) || 0,
-    gridShortCircuitMVA: Number(gridShortCircuitMVA) || 0,
-    estimatedMvFaultKA: Number(estimatedMvFaultKA) || 0,
-    plantAvailabilityPercent: Number(plantAvailabilityPercent) || 0,
-    annualDegradationPercent: Number(annualDegradationPercent) || 0,
+    terrainSlopeDeg: toNumber(terrainSlopeDeg, 0),
+    usableLandPercent: toNumber(usableLandPercent, 0),
+    gridShortCircuitMVA: toNumber(gridShortCircuitMVA, 0),
+    estimatedMvFaultKA: toNumber(estimatedMvFaultKA, 0),
+    plantAvailabilityPercent: toNumber(plantAvailabilityPercent, 0),
+    annualDegradationPercent: toNumber(annualDegradationPercent, 0),
     manualMode: equipmentManualMode || parameterManualMode,
     equipmentManualMode,
     parameterManualMode
-  }), [systemType, autonomyDays, reserveFactor, equipmentManualMode, parameterManualMode, panelId, inverterId, batteryId, panelExtraFactor, inverterExtraFactor, batteryExtraFactor, projectScale, targetPlantPowerMW, powerBlockSizeKW, mvVoltageKV, blockStationMW, exportLimitMW, groundCoverageRatio, trackerMode, terrainSlopeDeg, usableLandPercent, gridShortCircuitMVA, estimatedMvFaultKA, plantAvailabilityPercent, annualDegradationPercent]);
+  }), [systemType, autonomyDays, reserveFactor, equipmentManualMode, parameterManualMode, panelId, inverterId, batteryId, panelExtraFactor, inverterExtraFactor, batteryExtraFactor, projectScale, targetPlantPowerMW, powerBlockSizeKW, mvVoltageKV, blockStationMW, exportLimitMW, groundCoverageRatio, trackerMode, terrainSlopeDeg, usableLandPercent, gridShortCircuitMVA, estimatedMvFaultKA, plantAvailabilityPercent, annualDegradationPercent, solarPanelPowerInput, load, mpptCountPerInverter, batteryRequired, batteryScope, isSolarPanelPowerRoute]);
 
   const solarDesign = useMemo(() => runSolarAutoDesign({ load, environment, settings }), [load, environment, settings]);
+  const scaleTargetPowerW = Number(solarDesign.systemScale?.targetPowerW || solarDesign.design?.designPowerW || 0);
+  const utilityScaleActive = utilityGateway && (scaleTargetPowerW > 30000 || !["auto", "small"].includes(projectScale));
+  const utilityScaleStatusText = utilityGateway
+    ? (utilityScaleActive ? "فعال؛ مسیر مستقل نیروگاهی" : "آماده؛ توان هدف نیروگاهی را وارد کنید")
+    : "غیرفعال؛ فقط در درگاه مستقل نیروگاهی نمایش داده می‌شود";
 
   useEffect(() => {
     if (equipmentManualMode) return;
-    setPanelId(SHIL_SOLAR_PANELS.find((p) => p.powerW === 620)?.id || solarDesign.panel.id);
+    setPanelId(solarPanelPowerInput?.selectedPanelId || SHIL_SOLAR_PANELS.find((p) => p.powerW === 620)?.id || solarDesign.panel.id);
     setInverterId(solarDesign.inverter.id);
     setBatteryId(solarDesign.battery.battery.id);
-  }, [equipmentManualMode, solarDesign.panel.id, solarDesign.inverter.id, solarDesign.battery.battery.id]);
+  }, [equipmentManualMode, solarPanelPowerInput?.selectedPanelId, solarDesign.panel.id, solarDesign.inverter.id, solarDesign.battery.battery.id]);
 
   useEffect(() => {
     if (!warning) return undefined;
@@ -397,16 +472,19 @@ export default function SystemSettings() {
     setPanelExtraFactor(1);
     setInverterExtraFactor(1);
     setBatteryExtraFactor(1);
+    setMpptCountPerInverter("1");
+    setBatteryRequired(isSolarPanelPowerRoute ? false : systemType !== "ongrid");
+    if (isSolarPanelPowerRoute) { setAutonomyDays(0); setBatteryScope("none"); }
     setProjectScale("auto");
     setTargetPlantPowerMW("");
     setPowerBlockSizeKW("");
-    setPanelId(SHIL_SOLAR_PANELS.find((p) => p.powerW === 620)?.id || solarDesign.panel.id);
+    setPanelId(solarPanelPowerInput?.selectedPanelId || SHIL_SOLAR_PANELS.find((p) => p.powerW === 620)?.id || solarDesign.panel.id);
     setInverterId(solarDesign.inverter.id);
     setBatteryId(solarDesign.battery.battery.id);
   };
 
   const confirmSolar = () => {
-    const finalDesign = { ...solarDesign, confirmedAt: new Date().toISOString(), confirmedWithWarnings: !solarDesign.valid };
+    const finalDesign = { ...solarDesign, solarPanelPowerInput, batteryScope, confirmedAt: new Date().toISOString(), confirmedWithWarnings: !solarDesign.valid };
     approveProjectStep("system");
     localStorage.setItem("shil:solarSystemDesign", JSON.stringify(finalDesign));
     localStorage.setItem("shil:systemSettingsDraft", JSON.stringify({ domain: "solar", ...settings, design: finalDesign }));
@@ -446,64 +524,105 @@ export default function SystemSettings() {
           <DesignModeCards value={systemType} onChange={(nextType) => { setSystemType(nextType); setEquipmentManualMode(false); setWarning(`مدل طراحی ${nextType === "offgrid" ? "آفگرید" : nextType === "ongrid" ? "آنگرید" : "هیبرید"} در موتور محاسبات اعمال شد.`); }} />
         </div>
 
-        <div className="shil-section-card shil-config-block shil-scale-config-block">
-          <div className="shil-section-head"><h2>مقیاس پروژه نیروگاهی</h2><span>تا سقف ۳۰ مگاوات</span></div>
-          <div className="shil-form-grid shil-param-grid">
-            <label><span>مقیاس پروژه</span><select value={projectScale} onChange={(e) => { setParameterManualMode(true); setProjectScale(e.target.value); }}><option value="auto">خودکار</option><option value="small">خانگی / کوچک</option><option value="commercial">تجاری / صنعتی سبک</option><option value="industrial">صنعتی بزرگ</option><option value="utility">نیروگاهی</option><option value="mega_utility">نیروگاهی بزرگ</option></select></label>
-            <label><span>توان هدف نیروگاه MW</span><input type="number" step="0.1" min="0" max="30" value={targetPlantPowerMW} onChange={(e) => { setParameterManualMode(true); setTargetPlantPowerMW(e.target.value); }} placeholder="مثلاً 5 یا 10 یا 25" /></label>
-            <label><span>توان هر بلوک kW</span><input type="number" step="50" min="0" max="5000" value={powerBlockSizeKW} onChange={(e) => { setParameterManualMode(true); setPowerBlockSizeKW(e.target.value); }} placeholder="خودکار: 250/500/1000/2500" /></label>
-            <label><span>ولتاژ MV kV</span><input type="number" step="1" min="0" max="33" value={mvVoltageKV} onChange={(e) => { setParameterManualMode(true); setMvVoltageKV(e.target.value); }} placeholder="خودکار: 11/20/33" /></label>
-            <label><span>بلوک ترانس MW</span><input type="number" step="0.5" min="0" max="5" value={blockStationMW} onChange={(e) => { setParameterManualMode(true); setBlockStationMW(e.target.value); }} placeholder="خودکار: 0.5 تا 5" /></label>
-            <label><span>محدودیت تزریق MW</span><input type="number" step="0.1" min="0" max="30" value={exportLimitMW} onChange={(e) => { setParameterManualMode(true); setExportLimitMW(e.target.value); }} placeholder="اختیاری" /></label>
-            <label><span>GCR زمین</span><input type="number" step="0.01" min="0.28" max="0.62" value={groundCoverageRatio} onChange={(e) => { setParameterManualMode(true); setGroundCoverageRatio(e.target.value); }} placeholder="خودکار: 0.42" /></label>
-            <label><span>نوع چیدمان / Tracker</span><select value={trackerMode} onChange={(e) => { setParameterManualMode(true); setTrackerMode(e.target.value); }}><option value="auto">خودکار</option><option value="fixed_tilt">ثابت</option><option value="single_axis">ترکر تک‌محوره</option></select></label>
-            <label><span>شیب زمین درجه</span><input type="number" step="0.5" min="0" max="18" value={terrainSlopeDeg} onChange={(e) => { setParameterManualMode(true); setTerrainSlopeDeg(e.target.value); }} placeholder="خودکار: 2" /></label>
-            <label><span>زمین قابل استفاده ٪</span><input type="number" step="1" min="55" max="92" value={usableLandPercent} onChange={(e) => { setParameterManualMode(true); setUsableLandPercent(e.target.value); }} placeholder="خودکار: 82" /></label>
-            <label><span>قدرت اتصال کوتاه شبکه MVA</span><input type="number" step="10" min="0" value={gridShortCircuitMVA} onChange={(e) => { setParameterManualMode(true); setGridShortCircuitMVA(e.target.value); }} placeholder="خودکار بر اساس مقیاس" /></label>
-            <label><span>سطح اتصال کوتاه MV kA</span><input type="number" step="1" min="0" max="40" value={estimatedMvFaultKA} onChange={(e) => { setParameterManualMode(true); setEstimatedMvFaultKA(e.target.value); }} placeholder="خودکار: 16/20/25" /></label>
-            <label><span>Availability نیروگاه ٪</span><input type="number" step="0.1" min="92" max="99.8" value={plantAvailabilityPercent} onChange={(e) => { setParameterManualMode(true); setPlantAvailabilityPercent(e.target.value); }} placeholder="خودکار: 98" /></label>
-            <label><span>افت سالانه پنل ٪</span><input type="number" step="0.05" min="0.2" max="1.2" value={annualDegradationPercent} onChange={(e) => { setParameterManualMode(true); setAnnualDegradationPercent(e.target.value); }} placeholder="خودکار: 0.55" /></label>
-          </div>
-          <div className="shil-summary-grid shil-solar-sizing-preview">
+        {utilityGateway ? (
+        <div className={utilityScaleActive ? "shil-section-card shil-config-block shil-scale-config-block is-active" : "shil-section-card shil-config-block shil-scale-config-block is-locked"}>
+          <div className="shil-section-head"><h2>مقیاس پروژه نیروگاهی</h2><span>{utilityScaleStatusText}</span></div>
+          <div className="shil-summary-grid shil-solar-sizing-preview shil-scale-compact-status">
+            <div><span>توان طراحی فعلی</span><strong>{scaleTargetPowerW > 999999 ? mw(scaleTargetPowerW) : kw(scaleTargetPowerW)}</strong></div>
             <div><span>حالت تحلیل</span><strong>{solarDesign.systemScale?.designModeLabel}</strong></div>
-            <div><span>توان هدف</span><strong>{solarDesign.systemScale?.targetPowerMW >= 1 ? `${solarDesign.systemScale.targetPowerMW} MW` : `${solarDesign.systemScale?.targetPowerKW} kW`}</strong></div>
-            <div><span>بلوک‌ها</span><strong>{faNumber(solarDesign.systemScale?.blockCount)} بلوک</strong></div>
-            <div><span>اینورتر کل</span><strong>{faNumber(solarDesign.systemScale?.totalInverterCount)} عدد</strong></div>
-            <div><span>MV / فیدر</span><strong>{solarDesign.utilityElectrical?.active ? `${solarDesign.utilityElectrical.mv.voltageKV}kV / ${faNumber(solarDesign.utilityElectrical.mv.feederCount)}` : "نیاز ندارد"}</strong></div>
-            <div><span>ترانس</span><strong>{solarDesign.utilityElectrical?.active ? `${faNumber(solarDesign.utilityElectrical.transformer.count)} × ${solarDesign.utilityElectrical.transformer.unitMVA}MVA` : "نیاز ندارد"}</strong></div>
-            <div><span>زمین تقریبی</span><strong>{solarDesign.utilityElectrical?.active ? `${solarDesign.utilityElectrical.land.landAreaHa} ha` : "-"}</strong></div>
-            <div><span>تولید سالانه</span><strong>{solarDesign.utilityElectrical?.active ? `${faNumber(solarDesign.utilityElectrical.yield.annualKWh)} kWh` : "-"}</strong></div>
-            <div><span>Enterprise Score</span><strong>{solarDesign.enterpriseUtility?.active ? `${solarDesign.enterpriseUtility.score}/100` : "-"}</strong></div>
-            <div><span>حفاظت MV</span><strong>{solarDesign.enterpriseUtility?.active ? `${solarDesign.enterpriseUtility.protection.requiredBreakerKA}kA / ${solarDesign.enterpriseUtility.protection.feederBreakerA}A` : "-"}</strong></div>
-            <div><span>Grid Study</span><strong>{solarDesign.enterpriseUtility?.active ? solarDesign.enterpriseUtility.gridStudy.studyLevel : "-"}</strong></div>
-            <div><span>Tracker/GIS</span><strong>{solarDesign.enterpriseUtility?.active ? `${solarDesign.enterpriseUtility.tracker.trackerMode} / ${solarDesign.enterpriseUtility.terrain.requiredGrossLandHa} ha` : "-"}</strong></div>
-            <div><span>SCADA</span><strong>{solarDesign.enterpriseUtility?.active ? solarDesign.enterpriseUtility.scada.communicationTopology : "-"}</strong></div>
-            <div><span>P90 سال اول</span><strong>{solarDesign.enterpriseUtility?.active ? `${faNumber(solarDesign.enterpriseUtility.advancedYield.p90KWh)} kWh` : "-"}</strong></div>
+            <div><span>آستانه فعال‌سازی</span><strong>۳۰ کیلووات</strong></div>
+            <div><span>مسیر خروجی AC</span><strong>{settings.outputAcVoltage === 380 ? "۳۸۰ ولت سه‌فاز" : "۲۲۰ ولت تک‌فاز"}</strong></div>
+            <div><span>وضعیت بلوک‌های نیروگاهی</span><strong>{utilityScaleActive ? "فعال" : "بسته"}</strong></div>
           </div>
-          <p className="shil-muted-line">اگر توان از ۳۰kW بالاتر برود، اپ خطا نمی‌دهد و محاسبه را به چند اینورتر موازی یا بلوک‌بندی نیروگاهی تبدیل می‌کند. این بخش فقط تحلیل مهندسی است و هیچ قیمت یا خریدی وارد خروجی نمی‌شود.</p>
+
+          {!utilityScaleActive ? (
+            <>
+              <p className="shil-muted-line">چون توان مسیر انتخاب‌شده هنوز از ۳۰kW بالاتر نرفته، فیلدهای نیروگاهی، MV، ترانس، Grid Study، Tracker/GIS و SCADA بسته می‌مانند تا صفحه پیکربندی شلوغ نشود.</p>
+              <DetailsToggle title="نمایش دستی تنظیمات نیروگاهی پیشرفته">
+                <div className="shil-form-grid shil-param-grid">
+                  <label><span>مقیاس پروژه</span><select value={projectScale} onChange={(e) => { setParameterManualMode(true); setProjectScale(e.target.value); }}><option value="auto">خودکار</option><option value="small">خانگی / کوچک</option><option value="commercial">تجاری / صنعتی سبک</option><option value="industrial">صنعتی بزرگ</option><option value="utility">نیروگاهی</option><option value="mega_utility">نیروگاهی بزرگ</option></select></label>
+                  <label><span>توان هدف نیروگاه MW</span><input type="number" step="0.1" min="0" max="30" value={targetPlantPowerMW} onChange={(e) => { setParameterManualMode(true); setTargetPlantPowerMW(e.target.value); }} placeholder="مثلاً 5 یا 10 یا 25" /></label>
+                </div>
+                <p className="shil-muted-line">با وارد کردن توان بالاتر از ۰.۰۳MW یا انتخاب مقیاس صنعتی/نیروگاهی، بلوک کامل نیروگاهی فعال می‌شود.</p>
+              </DetailsToggle>
+            </>
+          ) : (
+            <>
+              <div className="shil-form-grid shil-param-grid">
+                <label><span>مقیاس پروژه</span><select value={projectScale} onChange={(e) => { setParameterManualMode(true); setProjectScale(e.target.value); }}><option value="auto">خودکار</option><option value="small">خانگی / کوچک</option><option value="commercial">تجاری / صنعتی سبک</option><option value="industrial">صنعتی بزرگ</option><option value="utility">نیروگاهی</option><option value="mega_utility">نیروگاهی بزرگ</option></select></label>
+                <label><span>توان هدف نیروگاه MW</span><input type="number" step="0.1" min="0" max="30" value={targetPlantPowerMW} onChange={(e) => { setParameterManualMode(true); setTargetPlantPowerMW(e.target.value); }} placeholder="مثلاً 5 یا 10 یا 25" /></label>
+                <label><span>توان هر بلوک kW</span><input type="number" step="50" min="0" max="5000" value={powerBlockSizeKW} onChange={(e) => { setParameterManualMode(true); setPowerBlockSizeKW(e.target.value); }} placeholder="خودکار: 250/500/1000/2500" /></label>
+                <label><span>ولتاژ MV kV</span><input type="number" step="1" min="0" max="33" value={mvVoltageKV} onChange={(e) => { setParameterManualMode(true); setMvVoltageKV(e.target.value); }} placeholder="خودکار: 11/20/33" /></label>
+                <label><span>بلوک ترانس MW</span><input type="number" step="0.5" min="0" max="5" value={blockStationMW} onChange={(e) => { setParameterManualMode(true); setBlockStationMW(e.target.value); }} placeholder="خودکار: 0.5 تا 5" /></label>
+                <label><span>محدودیت تزریق MW</span><input type="number" step="0.1" min="0" max="30" value={exportLimitMW} onChange={(e) => { setParameterManualMode(true); setExportLimitMW(e.target.value); }} placeholder="اختیاری" /></label>
+                <label><span>GCR زمین</span><input type="number" step="0.01" min="0.28" max="0.62" value={groundCoverageRatio} onChange={(e) => { setParameterManualMode(true); setGroundCoverageRatio(e.target.value); }} placeholder="خودکار: 0.42" /></label>
+                <label><span>نوع چیدمان / Tracker</span><select value={trackerMode} onChange={(e) => { setParameterManualMode(true); setTrackerMode(e.target.value); }}><option value="auto">خودکار</option><option value="fixed_tilt">ثابت</option><option value="single_axis">ترکر تک‌محوره</option></select></label>
+                <label><span>شیب زمین درجه</span><input type="number" step="0.5" min="0" max="18" value={terrainSlopeDeg} onChange={(e) => { setParameterManualMode(true); setTerrainSlopeDeg(e.target.value); }} placeholder="خودکار: 2" /></label>
+                <label><span>زمین قابل استفاده ٪</span><input type="number" step="1" min="55" max="92" value={usableLandPercent} onChange={(e) => { setParameterManualMode(true); setUsableLandPercent(e.target.value); }} placeholder="خودکار: 82" /></label>
+                <label><span>قدرت اتصال کوتاه شبکه MVA</span><input type="number" step="10" min="0" value={gridShortCircuitMVA} onChange={(e) => { setParameterManualMode(true); setGridShortCircuitMVA(e.target.value); }} placeholder="خودکار بر اساس مقیاس" /></label>
+                <label><span>سطح اتصال کوتاه MV kA</span><input type="number" step="1" min="0" max="40" value={estimatedMvFaultKA} onChange={(e) => { setParameterManualMode(true); setEstimatedMvFaultKA(e.target.value); }} placeholder="خودکار: 16/20/25" /></label>
+                <label><span>Availability نیروگاه ٪</span><input type="number" step="0.1" min="92" max="99.8" value={plantAvailabilityPercent} onChange={(e) => { setParameterManualMode(true); setPlantAvailabilityPercent(e.target.value); }} placeholder="خودکار: 98" /></label>
+                <label><span>افت سالانه پنل ٪</span><input type="number" step="0.05" min="0.2" max="1.2" value={annualDegradationPercent} onChange={(e) => { setParameterManualMode(true); setAnnualDegradationPercent(e.target.value); }} placeholder="خودکار: 0.55" /></label>
+              </div>
+              <div className="shil-summary-grid shil-solar-sizing-preview">
+                <div><span>حالت تحلیل</span><strong>{solarDesign.systemScale?.designModeLabel}</strong></div>
+                <div><span>توان هدف</span><strong>{solarDesign.systemScale?.targetPowerMW >= 1 ? `${solarDesign.systemScale.targetPowerMW} MW` : `${solarDesign.systemScale?.targetPowerKW} kW`}</strong></div>
+                <div><span>بلوک‌ها</span><strong>{faNumber(solarDesign.systemScale?.blockCount)} بلوک</strong></div>
+                <div><span>اینورتر کل</span><strong>{faNumber(solarDesign.systemScale?.totalInverterCount)} عدد</strong></div>
+                <div><span>MV / فیدر</span><strong>{solarDesign.utilityElectrical?.active ? `${solarDesign.utilityElectrical.mv.voltageKV}kV / ${faNumber(solarDesign.utilityElectrical.mv.feederCount)}` : "نیاز ندارد"}</strong></div>
+                <div><span>ترانس</span><strong>{solarDesign.utilityElectrical?.active ? `${faNumber(solarDesign.utilityElectrical.transformer.count)} × ${solarDesign.utilityElectrical.transformer.unitMVA}MVA` : "نیاز ندارد"}</strong></div>
+                <div><span>زمین تقریبی</span><strong>{solarDesign.utilityElectrical?.active ? `${solarDesign.utilityElectrical.land.landAreaHa} ha` : "-"}</strong></div>
+                <div><span>تولید سالانه</span><strong>{solarDesign.utilityElectrical?.active ? `${faNumber(solarDesign.utilityElectrical.yield.annualKWh)} kWh` : "-"}</strong></div>
+                <div><span>Enterprise Score</span><strong>{solarDesign.enterpriseUtility?.active ? `${solarDesign.enterpriseUtility.score}/100` : "-"}</strong></div>
+                <div><span>حفاظت MV</span><strong>{solarDesign.enterpriseUtility?.active ? `${solarDesign.enterpriseUtility.protection.requiredBreakerKA}kA / ${solarDesign.enterpriseUtility.protection.feederBreakerA}A` : "-"}</strong></div>
+                <div><span>Grid Study</span><strong>{solarDesign.enterpriseUtility?.active ? solarDesign.enterpriseUtility.gridStudy.studyLevel : "-"}</strong></div>
+                <div><span>Tracker/GIS</span><strong>{solarDesign.enterpriseUtility?.active ? `${solarDesign.enterpriseUtility.tracker.trackerMode} / ${solarDesign.enterpriseUtility.terrain.requiredGrossLandHa} ha` : "-"}</strong></div>
+                <div><span>SCADA</span><strong>{solarDesign.enterpriseUtility?.active ? solarDesign.enterpriseUtility.scada.communicationTopology : "-"}</strong></div>
+                <div><span>P90 سال اول</span><strong>{solarDesign.enterpriseUtility?.active ? `${faNumber(solarDesign.enterpriseUtility.advancedYield.p90KWh)} kWh` : "-"}</strong></div>
+              </div>
+              <p className="shil-muted-line">اگر توان از ۳۰kW بالاتر برود، اپ خطا نمی‌دهد و محاسبه را به چند اینورتر موازی یا بلوک‌بندی نیروگاهی تبدیل می‌کند. این بخش فقط تحلیل مهندسی است و هیچ قیمت یا خریدی وارد خروجی نمی‌شود.</p>
+            </>
+          )}
         </div>
+) : null}
 
         <div className="shil-section-card shil-config-block">
-          <div className="shil-section-head"><h2>پارامترهای اثرگذار</h2><span>{parameterManualMode ? "حالت دستی فعال" : "اعمال هوشمند فعال"}</span></div>
+          <div className="shil-section-head"><h2>کنترل طراحی</h2><span>{parameterManualMode ? "حالت دستی فعال" : "اعمال هوشمند فعال"}</span></div>
           <div className="shil-form-grid shil-param-grid">
-            <label><span>روزهای خودکفایی</span><input type="number" min="1" max="7" value={autonomyDays} onChange={(e) => { setParameterManualMode(true); setAutonomyDays(e.target.value); }} /></label>
-            <label><span>ضریب اطمینان استاندارد</span><input type="number" step="0.05" min="1" value={reserveFactor} onChange={(e) => { setParameterManualMode(true); setReserveFactor(e.target.value); }} /></label>
+            <label><span>ضریب راه‌اندازی پیش‌فرض</span><input type="text" inputMode="decimal" value={reserveFactor} onChange={(e) => { setParameterManualMode(true); setReserveFactor(e.target.value); }} /></label>
+            <label><span>روزهای خودکفایی</span><input type="text" inputMode="decimal" min="0" max="7" value={autonomyDays} onChange={(e) => { setParameterManualMode(true); const value = e.target.value; setAutonomyDays(value); if (toNumber(value, 0) <= 0) setBatteryScope("none"); else if (batteryScope === "none") setBatteryScope("all"); }} /></label>
+            {isSolarPanelPowerRoute && toNumber(autonomyDays, 0) > 0 ? (
+              <label><span>اعمال باتری برای</span><select value={batteryScope} onChange={(e) => { setParameterManualMode(true); setBatteryScope(e.target.value); }}>
+                <option value="all">همه اینورترها</option>
+                {Array.from({ length: Math.max(1, toNumber(solarPanelPowerInput?.inverterSplitCount, 1)) }, (_, i) => <option key={i + 1} value={String(i + 1)}>اینورتر {faNumber(i + 1)}</option>)}
+              </select></label>
+            ) : null}
           </div>
           <div className="shil-summary-grid shil-solar-sizing-preview">
-            <div><span>توان آرایه پنل</span><strong>{solarDesign.solarSizing?.pArrayKW || "-"} kW</strong></div>
-            <div><span>تولید روزانه</span><strong>{solarDesign.solarSizing?.ePvDailyKWh || "-"} kWh</strong></div>
-            <div><span>پوشش مصرف</span><strong>{solarDesign.solarSizing?.coveragePercent ? `${solarDesign.solarSizing.coveragePercent}%` : "نامشخص"}</strong></div>
-            <div><span>باتری خودکفایی</span><strong>{solarDesign.solarSizing?.eBatteryNeededKWh || "-"} kWh</strong><small>{solarDesign.solarSizing?.batterySummary || batterySpecText(solarDesign.battery)}</small></div>
+            <div><span>توان پایه</span><strong>{faNumber(solarPanelPowerInput?.totalPanelPowerW || solarDesign.pvArray?.arrayPowerW || 0)} W</strong></div>
+            <div><span>ضریب راه‌اندازی</span><strong>{reserveFactor}</strong></div>
+            <div><span>توان نهایی طراحی</span><strong>{faNumber(solarDesign.design?.designPowerW || 0)} W</strong></div>
+            <div><span>وضعیت باتری</span><strong>{toNumber(autonomyDays, 0) > 0 ? (batteryScope === "all" ? "باتری برای همه اینورترها" : `باتری برای اینورتر ${batteryScope}`) : "باتری انتخاب نشده"}</strong></div>
           </div>
           <div className="shil-action-row shil-smart-mode-row">
             <button type="button" className={!equipmentManualMode && !parameterManualMode ? "shil-soft-button active" : "shil-soft-button"} onClick={applySmart}>اعمال هوشمند SHIL</button>
             <button type="button" className={equipmentManualMode ? "shil-soft-button active" : "shil-soft-button"} onClick={() => setEquipmentManualMode(!equipmentManualMode)}>{equipmentManualMode ? "ورود دستی تجهیزات فعال" : "ورود دستی تجهیزات"}</button>
           </div>
-          <p className="shil-muted-line">در حالت پیش‌فرض، روزهای خودکفایی و ضریب اطمینان استاندارد مستقیم روی موتور محاسبات وارپ می‌شوند؛ با ورود عدد جدید، همان لحظه حالت دستی پارامتر فعال و محاسبات دوباره انجام می‌شود.</p>
+          <p className="shil-muted-line">ضریب راه‌اندازی و روزهای خودکفایی فقط در همین مسیر روی نتایج اینورتر، بانک باتری، کابل و حفاظت اثر می‌گذارند؛ صفر بودن خودکفایی یعنی باتری انتخاب نشده است.</p>
           <p className="shil-muted-line">{liveSaved ? "ذخیره و اتصال زنده به موتور انجام شد." : `پنل پیش‌فرض موتور: ${solarDesign.panel.powerW} وات`}</p>
         </div>
 
-        <PanelPowerProCard design={solarDesign} />
+        <InverterMpptTopologyCard
+          design={solarDesign}
+          mpptCount={mpptCountPerInverter}
+          onMpptCount={(value) => { setParameterManualMode(true); setMpptCountPerInverter(value); }}
+          enabled={isSolarPanelPowerRoute && Number(solarDesign.inverter?.count || 1) >= 1}
+        />
+
+        <div className="shil-section-card shil-config-block">
+          <div className="shil-section-head"><h2>بانک‌های هوشمند مسیر توان پنل</h2><span>{isSolarPanelPowerRoute ? "متصل به ورودی قبلی" : "حالت عمومی"}</span></div>
+          <p className="shil-muted-line">در این بخش بانک‌ها بر اساس انتخاب مرحله قبل نمایش داده می‌شوند؛ تعداد پنل و تقسیم‌بندی از ورودی کاربر حفظ می‌شود و ضریب اضافه مستقل در بانک‌ها اعمال نمی‌شود.</p>
+        </div>
 
         <div className="shil-system-banks-grid shil-system-banks-grid-final">
           <BankSelect
@@ -515,9 +634,9 @@ export default function SystemSettings() {
             onExtraFactor={(v) => { setEquipmentManualMode(true); setInverterExtraFactor(v); }}
             smartTitle={optionTitle(solarDesign.inverter)}
             items={SHIL_SOLAR_INVERTERS}
-            smartValue={`${kw(solarDesign.inverter.ratedPowerW)} / ${solarDesign.inverter.dcVoltage}V`}
+            smartValue={`${kw(solarDesign.inverter.ratedPowerW)} × ${faNumber(solarDesign.inverter.count)} عدد / ${solarDesign.inverter.dcVoltage}V`}
             renderMeta={(item) => <>{item?.ratedPowerW}W / ورودی باتری {item?.dcVoltage}V / MPPT {item?.mpptMinV}-{item?.mpptMaxV}V / سقف PV {item?.maxPvPowerW}W</>}
-            renderReason={(item) => <>{item?.title} زمانی مجاز است که توان دائم، توان لحظه‌ای و بازه ولتاژ شناور باتری با نیاز مصرف‌کننده همخوانی داشته باشد.</>}
+            renderReason={(item) => <>اینورتر هوشمند بر اساس سهم توان هر اینورتر، ضریب راه‌اندازی {reserveFactor}، ولتاژ خروجی {solarDesign.settings.outputAcVoltage}V و نزدیک‌ترین ظرفیت بالاتر مجاز انتخاب می‌شود.</>}
           />
           <BankSelect
             title="بانک باتری"
@@ -528,7 +647,7 @@ export default function SystemSettings() {
             onExtraFactor={(v) => { setEquipmentManualMode(true); setBatteryExtraFactor(v); }}
             smartTitle={solarDesign.battery.battery.title}
             items={SHIL_LITHIUM_BATTERIES}
-            smartValue={`${solarDesign.battery.unitVoltageV || solarDesign.battery.battery.nominalVoltage}V / ${faNumber(solarDesign.battery.totalCount)} عدد / ${solarDesign.battery.unitEnergyKWh || "-"}kWh`}
+            smartValue={toNumber(autonomyDays, 0) > 0 ? `${solarDesign.battery.unitVoltageV || solarDesign.battery.battery.nominalVoltage}V / ${faNumber(solarDesign.battery.totalCount)} عدد / ${solarDesign.battery.unitEnergyKWh || "-"}kWh / ${batteryScope === "all" ? "همه اینورترها" : `اینورتر ${batteryScope}`}` : "باتری انتخاب نشده"}
             renderMeta={(item) => <>{item?.nominalVoltage}V / {item?.capacityAh}Ah / بازه شناور {item?.minVoltage}-{item?.maxVoltage}V / انرژی خام {item?.energyWh}Wh</>}
             renderReason={() => <>ولتاژ باتری به صورت شناور کنترل می‌شود؛ برای اینورتر 12، 24 و 48 ولت، بازه باتری معادل همان ولتاژ باید داخل محدوده مجاز اینورتر باشد.</>}
           />
@@ -541,15 +660,15 @@ export default function SystemSettings() {
             onExtraFactor={(v) => { setEquipmentManualMode(true); setPanelExtraFactor(v); }}
             smartTitle={solarDesign.panel.title}
             items={SHIL_SOLAR_PANELS}
-            smartValue={`${solarDesign.panel.powerW}W / ${faNumber(solarDesign.pvArray.panelCount)} عدد`}
+            smartValue={`${solarDesign.panel.powerW}W / ${faNumber(solarDesign.pvArray.panelCount)} عدد / تقسیم: ${(solarDesign.inverterTopology?.panelDistribution || []).join(" / ") || "خودکار"}`}
             renderMeta={(item) => <>{item?.powerW}W / Vmp {item?.vmp}V / Voc {item?.voc}V / مساحت تقریبی {item?.areaM2}m²</>}
-            renderReason={() => <>تعداد سری پنل‌ها طوری تعیین می‌شود که ولتاژ رشته داخل محدوده MPPT اینورتر بماند و تعداد موازی توان مورد نیاز و توسعه آینده را پوشش دهد.</>}
+            renderReason={() => <>این بانک همان پنل و تعداد ثبت‌شده در ورودی قبلی را نشان می‌دهد؛ در صورت تغییر پنل، توان کل، تولید روزانه، تقسیم اینورتر، MPPT، کابل و حفاظت دوباره محاسبه می‌شود.</>}
           />
         </div>
 
         <div className="shil-section-card shil-auto-result-card shil-result-card-final">
           <div className="shil-section-head"><h2>نتیجه پیکربندی</h2><span>{solarDesign.valid ? "قابل تأیید" : "نیازمند اصلاح"}</span></div>
-          <ResultTable design={solarDesign} />
+          <ResultTable design={solarDesign} solarPanelPowerInput={solarPanelPowerInput} batteryScope={batteryScope} />
           {solarDesign.warnings.map((item) => <div key={item} className="shil-inline-warning">{item}</div>)}
           <ConfigurationLinkedDetails design={solarDesign} />
         </div>

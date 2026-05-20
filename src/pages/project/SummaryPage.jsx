@@ -73,7 +73,10 @@ export default function SummaryPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const emergency = domain === "emergency";
+  const methodKey = localStorage.getItem("shil:calculationMethod") || "";
   const method = location.state?.method || readDraft("shil:selectedCalculationMethod", { title: emergency ? "برق اضطراری" : "لیست تجهیزات" })?.title || (emergency ? "برق اضطراری" : "لیست تجهیزات");
+  const solarPanelPowerInput = readDraft("shil:solarPanelPowerInput", {});
+  const isSolarPanelPowerRoute = !emergency && (methodKey === "solar_panel_power" || Boolean(solarPanelPowerInput?.selectedPanelId));
 
   const project = useMemo(() => readDraft("shil:projectInfoDraft", {}), []);
   const environment = useMemo(() => readDraft("shil:environmentDraft", {}), []);
@@ -242,6 +245,17 @@ export default function SummaryPage() {
               <ul className="shil-engineering-list">{emergencyDesign?.explanations?.map((item) => <li key={item}>{item}</li>)}</ul>
             </div>
           </>
+        ) : isSolarPanelPowerRoute ? (
+          <SummaryBlock title="چکیده مسیر توان پنل خورشیدی" badge={solarDesign?.valid ? "تأیید شده" : "کنترل‌شده"}>
+            <SummaryItem label="توان کل پنل‌ها" value={solarPanelPowerInput?.totalPanelPowerW ? `${Math.round(solarPanelPowerInput.totalPanelPowerW / 100) / 10} kW` : solarDesign?.panelPowerAnalysis?.array?.powerKW ? `${solarDesign.panelPowerAnalysis.array.powerKW} kW` : null} />
+            <SummaryItem label="تولید خام روزانه" value={solarPanelPowerInput?.rawDailyEnergyKWh ? `${solarPanelPowerInput.rawDailyEnergyKWh} kWh` : null} />
+            <SummaryItem label="تولید واقعی با تلفات" value={solarPanelPowerInput?.generatedDailyKWh ? `${solarPanelPowerInput.generatedDailyKWh} kWh` : solarDesign?.panelPowerAnalysis?.array?.dailyEnergyKWh ? `${solarDesign.panelPowerAnalysis.array.dailyEnergyKWh} kWh` : null} />
+            <SummaryItem label="اینورتر" value={solarDesign?.inverter?.title || systemSettings?.inverterId} note={solarDesign?.inverter?.count ? `${solarDesign.inverter.count} عدد / MPPT ${solarDesign?.inverterTopology?.mpptPerInverter || 1} برای هر اینورتر` : null} />
+            <SummaryItem label="تقسیم پنل بین اینورترها" value={Array.isArray(solarPanelPowerInput?.inverterPanelDistribution) ? `${solarPanelPowerInput.inverterPanelDistribution.join(" / ")} پنل` : null} />
+            <SummaryItem label="بانک باتری" value={solarDesign?.settings?.autonomyDays > 0 ? batterySpecText(solarDesign?.battery) : "باتری انتخاب نشده"} note={solarDesign?.batteryScope ? (solarDesign.batteryScope === "all" ? "اعمال برای همه اینورترها" : `اعمال برای اینورتر ${solarDesign.batteryScope}`) : null} />
+            <SummaryItem label="حفاظت" value={solarDesign?.protection ? `DC ${solarDesign.protection.dcBreakerA}A / AC ${solarDesign.protection.acBreakerA}A` : null} />
+            <SummaryItem label="کابل" value={solarDesign?.protection ? `DC ${solarDesign.protection.dcCable} / PV ${solarDesign.protection.pvCable}` : null} />
+          </SummaryBlock>
         ) : (
           <SummaryBlock title="پیکربندی سیستم" badge={solarDesign?.valid ? "تأیید شده" : "کنترل‌شده"}>
             <SummaryItem label="اینورتر" value={solarDesign?.inverter?.title || systemSettings?.inverterId} note={solarDesign?.inverter?.count ? `${solarDesign.inverter.count} عدد` : null} />
