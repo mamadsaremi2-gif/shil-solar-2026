@@ -1,7 +1,7 @@
 cd "C:\Users\istock.ir\Downloads\SHIL SOLAR\shil_work"
 
 (Get-Content .\android\build.gradle) `
--replace "com.android.tools.build:gradle:[^']+", "com.android.tools.build:gradle:8.9.1" `
+-replace "com.android.tools.build:gradle:8.9.1']+", "com.android.tools.build:gradle:8.9.1
 | Set-Content .\android\build.gradle
 
 git add .
