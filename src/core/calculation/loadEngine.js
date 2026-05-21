@@ -162,14 +162,14 @@ export function runLoadEngine(input = {}) {
       transferredFields: ["totalPowerW", "totalEnergyWh", "acCurrentA", "startCurrentA", "surgePowerW", "selectedItems"],
     },
     nextEngine: domain === "emergency" ? "emergency-core" : "solar-core",
-    warnings: buildLoadWarnings({ totalPowerW, totalEnergyWh, surgePowerW, selectedItems, domain }),
+    warnings: buildLoadWarnings({ totalPowerW, totalEnergyWh, surgePowerW, selectedItems, domain, method }),
     createdAt: new Date().toISOString(),
   };
 }
 
-function buildLoadWarnings({ totalPowerW, totalEnergyWh, surgePowerW, selectedItems, domain }) {
+function buildLoadWarnings({ totalPowerW, totalEnergyWh, surgePowerW, selectedItems, domain, method }) {
   const warnings = [];
-  if (!selectedItems.length) warnings.push("هیچ تجهیزی انتخاب نشده؛ محاسبه فعلاً بر اساس سناریوی آماده انجام می‌شود.");
+  if (!selectedItems.length && !["profile", "energy", "power", "current", "solar_panel_power"].includes(method)) warnings.push("هیچ تجهیزی انتخاب نشده؛ محاسبه فعلاً بر اساس سناریوی آماده انجام می‌شود.");
   if (surgePowerW > totalPowerW * 2.5) warnings.push("توان راه‌اندازی بالا است؛ اینورتر باید برای پیک استارت بررسی شود.");
   if (selectedItems.some((item) => item.isMotor && !item.hasSoftStarter)) warnings.push("برای تجهیزات موتوری بدون سافت‌استارتر، جریان راه‌اندازی ۲.۵ برابر جریان نامی لحاظ شده است.");
   if (domain === "solar" && totalEnergyWh > 25000) warnings.push("انرژی روزانه بالا است؛ فضای نصب پنل و باتری باید دقیق کنترل شود.");

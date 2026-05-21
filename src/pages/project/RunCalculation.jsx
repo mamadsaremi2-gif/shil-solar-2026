@@ -6,6 +6,7 @@ import { markCurrentProjectFinal, showUxToast } from "../../workflow/uxFlowContr
 import { runEngineeringDesign } from "../../runEngineeringDesign.js";
 import { buildScenarioCalculationInput } from "../../core/scenario/scenarioToEngineeringForm.js";
 import { runEmergencyPowerDesign } from "../../core/calculation/emergencyPowerEngine.js";
+import { buildMethodSummary, getActiveMethodKey } from "../../core/summary/methodSummaryEngine.js";
 import {
   buildFinalEngineeringDelivery,
   exportDeliveryCsv,
@@ -71,7 +72,11 @@ export default function RunCalculation() {
   const summary = readDraft("shil:summaryDraft", {});
   const solarDesign = readDraft("shil:solarSystemDesign", summary?.solarDesign || {});
   const solarPanelPowerInput = readDraft("shil:solarPanelPowerInput", {});
-  const isSolarPanelPowerRoute = !emergency && (localStorage.getItem("shil:calculationMethod") === "solar_panel_power" || Boolean(solarPanelPowerInput?.selectedPanelId));
+  const loadResult = readDraft("shil:loadEngineResult", {});
+  const systemSettings = readDraft("shil:systemSettingsDraft", {});
+  const selectedEquipment = readDraft("shil:selectedEquipments", []);
+  const calculationInput = readCalculationInput();
+  const methodKey = getActiveMethodKey({ domain });
   const aiPreview = readDraft("shil:aiInstallationPreview", null);
   const projectTitle = project.projectName || project.name || (emergency ? "پروژه برق اضطراری" : "پروژه خورشیدی");
   const projectKey = localStorage.getItem("shil:activeProjectKey") || `final-${Date.now()}`;
@@ -84,31 +89,19 @@ export default function RunCalculation() {
   const diagnosticItems = engineeringDiagnostics?.items || engineeringDiagnostics || [];
   const actionDiagnostics = Array.isArray(diagnosticItems) ? diagnosticItems.filter((item) => ["critical", "error", "warning"].includes(item.severity)).slice(0, 8) : [];
 
-  const panelRows = emergency ? [] : (isSolarPanelPowerRoute ? [
-    { label: "توان کل پنل‌ها", value: `${Math.round(((solarPanelPowerInput?.totalPanelPowerW || solarDesign?.pvArray?.arrayPowerW || 0) / 1000) * 100) / 100} kW`, note: "از تعداد پنل و توان هر پنل" },
-    { label: "تولید خام روزانه", value: solarPanelPowerInput?.rawDailyEnergyKWh ? `${solarPanelPowerInput.rawDailyEnergyKWh} kWh` : "-", note: "قبل از اعمال تلفات" },
-    { label: "تولید واقعی با تلفات", value: solarPanelPowerInput?.generatedDailyKWh ? `${solarPanelPowerInput.generatedDailyKWh} kWh` : `${solarDesign?.panelPowerAnalysis?.array?.dailyEnergyKWh || "-"} kWh`, note: "پس از اعمال PSH، راندمان و تلفات" },
-    { label: "اینورتر خورشیدی", value: `${solarDesign?.inverter?.count || "-"} عدد / ${solarDesign?.inverter?.ratedPowerW || "-"} وات`, note: `${solarDesign?.inverterTopology?.mpptPerInverter || 1} MPPT برای هر اینورتر` },
-    { label: "تقسیم پنل", value: Array.isArray(solarPanelPowerInput?.inverterPanelDistribution) ? `${solarPanelPowerInput.inverterPanelDistribution.join(" / ")} پنل` : "تک اینورتر", note: "مطابق تقسیم هوشمند/دستی کاربر" },
-    { label: "باتری", value: solarDesign?.settings?.autonomyDays > 0 ? batterySpecText(solarDesign?.battery) : "باتری انتخاب نشده", note: solarDesign?.batteryScope === "all" ? "اعمال برای همه اینورترها" : solarDesign?.batteryScope ? `اعمال برای اینورتر ${solarDesign.batteryScope}` : "بدون خودکفایی" },
-    { label: "حفاظت DC/AC", value: `${solarDesign?.protection?.dcBreakerA || "-"}A / ${solarDesign?.protection?.acBreakerA || "-"}A`, note: "مطابق اینورتر، MPPT، کابل و تقسیم پنل" }
-  ] : [
-    { label: "توان پنل خورشیدی", value: `${solarDesign?.pvArray?.panelCount || "-"} عدد / ${solarDesign?.panel?.powerW || 620} وات`, note: `${solarDesign?.pvArray?.seriesCount || "-"} سری × ${solarDesign?.pvArray?.parallelCount || "-"} موازی` },
-    { label: "توان آرایه PV", value: `${solarDesign?.panelPowerAnalysis?.array?.powerKW || solarDesign?.solarSizing?.pArrayKW || "-"} kW`, note: `تولید روزانه: ${solarDesign?.panelPowerAnalysis?.array?.dailyEnergyKWh || solarDesign?.solarSizing?.ePvDailyKWh || "-"} kWh` },
-    { label: "اعتبارسنجی توان پنل", value: `${solarDesign?.panelPowerAnalysis?.score || "-"} از ۱۰۰`, note: solarDesign?.panelPowerAnalysis?.levelLabel || "کنترل توان، رشته، MPPT و جریان" },
-    { label: "پوشش مصرف", value: solarDesign?.panelPowerAnalysis?.array?.coveragePercent ? `${solarDesign.panelPowerAnalysis.array.coveragePercent}%` : solarDesign?.solarSizing?.coveragePercent ? `${solarDesign.solarSizing.coveragePercent}%` : "-", note: solarDesign?.panelPowerAnalysis?.array?.requiredAdditionalPanelsFor100 ? `نیازمند ${solarDesign.panelPowerAnalysis.array.requiredAdditionalPanelsFor100} پنل تکمیلی` : "مصرف روزانه پوشش داده می‌شود" },
-    { label: "باتری خودکفایی", value: `${solarDesign?.solarSizing?.eBatteryNeededKWh || "-"} kWh`, note: solarDesign?.solarSizing?.batterySummary || (solarDesign?.solarSizing?.batteryCount ? `${solarDesign.solarSizing.batteryCount} عدد / ${solarDesign.solarSizing.batteryVoltageV || "-"}V / ${solarDesign.solarSizing.batteryCapacityAh || "-"}Ah / ${solarDesign.solarSizing.batteryUnitKWh || "-"}kWh هر باتری / ${solarDesign.solarSizing.batteryBankKWh || "-"}kWh کل` : "محاسبه بر اساس DoD و راندمان") },
-    { label: "اینورتر خورشیدی", value: `${solarDesign?.inverter?.count || "-"} عدد / ${solarDesign?.inverter?.ratedPowerW || "-"} وات`, note: "مطابق سناریوی آفگرید، آنگرید یا هیبرید" },
-    { label: "باتری", value: batterySpecText(solarDesign?.battery), note: batteryNoteText(solarDesign?.battery) },
-    { label: "حفاظت DC/AC", value: `${solarDesign?.protection?.dcBreakerA || "-"}A / ${solarDesign?.protection?.acBreakerA || "-"}A`, note: "فیوز، بریکر، SPD و ارتینگ" }
-  ]);
+  const methodSummary = buildMethodSummary({
+    domain,
+    methodKey,
+    result,
+    loadResult,
+    systemSettings,
+    solarDesign,
+    solarPanelPowerInput,
+    selectedEquipment,
+    calculationInput
+  });
+  const finalRows = methodSummary.rows;
 
-  const emergencyRows = emergency ? [
-    { label: "اینورتر برق اضطراری", value: `${result?.inverter?.count || 1} عدد / ${result?.inverter?.ratedPowerW || "-"} وات`, note: "پوشش توان دائم و توان لحظه‌ای بارهای ضروری" },
-    { label: "باتری منتخب", value: batterySpecText(result?.battery), note: batteryNoteText(result?.battery) },
-    { label: "زمان برق اضطراری مورد نیاز", value: `${result?.settings?.requiredEmergencyHours || 2} ساعت`, note: "در ظرفیت باتری و ضریب اطمینان لحاظ شده است" },
-    { label: "سیستم حفاظتی", value: `DC ${result?.protection?.dcBreakerA || "-"}A / AC ${result?.protection?.acBreakerA || "-"}A`, note: "حفاظت باتری، خروجی AC، ارتینگ و جداسازی مدارهای اضطراری" }
-  ] : [];
 
   function saveFinalProject() {
     approveProjectStep("run");
@@ -176,7 +169,7 @@ export default function RunCalculation() {
             <Row label="نام پروژه" value={projectTitle} />
             <Row label="کارفرما" value={project.clientName || project.customerName || project.employerName} />
             <Row label="محل اجرا" value={[project.city, project.province].filter(Boolean).join(" / ") || "ثبت نشده"} />
-            <Row label="مسیر طراحی" value={emergency ? "برق اضطراری" : "پنل خورشیدی"} />
+            <Row label="مسیر طراحی" value={methodSummary.title} />
             <Row label="وضعیت محاسبات" value={result?.valid === false ? "نیازمند بازبینی" : "تکمیل شده"} />
             <Row label="قابلیت خروجی" value="تصویر / PDF / JSON / CSV / HTML / اشتراک" />
             <Row label="نسخه خروجی" value={delivery.meta.version} />
@@ -185,15 +178,17 @@ export default function RunCalculation() {
 
         {!emergency && aiPreview?.image?.src ? <div className="shil-section-card"><div className="shil-section-head"><h2>تصویر نهایی طراحی هوشمند</h2><span>AI Preview</span></div><img className="shil-final-preview-image" src={aiPreview.image.src} alt="تصویر نهایی پروژه" /></div> : null}
 
-        <Table title={emergency ? "تجهیزات مورد نیاز برق اضطراری" : "تجهیزات مورد نیاز اجرای پروژه خورشیدی"} rows={emergency ? emergencyRows : panelRows} />
+        <Table title={methodSummary.blockTitle} rows={finalRows} />
 
         <div className="shil-section-card shil-export-diagram-card">
           <div className="shil-section-head"><h2>دیاگرام مهندسی سیستم</h2><span>System Diagram</span></div>
           <div className="shil-export-diagram" aria-label="دیاگرام سیستم">
-            {emergency ? (
+            {methodKey === "emergency" ? (
               <><span>برق شهر</span><b>→</b><span>شارژر / اینورتر برق اضطراری</span><b>→</b><span>بارهای ضروری</span><i>↓</i><span>بانک باتری</span></>
-            ) : (
+            ) : methodKey === "solar_panel_power" ? (
               <><span>پنل خورشیدی</span><b>→</b><span>MPPT / اینورتر</span><b>→</b><span>مصرف‌کننده</span><i>↓</i><span>بانک باتری</span></>
+            ) : (
+              <><span>ورودی بار</span><b>→</b><span>موتور محاسبات مشترک</span><b>→</b><span>اینورتر / باتری / حفاظت</span><i>↓</i><span>چکیده اختصاصی مسیر</span></>
             )}
           </div>
         </div>

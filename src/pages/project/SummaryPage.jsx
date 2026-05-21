@@ -3,6 +3,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import EngineeringPageShell from "../../components/EngineeringPageShell.jsx";
 import { approveProjectStep } from "../../workflow/projectWorkflow.js";
 import { runEmergencyPowerDesign } from "../../core/calculation/emergencyPowerEngine.js";
+import { buildMethodSummary, getActiveMethodKey } from "../../core/summary/methodSummaryEngine.js";
 import { createAIInstallationPreview } from "../../ai/installation/aiInstallationPreviewEngine.js";
 import { generateAIInstallationImage } from "../../ai/installation/aiInstallationImageService.js";
 
@@ -73,10 +74,10 @@ export default function SummaryPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const emergency = domain === "emergency";
-  const methodKey = localStorage.getItem("shil:calculationMethod") || "";
+  const methodKey = getActiveMethodKey({ domain });
   const method = location.state?.method || readDraft("shil:selectedCalculationMethod", { title: emergency ? "برق اضطراری" : "لیست تجهیزات" })?.title || (emergency ? "برق اضطراری" : "لیست تجهیزات");
   const solarPanelPowerInput = readDraft("shil:solarPanelPowerInput", {});
-  const isSolarPanelPowerRoute = !emergency && (methodKey === "solar_panel_power" || Boolean(solarPanelPowerInput?.selectedPanelId));
+  const isSolarPanelPowerRoute = !emergency && methodKey === "solar_panel_power";
 
   const project = useMemo(() => readDraft("shil:projectInfoDraft", {}), []);
   const environment = useMemo(() => readDraft("shil:environmentDraft", {}), []);
@@ -98,6 +99,16 @@ export default function SummaryPage() {
   const sitePhotoCount = Number(environment.siteAttachments?.length || (environment.siteAttachment ? 1 : 0) || (environmentImage ? 1 : 0));
   const hasSitePhoto = sitePhotoCount > 0 && Boolean(environmentImage?.src || environmentImage?.title);
   const activeDesign = emergency ? emergencyDesign : solarDesign;
+  const methodSummary = buildMethodSummary({
+    domain,
+    methodKey,
+    result: activeDesign,
+    loadResult,
+    systemSettings,
+    solarDesign,
+    solarPanelPowerInput,
+    selectedEquipment
+  });
   const panelCount = solarDesign?.pvArray?.panelCount || systemSettings?.panelCount || "-";
   const panelPower = solarDesign?.panel?.powerW || systemSettings?.panelPowerW || 620;
   const panelSeries = solarDesign?.pvArray?.seriesCount || systemSettings?.panelSeriesCount || "-";
@@ -245,31 +256,11 @@ export default function SummaryPage() {
               <ul className="shil-engineering-list">{emergencyDesign?.explanations?.map((item) => <li key={item}>{item}</li>)}</ul>
             </div>
           </>
-        ) : isSolarPanelPowerRoute ? (
-          <SummaryBlock title="چکیده مسیر توان پنل خورشیدی" badge={solarDesign?.valid ? "تأیید شده" : "کنترل‌شده"}>
-            <SummaryItem label="توان کل پنل‌ها" value={solarPanelPowerInput?.totalPanelPowerW ? `${Math.round(solarPanelPowerInput.totalPanelPowerW / 100) / 10} kW` : solarDesign?.panelPowerAnalysis?.array?.powerKW ? `${solarDesign.panelPowerAnalysis.array.powerKW} kW` : null} />
-            <SummaryItem label="تولید خام روزانه" value={solarPanelPowerInput?.rawDailyEnergyKWh ? `${solarPanelPowerInput.rawDailyEnergyKWh} kWh` : null} />
-            <SummaryItem label="تولید واقعی با تلفات" value={solarPanelPowerInput?.generatedDailyKWh ? `${solarPanelPowerInput.generatedDailyKWh} kWh` : solarDesign?.panelPowerAnalysis?.array?.dailyEnergyKWh ? `${solarDesign.panelPowerAnalysis.array.dailyEnergyKWh} kWh` : null} />
-            <SummaryItem label="اینورتر" value={solarDesign?.inverter?.title || systemSettings?.inverterId} note={solarDesign?.inverter?.count ? `${solarDesign.inverter.count} عدد / MPPT ${solarDesign?.inverterTopology?.mpptPerInverter || 1} برای هر اینورتر` : null} />
-            <SummaryItem label="تقسیم پنل بین اینورترها" value={Array.isArray(solarPanelPowerInput?.inverterPanelDistribution) ? `${solarPanelPowerInput.inverterPanelDistribution.join(" / ")} پنل` : null} />
-            <SummaryItem label="بانک باتری" value={solarDesign?.settings?.autonomyDays > 0 ? batterySpecText(solarDesign?.battery) : "باتری انتخاب نشده"} note={solarDesign?.batteryScope ? (solarDesign.batteryScope === "all" ? "اعمال برای همه اینورترها" : `اعمال برای اینورتر ${solarDesign.batteryScope}`) : null} />
-            <SummaryItem label="حفاظت" value={solarDesign?.protection ? `DC ${solarDesign.protection.dcBreakerA}A / AC ${solarDesign.protection.acBreakerA}A` : null} />
-            <SummaryItem label="کابل" value={solarDesign?.protection ? `DC ${solarDesign.protection.dcCable} / PV ${solarDesign.protection.pvCable}` : null} />
-          </SummaryBlock>
         ) : (
-          <SummaryBlock title="پیکربندی سیستم" badge={solarDesign?.valid ? "تأیید شده" : "کنترل‌شده"}>
-            <SummaryItem label="اینورتر" value={solarDesign?.inverter?.title || systemSettings?.inverterId} note={solarDesign?.inverter?.count ? `${solarDesign.inverter.count} عدد` : null} />
-            <SummaryItem label="باتری" value={solarDesign?.battery?.battery?.title || systemSettings?.batteryId} note={solarDesign?.battery?.totalCount ? batterySpecText(solarDesign.battery) : null} />
-            <SummaryItem label="آرایش و جریان بانک باتری" value={solarDesign?.battery?.totalCount ? batteryNoteText(solarDesign.battery) : null} />
-            <SummaryItem label="توان پنل خورشیدی" value={solarDesign?.panel?.title || systemSettings?.panelId} note={solarDesign?.pvArray?.panelCount ? `${solarDesign.pvArray.panelCount} عدد / ${solarDesign.pvArray.seriesCount} سری × ${solarDesign.pvArray.parallelCount} موازی / امتیاز ${solarDesign?.panelPowerAnalysis?.score || "-"} از ۱۰۰` : null} />
-            <SummaryItem label="اعتبارسنجی پنل و MPPT" value={solarDesign?.panelPowerAnalysis?.levelLabel || "در انتظار محاسبه"} note={solarDesign?.panelPowerAnalysis?.status === "ok" ? "توان، انرژی، رشته‌بندی، جریان و محدوده MPPT تأیید شد" : solarDesign?.panelPowerAnalysis?.recommendations?.[0]} />
-            <SummaryItem label="توان آرایه PV" value={solarDesign?.panelPowerAnalysis?.array?.powerKW ? `${solarDesign.panelPowerAnalysis.array.powerKW} kW` : solarDesign?.solarSizing?.pArrayKW ? `${solarDesign.solarSizing.pArrayKW} kW` : null} note="P_array = N_panel × P_panel" />
-            <SummaryItem label="تولید روزانه قابل تأمین" value={solarDesign?.panelPowerAnalysis?.array?.dailyEnergyKWh ? `${solarDesign.panelPowerAnalysis.array.dailyEnergyKWh} kWh/day` : solarDesign?.solarSizing?.ePvDailyKWh ? `${solarDesign.solarSizing.ePvDailyKWh} kWh/day` : null} note="E_pv_daily = P_array × PSH × (1 - Loss_sys)" />
-            <SummaryItem label="درصد پوشش مصرف" value={solarDesign?.panelPowerAnalysis?.array?.coveragePercent ? `${solarDesign.panelPowerAnalysis.array.coveragePercent}%` : solarDesign?.solarSizing?.coveragePercent ? `${solarDesign.solarSizing.coveragePercent}%` : "در انتظار مصرف"} note={solarDesign?.solarSizing?.enoughDailyEnergy === false ? "مصرف بیشتر از تولید روزانه است" : "مقایسه با مصرف روزانه"} />
-            <SummaryItem label="ظرفیت باتری خودکفایی" value={solarDesign?.solarSizing?.eBatteryNeededKWh ? `${solarDesign.solarSizing.eBatteryNeededKWh} kWh` : null} note={solarDesign?.solarSizing?.batterySummary || (solarDesign?.solarSizing?.batteryCount ? `${solarDesign.solarSizing.batteryCount} عدد / ${solarDesign.solarSizing.batteryVoltageV || "-"}V / ${solarDesign.solarSizing.batteryCapacityAh || "-"}Ah / ${solarDesign.solarSizing.batteryUnitKWh || "-"}kWh هر باتری / ${solarDesign.solarSizing.batteryBankKWh || "-"}kWh کل` : "بر اساس DoD و راندمان")} />
-            <SummaryItem label="فضای نصب" value={solarDesign?.space?.maintenanceAreaM2 ? `${solarDesign.space.maintenanceAreaM2} m²` : null} />
-            <SummaryItem label="حفاظت" value={solarDesign?.protection ? `DC ${solarDesign.protection.dcBreakerA}A / AC ${solarDesign.protection.acBreakerA}A` : null} />
-            <SummaryItem label="کابل" value={solarDesign?.protection ? `DC ${solarDesign.protection.dcCable} / BAT ${solarDesign.protection.batteryCable}` : null} />
+          <SummaryBlock title={methodSummary.blockTitle} badge={methodSummary.badge}>
+            {methodSummary.rows.map((row) => (
+              <SummaryItem key={row.label} label={row.label} value={row.value} note={row.note || row.reason} />
+            ))}
           </SummaryBlock>
         )}
 

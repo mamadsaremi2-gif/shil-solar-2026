@@ -1,4 +1,4 @@
-package com.shil.engineering;
+package com.shil.app;
 
 import com.getcapacitor.BridgeActivity;
 

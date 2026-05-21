@@ -134,6 +134,13 @@ export default function CalculationInputs() {
   const [manualCurrentA, setManualCurrentA] = useState("");
   const [manualVoltage, setManualVoltage] = useState(domain === "emergency" ? "220" : "220");
   const [manualHours, setManualHours] = useState(domain === "emergency" ? "6" : "5");
+  const [profileVoltage, setProfileVoltage] = useState("220");
+  const [profilePowerW, setProfilePowerW] = useState("1000");
+  const [profileMorningKWh, setProfileMorningKWh] = useState("1");
+  const [profileNoonKWh, setProfileNoonKWh] = useState("1");
+  const [profileEveningKWh, setProfileEveningKWh] = useState("2");
+  const [profileNightKWh, setProfileNightKWh] = useState("1");
+  const [profileStartFactor, setProfileStartFactor] = useState("1.6");
 
   const environment = useMemo(() => readDraft("shil:environmentDraft") || {}, []);
   const environmentAssessment = useMemo(() => readDraft("shil:environmentAssessment") || {}, []);
@@ -215,11 +222,30 @@ export default function CalculationInputs() {
   }, [activePanelDistribution, panelPowerW]);
 
 
+  const profileBucketsWh = useMemo(() => ({
+    morning: Math.max(0, toNumber(profileMorningKWh, 0) * 1000),
+    noon: Math.max(0, toNumber(profileNoonKWh, 0) * 1000),
+    evening: Math.max(0, toNumber(profileEveningKWh, 0) * 1000),
+    night: Math.max(0, toNumber(profileNightKWh, 0) * 1000),
+  }), [profileMorningKWh, profileNoonKWh, profileEveningKWh, profileNightKWh]);
+
+  const profileTotalEnergyWh = useMemo(() => Object.values(profileBucketsWh).reduce((sum, value) => sum + value, 0), [profileBucketsWh]);
+  const profilePeakBucketWh = useMemo(() => Math.max(...Object.values(profileBucketsWh), 0), [profileBucketsWh]);
+  const profilePeakPowerW = useMemo(() => Math.max(toNumber(profilePowerW, 0), profilePeakBucketWh / 3), [profilePowerW, profilePeakBucketWh]);
+  const profileSurgePowerW = useMemo(() => Math.round(profilePeakPowerW * Math.max(1, toNumber(profileStartFactor, 1.6))), [profilePeakPowerW, profileStartFactor]);
+
+  const profileLoadProfile = useMemo(() => ({
+    buckets: profileBucketsWh,
+    peakBucket: Object.entries(profileBucketsWh).sort((a, b) => b[1] - a[1])[0]?.[0] || "evening",
+    peakHours: [18, 19, 20, 21],
+    simultaneityFactor: 1,
+  }), [profileBucketsWh]);
+
   const enginePreview = useMemo(() => {
-    const voltage = toNumber(method === "solar_panel_power" ? acVoltageRoute : manualVoltage || 220, 220);
+    const voltage = toNumber(method === "solar_panel_power" ? acVoltageRoute : method === "profile" ? profileVoltage : manualVoltage || 220, 220);
     const powerFromCurrent = method === "current" && manualCurrentA ? toNumber(manualCurrentA, 0) * voltage : 0;
-    const energyFromManual = method === "energy" && manualEnergyKWh ? toNumber(manualEnergyKWh, 0) * 1000 : 0;
-    const powerFromManual = method === "power" && manualPowerW ? toNumber(manualPowerW, 0) : 0;
+    const energyFromManual = method === "energy" && manualEnergyKWh ? toNumber(manualEnergyKWh, 0) * 1000 : method === "profile" ? profileTotalEnergyWh : 0;
+    const powerFromManual = method === "power" && manualPowerW ? toNumber(manualPowerW, 0) : method === "profile" ? profilePeakPowerW : 0;
     const solarPanelEnergyWh = method === "solar_panel_power" ? calculatedPvDailyKWh * 1000 : 0;
     const solarPanelPowerW = method === "solar_panel_power" ? totalPanelPowerW : 0;
     return runLoadEngine({
@@ -233,9 +259,11 @@ export default function CalculationInputs() {
       phaseAC: voltage >= 380 ? "three" : "single",
       manualEnergyWh: energyFromManual || solarPanelEnergyWh,
       manualPowerW: powerFromCurrent || powerFromManual || solarPanelPowerW,
-      manualHours: toNumber(manualHours || psh || 0, 0),
+      manualHours: toNumber(method === "profile" ? 1 : manualHours || psh || 0, 0),
+      manualSurgeW: method === "profile" ? profileSurgePowerW : 0,
+      loadProfile: method === "profile" ? profileLoadProfile : undefined,
     });
-  }, [domain, method, scenario, environment, environmentAssessment, selectedItems, manualEnergyKWh, manualPowerW, manualCurrentA, manualVoltage, manualHours, panelPowerW, panelCount, psh, acVoltageRoute, totalPanelPowerW, calculatedPvDailyKWh]);
+  }, [domain, method, scenario, environment, environmentAssessment, selectedItems, manualEnergyKWh, manualPowerW, manualCurrentA, manualVoltage, manualHours, panelPowerW, panelCount, psh, acVoltageRoute, totalPanelPowerW, calculatedPvDailyKWh, profileVoltage, profileTotalEnergyWh, profilePeakPowerW, profileSurgePowerW, profileLoadProfile]);
 
   const solarPanelPreview = useMemo(() => {
     if (method !== "solar_panel_power") return null;
@@ -326,6 +354,11 @@ export default function CalculationInputs() {
       return;
     }
 
+    if (method !== "solar_panel_power") {
+      localStorage.removeItem("shil:solarPanelPowerInput");
+      localStorage.removeItem("shil:solarPanelPowerPreview");
+    }
+
     if (method === "solar_panel_power") {
       localStorage.setItem("shil:solarPanelPowerInput", JSON.stringify({
         selectedPanelId,
@@ -364,12 +397,26 @@ export default function CalculationInputs() {
       environment,
       environmentAssessment,
       selectedItems,
-      voltageAC: toNumber(method === "solar_panel_power" ? acVoltageRoute : manualVoltage || 220, 220),
-      phaseAC: toNumber(method === "solar_panel_power" ? acVoltageRoute : manualVoltage || 220, 220) >= 380 ? "three" : "single",
-      manualEnergyWh: method === "energy" && manualEnergyKWh ? toNumber(manualEnergyKWh, 0) * 1000 : method === "solar_panel_power" ? calculatedPvDailyKWh * 1000 : 0,
-      manualPowerW: method === "current" && manualCurrentA ? toNumber(manualCurrentA, 0) * toNumber(manualVoltage || 220, 220) : method === "solar_panel_power" ? totalPanelPowerW : toNumber(manualPowerW, 0),
-      manualHours: toNumber(method === "solar_panel_power" ? psh || 0 : manualHours || 0, 0),
+      voltageAC: toNumber(method === "solar_panel_power" ? acVoltageRoute : method === "profile" ? profileVoltage : manualVoltage || 220, 220),
+      phaseAC: toNumber(method === "solar_panel_power" ? acVoltageRoute : method === "profile" ? profileVoltage : manualVoltage || 220, 220) >= 380 ? "three" : "single",
+      manualEnergyWh: method === "energy" && manualEnergyKWh ? toNumber(manualEnergyKWh, 0) * 1000 : method === "profile" ? profileTotalEnergyWh : method === "solar_panel_power" ? calculatedPvDailyKWh * 1000 : 0,
+      manualPowerW: method === "current" && manualCurrentA ? toNumber(manualCurrentA, 0) * toNumber(manualVoltage || 220, 220) : method === "profile" ? profilePeakPowerW : method === "solar_panel_power" ? totalPanelPowerW : toNumber(manualPowerW, 0),
+      manualSurgeW: method === "profile" ? profileSurgePowerW : 0,
+      manualHours: toNumber(method === "solar_panel_power" ? psh || 0 : method === "profile" ? 1 : manualHours || 0, 0),
+      loadProfile: method === "profile" ? profileLoadProfile : undefined,
     });
+
+    if (method === "profile") {
+      localStorage.setItem("shil:profileConsumptionInput", JSON.stringify({
+        voltageAC: toNumber(profileVoltage, 220),
+        basePowerW: toNumber(profilePowerW, 0),
+        startFactor: toNumber(profileStartFactor, 1.6),
+        bucketsWh: profileBucketsWh,
+        totalEnergyWh: profileTotalEnergyWh,
+        peakPowerW: profilePeakPowerW,
+        surgePowerW: profileSurgePowerW,
+      }));
+    }
 
     localStorage.setItem("shil:loadEngineResult", JSON.stringify(result));
     buildScenarioCalculationInput();
@@ -398,7 +445,7 @@ export default function CalculationInputs() {
           </div>
         </section>
 
-        {method === "equipment" || method === "profile" ? (
+        {method === "equipment" ? (
           <section className="shil-env-card shil-equipment-picker-card">
             <h3 className="shil-section-title">{isReadyScenarioEquipmentFlow ? (domain === "emergency" ? "لیست تجهیزات سناریوی آماده برق اضطراری" : "لیست تجهیزات سناریوی آماده خورشیدی") : "لیست تجهیزات"}</h3>
             <button type="button" className="shil-equipment-field" onClick={() => setIsEquipmentPickerOpen((v) => !v)}>
@@ -453,7 +500,26 @@ export default function CalculationInputs() {
         {method !== "equipment" ? (
           <section className="shil-env-card">
             <h3 className="shil-section-title">ورودی مستقیم روش انتخاب‌شده</h3>
-            {method === "solar_panel_power" ? (
+            {method === "profile" ? (
+              <>
+                <div className="shil-form-grid">
+                  <label>توان همزمان/پیک مصرف W<input className="shil-input" value={profilePowerW} onChange={(e) => setProfilePowerW(e.target.value)} placeholder="مثلاً 3500" inputMode="numeric" /></label>
+                  <label>ولتاژ AC<select className="shil-input" value={profileVoltage} onChange={(e) => setProfileVoltage(e.target.value)}><option value="220">۲۲۰ ولت تک‌فاز</option><option value="380">۳۸۰ ولت سه‌فاز</option></select></label>
+                  <label>ضریب راه‌اندازی/پیک<input className="shil-input" value={profileStartFactor} onChange={(e) => setProfileStartFactor(e.target.value)} placeholder="مثلاً 1.6" inputMode="decimal" /></label>
+                  <label>مصرف صبح kWh<input className="shil-input" value={profileMorningKWh} onChange={(e) => setProfileMorningKWh(e.target.value)} inputMode="decimal" /></label>
+                  <label>مصرف ظهر kWh<input className="shil-input" value={profileNoonKWh} onChange={(e) => setProfileNoonKWh(e.target.value)} inputMode="decimal" /></label>
+                  <label>مصرف عصر kWh<input className="shil-input" value={profileEveningKWh} onChange={(e) => setProfileEveningKWh(e.target.value)} inputMode="decimal" /></label>
+                  <label>مصرف شب kWh<input className="shil-input" value={profileNightKWh} onChange={(e) => setProfileNightKWh(e.target.value)} inputMode="decimal" /></label>
+                </div>
+                <div className="shil-summary-grid">
+                  <div><span>مصرف کل روزانه</span><strong>{(profileTotalEnergyWh / 1000).toFixed(2)} kWh</strong></div>
+                  <div><span>توان پیک مبنا</span><strong>{Math.round(profilePeakPowerW)} W</strong></div>
+                  <div><span>توان راه‌اندازی</span><strong>{profileSurgePowerW} W</strong></div>
+                  <div><span>بازه پیک مصرف</span><strong>{profileLoadProfile.peakBucket === "night" ? "شب" : profileLoadProfile.peakBucket === "noon" ? "ظهر" : profileLoadProfile.peakBucket === "morning" ? "صبح" : "عصر"}</strong></div>
+                </div>
+                <p className="shil-muted-note">این مسیر فقط بر اساس الگوی مصرف روزانه کار می‌کند و بانک پنل، MPPT و تقسیم پنل در آن نمایش داده نمی‌شود.</p>
+              </>
+            ) : method === "solar_panel_power" ? (
               <>
                 <div className="shil-form-grid">
                   <label>بانک کامل پنل خورشیدی<select className="shil-input" value={selectedPanelId} onChange={(e) => setSelectedPanelId(e.target.value)}>{SHIL_SOLAR_PANELS.map((panel) => <option key={panel.id} value={panel.id}>{panel.title} / {panel.powerW}W / {panel.type}</option>)}</select></label>
@@ -562,7 +628,7 @@ export default function CalculationInputs() {
           </section>
         ) : null}
 
-        {method === "equipment" || method === "profile" ? (
+        {method === "equipment" ? (
           <section className="shil-selected-equipment-list">
             <h3 className="shil-section-title">تجهیزات انتخابی</h3>
             {!selectedItems.length ? (
