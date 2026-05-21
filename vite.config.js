@@ -7,28 +7,25 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+
       includeAssets: [
-        'favicon.ico',
-        'robots.txt',
-        'apple-touch-icon.png',
-        'pwa-icons/icon-192.png',
-        'pwa-icons/icon-512.png',
-        'assets/**/*',
-        'icons/**/*',
         '**/*.png',
         '**/*.jpg',
         '**/*.jpeg',
-        '**/*.webp',
         '**/*.svg',
-        '**/*.gif'
+        '**/*.webp',
+        '**/*.gif',
+        '**/*.json'
       ],
+
       manifest: {
-        name: 'SHIL Solar',
-        short_name: 'SHIL',
+        name: 'SHIL SOLAR',
+        short_name: 'SHIL SOLAR',
         start_url: '/',
         display: 'standalone',
         background_color: '#080b18',
         theme_color: '#080b18',
+
         icons: [
           {
             src: '/pwa-icons/icon-192.png',
@@ -43,36 +40,26 @@ export default defineConfig({
           {
             src: '/pwa-icons/apple-touch-icon.png',
             sizes: '180x180',
-            type: 'image/png',
-            purpose: 'any'
+            type: 'image/png'
           }
         ]
       },
+
       workbox: {
         globPatterns: [
-          '**/*.{js,css,html,ico,png,svg,jpg,jpeg,webp,gif,json,woff,woff2,ttf}'
+          '**/*.{js,css,html,png,jpg,jpeg,svg,gif,webp,json,woff2}'
         ],
-        maximumFileSizeToCacheInBytes: 15 * 1024 * 1024,
+
         runtimeCaching: [
           {
-            urlPattern: ({ request }) => request.destination === 'image',
+            urlPattern: ({ request }) =>
+              request.destination === 'image',
             handler: 'CacheFirst',
             options: {
-              cacheName: 'shil-images-cache',
+              cacheName: 'shil-images',
               expiration: {
-                maxEntries: 300,
-                maxAgeSeconds: 60 * 60 * 24 * 365
-              }
-            }
-          },
-          {
-            urlPattern: ({ request }) => request.destination === 'font',
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'shil-fonts-cache',
-              expiration: {
-                maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24 * 365
+                maxEntries: 500,
+                maxAgeSeconds: 31536000
               }
             }
           }
