@@ -1,4 +1,4 @@
-﻿import { onCLS, onINP, onLCP, onFCP, onTTFB } from "web-vitals";
+import { onCLS, onINP, onLCP, onFCP, onTTFB } from "web-vitals";
 
 export function initTelemetry() {
   const send = (metric) => {

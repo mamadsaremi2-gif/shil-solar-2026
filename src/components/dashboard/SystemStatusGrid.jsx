@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 
 import {
   Cpu,
@@ -9,25 +9,25 @@ import {
 
 const systems = [
   {
-    title: "پنل خورشیدی",
+    title: "??? ???????",
     value: "ACTIVE",
     icon: <Sun size={20} />,
   },
 
   {
-    title: "باتری",
+    title: "?????",
     value: "92%",
     icon: <BatteryCharging size={20} />,
   },
 
   {
-    title: "اینورتر",
+    title: "???????",
     value: "RUNNING",
     icon: <Cpu size={20} />,
   },
 
   {
-    title: "اتصال",
+    title: "?????",
     value: "ONLINE",
     icon: <Wifi size={20} />,
   },

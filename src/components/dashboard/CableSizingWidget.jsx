@@ -1,25 +1,25 @@
-﻿import React from "react";
+import React from "react";
 
 const cables = [
 
   {
     title: "PV DC Cable",
-    size: "6mm²",
+    size: "6mm�",
   },
 
   {
     title: "Battery Cable",
-    size: "35mm²",
+    size: "35mm�",
   },
 
   {
     title: "AC Output",
-    size: "10mm²",
+    size: "10mm�",
   },
 
   {
     title: "Ground Cable",
-    size: "16mm²",
+    size: "16mm�",
   },
 
 ];
@@ -36,7 +36,7 @@ export default function CableSizingWidget() {
 
           <span>CABLE ANALYSIS</span>
 
-          <h3>تحلیل سایز کابل‌ها</h3>
+          <h3>????? ???? ???????</h3>
 
         </div>
 

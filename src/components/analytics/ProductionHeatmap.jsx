@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import CalendarHeatmap from "react-calendar-heatmap";
 import "react-calendar-heatmap/dist/styles.css";
 
@@ -18,7 +18,7 @@ export default function ProductionHeatmap() {
       <div className="widget-head-v15">
         <div>
           <span>PRODUCTION HEATMAP</span>
-          <h3>نقشه حرارتی تولید انرژی</h3>
+          <h3>???? ?????? ????? ?????</h3>
         </div>
       </div>
 

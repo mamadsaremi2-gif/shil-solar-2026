@@ -1,4 +1,4 @@
-﻿export function applyShilGlobalRuntimeFix() {
+export function applyShilGlobalRuntimeFix() {
   const apply = () => {
     const root = document.getElementById("root");
     if (!root) return;

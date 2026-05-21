@@ -1,4 +1,4 @@
-﻿import JSZip from "jszip";
+import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import { getOfflineProjects, shilDB } from "../db/shilDB.js";
 

@@ -1,4 +1,4 @@
-﻿export function calculateInverter(
+export function calculateInverter(
   load,
   surge = 1.3
 ) {

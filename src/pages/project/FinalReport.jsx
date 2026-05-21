@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 
 import {
   FileSpreadsheet,
@@ -33,11 +33,11 @@ export default function FinalReport() {
 
           <div className="hero-content-v15">
 
-            <h2>خروجی نهایی پروژه</h2>
+            <h2>????? ????? ?????</h2>
 
             <p>
-              گزارش نهایی طراحی و
-              محاسبات مهندسی سیستم
+              ????? ????? ????? ?
+              ??????? ?????? ?????
             </p>
 
           </div>
@@ -47,25 +47,25 @@ export default function FinalReport() {
         <section className="dashboard-grid-v15">
 
           <ResultCard
-            title="تعداد پنل"
+            title="????? ???"
             value={results.panelCount}
-            unit="عدد"
+            unit="???"
           />
 
           <ResultCard
-            title="توان اینورتر"
+            title="???? ???????"
             value={results.inverterPower}
-            unit="وات"
+            unit="???"
           />
 
           <ResultCard
-            title="ظرفیت باتری"
+            title="????? ?????"
             value={results.batteryCapacity}
             unit="Ah"
           />
 
           <ResultCard
-            title="انرژی موردنیاز"
+            title="????? ????????"
             value={results.requiredEnergy}
             unit="kWh"
           />
@@ -76,7 +76,7 @@ export default function FinalReport() {
 
           <div className="project-section-head-v15">
 
-            <h3>وضعیت پروژه</h3>
+            <h3>????? ?????</h3>
 
             <span>Engineering Status</span>
 
@@ -86,17 +86,17 @@ export default function FinalReport() {
 
             <div className="report-status-item-v15">
               <CheckCircle2 size={18} />
-              طراحی تکمیل شد
+              ????? ????? ??
             </div>
 
             <div className="report-status-item-v15">
               <CheckCircle2 size={18} />
-              محاسبات معتبر هستند
+              ??????? ????? ?????
             </div>
 
             <div className="report-status-item-v15">
               <CheckCircle2 size={18} />
-              پروژه آماده خروجی است
+              ????? ????? ????? ???
             </div>
 
           </div>
@@ -107,22 +107,22 @@ export default function FinalReport() {
 
           <button className="report-btn-v15">
             <FileSpreadsheet size={20} />
-            خروجی اکسل
+            ????? ????
           </button>
 
           <button className="report-btn-v15">
             <FileText size={20} />
-            خروجی PDF
+            ????? PDF
           </button>
 
           <button className="report-btn-v15">
             <Printer size={20} />
-            پرینت گزارش
+            ????? ?????
           </button>
 
           <button className="report-btn-v15 primary">
             <Download size={20} />
-            دانلود نهایی
+            ?????? ?????
           </button>
 
         </section>

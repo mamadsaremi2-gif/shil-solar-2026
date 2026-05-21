@@ -1,4 +1,4 @@
-﻿export function calculateBatteryBank({
+export function calculateBatteryBank({
   dailyEnergyWh = 0,
   autonomyHours = 8,
   averageLoadW = 1000,

@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 
 import {
   ResponsiveContainer,
@@ -50,7 +50,7 @@ export default function EngineeringRadarWidget() {
 
           <span>ENGINEERING ANALYSIS</span>
 
-          <h3>تحلیل عملکرد سیستم</h3>
+          <h3>????? ?????? ?????</h3>
 
         </div>
 

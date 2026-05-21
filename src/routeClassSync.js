@@ -1,4 +1,4 @@
-﻿export function syncShilRouteClass() {
+export function syncShilRouteClass() {
   const apply = () => {
     document.body.className = document.body.className
       .split(" ")

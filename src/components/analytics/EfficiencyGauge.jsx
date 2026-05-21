@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import GaugeComponent from "react-gauge-component";
 
 export default function EfficiencyGauge() {
@@ -7,7 +7,7 @@ export default function EfficiencyGauge() {
       <div className="widget-head-v15">
         <div>
           <span>EFFICIENCY</span>
-          <h3>شاخص راندمان سیستم</h3>
+          <h3>???? ??????? ?????</h3>
         </div>
       </div>
 

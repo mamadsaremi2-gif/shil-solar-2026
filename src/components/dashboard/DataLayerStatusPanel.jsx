@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { Database, Wifi, WifiOff, RefreshCcw, Download } from "lucide-react";
 
 import { useDataLayerStore } from "../../data-layer/offline/dataLayerStore.js";
@@ -14,7 +14,7 @@ export default function DataLayerStatusPanel() {
       <div className="widget-head-v15">
         <div>
           <span>OFFLINE DATA LAYER</span>
-          <h3>وضعیت ذخیره‌سازی و همگام‌سازی</h3>
+          <h3>????? ?????????? ? ??????????</h3>
         </div>
 
         <div className={`data-layer-chip-v15 ${online ? "online" : "offline"}`}>

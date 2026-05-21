@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 
 import {
   ErrorBoundary
@@ -10,7 +10,7 @@ function ErrorFallback() {
 
     <div className="error-box-v15">
 
-      خطا در اجرای ماژول
+      ??? ?? ????? ?????
 
     </div>
 

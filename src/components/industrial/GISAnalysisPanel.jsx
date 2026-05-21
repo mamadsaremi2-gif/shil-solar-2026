@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { MapPinned, Ruler, Compass } from "lucide-react";
 import { estimateTilt } from "../../industrial/gis/siteAnalysis.js";
 
@@ -11,7 +11,7 @@ export default function GISAnalysisPanel() {
       <div className="widget-head-v15">
         <div>
           <span>GIS / SITE ANALYSIS</span>
-          <h3>تحلیل سایت و موقعیت</h3>
+          <h3>????? ???? ? ??????</h3>
         </div>
       </div>
 
@@ -25,7 +25,7 @@ export default function GISAnalysisPanel() {
         <div>
           <Compass size={22} />
           <h4>Tilt</h4>
-          <strong>{tilt}°</strong>
+          <strong>{tilt}�</strong>
         </div>
 
         <div>

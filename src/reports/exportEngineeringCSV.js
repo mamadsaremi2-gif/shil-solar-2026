@@ -1,4 +1,4 @@
-﻿import Papa from "papaparse";
+import Papa from "papaparse";
 import { saveAs } from "file-saver";
 
 export function exportEngineeringCSV() {

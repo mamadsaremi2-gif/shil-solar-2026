@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { BrainCircuit, TrendingUp, ShieldAlert } from "lucide-react";
 import { forecastEnergy } from "../../enterprise/ai/energyForecast.js";
 
@@ -10,7 +10,7 @@ export default function EnterpriseFinalPanel() {
       <div className="widget-head-v15">
         <div>
           <span>ENTERPRISE READY</span>
-          <h3>لایه نهایی محصول</h3>
+          <h3>???? ????? ?????</h3>
         </div>
 
         <div className="enterprise-ready-chip-v15">
@@ -22,7 +22,7 @@ export default function EnterpriseFinalPanel() {
         <div>
           <BrainCircuit size={24} />
           <h4>AI Forecast</h4>
-          <p>{forecast[0].energy} kWh فردا</p>
+          <p>{forecast[0].energy} kWh ????</p>
         </div>
 
         <div>

@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import {
   ResponsiveContainer,
   RadarChart,
@@ -24,7 +24,7 @@ export default function SystemHealthRadar() {
       <div className="widget-head-v15">
         <div>
           <span>SYSTEM HEALTH</span>
-          <h3>رادار سلامت مهندسی</h3>
+          <h3>????? ????? ??????</h3>
         </div>
       </div>
 

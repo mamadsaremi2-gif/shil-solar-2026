@@ -1,4 +1,4 @@
-﻿import { jsPDF }
+import { jsPDF }
 from "jspdf";
 
 import autoTable

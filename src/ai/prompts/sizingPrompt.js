@@ -1,4 +1,4 @@
-﻿export function buildSizingPrompt(project) {
+export function buildSizingPrompt(project) {
   return `
 You are SHIL V15, a solar and backup power engineering assistant.
 

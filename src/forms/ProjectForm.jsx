@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 
 export default function ProjectForm() {
@@ -21,16 +21,16 @@ export default function ProjectForm() {
 
       <input
         {...register("project")}
-        placeholder="نام پروژه"
+        placeholder="??? ?????"
       />
 
       <input
         {...register("city")}
-        placeholder="شهر"
+        placeholder="???"
       />
 
       <button type="submit">
-        ذخیره
+        ?????
       </button>
 
     </form>

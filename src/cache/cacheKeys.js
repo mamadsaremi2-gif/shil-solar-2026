@@ -1,4 +1,4 @@
-﻿export const cacheKeys = {
+export const cacheKeys = {
 
   PROJECTS:
     "shil_projects",

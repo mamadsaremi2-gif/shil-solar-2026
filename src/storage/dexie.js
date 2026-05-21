@@ -1,4 +1,4 @@
-﻿import Dexie from "dexie";
+import Dexie from "dexie";
 
 export const shilDB =
   new Dexie("SHIL_V15_DB");

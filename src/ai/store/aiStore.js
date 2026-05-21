@@ -1,4 +1,4 @@
-﻿import { create } from "zustand";
+import { create } from "zustand";
 
 export const useAIStore = create((set) => ({
   loading: false,

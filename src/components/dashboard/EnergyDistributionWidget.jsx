@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 
 import {
   PieChart,
@@ -8,9 +8,9 @@ import {
 } from "recharts";
 
 const data = [
-  { name: "مصرف", value: 62 },
-  { name: "ذخیره", value: 24 },
-  { name: "تلفات", value: 14 },
+  { name: "????", value: 62 },
+  { name: "?????", value: 24 },
+  { name: "?????", value: 14 },
 ];
 
 const COLORS = [
@@ -31,7 +31,7 @@ export default function EnergyDistributionWidget() {
 
           <span>ENERGY FLOW</span>
 
-          <h3>توزیع انرژی سیستم</h3>
+          <h3>????? ????? ?????</h3>
 
         </div>
 
