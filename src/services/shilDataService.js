@@ -1,4 +1,4 @@
-import { putLocal, getLocal, listLocal, removeLocal } from "../db/localDb";
+﻿import { putLocal, getLocal, listLocal, removeLocal } from "../db/localDb";
 import { enqueueSyncJob } from "../sync";
 
 async function saveEntity(storeName, entityName, data, action = "upsert") {

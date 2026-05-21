@@ -1,4 +1,4 @@
-export function checkAppHealth() {
+﻿export function checkAppHealth() {
   return {
     routing: true,
     dashboard: true,

@@ -1,4 +1,4 @@
-import OpenAI from "openai";
+﻿import OpenAI from "openai";
 import { aiConfig } from "../aiConfig.js";
 import { buildSizingPrompt } from "../prompts/sizingPrompt.js";
 import { runLocalAIRecommendation } from "./localAIEngine.js";

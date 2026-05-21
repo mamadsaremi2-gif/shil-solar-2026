@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Bot, Sparkles, BrainCircuit, ShieldCheck } from "lucide-react";
@@ -42,7 +42,7 @@ export default function AIAssistantPanel() {
       <div className="widget-head-v15">
         <div>
           <span>AI ENGINEERING LAYER</span>
-          <h3>?????? ?????? ??????</h3>
+          <h3>دستیار هوشمند مهندسی</h3>
         </div>
 
         <div className="ai-chip-v15">
@@ -55,19 +55,19 @@ export default function AIAssistantPanel() {
         <div>
           <BrainCircuit size={24} />
           <h4>AI Sizing</h4>
-          <p>??????? ???? ???? ????? ? ???????</p>
+          <p>پیشنهاد سایز پنل، باتری و اینورتر</p>
         </div>
 
         <div>
           <ShieldCheck size={24} />
           <h4>Risk Check</h4>
-          <p>????? ???????? ??? ? ??????</p>
+          <p>تشخیص ریسک‌های فنی و اجرایی</p>
         </div>
 
         <div>
           <Bot size={24} />
           <h4>Assistant</h4>
-          <p>????? ????? ?? ???? ??????</p>
+          <p>تحلیل پروژه با زبان مهندسی</p>
         </div>
       </div>
 
@@ -77,7 +77,7 @@ export default function AIAssistantPanel() {
         onClick={handleRunAI}
         disabled={loading}
       >
-        {loading ? "?? ??? ?????..." : "????? ????? ??????"}
+        {loading ? "در حال تحلیل..." : "اجرای تحلیل هوشمند"}
       </button>
 
       {error && (

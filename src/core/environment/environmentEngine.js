@@ -1,4 +1,4 @@
-export const iranEnvironmentDefaults = {
+﻿export const iranEnvironmentDefaults = {
   irradiance: 5.2,
   temperature: 25,
   altitude: 1200

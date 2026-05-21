@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { CheckCircle2, ClipboardCheck } from "lucide-react";
 import { installerChecklist } from "../../industrial/installer/installerChecklist.js";
 
@@ -8,7 +8,7 @@ export default function InstallerModePanel() {
       <div className="widget-head-v15">
         <div>
           <span>INSTALLER MODE</span>
-          <h3>??????? ??? ? ??????????</h3>
+          <h3>چک‌لیست نصب و راه‌اندازی</h3>
         </div>
       </div>
 

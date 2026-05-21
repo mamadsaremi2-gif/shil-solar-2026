@@ -1,4 +1,4 @@
-import Peer from "peerjs";
+﻿import Peer from "peerjs";
 
 export const peer =
   new Peer();

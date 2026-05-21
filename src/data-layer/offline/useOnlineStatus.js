@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+﻿import { useEffect } from "react";
 import { useDataLayerStore } from "./dataLayerStore.js";
 
 export function useOnlineStatus() {

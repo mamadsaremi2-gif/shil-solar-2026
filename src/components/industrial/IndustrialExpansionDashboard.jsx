@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 
 import IndustrialTelemetryPanel from "./IndustrialTelemetryPanel.jsx";
 import AlarmCenterPanel from "./AlarmCenterPanel.jsx";

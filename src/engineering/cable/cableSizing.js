@@ -1,4 +1,4 @@
-export function calculateCableSizing({
+﻿export function calculateCableSizing({
   currentA = 0,
   lengthM = 0,
   voltageV = 48,

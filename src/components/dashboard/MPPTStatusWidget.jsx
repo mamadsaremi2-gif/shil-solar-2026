@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 
 const mppt = [
 
@@ -37,7 +37,7 @@ export default function MPPTStatusWidget() {
 
           <span>MPPT STATUS</span>
 
-          <h3>????? ????????? MPPT</h3>
+          <h3>وضعیت ورودی‌های MPPT</h3>
 
         </div>
 

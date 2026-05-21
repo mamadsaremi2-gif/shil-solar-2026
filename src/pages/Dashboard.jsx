@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import IosIconGrid from "../components/IosIconGrid.jsx";
+import ShilPageShell from "../components/ShilPageShell.jsx";
 import { dashboardItems } from "../data/shilFlowConfig.jsx";
 import { clearSession } from "../auth/session.js";
 
@@ -33,13 +34,14 @@ export default function Dashboard() {
   );
 
   return (
-    <div className="shil-dashboard-home" dir="rtl">
-      <div className="shil-master-bg shil-dashboard-bg" />
-      <div className="shil-online-chip" data-online={online ? "true" : "false"}>
-        <span />
-        {online ? "کاربر آنلاین است" : "کاربر آفلاین است"}
-      </div>
-      <IosIconGrid items={items} gridClass="dashboard-icons" />
-    </div>
+    <ShilPageShell title="داشبورد" className="shil-dashboard-shell">
+      <section className="shil-dashboard-home" dir="rtl">
+        <div className="shil-online-chip" data-online={online ? "true" : "false"}>
+          <span />
+          {online ? "کاربر آنلاین است" : "کاربر آفلاین است"}
+        </div>
+        <IosIconGrid items={items} gridClass="dashboard-icons" />
+      </section>
+    </ShilPageShell>
   );
 }

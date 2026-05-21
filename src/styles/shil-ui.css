@@ -9542,3 +9542,38 @@ select,
 .shil-orientation-select option{background:#101827;color:#fff;}
 .shil-orientation-label{cursor:pointer;}
 .shil-orientation-label:focus-within{box-shadow:0 0 0 2px rgba(32,217,255,.35),0 0 18px rgba(32,217,255,.22);}
+
+/* DASHBOARD_UNIFIED_SHELL_UPDATE_START
+   Dashboard now uses ShilPageShell so its fixed header/footer matches New Project.
+   The rules below keep the dashboard icon grid centered inside the safe content area
+   and prevent the online chip from overlapping the fixed header. */
+.shil-dashboard-shell .shil-page-content{
+  display:grid;
+  place-items:center;
+}
+.shil-dashboard-shell .shil-dashboard-home{
+  width:100%;
+  max-width:calc(100vw - (2 * var(--shil-page-pad,16px)));
+  min-height:calc(100dvh - var(--shil-header-h,76px) - var(--shil-footer-h,86px) - 56px);
+  display:grid;
+  place-items:center;
+  padding:0;
+  background:none !important;
+  overflow:visible;
+}
+.shil-dashboard-shell .shil-online-chip{
+  top:calc(var(--shil-header-h,76px) + env(safe-area-inset-top,0px) + 10px);
+  right:var(--shil-page-pad,16px);
+  z-index:1001;
+}
+.shil-dashboard-shell .dashboard-icons{
+  width:min(100%,520px);
+  margin-block:auto;
+}
+@media (max-width:420px){
+  .shil-dashboard-shell .shil-online-chip{
+    font-size:11px;
+    padding:6px 9px;
+  }
+}
+/* DASHBOARD_UNIFIED_SHELL_UPDATE_END */

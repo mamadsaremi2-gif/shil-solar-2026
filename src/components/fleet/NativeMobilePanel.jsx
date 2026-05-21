@@ -1,4 +1,4 @@
-import React, {
+﻿import React, {
   useEffect,
   useState,
 } from "react";
@@ -52,7 +52,7 @@ export default function NativeMobilePanel() {
 
         <div>
           <span>NATIVE MOBILE</span>
-          <h3>???? Native ??????</h3>
+          <h3>لایه Native موبایل</h3>
         </div>
 
       </div>

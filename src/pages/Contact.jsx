@@ -14,22 +14,22 @@ const qrItems = [
   {
     title: "اینستاگرام شخصی",
     subtitle: "@MOHAMAD_SAREMI1991",
-    src: "/assets/contact/qr-1.png",
+    src: "/assets/contact/instagram-personal.jpg",
   },
   {
     title: "اینستاگرام SHIL",
     subtitle: "@SHILIRAN",
-    src: "/assets/contact/qr-2.png",
+    src: "/assets/contact/instagram-shil.jpg",
   },
   {
     title: "تلگرام",
     subtitle: "@MOHAMAD_SAREMI1991",
-    src: "/assets/contact/qr-3.png",
+    src: "/assets/contact/telegram.jpg",
   },
   {
     title: "واتساپ بیزینس",
     subtitle: "m.saremi-shilirian company",
-    src: "/assets/contact/qr-4.png",
+    src: "/assets/contact/whatsapp.jpg",
   },
 ];
 

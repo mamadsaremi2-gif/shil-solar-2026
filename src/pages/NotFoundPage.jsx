@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { Link } from "react-router-dom";
 import { Home, AlertTriangle } from "lucide-react";
 
@@ -9,15 +9,15 @@ export default function NotFoundPage() {
         <section className="notfound-card-v15">
           <AlertTriangle size={42} />
 
-          <h1>???? ???? ???</h1>
+          <h1>صفحه پیدا نشد</h1>
 
           <p>
-            ???? ???? ??? ?? ?? ???? ????? ?? ???? ???? ???? ???.
+            مسیر وارد شده در اپ وجود ندارد یا هنوز فعال نشده است.
           </p>
 
           <Link to="/">
             <Home size={20} />
-            ?????? ?? ???????
+            بازگشت به داشبورد
           </Link>
         </section>
       </main>

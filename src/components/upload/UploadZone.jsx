@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { UploadCloud } from "lucide-react";
 
 export default function UploadZone() {
@@ -8,10 +8,10 @@ export default function UploadZone() {
 
       <UploadCloud size={42} />
 
-      <h3>????? ???? ?????</h3>
+      <h3>آپلود فایل پروژه</h3>
 
       <p>
-        PDF? DWG? XLSX ?? ?????? ???? ?????
+        PDF، DWG، XLSX یا تصاویر سایت پروژه
       </p>
 
     </div>

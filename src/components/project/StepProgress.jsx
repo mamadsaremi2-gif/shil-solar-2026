@@ -1,15 +1,15 @@
-import React from "react";
+﻿import React from "react";
 
 export default function StepProgress({ current = 1 }) {
   const steps = [
-    "???????",
-    "????",
-    "????",
-    "???",
-    "?????",
-    "?????",
-    "?????",
-    "????",
+    "اطلاعات",
+    "محیط",
+    "مسیر",
+    "روش",
+    "ورودی",
+    "سیستم",
+    "چکیده",
+    "اجرا",
   ];
 
   return (

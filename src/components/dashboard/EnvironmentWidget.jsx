@@ -1,23 +1,23 @@
-import React from "react";
+﻿import React from "react";
 
 const weather = [
   {
-    title: "????",
-    value: "5.8 kWh/m�",
+    title: "تابش",
+    value: "5.8 kWh/m²",
   },
 
   {
-    title: "???? ????",
-    value: "31�C",
+    title: "دمای محیط",
+    value: "31°C",
   },
 
   {
-    title: "???? ???",
+    title: "سرعت باد",
     value: "12 km/h",
   },
 
   {
-    title: "??????? ???",
+    title: "راندمان پنل",
     value: "88%",
   },
 ];
@@ -34,7 +34,7 @@ export default function EnvironmentWidget() {
 
           <span>ENVIRONMENT</span>
 
-          <h3>????? ????? ?????</h3>
+          <h3>شرایط محیطی پروژه</h3>
 
         </div>
 

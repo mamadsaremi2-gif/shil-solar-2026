@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { runEngineeringEngine } from "../../engineering/engine/runEngineeringEngine.js";
 
 export default function EngineeringResultPanel() {
@@ -10,7 +10,7 @@ export default function EngineeringResultPanel() {
       <div className="widget-head-v15">
         <div>
           <span>REAL ENGINE</span>
-          <h3>????? ????? ????? ??????</h3>
+          <h3>خروجی موتور واقعی مهندسی</h3>
         </div>
 
         <div className="engine-status-chip-v15">
@@ -20,25 +20,25 @@ export default function EngineeringResultPanel() {
 
       <div className="engineering-result-grid-v15">
         <div>
-          <h4>????? ???</h4>
+          <h4>تعداد پنل</h4>
           <strong>{result.pv.panelCount}</strong>
           <p>{result.pv.arrayPowerW} Wp</p>
         </div>
 
         <div>
-          <h4>?????</h4>
-          <strong>{result.battery.batteryCount || result.battery.totalCount || "-"} ??? / {result.battery.voltageV || result.battery.unitVoltageV || "-"}V</strong>
+          <h4>باتری</h4>
+          <strong>{result.battery.batteryCount || result.battery.totalCount || "-"} عدد / {result.battery.voltageV || result.battery.unitVoltageV || "-"}V</strong>
           <p>{result.battery.batteryAh || result.battery.capacityAh || result.battery.unitCapacityAh || "-"}Ah / {result.battery.batteryKWh || result.battery.grossEnergyKWh || "-"}kWh</p>
         </div>
 
         <div>
-          <h4>???????</h4>
+          <h4>اینورتر</h4>
           <strong>{result.inverter.recommendedInverterW} W</strong>
           <p>Recommended</p>
         </div>
 
         <div>
-          <h4>??? ?????</h4>
+          <h4>افت ولتاژ</h4>
           <strong>{result.cable.voltageDropPercent}%</strong>
           <p>{result.cable.status}</p>
         </div>
@@ -50,7 +50,7 @@ export default function EngineeringResultPanel() {
         </div>
 
         <div>
-          <h4>???????</h4>
+          <h4>راندمان</h4>
           <strong>{result.losses.efficiency}%</strong>
           <p>Total Loss {result.losses.totalLoss}%</p>
         </div>

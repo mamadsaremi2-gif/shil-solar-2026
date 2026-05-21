@@ -1,4 +1,4 @@
-const DB_NAME = "shil_local_db_v1";
+﻿const DB_NAME = "shil_local_db_v1";
 const DB_VERSION = 1;
 
 const STORES = [

@@ -1,4 +1,4 @@
-import Dexie from "dexie";
+﻿import Dexie from "dexie";
 
 export const db = new Dexie("SHIL_DATABASE");
 

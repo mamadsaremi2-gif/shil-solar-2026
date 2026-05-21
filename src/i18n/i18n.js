@@ -1,4 +1,4 @@
-import i18n from "i18next";
+﻿import i18n from "i18next";
 
 import {
   initReactI18next
@@ -16,7 +16,7 @@ i18n.use(
 
     fa: {
       translation: {
-        welcome: "??? ?????",
+        welcome: "خوش آمدید",
       },
     },
 

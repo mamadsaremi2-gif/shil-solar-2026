@@ -1,4 +1,4 @@
-import {
+﻿import {
   getTimes
 } from "solar-calculator";
 

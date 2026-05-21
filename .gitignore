@@ -1,13 +1,11 @@
-﻿node_modules
+﻿cat > .gitignore << 'EOF'
+node_modules
 dist
-*.zip
-*.rar
-*.7z
-*.pdf
-*.png
-*.jpg
-*.jpeg
-*.mp4
-*.psd
-.cache
-.vscode
+.vite
+capacitor.config.ts.timestamp-*
+android/.gradle
+android/build
+android/app/build
+*.log
+.DS_Store
+EOF
