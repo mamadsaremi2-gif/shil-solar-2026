@@ -1,6 +1,6 @@
-﻿{
-  "name": "SHIL",
-  "short_name": "SHIL",
+{
+  "name":"SHIL SOLAR",
+  "short_name":"SHIL SOLAR",
   "description": "SHIL Smart Engineering Platform",
   "start_url": "/?source=pwa",
   "scope": "/",
