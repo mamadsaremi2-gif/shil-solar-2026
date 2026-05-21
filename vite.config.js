@@ -1,140 +1,83 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-import { VitePWA } from "vite-plugin-pwa";
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: "autoUpdate",
-      injectRegister: "auto",
+      registerType: 'autoUpdate',
       includeAssets: [
-        "favicon.ico",
-        "apple-touch-icon.png",
-        "icon-192.png",
-        "icon-512.png",
-        "pwa-icons/icon-192.png",
-        "pwa-icons/icon-512.png",
-        "assets/**/*",
+        'favicon.ico',
+        'robots.txt',
+        'apple-touch-icon.png',
+        'pwa-icons/icon-192.png',
+        'pwa-icons/icon-512.png',
+        'assets/**/*',
+        'icons/**/*',
+        '**/*.png',
+        '**/*.jpg',
+        '**/*.jpeg',
+        '**/*.webp',
+        '**/*.svg',
+        '**/*.gif'
       ],
-      manifestFilename: "manifest.webmanifest",
       manifest: {
-        name: "SHIL Engineering",
-        short_name: "SHIL",
-        description: "SHIL offline engineering platform for solar and utility-scale calculations",
-        start_url: "/?source=pwa",
-        scope: "/",
-        display: "standalone",
-        orientation: "portrait",
-        lang: "fa",
-        dir: "rtl",
-        theme_color: "#081120",
-        background_color: "#020617",
+        name: 'SHIL Solar',
+        short_name: 'SHIL',
+        start_url: '/',
+        display: 'standalone',
+        background_color: '#080b18',
+        theme_color: '#080b18',
         icons: [
           {
-            src: "/icon-192.png",
-            sizes: "192x192",
-            type: "image/png",
-            purpose: "any",
+            src: '/pwa-icons/icon-192.png',
+            sizes: '192x192',
+            type: 'image/png'
           },
           {
-            src: "/icon-512.png",
-            sizes: "512x512",
-            type: "image/png",
-            purpose: "any",
+            src: '/pwa-icons/icon-512.png',
+            sizes: '512x512',
+            type: 'image/png'
           },
           {
-            src: "/icon-512.png",
-            sizes: "512x512",
-            type: "image/png",
-            purpose: "maskable",
-          },
-        ],
+            src: '/pwa-icons/apple-touch-icon.png',
+            sizes: '180x180',
+            type: 'image/png',
+            purpose: 'any'
+          }
+        ]
       },
       workbox: {
-        cleanupOutdatedCaches: true,
-        skipWaiting: true,
-        clientsClaim: true,
-        navigateFallback: "/index.html",
-        maximumFileSizeToCacheInBytes: 20 * 1024 * 1024,
-        globPatterns: ["**/*.{js,css,html,ico,png,svg,webp,jpg,jpeg,json,woff,woff2,ttf}"],
+        globPatterns: [
+          '**/*.{js,css,html,ico,png,svg,jpg,jpeg,webp,gif,json,woff,woff2,ttf}'
+        ],
+        maximumFileSizeToCacheInBytes: 15 * 1024 * 1024,
         runtimeCaching: [
           {
-            urlPattern: ({ request }) => request.mode === "navigate",
-            handler: "NetworkFirst",
+            urlPattern: ({ request }) => request.destination === 'image',
+            handler: 'CacheFirst',
             options: {
-              cacheName: "shil-html-routes-v1",
-              networkTimeoutSeconds: 3,
+              cacheName: 'shil-images-cache',
               expiration: {
-                maxEntries: 60,
-                maxAgeSeconds: 30 * 24 * 60 * 60,
-              },
-              cacheableResponse: {
-                statuses: [0, 200],
-              },
-            },
+                maxEntries: 300,
+                maxAgeSeconds: 60 * 60 * 24 * 365
+              }
+            }
           },
           {
-            urlPattern: ({ request }) => ["style", "script", "worker"].includes(request.destination),
-            handler: "StaleWhileRevalidate",
+            urlPattern: ({ request }) => request.destination === 'font',
+            handler: 'CacheFirst',
             options: {
-              cacheName: "shil-static-runtime-v1",
+              cacheName: 'shil-fonts-cache',
               expiration: {
-                maxEntries: 180,
-                maxAgeSeconds: 90 * 24 * 60 * 60,
-              },
-              cacheableResponse: {
-                statuses: [0, 200],
-              },
-            },
-          },
-          {
-            urlPattern: ({ request }) => ["image", "font"].includes(request.destination),
-            handler: "CacheFirst",
-            options: {
-              cacheName: "shil-media-fonts-v1",
-              expiration: {
-                maxEntries: 260,
-                maxAgeSeconds: 180 * 24 * 60 * 60,
-              },
-              cacheableResponse: {
-                statuses: [0, 200],
-              },
-            },
-          },
-          {
-            urlPattern: ({ url }) => url.pathname.startsWith("/api/"),
-            handler: "NetworkFirst",
-            options: {
-              cacheName: "shil-api-cache-v1",
-              networkTimeoutSeconds: 4,
-              expiration: {
-                maxEntries: 80,
-                maxAgeSeconds: 7 * 24 * 60 * 60,
-              },
-              cacheableResponse: {
-                statuses: [0, 200],
-              },
-            },
-          },
-        ],
-      },
-      devOptions: {
-        enabled: true,
-        navigateFallback: "/index.html",
-        type: "module",
-      },
-    }),
-  ],
-
-  build: {
-    target: "es2020",
-    minify: "terser",
-    sourcemap: false,
-    chunkSizeWarningLimit: 2500,
-  },
-
-  server: {
-    host: "0.0.0.0",
-  },
-});
+                maxEntries: 50,
+                maxAgeSeconds: 60 * 60 * 24 * 365
+              }
+            }
+          }
+        ]
+      }
+    })
+  ]
+})
