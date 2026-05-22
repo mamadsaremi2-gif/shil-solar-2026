@@ -26,15 +26,36 @@ export default function LoginPage() {
     }
 
     if (isAdminCredential(login, password)) {
-      goByRole(createSession({ role: "admin", login, authType: "admin", displayName: "ادمین اصلی SHIL" }));
+      goByRole(createSession({
+        role: "admin",
+        login,
+        authType: "admin",
+        displayName: "ادمین اصلی SHIL"
+      }));
       return;
     }
 
-    goByRole(createSession({ role: "user", login, authType: login.includes("@") ? "email" : "mobile", displayName: login }));
+    goByRole(createSession({
+      role: "user",
+      login,
+      authType: login.includes("@") ? "email" : "mobile",
+      displayName: login
+    }));
   }
 
   return (
-    <div className="shil-auth-page" dir="rtl">
+    <div
+      className="shil-auth-page shil-login-page"
+      dir="rtl"
+      style={{
+        backgroundImage:
+          "linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.45)), url('/assets/shil/background/login/shil-login-bg.webp')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        minHeight: "100vh"
+      }}
+    >
       <section className="shil-auth-card">
         <div className="shil-auth-brand">
           <strong>SHIL</strong>
@@ -42,8 +63,19 @@ export default function LoginPage() {
         </div>
 
         <form className="shil-auth-form" onSubmit={handleSubmit}>
-          <input value={login} onChange={(event) => setLogin(event.target.value)} placeholder="ایمیل یا شماره موبایل" autoComplete="username" />
-          <input type="password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="رمز عبور" autoComplete="current-password" />
+          <input
+            value={login}
+            onChange={(event) => setLogin(event.target.value)}
+            placeholder="ایمیل یا شماره موبایل"
+            autoComplete="username"
+          />
+          <input
+            type="password"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+            placeholder="رمز عبور"
+            autoComplete="current-password"
+          />
           {error ? <p className="shil-auth-error">{error}</p> : null}
           <button type="submit">ورود / ثبت نام</button>
         </form>

@@ -11,7 +11,6 @@ export const dashboardItems = [
   { title: "سناریوهای آماده", to: "/scenarios", image: SHIL_ASSETS.icons.dashboard.scenarios, icon: <Layers size={42} /> },
   { title: "آموزش", to: "/education", image: SHIL_ASSETS.icons.dashboard.education, icon: <GraduationCap size={42} /> },
   { title: "خروج", to: "/login", image: SHIL_ASSETS.icons.dashboard.logout, icon: <LogOut size={42} /> },
-  { title: "توسعه صفحه پروژه جدید", to: "/new-project/future", image: SHIL_ASSETS.icons.project.future, icon: <Cuboid size={42} /> },
 ];
 
 export const projectSteps = [

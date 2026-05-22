@@ -1,11 +1,14 @@
+import { deleteCloudRecord, mirrorCloudWrite, upsertCloudRecord } from "../services/shilCloudSync.js";
+
 const SESSION_KEY = "shil-session";
 const DEVICE_GUEST_KEY = "shil-device-guest-id";
 
-const ADMIN_CREDENTIALS = [
+const DEFAULT_ADMIN_CREDENTIALS = [
   { login: "admin", password: "shil-admin" },
   { login: "admin@shil.app", password: "shil-admin" },
   { login: "shil.admin", password: "shil-admin" },
 ];
+const ADMIN_CREDENTIALS_KEY = "shil:admin:login-credentials";
 
 function normalizeLogin(value = "") {
   return String(value).trim().toLowerCase();
@@ -31,9 +34,32 @@ function stableIdFromLogin(login) {
   return `user-${normalized || makeId("user")}`;
 }
 
+export function readAdminLoginCredentials() {
+  const saved = safeParse(localStorage.getItem(ADMIN_CREDENTIALS_KEY), null);
+  const list = Array.isArray(saved) && saved.length ? saved : DEFAULT_ADMIN_CREDENTIALS;
+  return list.map((item) => ({
+    login: String(item.login || "").trim(),
+    password: String(item.password || ""),
+  })).filter((item) => item.login && item.password);
+}
+
+export function saveAdminLoginCredentials(credentials = []) {
+  const clean = credentials
+    .map((item) => ({ login: String(item.login || "").trim(), password: String(item.password || "") }))
+    .filter((item) => item.login && item.password);
+  if (!clean.length) throw new Error("حداقل یک یوزر و پسورد ادمین باید ثبت شود.");
+  localStorage.setItem(ADMIN_CREDENTIALS_KEY, JSON.stringify(clean));
+  return clean;
+}
+
+export function resetAdminLoginCredentials() {
+  localStorage.removeItem(ADMIN_CREDENTIALS_KEY);
+  return readAdminLoginCredentials();
+}
+
 export function isAdminCredential(login, password) {
   const normalized = normalizeLogin(login);
-  return ADMIN_CREDENTIALS.some((item) => normalizeLogin(item.login) === normalized && item.password === password);
+  return readAdminLoginCredentials().some((item) => normalizeLogin(item.login) === normalized && item.password === password);
 }
 
 export function getCurrentSession() {
@@ -90,6 +116,7 @@ export function appendUserRecord(baseKey, record) {
     createdAt: new Date().toISOString(),
   };
   localStorage.setItem(key, JSON.stringify([nextRecord, ...list]));
+  mirrorCloudWrite(() => upsertCloudRecord(baseKey, nextRecord));
   return nextRecord;
 }
 
@@ -117,6 +144,7 @@ export function upsertUserRecord(baseKey, matcher, patch) {
     const next = [...list];
     next[index] = updated;
     localStorage.setItem(key, JSON.stringify(next));
+    mirrorCloudWrite(() => upsertCloudRecord(baseKey, updated));
     return updated;
   }
   const nextRecord = {
@@ -129,6 +157,7 @@ export function upsertUserRecord(baseKey, matcher, patch) {
     updatedAt: now,
   };
   localStorage.setItem(key, JSON.stringify([nextRecord, ...list]));
+  mirrorCloudWrite(() => upsertCloudRecord(baseKey, nextRecord));
   return nextRecord;
 }
 
@@ -144,6 +173,7 @@ export function updateUserRecord(baseKey, matcher, updater) {
     return { ...item, ...patch, updatedAt: now };
   });
   localStorage.setItem(key, JSON.stringify(next));
+  next.filter((item) => matcher(item)).forEach((item) => mirrorCloudWrite(() => upsertCloudRecord(baseKey, item)));
   return next;
 }
 
@@ -151,7 +181,9 @@ export function deleteUserRecord(baseKey, matcher) {
   const session = getCurrentSession() || createSession({ role: "guest", authType: "guest" });
   const key = getUserScopedKey(baseKey, session.userId);
   const list = safeParse(localStorage.getItem(key), []);
+  const removed = list.filter((item) => matcher(item));
   const next = list.filter((item) => !matcher(item));
   localStorage.setItem(key, JSON.stringify(next));
+  removed.forEach((item) => mirrorCloudWrite(() => deleteCloudRecord(baseKey, item.id)));
   return next;
 }

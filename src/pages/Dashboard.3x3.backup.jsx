@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import IosIconGrid from "../components/IosIconGrid.jsx";
 import ShilPageShell from "../components/ShilPageShell.jsx";
@@ -25,7 +25,7 @@ export default function Dashboard() {
   const items = useMemo(
     () =>
       dashboardItems.map((item) =>
-        item.title === "خروج"
+        item.title === "????"
           ? {
               ...item,
               onClick: () => {
@@ -39,11 +39,11 @@ export default function Dashboard() {
   );
 
   return (
-    <ShilPageShell title="داشبورد" className="shil-dashboard-floating-shell">
+    <ShilPageShell title="???????" className="shil-dashboard-floating-shell">
       <section className="shil-dashboard-floating-page" dir="rtl">
         <div className="shil-dashboard-mini-status" data-online={online ? "true" : "false"}>
           <span />
-          {online ? "آنلاین" : "آفلاین"}
+          {online ? "??????" : "??????"}
         </div>
 
         <IosIconGrid items={items} gridClass="dashboard-icons shil-dashboard-floating-icons" />

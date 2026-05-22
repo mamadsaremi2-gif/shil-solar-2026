@@ -71,7 +71,7 @@ export function buildFinalEngineeringDelivery({ domain, project = {}, summary = 
     { check: "کامل بودن اطلاعات پروژه", status: "تأیید", detail: "اطلاعات اصلی برای تولید خروجی نهایی در دسترس است" },
     { check: "اعتبار طراحی", status: result?.valid === false ? "نیازمند بازبینی" : "تأیید", detail: result?.valid === false ? "هشدارهای موتور باید بررسی شوند" : "محاسبات برای خروجی مهندسی آماده است" },
     { check: "تجهیزات مورد نیاز", status: "تأیید", detail: "لیست تجهیزات اجرایی بر اساس مسیر طراحی تولید شده است" },
-    { check: "خروجی نهایی", status: "آماده", detail: "امکان ذخیره تصویر، PDF، JSON و CSV فعال است" }
+    { check: "خروجی نهایی", status: "آماده", detail: "امکان ذخیره تصویر، PDF یک‌صفحه‌ای و اشتراک‌گذاری فعال است" }
   ];
 
   return {
@@ -82,7 +82,7 @@ export function buildFinalEngineeringDelivery({ domain, project = {}, summary = 
       domain: emergency ? "برق اضطراری" : "پنل خورشیدی",
       generatedAt,
       status: result?.valid === false ? "نیازمند بازبینی" : "تکمیل شده",
-      version: "SHIL Export System 100"
+      version: "SHIL One Page Export 101"
     },
     project,
     summary,
@@ -132,20 +132,17 @@ export async function exportElementAsPdf(element, delivery, filename = "shil-out
   const pdf = new jsPDF("p", "mm", "a4");
   const pageWidth = pdf.internal.pageSize.getWidth();
   const pageHeight = pdf.internal.pageSize.getHeight();
-  const imgWidth = pageWidth;
-  const imgHeight = (canvas.height * imgWidth) / canvas.width;
-  let heightLeft = imgHeight;
-  let position = 0;
+  const margin = 5;
+  const maxWidth = pageWidth - margin * 2;
+  const maxHeight = pageHeight - margin * 2;
+  const ratio = Math.min(maxWidth / canvas.width, maxHeight / canvas.height);
+  const imgWidth = canvas.width * ratio;
+  const imgHeight = canvas.height * ratio;
+  const x = (pageWidth - imgWidth) / 2;
+  const y = (pageHeight - imgHeight) / 2;
 
-  pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight, undefined, "FAST");
-  heightLeft -= pageHeight;
-  while (heightLeft > 0) {
-    position = heightLeft - imgHeight;
-    pdf.addPage();
-    pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight, undefined, "FAST");
-    heightLeft -= pageHeight;
-  }
-  pdf.setProperties({ title: delivery?.meta?.title || "SHIL Engineering Output", subject: "SHIL Engineering Delivery", creator: "SHIL" });
+  pdf.addImage(imgData, "PNG", x, y, imgWidth, imgHeight, undefined, "FAST");
+  pdf.setProperties({ title: delivery?.meta?.title || "SHIL One Page Output", subject: "SHIL One Page Engineering Delivery", creator: "SHIL" });
   pdf.save(filename);
 }
 

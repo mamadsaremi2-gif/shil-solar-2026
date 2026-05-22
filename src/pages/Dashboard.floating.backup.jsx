@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import IosIconGrid from "../components/IosIconGrid.jsx";
 import ShilPageShell from "../components/ShilPageShell.jsx";
@@ -25,7 +25,7 @@ export default function Dashboard() {
   const items = useMemo(
     () =>
       dashboardItems.map((item) =>
-        item.title === "خروج"
+        item.title === "????"
           ? {
               ...item,
               onClick: () => {
@@ -39,17 +39,17 @@ export default function Dashboard() {
   );
 
   return (
-    <ShilPageShell title="داشبورد" className="shil-dashboard-shell shil-dashboard-mobile-final">
+    <ShilPageShell title="???????" className="shil-dashboard-shell shil-dashboard-mobile-final">
       <section className="shil-dashboard-home shil-dashboard-final-layout" dir="rtl">
         <div className="shil-dashboard-hero">
           <div className="shil-dashboard-eyebrow">SHIL ENGINEERING</div>
-          <h1>داشبورد مهندسی شیل</h1>
-          <p>دسترسی سریع به پروژه‌ها، محاسبات، سناریوها و ابزارهای مهندسی</p>
+          <h1>??????? ?????? ???</h1>
+          <p>?????? ???? ?? ????????? ???????? ???????? ? ???????? ??????</p>
 
           <div className="shil-dashboard-status-row">
             <div className="shil-online-chip shil-dashboard-online-chip" data-online={online ? "true" : "false"}>
               <span />
-              {online ? "کاربر آنلاین است" : "کاربر آفلاین است"}
+              {online ? "????? ?????? ???" : "????? ?????? ???"}
             </div>
           </div>
         </div>

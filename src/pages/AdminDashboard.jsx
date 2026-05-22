@@ -1,7 +1,14 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import ShilPageShell from "../components/ShilPageShell.jsx";
-import { clearSession, getCurrentSession, readAllUserRecords } from "../auth/session.js";
+import {
+  clearSession,
+  getCurrentSession,
+  readAllUserRecords,
+  readAdminLoginCredentials,
+  resetAdminLoginCredentials,
+  saveAdminLoginCredentials,
+} from "../auth/session.js";
 import {
   ADMIN_SYSTEM_VERSION,
   DEFAULT_ADMIN_DEFAULTS,
@@ -27,6 +34,95 @@ import {
   validateAdminSystem,
   verifyAdminPin,
 } from "../admin/adminStore.js";
+import {
+  deleteCloudRecord,
+  getCloudModeLabel,
+  isSupabaseReady,
+  pushAllLocalRecordsToCloud,
+  readCloudRecords,
+  saveAdminSettingToCloud,
+  upsertCloudRecord,
+} from "../services/shilCloudSync.js";
+
+const ADMIN_DATA_KEYS = [
+  ["shil-feedback", "نظرات کاربران"],
+  ["shil-assistant-questions", "پرسش‌های دستیار"],
+  ["shil-projects", "پروژه‌ها و ذخیره‌ها"],
+];
+
+function safeParse(value, fallback = []) {
+  try {
+    return value ? JSON.parse(value) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function makeAdminId(prefix = "admin") {
+  if (typeof crypto !== "undefined" && crypto.randomUUID) return `${prefix}-${crypto.randomUUID()}`;
+  return `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
+function readAdminDataSnapshot() {
+  const feedback = readAllUserRecords("shil-feedback");
+  const assistant = readAllUserRecords("shil-assistant-questions");
+  const projects = readAllUserRecords("shil-projects");
+  const byUser = new Map();
+
+  [...feedback, ...assistant, ...projects].forEach((item) => {
+    const userId = item.userId || item.sourceKey?.split(":").slice(1).join(":") || "anonymous";
+    const current = byUser.get(userId) || {
+      userId,
+      login: item.userLogin || "",
+      role: item.userRole || "user",
+      feedback: 0,
+      assistant: 0,
+      projects: 0,
+      lastAt: "",
+    };
+    current.login = current.login || item.userLogin || "";
+    current.role = current.role || item.userRole || "user";
+    current.lastAt = [current.lastAt, item.updatedAt, item.createdAt].filter(Boolean).sort().at(-1) || current.lastAt;
+    byUser.set(userId, current);
+  });
+
+  feedback.forEach((item) => byUser.get(item.userId || "anonymous") && (byUser.get(item.userId || "anonymous").feedback += 1));
+  assistant.forEach((item) => byUser.get(item.userId || "anonymous") && (byUser.get(item.userId || "anonymous").assistant += 1));
+  projects.forEach((item) => byUser.get(item.userId || "anonymous") && (byUser.get(item.userId || "anonymous").projects += 1));
+
+  return {
+    feedback,
+    assistant,
+    projects,
+    users: Array.from(byUser.values()).sort((a, b) => String(b.lastAt).localeCompare(String(a.lastAt))),
+  };
+}
+
+function updateRecordBySourceKey(sourceKey, recordId, patch) {
+  const list = safeParse(localStorage.getItem(sourceKey), []);
+  const next = list.map((item) => item.id === recordId ? { ...item, ...patch, updatedAt: new Date().toISOString() } : item);
+  localStorage.setItem(sourceKey, JSON.stringify(next));
+  return next;
+}
+
+function deleteRecordBySourceKey(sourceKey, recordId) {
+  const list = safeParse(localStorage.getItem(sourceKey), []);
+  const next = list.filter((item) => item.id !== recordId);
+  localStorage.setItem(sourceKey, JSON.stringify(next));
+  return next;
+}
+
+function deleteUserAllData(userId) {
+  ADMIN_DATA_KEYS.forEach(([baseKey]) => localStorage.removeItem(`${baseKey}:${userId}`));
+}
+
+function exportUserBundle(userId) {
+  const bundle = { userId, exportedAt: new Date().toISOString(), records: {} };
+  ADMIN_DATA_KEYS.forEach(([baseKey]) => {
+    bundle.records[baseKey] = safeParse(localStorage.getItem(`${baseKey}:${userId}`), []);
+  });
+  return bundle;
+}
 
 function StatCard({ title, value, note, status }) {
   return (
@@ -58,6 +154,15 @@ function AdminInput({ label, value, onChange, type = "text", placeholder = "" })
     <label className="shil-admin-field">
       <span>{label}</span>
       <input type={type} value={value ?? ""} placeholder={placeholder} onChange={(event) => onChange(event.target.value)} dir="auto" />
+    </label>
+  );
+}
+
+function AdminTextarea({ label, value, onChange, placeholder = "" }) {
+  return (
+    <label className="shil-admin-field shil-admin-field-wide">
+      <span>{label}</span>
+      <textarea value={value ?? ""} placeholder={placeholder} onChange={(event) => onChange(event.target.value)} dir="auto" />
     </label>
   );
 }
@@ -97,6 +202,29 @@ function AdminGate({ onVerified }) {
   );
 }
 
+function RecordCard({ item, type, onPatch, onDelete, onReply }) {
+  const title = item.title || item.projectName || item.customerName || item.category || item.text || "رکورد بدون عنوان";
+  return (
+    <article className="shil-thread-card shil-admin-record-card">
+      <div className="shil-admin-record-head">
+        <div>
+          <h3>{title}</h3>
+          <p>{item.userLogin || item.userId || "کاربر ناشناس"} · {item.createdAt ? new Date(item.createdAt).toLocaleString("fa-IR") : "بدون تاریخ"}</p>
+        </div>
+        <span>{type}</span>
+      </div>
+      {item.text ? <p>{item.text}</p> : null}
+      {item.answer ? <p><strong>پاسخ سیستم:</strong> {item.answer}</p> : null}
+      {item.adminReply ? <p><strong>پاسخ ادمین:</strong> {item.adminReply}</p> : null}
+      <div className="shil-admin-actions-row compact">
+        {onReply ? <button type="button" onClick={() => onReply(item)}>پاسخ/ویرایش پاسخ</button> : null}
+        <button type="button" onClick={() => onPatch(item, { status: item.status === "closed" ? "open" : "closed" })}>{item.status === "closed" ? "باز کردن" : "بستن"}</button>
+        <button type="button" className="danger" onClick={() => onDelete(item)}>حذف</button>
+      </div>
+    </article>
+  );
+}
+
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const session = getCurrentSession();
@@ -113,13 +241,17 @@ export default function AdminDashboard() {
   const [message, setMessage] = useState("");
   const [newPin, setNewPin] = useState("");
   const [health, setHealth] = useState(() => validateAdminSystem());
+  const [adminCredentials, setAdminCredentials] = useState(() => readAdminLoginCredentials());
+  const [dataVersion, setDataVersion] = useState(0);
+  const [replyDraft, setReplyDraft] = useState({ id: "", sourceKey: "", text: "" });
+  const [cloudData, setCloudData] = useState(null);
+  const [cloudStatus, setCloudStatus] = useState(() => ({ online: isSupabaseReady(), loading: false, message: getCloudModeLabel() }));
 
-  const data = useMemo(() => {
-    const feedback = readAllUserRecords("shil-feedback");
-    const assistant = readAllUserRecords("shil-assistant-questions");
-    const projects = readAllUserRecords("shil-projects");
-    const userIds = new Set([...feedback, ...assistant, ...projects].map((item) => item.userId).filter(Boolean));
-    return { feedback, assistant, projects, userCount: userIds.size };
+  const localData = useMemo(() => readAdminDataSnapshot(), [dataVersion]);
+  const data = cloudData?.online ? cloudData : localData;
+
+  useEffect(() => {
+    if (session?.role === "admin") loadCloudData(false);
   }, []);
 
   const catalogStats = useMemo(() => ({
@@ -133,11 +265,40 @@ export default function AdminDashboard() {
   if (session?.role !== "admin") return <Navigate to="/login" replace />;
   if (!unlocked) return <AdminGate onVerified={() => { setUnlocked(true); setSecurity(readAdminSecurity()); }} />;
 
+  async function loadCloudData(showMessage = false) {
+    if (!isSupabaseReady()) {
+      setCloudStatus({ online: false, loading: false, message: "Supabase تنظیم نشده؛ حالت لوکال فعال است." });
+      return;
+    }
+    try {
+      setCloudStatus((prev) => ({ ...prev, online: true, loading: true, message: "در حال دریافت داده از Supabase..." }));
+      const snapshot = await readCloudRecords();
+      setCloudData(snapshot);
+      setCloudStatus({ online: true, loading: false, message: `Supabase متصل است؛ ${snapshot.projects.length + snapshot.feedback.length + snapshot.assistant.length} رکورد آنلاین دریافت شد.` });
+      if (showMessage) notify("داده‌های آنلاین Supabase بروزرسانی شد.");
+    } catch (error) {
+      setCloudStatus({ online: false, loading: false, message: error.message || "اتصال Supabase ناموفق بود." });
+    }
+  }
+
+  async function pushLocalToCloud() {
+    try {
+      setCloudStatus((prev) => ({ ...prev, loading: true, message: "در حال ارسال داده‌های لوکال به Supabase..." }));
+      const count = await pushAllLocalRecordsToCloud();
+      await loadCloudData(false);
+      notify(`${count} رکورد لوکال به Supabase ارسال شد.`);
+    } catch (error) {
+      setCloudStatus({ online: false, loading: false, message: error.message || "ارسال به Supabase انجام نشد." });
+      notify(error.message || "ارسال به Supabase انجام نشد.");
+    }
+  }
+
   function syncAdminState() {
     setAudit(readAdminAuditLog());
     setSnapshots(readAdminSnapshots());
     setHealth(validateAdminSystem());
     setSecurity(readAdminSecurity());
+    setDataVersion((value) => value + 1);
   }
 
   function notify(text) {
@@ -268,21 +429,70 @@ export default function AdminDashboard() {
     }
   }
 
+  function saveCredentials() {
+    try {
+      const savedCredentials = saveAdminLoginCredentials(adminCredentials);
+      setAdminCredentials(savedCredentials);
+      saveAdminSettingToCloud("adminLoginCredentials", savedCredentials).catch(() => {});
+      notify("یوزر و پسورد ورود ادمین ذخیره شد.");
+    } catch (error) {
+      notify(error.message || "ذخیره یوزر و پسورد انجام نشد.");
+    }
+  }
+
+  function getBaseKeyFromItem(item) {
+    return item.baseKey || item.sourceKey?.split(":")[0] || "shil-records";
+  }
+
+  function patchRecord(item, patch) {
+    const updatedList = updateRecordBySourceKey(item.sourceKey, item.id, patch);
+    const updated = updatedList.find((record) => record.id === item.id) || { ...item, ...patch };
+    if (cloudData?.online || isSupabaseReady()) upsertCloudRecord(getBaseKeyFromItem(item), updated).then(() => loadCloudData(false)).catch((error) => notify(error.message || "بروزرسانی Supabase انجام نشد."));
+    notify("رکورد کاربر بروزرسانی شد.");
+  }
+
+  function removeRecord(item) {
+    deleteRecordBySourceKey(item.sourceKey, item.id);
+    if (cloudData?.online || isSupabaseReady()) deleteCloudRecord(getBaseKeyFromItem(item), item.id).then(() => loadCloudData(false)).catch((error) => notify(error.message || "حذف از Supabase انجام نشد."));
+    notify("رکورد کاربر حذف شد.");
+  }
+
+  function openReply(item) {
+    setReplyDraft({ id: item.id, sourceKey: item.sourceKey, text: item.adminReply || "" });
+    setTab("feedback");
+  }
+
+  function saveReply() {
+    if (!replyDraft.id || !replyDraft.sourceKey) return;
+    updateRecordBySourceKey(replyDraft.sourceKey, replyDraft.id, {
+      adminReply: replyDraft.text.trim() || "در انتظار پاسخ ادمین",
+      status: replyDraft.text.trim() ? "answered" : "open",
+      answeredBy: "admin-root",
+      answeredAt: new Date().toISOString(),
+    });
+    setReplyDraft({ id: "", sourceKey: "", text: "" });
+    notify("پاسخ ادمین برای کاربر ذخیره شد.");
+  }
+
   const tabs = [
     ["overview", "نمای کلی"],
+    ["users", "کاربران"],
+    ["projects", "سیوها و پروژه‌ها"],
+    ["feedback", "نظرات و پاسخ‌ها"],
     ["cards", "کارت‌های مسیر"],
     ["defaults", "پیش‌فرض‌ها"],
     ["catalog", "بانک تجهیزات"],
     ["security", "امنیت و نسخه"],
+    ["cloud", "ابر/Supabase"],
   ];
 
   return (
     <ShilPageShell title="کارتابل ادمین SHIL">
       <section className="shil-admin-hero">
         <div>
-          <span>{ADMIN_SYSTEM_VERSION}</span>
+          <span>{ADMIN_SYSTEM_VERSION} · Admin Pro</span>
           <h2>مرکز مدیریت کامل SHIL</h2>
-          <p>مدیریت کارت‌های مسیر پروژه، تصاویر PNG، بانک تجهیزات، حفاظت‌ها، پیش‌فرض‌های مهندسی، نسخه پشتیبان، امنیت ادمین و لاگ تغییرات.</p>
+          <p>مدیریت کاربران، یوزر/پسورد ادمین، ذخیره‌ها، پروژه‌ها، نظرات، پاسخ ادمین، کارت‌های مسیر، بانک تجهیزات، امنیت، نسخه پشتیبان و همگام‌سازی Supabase.</p>
         </div>
         <button type="button" className="shil-guest-btn" onClick={logout}>خروج از کارتابل ادمین</button>
       </section>
@@ -299,8 +509,9 @@ export default function AdminDashboard() {
         <>
           <section className="shil-admin-grid">
             <StatCard title="سلامت Admin" value={health.ok ? "۱۰۰٪" : "نیازمند بررسی"} note={health.ok ? "تمام کنترل‌ها معتبر است" : `${health.warnings.length} هشدار`} status={health.ok ? "ok" : "warn"} />
-            <StatCard title="کاربران دارای داده" value={data.userCount} note="از داده‌های محلی" />
+            <StatCard title="کاربران دارای داده" value={data.users.length} note={data.online ? "از Supabase" : "از داده‌های لوکال"} />
             <StatCard title="پروژه‌های ثبت‌شده" value={data.projects.length} />
+            <StatCard title="نظرات کاربران" value={data.feedback.length} note={`${data.feedback.filter((item) => item.status !== "answered").length} مورد باز`} />
             <StatCard title="تجهیزات فعال" value={catalogStats.panels + catalogStats.inverters + catalogStats.batteries + catalogStats.emergency + catalogStats.protections} />
           </section>
 
@@ -315,11 +526,72 @@ export default function AdminDashboard() {
           <section className="shil-admin-actions-row">
             <button type="button" onClick={() => downloadJson("shil-admin-config-100.json", exportAdminJson())}>خروجی JSON کامل</button>
             <button type="button" onClick={() => importRef.current?.click()}>ورود JSON تنظیمات</button>
+            <button type="button" onClick={() => downloadJson("shil-admin-users-data.json", data)}>خروجی کاربران/نظرات/پروژه‌ها</button>
             <button type="button" onClick={makeSnapshot}>ساخت نسخه پشتیبان</button>
             <button type="button" className="danger" onClick={resetAll}>بازگشت به تنظیمات استاندارد</button>
             <input ref={importRef} type="file" accept="application/json" hidden onChange={(event) => importConfig(event.target.files?.[0])} />
           </section>
         </>
+      ) : null}
+
+      {tab === "users" ? (
+        <AdminPanel title="مدیریت کاربران" subtitle="مشاهده کاربران لوکال، تعداد سیوها، نظرات و خروجی/حذف اطلاعات هر کاربر.">
+          <div className="shil-thread-list">
+            {data.users.map((user) => (
+              <article className="shil-thread-card" key={user.userId}>
+                <h3>{user.login || user.userId}</h3>
+                <p><strong>شناسه:</strong> {user.userId}</p>
+                <p><strong>نقش:</strong> {user.role} · <strong>آخرین فعالیت:</strong> {user.lastAt ? new Date(user.lastAt).toLocaleString("fa-IR") : "نامشخص"}</p>
+                <p>پروژه‌ها: {user.projects} · نظرات: {user.feedback} · پرسش‌ها: {user.assistant}</p>
+                <div className="shil-admin-actions-row compact">
+                  <button type="button" onClick={() => downloadJson(`shil-user-${user.userId}.json`, exportUserBundle(user.userId))}>خروجی کاربر</button>
+                  <button type="button" className="danger" onClick={() => { deleteUserAllData(user.userId); notify("تمام اطلاعات این کاربر حذف شد."); }}>حذف اطلاعات کاربر</button>
+                </div>
+              </article>
+            ))}
+            {!data.users.length ? <p>هنوز کاربری داده ثبت نکرده است.</p> : null}
+          </div>
+        </AdminPanel>
+      ) : null}
+
+      {tab === "projects" ? (
+        <AdminPanel title="مدیریت سیوها و پروژه‌ها" subtitle="ادمین می‌تواند ذخیره‌های کاربران را مشاهده، ببندد، حذف یا خروجی بگیرد.">
+          <section className="shil-admin-actions-row">
+            <button type="button" onClick={() => downloadJson("shil-all-project-saves.json", data.projects)}>خروجی تمام سیوها</button>
+          </section>
+          <div className="shil-thread-list">
+            {data.projects.map((item) => (
+              <RecordCard key={`${item.sourceKey}-${item.id}`} item={item} type="پروژه/سیو" onPatch={patchRecord} onDelete={removeRecord} />
+            ))}
+            {!data.projects.length ? <p>هنوز پروژه یا ذخیره‌ای ثبت نشده است.</p> : null}
+          </div>
+        </AdminPanel>
+      ) : null}
+
+      {tab === "feedback" ? (
+        <AdminPanel title="نظرات کاربران و پاسخ ادمین" subtitle="پاسخ ادمین داخل رکورد کاربر ذخیره می‌شود و در صفحه نظرات همان کاربر قابل نمایش است.">
+          {replyDraft.id ? (
+            <div className="shil-feedback-form">
+              <AdminTextarea label="متن پاسخ ادمین" value={replyDraft.text} onChange={(text) => setReplyDraft((prev) => ({ ...prev, text }))} placeholder="پاسخ رسمی به کاربر..." />
+              <section className="shil-admin-actions-row compact">
+                <button type="button" onClick={saveReply}>ذخیره پاسخ</button>
+                <button type="button" className="danger" onClick={() => setReplyDraft({ id: "", sourceKey: "", text: "" })}>انصراف</button>
+              </section>
+            </div>
+          ) : null}
+          <section className="shil-admin-actions-row">
+            <button type="button" onClick={() => downloadJson("shil-feedback-and-questions.json", { feedback: data.feedback, assistant: data.assistant })}>خروجی نظرات و پرسش‌ها</button>
+          </section>
+          <div className="shil-thread-list">
+            {data.feedback.map((item) => (
+              <RecordCard key={`${item.sourceKey}-${item.id}`} item={item} type="نظر کاربر" onPatch={patchRecord} onDelete={removeRecord} onReply={openReply} />
+            ))}
+            {data.assistant.map((item) => (
+              <RecordCard key={`${item.sourceKey}-${item.id}`} item={item} type="پرسش دستیار" onPatch={patchRecord} onDelete={removeRecord} onReply={openReply} />
+            ))}
+            {!data.feedback.length && !data.assistant.length ? <p>هنوز نظری یا پرسشی ثبت نشده است.</p> : null}
+          </div>
+        </AdminPanel>
       ) : null}
 
       {tab === "cards" ? (
@@ -385,15 +657,54 @@ export default function AdminDashboard() {
         </AdminPanel>
       ) : null}
 
+
+      {tab === "cloud" ? (
+        <>
+          <AdminPanel title="اتصال ابری Supabase" subtitle="در این بخش داده‌های لوکال/PWA با دیتابیس Supabase همگام می‌شود تا پنل ادمین از چند دستگاه قابل استفاده باشد.">
+            <section className="shil-admin-grid">
+              <StatCard title="وضعیت اتصال" value={cloudStatus.online ? "متصل" : "لوکال"} note={cloudStatus.message} status={cloudStatus.online ? "ok" : "warn"} />
+              <StatCard title="رکوردهای آنلاین" value={(cloudData?.projects?.length || 0) + (cloudData?.feedback?.length || 0) + (cloudData?.assistant?.length || 0)} note="پروژه‌ها، نظرات و پرسش‌ها" />
+              <StatCard title="رکوردهای لوکال" value={localData.projects.length + localData.feedback.length + localData.assistant.length} note="قبل از ارسال به ابر" />
+            </section>
+            <section className="shil-admin-actions-row">
+              <button type="button" onClick={() => loadCloudData(true)} disabled={cloudStatus.loading}>دریافت از Supabase</button>
+              <button type="button" onClick={pushLocalToCloud} disabled={cloudStatus.loading || !isSupabaseReady()}>ارسال داده‌های لوکال به Supabase</button>
+              <button type="button" onClick={() => downloadJson("shil-cloud-data.json", cloudData || {})}>خروجی داده آنلاین</button>
+            </section>
+            <div className="shil-admin-health warn">
+              <p>برای فعال شدن این بخش باید فایل <strong>.env</strong> شامل <strong>VITE_SUPABASE_URL</strong> و <strong>VITE_SUPABASE_ANON_KEY</strong> باشد و فایل <strong>supabase/schema.sql</strong> در Supabase اجرا شده باشد.</p>
+              <p>Policy فعلی برای تست و PWA باز است. برای نسخه عمومی باید Supabase Auth و RLS اختصاصی ادمین فعال شود.</p>
+            </div>
+          </AdminPanel>
+        </>
+      ) : null}
+
       {tab === "security" ? (
         <>
+          <AdminPanel title="یوزر و پسورد ورود ادمین" subtitle="این بخش مرحله ورود /login به نقش admin را کنترل می‌کند. بعد از ذخیره، با یوزر/پسورد جدید وارد شوید.">
+            <div className="shil-admin-catalog-stack">
+              {adminCredentials.map((credential, index) => (
+                <div className="shil-admin-catalog-row wide" key={`${credential.login}-${index}`}>
+                  <input value={credential.login} onChange={(event) => setAdminCredentials((prev) => prev.map((item, itemIndex) => itemIndex === index ? { ...item, login: event.target.value } : item))} placeholder="یوزر ادمین" dir="ltr" />
+                  <input value={credential.password} onChange={(event) => setAdminCredentials((prev) => prev.map((item, itemIndex) => itemIndex === index ? { ...item, password: event.target.value } : item))} placeholder="پسورد ادمین" dir="ltr" />
+                  <button type="button" className="danger" onClick={() => setAdminCredentials((prev) => prev.filter((_, itemIndex) => itemIndex !== index))}>حذف</button>
+                </div>
+              ))}
+            </div>
+            <section className="shil-admin-actions-row">
+              <button type="button" onClick={() => setAdminCredentials((prev) => [...prev, { login: "", password: "" }])}>افزودن یوزر ادمین</button>
+              <button type="button" onClick={saveCredentials}>ذخیره یوزر/پسورد</button>
+              <button type="button" className="danger" onClick={() => { setAdminCredentials(resetAdminLoginCredentials()); notify("یوزر/پسورد ادمین به حالت پیش‌فرض برگشت."); }}>بازگشت پیش‌فرض</button>
+            </section>
+          </AdminPanel>
+
           <AdminPanel title="امنیت ادمین" subtitle="این لایه برای جلوگیری از ورود اتفاقی به پنل مدیریت در نسخه لوکال/PWA است.">
             <div className="shil-admin-form-grid">
-              <AdminInput label="رمز جدید ادمین" value={newPin} onChange={setNewPin} placeholder="حداقل ۴ رقم" />
+              <AdminInput label="رمز جدید لایه دوم ادمین" value={newPin} onChange={setNewPin} placeholder="حداقل ۴ رقم" />
               <AdminInput label="مدت اعتبار ورود دقیقه" type="number" value={security.sessionMinutes} onChange={(sessionMinutes) => setSecurity((prev) => ({ ...prev, sessionMinutes }))} />
             </div>
             <section className="shil-admin-actions-row">
-              <button type="button" onClick={changePin}>تغییر رمز ادمین</button>
+              <button type="button" onClick={changePin}>تغییر رمز لایه دوم</button>
               <button type="button" onClick={() => { localStorage.setItem("shil:admin:security", JSON.stringify({ ...security, sessionMinutes: normalizeNumber(security.sessionMinutes, 60) })); notify("تنظیمات امنیت ادمین ذخیره شد."); }}>ذخیره امنیت</button>
             </section>
           </AdminPanel>
