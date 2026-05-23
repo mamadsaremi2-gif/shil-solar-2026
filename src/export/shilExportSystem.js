@@ -50,12 +50,22 @@ export function buildFinalEngineeringDelivery({ domain, project = {}, summary = 
   const location = [project.city, project.province].filter(Boolean).join(" / ") || project.address || "ثبت نشده";
   const generatedAt = new Date().toLocaleString("fa-IR");
 
+  const distributedRows = Array.isArray(solarDesign?.distributedInverterSystems)
+    ? solarDesign.distributedInverterSystems.slice(0, 12).map((system) => ({
+      item: system.title || "زیرسیستم اینورتر",
+      qty: "۱ زیرسیستم",
+      spec: `${safeText(system?.inverterModel, "اینورتر")} / ${safeText(system?.pv?.panelCount, "-")} پنل / ${safeText(system?.battery?.count, 0)} باتری`,
+      reason: `سهم بار ${safeText(system?.designPowerShareW, "-")}W؛ DC ${safeText(system?.protection?.dcBreakerA, "-")}A / AC ${safeText(system?.protection?.acBreakerA, "-")}A / کابل ${safeText(system?.protection?.dcCable, "-")} و ${safeText(system?.protection?.acCable, "-")}`
+    }))
+    : [];
+
   const solarRows = [
     { item: "پنل خورشیدی", qty: safeText(solarDesign?.pvArray?.panelCount, "-") + " عدد", spec: `${safeText(solarDesign?.panel?.powerW, 620)} وات`, reason: `${safeText(solarDesign?.pvArray?.seriesCount, "-")} سری × ${safeText(solarDesign?.pvArray?.parallelCount, "-")} موازی برای تطابق توان و محدوده کاری` },
-    { item: "اینورتر خورشیدی", qty: safeText(solarDesign?.inverter?.count, 1) + " عدد", spec: `${safeText(solarDesign?.inverter?.ratedPowerW, "-")} وات`, reason: "انتخاب‌شده بر اساس توان بار، سناریوی طراحی و ظرفیت توسعه آینده" },
+    { item: "اینورتر خورشیدی", qty: safeText(solarDesign?.inverter?.count, 1) + " عدد", spec: `${safeText(solarDesign?.inverter?.ratedPowerW, "-")} وات`, reason: "انتخاب‌شده بر اساس توان بار، سناریوی طراحی و قانون مشترک تقسیم چنداینورتری" },
     { item: "باتری", qty: safeText(solarDesign?.battery?.totalCount, "-") + " عدد", spec: batterySpecText(solarDesign?.battery), reason: `${batteryNoteText(solarDesign?.battery)} برای تأمین ظرفیت ذخیره` },
     { item: "حفاظت DC/AC", qty: "۱ مجموعه", spec: `DC ${safeText(solarDesign?.protection?.dcBreakerA, "-")}A / AC ${safeText(solarDesign?.protection?.acBreakerA, "-")}A`, reason: "حفاظت مدار، جداسازی، ارتینگ و محدودسازی خطا" },
-    { item: "استراکچر و متعلقات نصب", qty: "بر اساس جانمایی", spec: "سقف / زمین / ترکیبی", reason: "مطابق محل نصب، جهت پنل و شرایط اجرای پروژه" }
+    { item: "استراکچر و متعلقات نصب", qty: "بر اساس جانمایی", spec: "سقف / زمین / ترکیبی", reason: "مطابق محل نصب، جهت پنل و شرایط اجرای پروژه" },
+    ...distributedRows
   ];
 
   const emergencyRows = [

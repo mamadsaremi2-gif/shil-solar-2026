@@ -1,11 +1,11 @@
-﻿cat > .gitignore << 'EOF'
-node_modules
-dist
-.vite
-capacitor.config.ts.timestamp-*
-android/.gradle
-android/build
-android/app/build
+node_modules/
+dist/
+.vite/
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
 *.log
 .DS_Store
-EOF
+.env.local
+.env.production.local

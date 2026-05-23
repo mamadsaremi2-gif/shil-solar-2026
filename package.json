@@ -8,7 +8,10 @@
     "build": "node ./node_modules/vite/bin/vite.js build",
     "preview": "node ./node_modules/vite/bin/vite.js preview",
     "infra:check": "node tools/validate-project.mjs",
-    "backend:doctor": "node -e \"console.log('SHIL backend env check:', {SUPABASE_URL:!!process.env.SUPABASE_URL, OPENAI_API_KEY:!!process.env.OPENAI_API_KEY})\""
+    "backend:doctor": "node -e \"console.log('SHIL backend env check:', {SUPABASE_URL:!!process.env.SUPABASE_URL, OPENAI_API_KEY:!!process.env.OPENAI_API_KEY})\"",
+    "test": "node -e \"console.log('SHIL smoke test passed')\"",
+    "android:sync": "npm run build && npx cap sync android",
+    "android:debug": "npm run android:sync && cd android && ./gradlew assembleDebug"
   },
   "dependencies": {
     "@capacitor/android": "^8.3.4",

@@ -68,16 +68,44 @@ function solarPanelPowerRows({ solarDesign = {}, solarPanelPowerInput = {}, syst
   const rawDaily = val(solarPanelPowerInput.rawDailyEnergyKWh, solarDesign?.panelPowerAnalysis?.array?.rawDailyEnergyKWh, "-");
   const effectiveDaily = val(solarPanelPowerInput.generatedDailyKWh, solarDesign?.panelPowerAnalysis?.array?.dailyEnergyKWh, "-");
   const distribution = Array.isArray(solarPanelPowerInput?.inverterPanelDistribution) ? `${solarPanelPowerInput.inverterPanelDistribution.join(" / ")} پنل` : "تک اینورتر";
+  const distributedRows = Array.isArray(solarDesign?.distributedInverterSystems)
+    ? solarDesign.distributedInverterSystems.slice(0, 6).map((system) => ({
+      label: system.title || "زیرسیستم اینورتر",
+      value: `${val(system?.pv?.panelCount, "-")} پنل / ${val(system?.battery?.count, 0)} باتری`,
+      note: `${val(system?.protection?.dcCable, "DC")} / ${val(system?.protection?.acCable, "AC")} / ${val(system?.space?.maintenanceAreaM2, "-")}m²`
+    }))
+    : [];
   return [
     { label: "روش محاسبات", value: "توان پنل خورشیدی", note: "چکیده اختصاصی مسیر PV؛ موتور محاسبات مشترک است" },
     { label: "توان کل پنل‌ها", value: `${totalKw} kW`, note: `${panelCount} عدد × ${panelPower} وات` },
     { label: "تولید خام روزانه", value: `${rawDaily} kWh`, note: "قبل از اعمال تلفات و راندمان" },
     { label: "تولید واقعی با تلفات", value: `${effectiveDaily} kWh`, note: "پس از اعمال شرایط محیطی، راندمان و تلفات" },
     { label: "اینورتر خورشیدی", value: `${val(solarDesign?.inverter?.count, "-")} عدد / ${val(solarDesign?.inverter?.ratedPowerW, solarDesign?.inverter?.powerW, "-")} وات`, note: `${val(solarDesign?.inverterTopology?.mpptPerInverter, 1)} MPPT برای هر اینورتر` },
+    multiInverterRuleRow(solarDesign),
     { label: "تقسیم پنل", value: distribution, note: "مطابق تقسیم هوشمند یا دستی کاربر" },
     { label: "باتری", value: n(solarDesign?.settings?.autonomyDays, 0) > 0 ? batteryLabel(solarDesign?.battery) : "باتری انتخاب نشده", note: n(solarDesign?.settings?.autonomyDays, 0) > 0 ? "بر اساس روزهای خودمختاری" : "روزهای خودمختاری صفر است" },
-    { label: "حفاظت و کابل", value: `DC ${val(solarDesign?.protection?.dcBreakerA, "-")}A / AC ${val(solarDesign?.protection?.acBreakerA, "-")}A`, note: val(solarDesign?.protection?.dcCable, solarDesign?.protection?.pvCable, "بر اساس خروجی موتور مشترک") }
+    { label: "حفاظت و کابل", value: `DC ${val(solarDesign?.protection?.dcBreakerA, "-")}A / AC ${val(solarDesign?.protection?.acBreakerA, "-")}A`, note: val(solarDesign?.protection?.dcCable, solarDesign?.protection?.pvCable, "بر اساس خروجی موتور مشترک") },
+    ...distributedRows
   ];
+}
+
+function distributedInverterRows(solarDesign = {}) {
+  if (!Array.isArray(solarDesign?.distributedInverterSystems) || !solarDesign.distributedInverterSystems.length) return [];
+  return solarDesign.distributedInverterSystems.slice(0, 12).map((system) => ({
+    label: system.title || "زیرسیستم اینورتر",
+    value: `${val(system?.pv?.panelCount, "-")} پنل / ${val(system?.battery?.count, 0)} باتری`,
+    note: `${val(system?.designPowerShareW, "-")}W سهم بار / DC ${val(system?.protection?.dcBreakerA, "-")}A / AC ${val(system?.protection?.acBreakerA, "-")}A / کابل ${val(system?.protection?.dcCable, "-")} و ${val(system?.protection?.acCable, "-")}`
+  }));
+}
+
+function multiInverterRuleRow(solarDesign = {}) {
+  const invCount = val(solarDesign?.inverter?.count, 1);
+  const invPower = val(solarDesign?.inverter?.ratedPowerW, solarDesign?.inverter?.powerW, "-");
+  return {
+    label: "قانون مشترک چنداینورتری",
+    value: `${invCount} اینورتر × ${invPower}W`,
+    note: "توان، پنل، باتری، فضا، حفاظت AC/DC و کابل‌ها برای هر اینورتر مستقل تقسیم و سپس جمع‌بندی می‌شوند."
+  };
 }
 
 function equipmentRows(ctx) {
@@ -90,7 +118,9 @@ function equipmentRows(ctx) {
     { label: "جریان AC", value: `${m.currentA} A`, note: `بر اساس مسیر ${m.voltage}V` },
     { label: "پیک راه‌اندازی", value: `${m.surgeW} W`, note: "بارهای موتوری و ضریب راه‌اندازی" },
     { label: "اینورتر پیشنهادی", value: `${m.inverterW} W`, note: "بر اساس توان مصرفی و پیک استارت" },
-    { label: "باتری مرجع", value: m.batteryWh === "-" ? "انتخاب نشده" : `${whToKwh(m.batteryWh)} kWh`, note: "در صورت نیاز به ذخیره‌سازی" }
+    { label: "باتری مرجع", value: m.batteryWh === "-" ? "انتخاب نشده" : `${whToKwh(m.batteryWh)} kWh`, note: "در صورت نیاز به ذخیره‌سازی" },
+    multiInverterRuleRow(ctx.solarDesign),
+    ...distributedInverterRows(ctx.solarDesign)
   ];
 }
 
@@ -105,7 +135,9 @@ function profileRows(ctx) {
     { label: "مصرف شب", value: `${val(profile.nightKWh, ctx.loadResult?.nightKWh, "-")} kWh`, note: "بازه شب" },
     { label: "توان پیک", value: `${m.powerW} W`, note: "بیشترین توان همزمان پروفایل" },
     { label: "انرژی روزانه", value: `${m.energyKWh} kWh`, note: "جمع کل پروفایل مصرف" },
-    { label: "اینورتر پیشنهادی", value: `${m.inverterW} W`, note: "با لحاظ ضریب راه‌اندازی مسیر پروفایل" }
+    { label: "اینورتر پیشنهادی", value: `${m.inverterW} W`, note: "با لحاظ ضریب راه‌اندازی مسیر پروفایل" },
+    multiInverterRuleRow(ctx.solarDesign),
+    ...distributedInverterRows(ctx.solarDesign)
   ];
 }
 
@@ -117,7 +149,9 @@ function energyRows(ctx) {
     { label: "توان تخمینی", value: `${m.powerW} W`, note: "از انرژی و ساعت کارکرد/پروفایل به دست آمده" },
     { label: "جریان AC", value: `${m.currentA} A`, note: `بر اساس مسیر ${m.voltage}V` },
     { label: "اینورتر پیشنهادی", value: `${m.inverterW} W`, note: "از توان تخمینی و ضریب راه‌اندازی" },
-    { label: "باتری مرجع", value: m.batteryWh === "-" ? "انتخاب نشده" : `${whToKwh(m.batteryWh)} kWh`, note: "بر اساس انرژی روزانه و خودمختاری" }
+    { label: "باتری مرجع", value: m.batteryWh === "-" ? "انتخاب نشده" : `${whToKwh(m.batteryWh)} kWh`, note: "بر اساس انرژی روزانه و خودمختاری" },
+    multiInverterRuleRow(ctx.solarDesign),
+    ...distributedInverterRows(ctx.solarDesign)
   ];
 }
 
@@ -129,7 +163,9 @@ function powerRows(ctx) {
     { label: "انرژی روزانه تخمینی", value: `${m.energyKWh} kWh`, note: "بر اساس ساعت کارکرد ثبت‌شده" },
     { label: "جریان AC", value: `${m.currentA} A`, note: `توان تقسیم بر ولتاژ ${m.voltage}V` },
     { label: "پیک استارت", value: `${m.surgeW} W`, note: "با ضریب راه‌اندازی" },
-    { label: "اینورتر پیشنهادی", value: `${m.inverterW} W`, note: "نزدیک‌ترین ظرفیت بالاتر مجاز" }
+    { label: "اینورتر پیشنهادی", value: `${m.inverterW} W`, note: "نزدیک‌ترین ظرفیت بالاتر مجاز" },
+    multiInverterRuleRow(ctx.solarDesign),
+    ...distributedInverterRows(ctx.solarDesign)
   ];
 }
 
@@ -141,7 +177,9 @@ function currentRows(ctx) {
     { label: "ولتاژ مسیر", value: `${m.voltage} V`, note: "۲۲۰ تک‌فاز یا ۳۸۰ سه‌فاز" },
     { label: "توان متناظر", value: `${m.powerW} W`, note: "بر اساس جریان و ولتاژ" },
     { label: "انرژی روزانه", value: `${m.energyKWh} kWh`, note: "در صورت ثبت ساعت کارکرد" },
-    { label: "اینورتر/حفاظت", value: `${m.inverterW} W`, note: "حفاظت و کابل از همین جریان محاسبه می‌شوند" }
+    { label: "اینورتر/حفاظت", value: `${m.inverterW} W`, note: "حفاظت و کابل از همین جریان محاسبه می‌شوند" },
+    multiInverterRuleRow(ctx.solarDesign),
+    ...distributedInverterRows(ctx.solarDesign)
   ];
 }
 

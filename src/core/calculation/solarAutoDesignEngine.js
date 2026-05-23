@@ -23,6 +23,21 @@ const PERSIAN_SYSTEM_LABEL = {
   hybrid: "هیبرید"
 };
 
+
+function getPvDcOverbuildRatio(systemType = "offgrid") {
+  if (systemType === "ongrid") return 1.1;
+  if (systemType === "hybrid") return 1.05;
+  return 1.08;
+}
+
+function distributeInteger(total, parts) {
+  const count = Math.max(1, Math.round(num(parts, 1)));
+  const normalizedTotal = Math.max(0, Math.round(num(total, 0)));
+  const base = Math.floor(normalizedTotal / count);
+  const remainder = normalizedTotal % count;
+  return Array.from({ length: count }, (_, index) => base + (index < remainder ? 1 : 0));
+}
+
 function normalizeLoad(load = {}) {
   const selected = Array.isArray(load.selectedEquipment) ? load.selectedEquipment : [];
   const equipmentPowerW = selected.reduce((sum, item) => sum + num(item.powerW ?? item.watt, 0) * num(item.quantity, 1), 0);
@@ -64,7 +79,8 @@ function choosePanel(panelId, panelPowerW) {
   const manual = pickById(SHIL_SOLAR_PANELS, panelId);
   if (manual) return { panel: manual, manual: true };
   const target = num(panelPowerW, 620);
-  const panel = [...SHIL_SOLAR_PANELS].sort((a, b) => Math.abs(a.powerW - target) - Math.abs(b.powerW - target))[0] || SHIL_SOLAR_PANELS.find((p) => p.powerW === 620) || SHIL_SOLAR_PANELS.at(-1);
+  const preferredHighPower = target >= 600 ? SHIL_SOLAR_PANELS.find((p) => p.powerRangeW?.[0] <= target && p.powerRangeW?.[1] >= target) || SHIL_SOLAR_PANELS.find((p) => p.powerW >= 600) : null;
+  const panel = preferredHighPower || [...SHIL_SOLAR_PANELS].sort((a, b) => Math.abs(a.powerW - target) - Math.abs(b.powerW - target))[0] || SHIL_SOLAR_PANELS.find((p) => p.powerW === 620) || SHIL_SOLAR_PANELS.at(-1);
   return { panel, manual: target !== 620 };
 }
 
@@ -78,10 +94,13 @@ function chooseSystemVoltage(designPowerW, requestedType, manualVoltage) {
 
 function chooseInverter(requiredPowerW, requiredSurgeW, systemVoltage, inverterId, systemType) {
   const manual = pickById(SHIL_SOLAR_INVERTERS, inverterId);
-  if (manual) return { inverter: manual, count: 1, manual: true, parallelRequired: false };
+  const headroom = systemType === "ongrid" ? 1.05 : systemType === "hybrid" ? 1.15 : 1.2;
+  if (manual) {
+    const count = ceil(Math.max(requiredPowerW / Math.max(1, manual.ratedPowerW), requiredSurgeW / Math.max(1, manual.surgePowerW || manual.ratedPowerW * 2)));
+    return { inverter: manual, count, manual: true, parallelRequired: count > 1 };
+  }
   const byVoltage = SHIL_SOLAR_INVERTERS.filter((item) => item.dcVoltage === systemVoltage);
   const pool = (byVoltage.length ? byVoltage : SHIL_SOLAR_INVERTERS).sort((a, b) => a.ratedPowerW - b.ratedPowerW);
-  const headroom = systemType === "ongrid" ? 1.05 : systemType === "hybrid" ? 1.15 : 1.2;
   const direct = pool.find((item) => item.ratedPowerW >= requiredPowerW * headroom && item.surgePowerW >= requiredSurgeW);
   if (direct) return { inverter: direct, count: 1, manual: false, parallelRequired: false };
   const largest = pool.at(-1);
@@ -91,10 +110,11 @@ function chooseInverter(requiredPowerW, requiredSurgeW, systemVoltage, inverterI
 
 function chooseBattery(systemVoltage, requiredUsableWh, preferredBatteryVoltage, batteryId) {
   const manual = pickById(SHIL_LITHIUM_BATTERIES, batteryId);
+  const voltageClass = systemVoltage <= 13 ? 12 : systemVoltage <= 29 ? 25.6 : 51.2;
   const candidates = SHIL_LITHIUM_BATTERIES
-    .filter((item) => systemVoltage % item.nominalVoltage === 0)
+    .filter((item) => Math.abs(num(item.nominalVoltage, 0) - voltageClass) <= (voltageClass === 12 ? 1 : 3.5))
     .sort((a, b) => b.energyWh - a.energyWh || b.capacityAh - a.capacityAh);
-  const preferred = preferredBatteryVoltage ? candidates.find((item) => item.nominalVoltage === num(preferredBatteryVoltage, 0)) : null;
+  const preferred = preferredBatteryVoltage ? candidates.find((item) => Math.abs(item.nominalVoltage - num(preferredBatteryVoltage, 0)) < 3) : null;
   const battery = manual || preferred || candidates[0] || SHIL_LITHIUM_BATTERIES.at(-1);
   const seriesCount = Math.max(1, Math.round(systemVoltage / battery.nominalVoltage));
   const usableStringWh = battery.nominalVoltage * battery.capacityAh * battery.usableDod * battery.efficiency * seriesCount;
@@ -308,6 +328,74 @@ function buildInverterMpptTopology({ pvArray = {}, panel = {}, inverter = {}, in
   };
 }
 
+
+function buildDistributedInverterSystems({ topology = {}, inverter = {}, panel = {}, pvArray = {}, battery = {}, protection = {}, space = {}, settings = {}, load = {}, designPowerW = 0 }) {
+  const rows = Array.isArray(topology.rows) && topology.rows.length ? topology.rows : [{ inverterNo: 1, panelsApprox: pvArray.panelCount || 0, stringsApprox: pvArray.parallelCount || 1, pvPowerKW: round((pvArray.arrayPowerW || 0) / 1000, 2), acPowerKW: round((inverter.ratedPowerW || 0) / 1000, 2), mppt: [] }];
+  const inverterCount = Math.max(1, rows.length);
+  const batteryDistribution = distributeInteger(battery?.totalCount || 0, inverterCount);
+  const usableBatteryPerUnitWh = battery?.totalCount ? num(battery.usableEnergyWh, 0) / Math.max(1, num(battery.totalCount, 1)) : 0;
+  const maintenanceAreaPerInverter = space?.maintenanceAreaM2 ? round(num(space.maintenanceAreaM2, 0) / inverterCount, 2) : round(num(pvArray.maintenanceAreaM2, 0) / inverterCount, 2);
+  const powerShareW = round(num(designPowerW, 0) / inverterCount, 0);
+  return rows.map((row, index) => {
+    const localPanels = Math.max(0, Math.round(num(row.panelsApprox, 0)));
+    const localStrings = Math.max(1, Math.round(num(row.stringsApprox, 1)));
+    const localPvPowerW = localPanels * num(panel.powerW, 0);
+    const localBatteryCount = batteryDistribution[index] || 0;
+    const localUsableBatteryWh = round(localBatteryCount * usableBatteryPerUnitWh, 0);
+    const localDcCurrentA = round((localPvPowerW || num(inverter.ratedPowerW, 0)) / Math.max(12, num(inverter.dcVoltage, inverter.batteryVoltage || 48)) / 0.92, 1);
+    const localAcCurrentA = topology.acCurrentPerInverterA || protection.acCurrentA || 0;
+    const localDcBreakerA = Math.ceil(localDcCurrentA * 1.25 / 5) * 5;
+    const localPvFuseA = Math.ceil(num(panel.isc || panel.imp, 0) * 1.56 / 5) * 5;
+    return {
+      id: `INV-${String(index + 1).padStart(2, "0")}`,
+      title: `INV-${String(index + 1).padStart(2, "0")}`,
+      inverterModel: inverter.title || inverter.model || "SHIL Inverter",
+      inverterRatedPowerW: num(inverter.ratedPowerW, 0),
+      designPowerShareW: powerShareW,
+      pv: {
+        panelModel: panel.title || panel.model || "SHIL Panel",
+        panelPowerW: num(panel.powerW, 0),
+        panelCount: localPanels,
+        stringCount: localStrings,
+        seriesCount: pvArray.seriesCount || 1,
+        pvPowerW: localPvPowerW,
+        mppt: row.mppt || [],
+        vmpStringV: pvArray.stringVmp || 0,
+        vocColdStringV: pvArray.coldStringVoc || 0,
+      },
+      battery: {
+        enabled: Boolean(settings.batteryRequired || batteryPerInverter > 0),
+        model: battery?.battery?.title || "SHIL LiFePO4",
+        count: localBatteryCount,
+        usableEnergyWh: localUsableBatteryWh,
+        bankVoltageV: battery.bankVoltageV || inverter.dcVoltage || inverter.batteryVoltage,
+        note: localBatteryCount ? `${localBatteryCount.toLocaleString("fa-IR")} باتری برای این زیرسیستم` : "باتری برای این مسیر انتخاب نشده است"
+      },
+      protection: {
+        dcFuseA: topology.protectionPerInverter?.stringFuseA || localPvFuseA || protection.pvFuseA,
+        dcBreakerA: topology.protectionPerInverter?.mpptBreakerA || localDcBreakerA || protection.dcBreakerA,
+        acBreakerA: topology.protectionPerInverter?.acBreakerA || protection.acBreakerA,
+        dcCable: topology.protectionPerInverter?.dcCable || protection.dcCable,
+        acCable: topology.protectionPerInverter?.acCable || protection.acCable,
+        batteryCable: protection.batteryCable,
+        dcItems: SHIL_SOLAR_PROTECTION_BANK.dc,
+        acItems: SHIL_SOLAR_PROTECTION_BANK.ac,
+      },
+      currents: {
+        dcA: localDcCurrentA,
+        acA: round(localAcCurrentA, 1),
+        batteryBranchA: localBatteryCount ? round((protection.batteryBranchCurrentA || 0) / Math.max(1, inverterCount), 1) : 0,
+      },
+      space: {
+        panelAreaM2: round(localPanels * num(panel.areaM2, 0), 2),
+        maintenanceAreaM2: maintenanceAreaPerInverter,
+        note: "فضا، کابل و حفاظت برای همین اینورتر به صورت مستقل گزارش شده است."
+      },
+      summary: `${localPanels.toLocaleString("fa-IR")} پنل / ${localStrings.toLocaleString("fa-IR")} رشته / ${localBatteryCount.toLocaleString("fa-IR")} باتری / DC ${topology.protectionPerInverter?.dcCable || protection.dcCable} / AC ${topology.protectionPerInverter?.acCable || protection.acCable}`
+    };
+  });
+}
+
 function buildValidation({ load, designPowerW, designSurgeW, inverter, inverterCount, battery, requiredBatteryWh, pvArray, env }) {
   const checks = [];
   const push = (key, ok, level, message, fix = "") => checks.push({ key, ok, level: ok ? "ok" : level, message, fix });
@@ -354,7 +442,11 @@ export function runSolarAutoDesign({ load = {}, environment = {}, settings = {} 
   const batteryDesign = chooseBattery(inverterPick.inverter.dcVoltage, Math.max(1, requiredBatteryWh), settings.batteryVoltage, settings.batteryId);
   const batteryBaseCount = Math.max(batteryDesign.totalCount, num(settings.batteryCount, batteryDesign.totalCount));
   const batteryTotalCount = Math.max(batteryDesign.totalCount, ceil(batteryBaseCount * Math.max(1, num(settings.batteryExtraFactor, 1))));
-  const pvArray = sizePvArray({ dailyWh: normalized.totalEnergyWh, autonomyDays, panel, inverter: inverterPick.inverter, env, manualPanelCount: settings.panelCount, panelExtraFactor: settings.panelExtraFactor, targetPvPowerW: systemScale.targetDcPowerW });
+  const inverterDcTargetPowerW = inverterCount * num(inverterPick.inverter.ratedPowerW, 0) * getPvDcOverbuildRatio(systemType);
+  const cappedInverterPvTargetW = Math.min(inverterCount * num(inverterPick.inverter.maxPvPowerW, inverterPick.inverter.ratedPowerW * 1.3), inverterDcTargetPowerW);
+  const sharedTargetPvPowerW = Math.max(num(systemScale.targetDcPowerW, 0), cappedInverterPvTargetW, designPowerW * getPvDcOverbuildRatio(systemType));
+  const manualPanelCountForEngine = settings.method === "solar_panel_power" || settings.calculationMethod === "solar_panel_power" ? settings.panelCount : null;
+  const pvArray = sizePvArray({ dailyWh: normalized.totalEnergyWh, autonomyDays, panel, inverter: inverterPick.inverter, env, manualPanelCount: manualPanelCountForEngine, panelExtraFactor: settings.panelExtraFactor, targetPvPowerW: sharedTargetPvPowerW });
   const batteryFinal = { ...batteryDesign, totalCount: batteryTotalCount, parallelCount: Math.max(batteryDesign.parallelCount, Math.ceil(batteryTotalCount / Math.max(1, batteryDesign.seriesCount))) };
   batteryFinal.usableEnergyWh = round(batteryDesign.stringUsableWh * batteryFinal.parallelCount, 0);
   batteryFinal.grossEnergyWh = batteryFinal.bankVoltageV * batteryFinal.battery.capacityAh * batteryFinal.parallelCount;
@@ -398,12 +490,24 @@ export function runSolarAutoDesign({ load = {}, environment = {}, settings = {} 
   const protection = sizeProtection({ designPowerW, inverter: inverterPick.inverter, inverterCount, pvArray, batteryDesign: batteryFinal, outputAcVoltage: num(settings.outputAcVoltage, 220), outputPhase: settings.outputPhase || ((num(settings.outputAcVoltage, 220) >= 380) ? "three" : "single") });
   const inverterTopology = buildInverterMpptTopology({ pvArray, panel, inverter: inverterPick.inverter, inverterCount, mpptCount: mpptCountPerInverter, panelDistribution: settings.inverterPanelDistribution || [], outputAcVoltage: num(settings.outputAcVoltage, 220), outputPhase: settings.outputPhase || ((num(settings.outputAcVoltage, 220) >= 380) ? "three" : "single") });
   const batteryReport = enrichBatteryBankInfo(batteryFinal, protection);
+  const distributedInverterSystems = buildDistributedInverterSystems({
+    topology: inverterTopology,
+    inverter: inverterPick.inverter,
+    panel,
+    pvArray,
+    battery: batteryReport,
+    protection,
+    space: { maintenanceAreaM2: pvArray.maintenanceAreaM2 },
+    settings: { ...settings, batteryRequired },
+    load: normalized,
+    designPowerW
+  });
   const validation = buildValidation({ load: normalized, designPowerW, designSurgeW, inverter: inverterPick.inverter, inverterCount, battery: batteryReport, requiredBatteryWh, pvArray, env });
   const diagnostics = runSolarProfessionalDiagnostics({
     load: normalized,
     env,
     settings: { autonomyDays, systemType },
-    design: { designPowerW, designSurgeW, requiredBatteryWh, systemVoltage, requestedPlantPowerW },
+    design: { designPowerW, designSurgeW, requiredBatteryWh, systemVoltage, requestedPlantPowerW, sharedTargetPvPowerW: round(sharedTargetPvPowerW, 0), inverterDesignPowerW: round(designPowerW / Math.max(1, inverterCount), 0) },
     panel,
     inverter: inverterPick.inverter,
     inverterCount,
@@ -414,6 +518,7 @@ export function runSolarAutoDesign({ load = {}, environment = {}, settings = {} 
     validation,
     panelPowerAnalysis,
     inverterTopology,
+    distributedInverterSystems,
     systemScale,
     utilityElectrical,
     enterpriseUtility
@@ -428,6 +533,7 @@ export function runSolarAutoDesign({ load = {}, environment = {}, settings = {} 
     batteryRequired ? `باتری ${batteryReport.summaryLabel} با آرایش ${batteryReport.engineeringLabel} انتخاب شد تا ولتاژ بانک و انرژی قابل استفاده پروژه تأمین شود.` : "در این مسیر، نیاز باتری توسط کاربر اعلام نشده و محاسبه باتری به حالت غیرفعال/مرجع منتقل شد.",
     `مسیر خروجی AC برابر ${num(settings.outputAcVoltage, normalized.voltageAC || 220)} ولت و حالت ${settings.outputPhase || normalized.phaseAC || "single"} به موتور جامع منتقل شد.`,
     `تعداد MPPT هر اینورتر ${mpptCountPerInverter} در نظر گرفته شد و استرینگ‌ها، کابل و حفاظت بر اساس تقسیم بین اینورترها محاسبه شدند.`,
+    `قانون Multi-Inverter فعال است: اگر توان دستی اینورتر از مسیر محاسبات وارد شود، بار، پنل، باتری، فضا، حفاظت AC/DC و کابل‌ها برای هر اینورتر به صورت زیرسیستم مستقل محاسبه و در خروجی نهایی ثبت می‌شود.`,
     `در مسیر توان پنل خورشیدی، تعداد پنل از ورودی کاربر حفظ می‌شود و ضریب‌های توسعه آینده به صورت ورودی مستقل روی بانک‌ها اعمال نمی‌شوند؛ انتخاب اینورتر بر اساس ضریب راه‌اندازی انجام می‌شود.`
   ];
 
@@ -437,7 +543,7 @@ export function runSolarAutoDesign({ load = {}, environment = {}, settings = {} 
     confidence,
     label: PERSIAN_SYSTEM_LABEL[systemType] || "خورشیدی",
     load: normalized,
-    design: { designPowerW, designSurgeW, requiredBatteryWh, systemVoltage, requestedPlantPowerW },
+    design: { designPowerW, designSurgeW, requiredBatteryWh, systemVoltage, requestedPlantPowerW, sharedTargetPvPowerW: round(sharedTargetPvPowerW, 0), inverterDesignPowerW: round(designPowerW / Math.max(1, inverterCount), 0) },
     settings: {
       autonomyDays,
       reserveFactor,
@@ -466,7 +572,10 @@ export function runSolarAutoDesign({ load = {}, environment = {}, settings = {} 
       outputAcVoltage: num(settings.outputAcVoltage, normalized.voltageAC || 220),
       outputPhase: settings.outputPhase || normalized.phaseAC || ((num(settings.outputAcVoltage, normalized.voltageAC || 220) >= 380) ? "three" : "single"),
       batteryRequired,
-      mpptCountPerInverter
+      mpptCountPerInverter,
+      multiInverterRuleActive: true,
+      sharedTargetPvPowerW: round(sharedTargetPvPowerW, 0),
+      pvDcOverbuildRatio: getPvDcOverbuildRatio(systemType)
     },
     inverter: { ...inverterPick.inverter, count: inverterCount, parallelRequired: inverterCount > 1, manual: inverterPick.manual },
     panel,
@@ -474,6 +583,7 @@ export function runSolarAutoDesign({ load = {}, environment = {}, settings = {} 
     solarSizing,
     panelPowerAnalysis,
     inverterTopology,
+    distributedInverterSystems,
     systemScale,
     utilityElectrical,
     enterpriseUtility,
@@ -494,7 +604,8 @@ export function runSolarAutoDesign({ load = {}, environment = {}, settings = {} 
       { group: "پنل خورشیدی", qty: pvArray.panelCount, spec: `${panel.powerW}W / ${panel.type}`, reason: "تأمین انرژی روزانه و تطابق با محدوده MPPT" },
       { group: systemScale.designMode === "block_based_power_plant" ? "بلوک نیروگاهی / اینورتر" : "اینورتر خورشیدی", qty: inverterCount, spec: `${inverterPick.inverter.ratedPowerW}W / ${inverterPick.inverter.dcVoltage}V`, reason: "پوشش توان دائم و توان لحظه‌ای" },
       { group: "باتری", qty: batteryReport.totalCount, spec: `${batteryReport.unitVoltageV}V / ${batteryReport.unitCapacityAh}Ah / ${batteryReport.unitEnergyKWh}kWh هر باتری / ${batteryReport.grossEnergyKWh}kWh کل`, reason: `${batteryReport.seriesCount} سری × ${batteryReport.parallelCount} موازی / جریان بانک ${batteryReport.bankCurrentAh}Ah` },
-      { group: "حفاظت", qty: 1, spec: `DC ${protection.dcBreakerA}A / AC ${protection.acBreakerA}A`, reason: "حفاظت خروجی، باتری، پنل، ارتینگ و سرج" }
+      { group: "حفاظت", qty: 1, spec: `DC ${protection.dcBreakerA}A / AC ${protection.acBreakerA}A`, reason: "حفاظت خروجی، باتری، پنل، ارتینگ و سرج" },
+      ...distributedInverterSystems.map((system) => ({ group: system.title, qty: 1, spec: `${system.inverterModel} / ${system.pv.panelCount} پنل / ${system.battery.count} باتری`, reason: system.summary }))
     ],
     banks: { inverters: SHIL_SOLAR_INVERTERS, batteries: SHIL_LITHIUM_BATTERIES, panels: SHIL_SOLAR_PANELS },
     nextBlockedReason: validation.errors[0] || ""

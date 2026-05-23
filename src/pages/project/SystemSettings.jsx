@@ -429,8 +429,12 @@ export default function SystemSettings() {
   const [mpptCountPerInverter, setMpptCountPerInverter] = useState("1");
   const [warning, setWarning] = useState("");
 
+  const activeCalculationMethod = localStorage.getItem("shil:calculationMethod") || (isSolarPanelPowerRoute ? "solar_panel_power" : "equipment");
+
   const settings = useMemo(() => ({
     systemType,
+    method: activeCalculationMethod,
+    calculationMethod: activeCalculationMethod,
     autonomyDays: toNumber(autonomyDays, isSolarPanelPowerRoute ? 0 : 1),
     reserveFactor: toNumber(reserveFactor, 1.2),
     panelId: equipmentManualMode ? panelId : (isSolarPanelPowerRoute ? (solarPanelPowerInput?.selectedPanelId || undefined) : undefined),
@@ -464,7 +468,7 @@ export default function SystemSettings() {
     manualMode: equipmentManualMode || parameterManualMode,
     equipmentManualMode,
     parameterManualMode
-  }), [systemType, autonomyDays, reserveFactor, equipmentManualMode, parameterManualMode, panelId, inverterId, batteryId, panelExtraFactor, inverterExtraFactor, batteryExtraFactor, projectScale, targetPlantPowerMW, powerBlockSizeKW, mvVoltageKV, blockStationMW, exportLimitMW, groundCoverageRatio, trackerMode, terrainSlopeDeg, usableLandPercent, gridShortCircuitMVA, estimatedMvFaultKA, plantAvailabilityPercent, annualDegradationPercent, solarPanelPowerInput, load, mpptCountPerInverter, batteryRequired, batteryScope, isSolarPanelPowerRoute]);
+  }), [systemType, activeCalculationMethod, autonomyDays, reserveFactor, equipmentManualMode, parameterManualMode, panelId, inverterId, batteryId, panelExtraFactor, inverterExtraFactor, batteryExtraFactor, projectScale, targetPlantPowerMW, powerBlockSizeKW, mvVoltageKV, blockStationMW, exportLimitMW, groundCoverageRatio, trackerMode, terrainSlopeDeg, usableLandPercent, gridShortCircuitMVA, estimatedMvFaultKA, plantAvailabilityPercent, annualDegradationPercent, solarPanelPowerInput, load, mpptCountPerInverter, batteryRequired, batteryScope, isSolarPanelPowerRoute]);
 
   const solarDesign = useMemo(() => runSolarAutoDesign({ load, environment, settings }), [load, environment, settings]);
   const scaleTargetPowerW = Number(solarDesign.systemScale?.targetPowerW || solarDesign.design?.designPowerW || 0);

@@ -1,0 +1,129 @@
+﻿/* ===== SHIL FINAL GLOBAL FIX ===== */
+
+*{
+  box-sizing:border-box !important;
+}
+
+html,
+body,
+#root{
+  width:100% !important;
+  min-height:100vh !important;
+  margin:0 !important;
+  padding:0 !important;
+  overflow-x:hidden !important;
+  background:#eef0f4 !important;
+}
+
+body{
+  display:flex !important;
+  justify-content:center !important;
+}
+
+#root{
+  display:flex !important;
+  justify-content:center !important;
+}
+
+/* ===== ALL PAGES ===== */
+
+[class*="page"],
+[class*="screen"],
+[class*="container"],
+main{
+  width:100% !important;
+  max-width:480px !important;
+  margin:0 auto !important;
+  padding:16px !important;
+}
+
+/* ===== CARDS ===== */
+
+[class*="card"],
+[class*="tile"],
+[class*="box"]{
+  overflow:visible !important;
+  min-height:auto !important;
+}
+
+/* ===== IMAGES ===== */
+
+img{
+  max-width:100% !important;
+  height:auto !important;
+  object-fit:contain !important;
+}
+
+/* ===== DASHBOARD ICONS ===== */
+
+.dashboard img,
+.dashboard-card img,
+[class*="dashboard"] img{
+  width:84px !important;
+  height:84px !important;
+  object-fit:contain !important;
+}
+
+/* ===== NEW PROJECT ICONS ===== */
+
+.new-project img,
+.project-card img,
+.workflow-card img,
+[class*="project"] img{
+  width:76px !important;
+  height:76px !important;
+  object-fit:contain !important;
+}
+
+/* ===== FORMS ===== */
+
+input,
+select,
+textarea{
+  width:100% !important;
+  max-width:100% !important;
+}
+
+/* ===== MAP ===== */
+
+.map-image,
+.environment-map,
+[class*="map"] img{
+  width:100% !important;
+  border-radius:24px !important;
+  display:block !important;
+}
+
+/* ===== GRID ===== */
+
+.grid,
+.cards-grid,
+.dashboard-grid{
+  display:grid !important;
+  grid-template-columns:1fr 1fr !important;
+  gap:18px !important;
+  justify-content:center !important;
+}
+
+/* ===== MOBILE ===== */
+
+@media (max-width:768px){
+
+  .grid,
+  .cards-grid,
+  .dashboard-grid{
+    grid-template-columns:1fr 1fr !important;
+  }
+
+  h1{
+    font-size:28px !important;
+  }
+
+  h2{
+    font-size:24px !important;
+  }
+
+  h3{
+    font-size:20px !important;
+  }
+}

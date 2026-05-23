@@ -72,7 +72,7 @@ function Row({ label, value, note }) {
 }
 
 function CompactEquipmentTable({ title, rows }) {
-  const visibleRows = rows.slice(0, 5);
+  const visibleRows = rows.slice(0, 14);
   return (
     <div className="shil-final-sheet-block">
       <h3>{title}</h3>
@@ -83,6 +83,25 @@ function CompactEquipmentTable({ title, rows }) {
             <span>{row.label || row.item}</span>
             <strong>{row.value || [row.qty, row.spec].filter(Boolean).join(" / ")}</strong>
             <small>{row.note || row.reason}</small>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function DistributedInverterTable({ systems = [] }) {
+  if (!Array.isArray(systems) || !systems.length) return null;
+  return (
+    <div className="shil-final-sheet-block">
+      <h3>تقسیم زیرسیستم‌ها برای هر اینورتر</h3>
+      <div className="shil-final-equipment-table">
+        <div className="head"><span>اینورتر</span><span>پنل / باتری / فضا</span><span>حفاظت و کابل مستقل</span></div>
+        {systems.slice(0, 12).map((system) => (
+          <div key={system.id || system.title}>
+            <span>{system.title || system.id}</span>
+            <strong>{system?.pv?.panelCount || 0} پنل / {system?.battery?.count || 0} باتری / {system?.space?.maintenanceAreaM2 || "-"}m²</strong>
+            <small>DC {system?.protection?.dcBreakerA || "-"}A / AC {system?.protection?.acBreakerA || "-"}A / کابل {system?.protection?.dcCable || "-"} و {system?.protection?.acCable || "-"}</small>
           </div>
         ))}
       </div>
@@ -218,6 +237,7 @@ export default function RunCalculation() {
 
           <DecisionPath methodSummary={methodSummary} result={result} calculationInput={calculationInput} solarDesign={solarDesign} emergency={emergency} />
           <CompactEquipmentTable title="خلاصه محصولات و تجهیزات" rows={delivery.equipment.length ? delivery.equipment : methodSummary.rows} />
+          <DistributedInverterTable systems={solarDesign?.distributedInverterSystems || result?.distributedInverterSystems || []} />
 
           <div className="shil-final-sheet-block shil-final-result-block">
             <h3>نتایج و نکات مهم</h3>
