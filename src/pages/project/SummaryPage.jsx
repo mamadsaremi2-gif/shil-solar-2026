@@ -84,6 +84,7 @@ export default function SummaryPage() {
   const loadResult = useMemo(() => readDraft("shil:loadEngineResult", {}), []);
   const systemSettings = useMemo(() => readDraft("shil:systemSettingsDraft", {}), []);
   const solarDesign = useMemo(() => readDraft("shil:solarSystemDesign", systemSettings?.design || {}), [systemSettings]);
+  const unifiedPvResult = useMemo(() => readDraft("shil:unifiedPvEngineResult", solarDesign?.unifiedPvEngineResult || systemSettings?.unifiedPvEngineResult || null), [solarDesign, systemSettings]);
   const selectedEquipment = useMemo(() => readDraft("shil:selectedEquipments", []), []);
   const environmentImage = useMemo(() => getFirstSiteImage(environment), [environment]);
   const emergencyDesign = useMemo(() => emergency ? runEmergencyPowerDesign({ load: loadResult, settings: readDraft("shil:emergencyPowerSettings", {}) }) : null, [emergency, loadResult]);
@@ -220,8 +221,8 @@ export default function SummaryPage() {
         <SummaryBlock title="اطلاعات پروژه" badge="Project">
           <SummaryItem label="نام پروژه" value={project.projectName || project.name} />
           <SummaryItem label="نوع مسیر" value={emergency ? "برق اضطراری" : "خورشیدی"} />
-          <SummaryItem label="روش محاسبات" value={method} />
-          <SummaryItem label="تعداد تجهیزات انتخابی" value={Array.isArray(selectedEquipment) ? `${selectedEquipment.length} مورد` : "ثبت نشده"} />
+          <SummaryItem label="روش محاسبات" value={isSolarPanelPowerRoute ? "توان پنل خورشیدی" : method} />
+          {!isSolarPanelPowerRoute ? <SummaryItem label="تعداد تجهیزات انتخابی" value={Array.isArray(selectedEquipment) ? `${selectedEquipment.length} مورد` : "ثبت نشده"} /> : null}
         </SummaryBlock>
 
         <SummaryBlock title={emergency ? "شرایط اجرای برق اضطراری" : "شرایط محیطی"} badge="Environment">
@@ -235,9 +236,9 @@ export default function SummaryPage() {
 
         <SummaryBlock title="مصرف و ورودی محاسبات" badge="Load">
           <SummaryItem label="توان طراحی" value={typeof requiredPower === "number" ? `${Math.round(requiredPower)} W` : requiredPower} />
-          {emergency ? <SummaryItem label="زمان برق اضطراری مورد نیاز" value={`${emergencyDesign?.settings?.requiredEmergencyHours || 2} ساعت`} /> : <SummaryItem label="انرژی روزانه" value={loadResult?.dailyEnergyWh ? `${Math.round(loadResult.dailyEnergyWh / 1000)} kWh` : loadResult?.dailyEnergyKWh ? `${loadResult.dailyEnergyKWh} kWh` : null} />}
-          <SummaryItem label="بار موتوری" value={loadResult?.motorLoadsCount ? `${loadResult.motorLoadsCount} مورد` : "مطابق لیست تجهیزات"} />
-          <SummaryItem label="کنترل راه‌اندازی" value="در موتور محاسبات لحاظ می‌شود" />
+          {emergency ? <SummaryItem label="زمان برق اضطراری مورد نیاز" value={`${emergencyDesign?.settings?.requiredEmergencyHours || 2} ساعت`} /> : <SummaryItem label="انرژی روزانه" value={isSolarPanelPowerRoute ? (unifiedPvResult?.summary?.important_results?.real_daily_production_Wh ? `${Math.round(unifiedPvResult.summary.important_results.real_daily_production_Wh / 1000)} kWh` : null) : loadResult?.dailyEnergyWh ? `${Math.round(loadResult.dailyEnergyWh / 1000)} kWh` : loadResult?.dailyEnergyKWh ? `${loadResult.dailyEnergyKWh} kWh` : null} />}
+          {!isSolarPanelPowerRoute ? <SummaryItem label="بار موتوری" value={loadResult?.motorLoadsCount ? `${loadResult.motorLoadsCount} مورد` : "مطابق لیست تجهیزات"} /> : null}
+          {!isSolarPanelPowerRoute ? <SummaryItem label="کنترل راه‌اندازی" value="در موتور محاسبات لحاظ می‌شود" /> : null}
         </SummaryBlock>
 
         {emergency ? (
@@ -256,6 +257,17 @@ export default function SummaryPage() {
               <ul className="shil-engineering-list">{emergencyDesign?.explanations?.map((item) => <li key={item}>{item}</li>)}</ul>
             </div>
           </>
+        ) : isSolarPanelPowerRoute ? (
+          <SummaryBlock title="چکیده مسیر توان پنل خورشیدی" badge="Unified PV">
+            <SummaryItem label="روش محاسبات" value="توان پنل خورشیدی" />
+            <SummaryItem label="توان کل" value={unifiedPvResult?.summary?.important_results?.panel_array_power_W ? `${Math.round(unifiedPvResult.summary.important_results.panel_array_power_W)} W` : `${solarDesign?.pvArray?.arrayPowerW || solarPanelPowerInput?.totalPanelPowerW || "-"} W`} />
+            <SummaryItem label="توان نهایی طراحی" value={unifiedPvResult?.summary?.important_results?.final_design_power_W ? `${Math.round(unifiedPvResult.summary.important_results.final_design_power_W)} W` : `${solarDesign?.design?.designPowerW || "-"} W`} />
+            <SummaryItem label="تولید خام روزانه" value={unifiedPvResult?.summary?.important_results?.raw_daily_production_Wh ? `${Math.round(unifiedPvResult.summary.important_results.raw_daily_production_Wh / 1000)} kWh` : `${solarPanelPowerInput?.rawDailyEnergyKWh || "-"} kWh`} />
+            <SummaryItem label="تولید واقعی با تلفات" value={unifiedPvResult?.summary?.important_results?.real_daily_production_Wh ? `${Math.round(unifiedPvResult.summary.important_results.real_daily_production_Wh / 1000)} kWh` : `${solarPanelPowerInput?.generatedDailyKWh || "-"} kWh`} />
+            <SummaryItem label="اینورتر" value={`${inverterCount} عدد / ${inverterPower === "-" ? "ثبت نشده" : `${inverterPower} W`}`} />
+            <SummaryItem label="تعداد پنل" value={`${panelCount} عدد`} />
+            <SummaryItem label="تعداد باتری" value={`${batteryCount} عدد`} />
+          </SummaryBlock>
         ) : (
           <SummaryBlock title={methodSummary.blockTitle} badge={methodSummary.badge}>
             {methodSummary.rows.map((row) => (

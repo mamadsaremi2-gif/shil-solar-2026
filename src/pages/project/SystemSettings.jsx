@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import EngineeringPageShell from "../../components/EngineeringPageShell.jsx";
 import { approveProjectStep } from "../../workflow/projectWorkflow.js";
 import { runSolarAutoDesign } from "../../core/calculation/solarAutoDesignEngine.js";
+import { runUnifiedPvForUi, unifiedPvToLegacyDesign } from "../../engine/unifiedPvUiAdapter.js";
 import { SHIL_LITHIUM_BATTERIES, SHIL_SOLAR_INVERTERS, SHIL_SOLAR_PANELS } from "../../data/shilSolarBanks.js";
 
 function readDraft(key, fallback = null) {
@@ -209,8 +210,6 @@ function SolarPanelPowerResultTable({ design, solarPanelPowerInput = {}, battery
     ["تولید خام روزانه", rawDaily ? `${rawDaily} kWh` : "-"],
     ["تولید واقعی با تلفات", usableDaily ? `${usableDaily} kWh` : "-"],
     ["باتری", toNumber(design.settings.autonomyDays, 0) > 0 ? `${batterySpecText(design.battery)} / ${batteryScope === "all" ? "اعمال برای همه اینورترها" : batteryScope === "none" ? "انتخاب نشده" : `اعمال برای اینورتر ${batteryScope}`}` : "انتخاب نشده"],
-    ["حفاظت", `DC ${design.protection.dcBreakerA}A / AC ${design.protection.acBreakerA}A`],
-    ["کابل", `DC ${design.protection.dcCable} / PV ${design.protection.pvCable}`]
   ];
 
   return <ResultTableFrame rows={rows} ariaLabel="نتیجه پیکربندی مسیر توان پنل خورشیدی" />;
@@ -228,8 +227,6 @@ function GeneralLoadResultTable({ load = {}, design = {} }) {
     ["مسیر AC", load.phaseAC === "three" ? "۳۸۰ ولت سه‌فاز" : `${faNumber(load.voltageAC || 220)} ولت تک‌فاز`],
     ["اینورتر پیشنهادی", `${faNumber(load.recommendedInverterW || design.inverter?.ratedPowerW || 0)} W`],
     ["باتری مرجع", `${Math.round(Number(load.recommendedBatteryWh || 0) / 1000)} kWh`],
-    ["حفاظت", `AC ${design.protection?.acBreakerA || "-"}A`],
-    ["کابل", design.protection?.batteryCable || design.protection?.acCable || "مطابق جریان خروجی"]
   ];
   return <ResultTableFrame rows={rows} ariaLabel="نتیجه پیکربندی عمومی بار" />;
 }
@@ -470,7 +467,15 @@ export default function SystemSettings() {
     parameterManualMode
   }), [systemType, activeCalculationMethod, autonomyDays, reserveFactor, equipmentManualMode, parameterManualMode, panelId, inverterId, batteryId, panelExtraFactor, inverterExtraFactor, batteryExtraFactor, projectScale, targetPlantPowerMW, powerBlockSizeKW, mvVoltageKV, blockStationMW, exportLimitMW, groundCoverageRatio, trackerMode, terrainSlopeDeg, usableLandPercent, gridShortCircuitMVA, estimatedMvFaultKA, plantAvailabilityPercent, annualDegradationPercent, solarPanelPowerInput, load, mpptCountPerInverter, batteryRequired, batteryScope, isSolarPanelPowerRoute]);
 
-  const solarDesign = useMemo(() => runSolarAutoDesign({ load, environment, settings }), [load, environment, settings]);
+  const legacySolarDesign = useMemo(() => runSolarAutoDesign({ load, environment, settings }), [load, environment, settings]);
+  const unifiedPvResult = useMemo(() => {
+    if (!isSolarPanelPowerRoute) return null;
+    return runUnifiedPvForUi({ load, environment, settings, solarPanelPowerInput });
+  }, [isSolarPanelPowerRoute, load, environment, settings, solarPanelPowerInput]);
+  const solarDesign = useMemo(() => {
+    if (!isSolarPanelPowerRoute || !unifiedPvResult) return legacySolarDesign;
+    return unifiedPvToLegacyDesign(unifiedPvResult, legacySolarDesign);
+  }, [isSolarPanelPowerRoute, unifiedPvResult, legacySolarDesign]);
   const scaleTargetPowerW = Number(solarDesign.systemScale?.targetPowerW || solarDesign.design?.designPowerW || 0);
   const utilityScaleActive = utilityGateway && (scaleTargetPowerW > 30000 || !["auto", "small"].includes(projectScale));
   const utilityScaleStatusText = utilityGateway
@@ -493,14 +498,15 @@ export default function SystemSettings() {
   useEffect(() => {
     try {
       localStorage.setItem("shil:solarSystemDesign:live", JSON.stringify(solarDesign));
-      localStorage.setItem("shil:systemSettingsDraft:live", JSON.stringify({ domain: "solar", ...settings, design: solarDesign }));
+      if (unifiedPvResult) localStorage.setItem("shil:unifiedPvEngineResult:live", JSON.stringify(unifiedPvResult));
+      localStorage.setItem("shil:systemSettingsDraft:live", JSON.stringify({ domain: "solar", ...settings, design: solarDesign, unifiedPvEngineResult: unifiedPvResult }));
       setLiveSaved(true);
       const timer = setTimeout(() => setLiveSaved(false), 900);
       return () => clearTimeout(timer);
     } catch {
       return undefined;
     }
-  }, [solarDesign, settings]);
+  }, [solarDesign, settings, unifiedPvResult]);
 
   const applySmart = () => {
     setEquipmentManualMode(false);
@@ -520,10 +526,11 @@ export default function SystemSettings() {
   };
 
   const confirmSolar = () => {
-    const finalDesign = { ...solarDesign, solarPanelPowerInput: isSolarPanelPowerRoute ? solarPanelPowerInput : {}, batteryScope: isSolarPanelPowerRoute ? batteryScope : "default", confirmedAt: new Date().toISOString(), confirmedWithWarnings: !solarDesign.valid };
+    const finalDesign = { ...solarDesign, solarPanelPowerInput: isSolarPanelPowerRoute ? solarPanelPowerInput : {}, unifiedPvEngineResult: unifiedPvResult, batteryScope: isSolarPanelPowerRoute ? batteryScope : "default", confirmedAt: new Date().toISOString(), confirmedWithWarnings: !solarDesign.valid };
     approveProjectStep("system");
     localStorage.setItem("shil:solarSystemDesign", JSON.stringify(finalDesign));
-    localStorage.setItem("shil:systemSettingsDraft", JSON.stringify({ domain: "solar", ...settings, design: finalDesign }));
+    if (unifiedPvResult) localStorage.setItem("shil:unifiedPvEngineResult", JSON.stringify(unifiedPvResult));
+    localStorage.setItem("shil:systemSettingsDraft", JSON.stringify({ domain: "solar", ...settings, design: finalDesign, unifiedPvEngineResult: unifiedPvResult }));
     if (!solarDesign.valid) {
       setWarning(solarDesign.nextBlockedReason || "پیکربندی با هشدار ثبت شد و در چکیده قابل بررسی است.");
     }
@@ -624,7 +631,7 @@ export default function SystemSettings() {
 
         {isSolarPanelPowerRoute ? (
         <div className="shil-section-card shil-config-block">
-          <div className="shil-section-head"><h2>کنترل طراحی</h2><span>{parameterManualMode ? "حالت دستی فعال" : "اعمال هوشمند فعال"}</span></div>
+          <div className="shil-section-head"><h2>اعمال ضرایب استاندارد</h2><span>{parameterManualMode ? "حالت دستی فعال" : "اعمال هوشمند فعال"}</span></div>
           <div className="shil-form-grid shil-param-grid">
             <label><span>ضریب راه‌اندازی پیش‌فرض</span><input type="text" inputMode="decimal" value={reserveFactor} onChange={(e) => { setParameterManualMode(true); setReserveFactor(e.target.value); }} /></label>
             <label><span>روزهای خودکفایی</span><input type="text" inputMode="decimal" min="0" max="7" value={autonomyDays} onChange={(e) => { setParameterManualMode(true); const value = e.target.value; setAutonomyDays(value); if (toNumber(value, 0) <= 0) setBatteryScope("none"); else if (batteryScope === "none") setBatteryScope("all"); }} /></label>
@@ -645,12 +652,11 @@ export default function SystemSettings() {
             <button type="button" className={!equipmentManualMode && !parameterManualMode ? "shil-soft-button active" : "shil-soft-button"} onClick={applySmart}>اعمال هوشمند SHIL</button>
             <button type="button" className={equipmentManualMode ? "shil-soft-button active" : "shil-soft-button"} onClick={() => setEquipmentManualMode(!equipmentManualMode)}>{equipmentManualMode ? "ورود دستی تجهیزات فعال" : "ورود دستی تجهیزات"}</button>
           </div>
-          <p className="shil-muted-line">ضریب راه‌اندازی و روزهای خودکفایی فقط در همین مسیر روی نتایج اینورتر، بانک باتری، کابل و حفاظت اثر می‌گذارند؛ صفر بودن خودکفایی یعنی باتری انتخاب نشده است.</p>
           <p className="shil-muted-line">{liveSaved ? "ذخیره و اتصال زنده به موتور انجام شد." : `پنل پیش‌فرض موتور: ${solarDesign.panel.powerW} وات`}</p>
         </div>
         ) : (
           <div className="shil-section-card shil-config-block">
-            <div className="shil-section-head"><h2>پارامترهای اثرگذار</h2><span>{parameterManualMode ? "حالت دستی فعال" : "اعمال هوشمند فعال"}</span></div>
+            <div className="shil-section-head"><h2>اعمال ضرایب استاندارد</h2><span>{parameterManualMode ? "حالت دستی فعال" : "اعمال هوشمند فعال"}</span></div>
             <div className="shil-form-grid shil-param-grid">
               <label><span>روزهای خودکفایی</span><input type="text" inputMode="decimal" min="0" max="7" value={autonomyDays} onChange={(e) => { setParameterManualMode(true); const value = e.target.value; setAutonomyDays(value); setBatteryRequired(toNumber(value, 0) > 0); }} /></label>
               <label><span>ضریب اطمینان استاندارد</span><input type="text" inputMode="decimal" value={reserveFactor} onChange={(e) => { setParameterManualMode(true); setReserveFactor(e.target.value); }} /></label>
@@ -675,7 +681,6 @@ export default function SystemSettings() {
 
             <div className="shil-section-card shil-config-block">
               <div className="shil-section-head"><h2>بانک‌های هوشمند مسیر توان پنل</h2><span>متصل به ورودی قبلی</span></div>
-              <p className="shil-muted-line">در این بخش بانک‌ها بر اساس انتخاب مرحله قبل نمایش داده می‌شوند؛ تعداد پنل و تقسیم‌بندی از ورودی کاربر حفظ می‌شود و ضریب اضافه مستقل در بانک‌ها اعمال نمی‌شود.</p>
             </div>
           </>
         ) : (
@@ -722,10 +727,9 @@ export default function SystemSettings() {
         </div>
 
         <div className="shil-section-card shil-auto-result-card shil-result-card-final">
-          <div className="shil-section-head"><h2>نتیجه پیکربندی</h2><span>{solarDesign.valid ? "قابل تأیید" : "نیازمند اصلاح"}</span></div>
+          <div className="shil-section-head"><h2>{isSolarPanelPowerRoute ? "نتایج پیکربندی با استفاده از توان پنل خورشیدی" : "نتایج پیکربندی"}</h2><span>{solarDesign.valid ? "قابل تأیید" : "نیازمند اصلاح"}</span></div>
           {isSolarPanelPowerRoute ? <SolarPanelPowerResultTable design={solarDesign} solarPanelPowerInput={solarPanelPowerInput} batteryScope={batteryScope} /> : <GeneralLoadResultTable load={load} design={solarDesign} />}
           {solarDesign.warnings.map((item) => <div key={item} className="shil-inline-warning">{item}</div>)}
-          {isSolarPanelPowerRoute ? <ConfigurationLinkedDetails design={solarDesign} /> : null}
         </div>
 
         <button type="button" className="shil-primary-wide shil-confirm-config-button" onClick={confirmSolar}>تأیید پیکربندی و رفتن به چکیده</button>

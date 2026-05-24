@@ -646,3 +646,52 @@ p {
   background: #f59e0b;
   box-shadow: 0 0 10px rgba(245, 158, 11, 0.85);
 }
+
+
+/* SHIL requested update - brighter industrial background, icon cards, environment flow */
+html, body, #root{
+  background:#0b1b2f !important;
+}
+.app-bg{
+  background:
+    radial-gradient(circle at 50% -8%, rgba(255,255,255,.22), transparent 34%),
+    radial-gradient(circle at 18% 16%, rgba(45,212,191,.22), transparent 30%),
+    radial-gradient(circle at 84% 10%, rgba(96,165,250,.18), transparent 28%),
+    linear-gradient(180deg,#20314d 0%,#142338 45%,#0b1628 100%) !important;
+}
+.mobile-frame{
+  background:linear-gradient(180deg,rgba(17,32,52,.72),rgba(8,18,32,.70)) !important;
+}
+.hero-card,.panel,.page-card,.status-card,.shil-env-card{
+  background:linear-gradient(145deg,rgba(24,43,70,.88),rgba(11,23,42,.76)) !important;
+  box-shadow:0 18px 46px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.08) !important;
+}
+.shil-ios-icon-img,
+.dashboard-icons .shil-ios-icon-img,
+.new-project-grid-3x3 .shil-ios-icon-img{
+  background:transparent !important;
+  border:none !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+  overflow:visible !important;
+}
+.shil-ios-icon-img img,
+.dashboard-icons .shil-ios-icon-img img,
+.new-project-grid-3x3 .shil-ios-icon-img img{
+  width:100% !important;
+  height:100% !important;
+  object-fit:contain !important;
+  border-radius:0 !important;
+  filter:drop-shadow(0 14px 22px rgba(0,0,0,.28)) saturate(1.06) contrast(1.03) !important;
+}
+.dashboard-icons .shil-ios-icon-img{width:clamp(72px,22vw,104px) !important;height:clamp(72px,22vw,104px) !important;}
+.new-project-grid-3x3 .shil-ios-icon-img{width:clamp(54px,15vw,76px) !important;height:clamp(54px,15vw,76px) !important;}
+.shil-ios-icon-title{display:block;text-align:center;margin-top:6px;line-height:1.55;}
+.shil-env-location-map{margin-top:12px;}
+.shil-site-preview-contain-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px;}
+.shil-site-preview-card{margin:0;border:1px solid rgba(125,255,224,.18);border-radius:16px;padding:6px;background:rgba(0,0,0,.16);overflow:hidden;}
+.shil-site-preview-card img{width:100%;height:118px;object-fit:contain;display:block;border-radius:12px;background:rgba(255,255,255,.035);}
+.shil-site-preview-card figcaption{text-align:center;color:#d8fffb;font-size:11px;margin-top:5px;}
+.shil-save-images-btn,.shil-climate-restore-bottom{width:100%;margin-top:10px;justify-content:center;}
+.shil-install-upload-grid small{line-height:1.6;}
+@media (max-width:380px){.shil-site-preview-contain-grid{grid-template-columns:1fr}.shil-site-preview-card img{height:132px}}

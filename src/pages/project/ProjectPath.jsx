@@ -10,7 +10,7 @@ const fallbackOptions = [
     key: "solar",
     title: "برق خورشیدی با پنل",
     description: "طراحی خورشیدی معمولی با پنل، باتری، اینورتر و خروجی مهندسی تا محدوده سبک/متوسط",
-    image: "/assets/shil/execution/solar-execution.svg",
+    image: "/assets/shil/execution/solar-execution.png",
     calculationDomain: "solar",
     order: 1,
   },
@@ -18,7 +18,7 @@ const fallbackOptions = [
     key: "emergency",
     title: "برق اضطراری",
     description: "طراحی سیستم پشتیبان با اینورتر، باتری و زمان برق اضطراری مورد نیاز",
-    image: "/assets/shil/execution/emergency-inverter-battery.svg",
+    image: "/assets/shil/execution/emergency-inverter-battery.png",
     calculationDomain: "emergency",
     order: 2,
   },
@@ -26,7 +26,7 @@ const fallbackOptions = [
     key: "utility",
     title: "نیروگاهی",
     description: "درگاه مستقل طراحی نیروگاه خورشیدی بالای ۳۰kW تا ظرفیت‌های MW، شامل بلوک‌بندی، MV، ترانس و Grid Study مقدماتی",
-    image: "/assets/shil/execution/solar-execution.svg",
+    image: "/assets/shil/execution/utility-execution.png",
     calculationDomain: "utility",
     order: 3,
   },
@@ -79,6 +79,16 @@ export default function ProjectPath() {
 
     return () => { alive = false; };
   }, []);
+
+  const mainOptions = useMemo(
+    () => options.filter((item) => !(item.calculationDomain === "utility" || item.key === "utility")),
+    [options]
+  );
+
+  const utilityOption = useMemo(
+    () => options.find((item) => item.calculationDomain === "utility" || item.key === "utility"),
+    [options]
+  );
 
   const selectedOption = useMemo(
     () => options.find((item) => item.key === selected),
@@ -142,16 +152,12 @@ export default function ProjectPath() {
             <span>Project Path</span>
           </div>
 
-          <p className="shil-section-note">
-            مسیرهای معمولی مرحله‌به‌مرحله پیش می‌روند. طراحی نیروگاهی از کارت مستقل «نیروگاهی» شروع می‌شود تا منطق MW داخل مسیر پنل یا برق اضطراری شلوغی ایجاد نکند.
-          </p>
-
           <div className="shil-execution-grid shil-project-path-two-cards">
-            {options.map((option) => (
+            {mainOptions.map((option) => (
               <button
                 type="button"
                 key={option.key}
-                className={`shil-execution-card ${selected === option.key ? "active" : ""}`}
+                className={`shil-execution-card shil-project-path-card ${selected === option.key ? "active" : ""}`}
                 onClick={() => { setSelected(option.key); setWarning(""); }}
               >
                 {option.image ? <img src={option.image} alt="" className="shil-execution-image" /> : null}
@@ -161,6 +167,27 @@ export default function ProjectPath() {
               </button>
             ))}
           </div>
+
+          {utilityOption ? (
+            <details className={`shil-utility-path-field ${selected === utilityOption.key ? "active" : ""}`}>
+              <summary>
+                <span>مسیر نیروگاهی</span>
+                <small>برای پروژه‌های ظرفیت بالا باز کنید</small>
+              </summary>
+              <button
+                type="button"
+                className={`shil-utility-select-button ${selected === utilityOption.key ? "active" : ""}`}
+                onClick={() => { setSelected(utilityOption.key); setWarning(""); }}
+              >
+                {utilityOption.image ? <img src={utilityOption.image} alt="" /> : null}
+                <span>
+                  <strong>{utilityOption.title}</strong>
+                  <small>{utilityOption.description}</small>
+                </span>
+                <b>{selected === utilityOption.key ? "✓" : "انتخاب"}</b>
+              </button>
+            </details>
+          ) : null}
 
           {warning ? <div className="shil-inline-warning">{warning}</div> : null}
           <button type="button" className="shil-primary-wide" onClick={confirm}>تأیید مسیر پروژه</button>

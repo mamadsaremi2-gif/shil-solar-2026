@@ -6,6 +6,7 @@ import { consumerEquipmentLibrary, searchConsumerEquipment } from "../../data/ca
 import { buildScenarioCalculationInput } from "../../core/scenario/scenarioToEngineeringForm.js";
 import { METHOD_LABELS, persistLoadEngineResult, runLoadEngine } from "../../core/calculation/loadEngine.js";
 import { runSolarPanelPowerEngine } from "../../core/calculation/solarPanelPowerEngine.js";
+import { runUnifiedPvForUi } from "../../engine/unifiedPvUiAdapter.js";
 import { SHIL_SOLAR_PANELS, SHIL_LITHIUM_BATTERIES } from "../../data/shilSolarBanks.js";
 import { isScenarioFlowFor, startUtilityGateway } from "../../workflow/flowIsolation.js";
 
@@ -388,6 +389,22 @@ export default function CalculationInputs() {
         utilityScaleBasis: "effective_after_losses",
       }));
       localStorage.setItem("shil:solarPanelPowerPreview", JSON.stringify(solarPanelPreview));
+      const unifiedPreview = runUnifiedPvForUi({
+        load: { method, totalPowerW: totalPanelPowerW, totalEnergyKWh: calculatedPvDailyKWh, voltageAC: toNumber(acVoltageRoute, 220) },
+        environment,
+        settings: { method: "solar_panel_power", calculationMethod: "solar_panel_power", panelId: selectedPanelId, panelCount: Number(panelCount || 0), outputAcVoltage: toNumber(acVoltageRoute, 220) },
+        solarPanelPowerInput: {
+          selectedPanelId,
+          panelPowerW: Number(panelPowerW || 0),
+          panelCount: Number(panelCount || 0),
+          totalPanelPowerW,
+          psh: Number(psh || 0),
+          lossPercent: Number(lossPercent || 0),
+          generatedDailyKWh: calculatedPvDailyKWh,
+          acVoltageRoute: toNumber(acVoltageRoute, 220),
+        },
+      });
+      localStorage.setItem("shil:unifiedPvEngineResult:input", JSON.stringify(unifiedPreview));
     }
 
     const result = persistLoadEngineResult({
@@ -499,7 +516,7 @@ export default function CalculationInputs() {
 
         {method !== "equipment" ? (
           <section className="shil-env-card">
-            <h3 className="shil-section-title">ورودی مستقیم روش انتخاب‌شده</h3>
+            <h3 className="shil-section-title">اطلاعات مورد نیاز را وارد کنید.</h3>
             {method === "profile" ? (
               <>
                 <div className="shil-form-grid">
@@ -529,30 +546,10 @@ export default function CalculationInputs() {
                   <label>تلفات کل سیستم ٪<input className="shil-input" value={lossPercent} onChange={(e) => setLossPercent(e.target.value)} placeholder={`از شرایط محیطی: ${envSolarDefaults.totalLoss}%`} inputMode="decimal" /></label>
                   <label>راندمان مؤثر سیستم ٪<input className="shil-input" value={(100 - toNumber(lossPercent, 0)).toFixed(1)} onChange={(e) => { const efficiency = Math.max(5, Math.min(100, toNumber(e.target.value, 0))); setLossPercent(String((100 - efficiency).toFixed(1))); }} placeholder="محاسبه از شرایط محیطی" inputMode="decimal" /></label>
                   <label>مسیر خروجی AC<select className="shil-input" value={acVoltageRoute} onChange={(e) => setAcVoltageRoute(e.target.value)}><option value="220">۲۲۰ ولت تک‌فاز</option><option value="380">۳۸۰ ولت سه‌فاز</option></select></label>
-                  <label>تقسیم توان بین چند اینورتر<input className="shil-input" value={inverterSplitCount} onChange={(e) => setInverterSplitCount(e.target.value)} placeholder="مثلاً 1 یا 2 یا 6" inputMode="numeric" /></label>
                 </div>
-                <div className="shil-summary-grid"><div><span>توان کل پنل‌ها</span><strong>{(totalPanelPowerW / 1000).toFixed(2)} kW</strong></div><div><span>تولید روزانه بدون تلفات</span><strong>{rawPvDailyKWh} kWh</strong></div><div><span>تولید روزانه با تلفات</span><strong>{calculatedPvDailyKWh} kWh</strong></div><div><span>توان موثر معیار مسیر</span><strong>{(effectivePanelPowerW / 1000).toFixed(2)} kW</strong></div>{inverterCountNormalized > 1 ? <div><span>سهم هر اینورتر</span><strong>{((totalPanelPowerW / 1000) / inverterCountNormalized).toFixed(2)} kW</strong></div> : null}<div><span>محدوده طراحی</span><strong>{isUtilityPanelScale ? "نیروگاهی / توان موثر بالای ۳۰kW" : "مصرفی عادی / توان موثر زیر ۳۰kW"}</strong></div><div><span>منبع PSH و تلفات</span><strong>{environment?.city || "شرایط محیطی"}</strong></div><div><span>راندمان مؤثر</span><strong>{(100 - toNumber(lossPercent, 0)).toFixed(1)}٪</strong></div><div><span>افت جهت/زاویه</span><strong>{envSolarDefaults.orientation.toFixed(1)}٪</strong></div></div>
-                <label className="shil-check-row"><input type="checkbox" checked={showManualPanelSplit} onChange={(e) => setShowManualPanelSplit(e.target.checked)} />تقسیم دستی پنل‌ها بین اینورترها</label>
-                {showManualPanelSplit ? (
-                  <div className="shil-form-grid shil-inverter-split-grid">
-                    {manualPanelDistribution.map((count, index) => (
-                      <label key={index}>اینورتر {index + 1}<input className="shil-input" value={count} onChange={(e) => setManualPanelDistribution((prev) => prev.map((item, idx) => idx === index ? e.target.value : item))} inputMode="numeric" /></label>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="shil-summary-grid">
-                    {defaultPanelDistribution.map((count, index) => <div key={index}><span>اینورتر {index + 1}</span><strong>{count} پنل</strong></div>)}
-                  </div>
-                )}
-                {distributionMismatch ? <p className="shil-warning-line">جمع پنل‌های تقسیم‌شده باید دقیقاً برابر {panelCountNormalized} پنل باشد؛ مقدار فعلی {distributionTotal} پنل است.</p> : null}
-                <div className="shil-summary-grid shil-inverter-layout-grid">
-                  {inverterPanelLayouts.map((row) => (
-                    <div key={row.index}><span>اینورتر {row.index}</span><strong>{row.count} پنل / {row.powerKW} kW</strong><small>{row.series} سری × {row.parallel} موازی</small></div>
-                  ))}
-                </div>
+                <div className="shil-summary-grid"><div><span>توان کل پنل‌ها</span><strong>{(totalPanelPowerW / 1000).toFixed(2)} kW</strong></div><div><span>تولید روزانه بدون تلفات</span><strong>{rawPvDailyKWh} kWh</strong></div><div><span>تولید روزانه با تلفات</span><strong>{calculatedPvDailyKWh} kWh</strong></div><div><span>توان موثر معیار مسیر</span><strong>{(effectivePanelPowerW / 1000).toFixed(2)} kW</strong></div><div><span>محدوده طراحی</span><strong>{isUtilityPanelScale ? "نیروگاهی / توان موثر بالای ۳۰kW" : "مصرفی عادی / توان موثر زیر ۳۰kW"}</strong></div><div><span>منبع PSH و تلفات</span><strong>{environment?.city || "شرایط محیطی"}</strong></div><div><span>راندمان مؤثر</span><strong>{(100 - toNumber(lossPercent, 0)).toFixed(1)}٪</strong></div><div><span>افت جهت/زاویه</span><strong>{envSolarDefaults.orientation.toFixed(1)}٪</strong></div></div>
                 {isUtilityPanelScale && !isUtilityGateway ? (<div className="shil-expert-box shil-utility-gateway-warning"><strong>توان از محدوده مسیر معمولی عبور کرده است.</strong><p>این مسیر برای طراحی خورشیدی معمولی و سبک نگه داشته می‌شود. برای توان موثر بالای ۳۰kW پس از تلفات/راندمان، بلوک‌های نیروگاهی داخل مسیر پنل یا برق اضطراری باز نمی‌شوند؛ از کارت مستقل «نیروگاهی» در صفحه انتخاب مسیر پروژه استفاده کن.</p><button type="button" className="shil-secondary-wide" onClick={goToUtilityGateway}>ورود به درگاه نیروگاهی</button></div>) : null}
                 {isUtilityPanelScale && isUtilityGateway ? (<div className="shil-expert-box"><strong>درگاه نیروگاهی فعال است.</strong><p>این مسیر مستقل برای طراحی‌های بالای ۳۰kW، بلوک‌بندی MW، MV، ترانس و Grid Study مقدماتی استفاده می‌شود.</p></div>) : null}
-                <p className="shil-muted-note">در این مسیر، PSH و تلفات از شرایط محیطی خوانده می‌شوند. اگر توان موثر پس از تلفات/راندمان از ۳۰kW بالاتر برود، اپ به‌جای شلوغ کردن مسیر معمولی، کاربر را به درگاه مستقل نیروگاهی هدایت می‌کند.</p>
               </>
             ) : (
               <div className="shil-form-grid">
@@ -563,28 +560,6 @@ export default function CalculationInputs() {
                 <label>ساعت استفاده / زمان برق اضطراری مورد نظر<input className="shil-input" value={manualHours} onChange={(e) => setManualHours(e.target.value)} inputMode="decimal" /></label>
               </div>
             )}
-          </section>
-        ) : null}
-
-        {method === "solar_panel_power" && solarPanelPreview ? (
-          <section className="shil-env-card">
-            <h3 className="shil-section-title">خروجی زنده توان پنل خورشیدی</h3>
-            <div className="shil-summary-grid">
-              <div><span>توان کل پنل‌ها</span><strong>{solarPanelPreview.array?.powerKW} kW</strong></div>
-              <div><span>تولید خام روزانه</span><strong>{rawPvDailyKWh} kWh</strong></div>
-              <div><span>تولید واقعی با تلفات</span><strong>{solarPanelPreview.generatedDailyKWh} kWh</strong></div>
-              <div><span>توان موثر معیار مسیر</span><strong>{((solarPanelPreview.effectivePanelPowerW || 0) / 1000).toFixed(2)} kW</strong></div>
-              <div><span>مسیر AC</span><strong>{solarPanelPreview.acVoltageRoute === 380 ? "۳۸۰ ولت سه‌فاز" : "۲۲۰ ولت تک‌فاز"}</strong></div>
-              {solarPanelPreview.inverterSplitCount > 1 ? <div><span>تقسیم اینورتر</span><strong>{solarPanelPreview.inverterSplitCount} مسیر × {solarPanelPreview.inverterPowerShareKW} kW</strong></div> : null}
-              <div><span>تقسیم پنل بین اینورترها</span><strong>{solarPanelPreview.inverterPanelDistribution?.join(" / ")} پنل</strong></div>
-              <div><span>امتیاز مهندسی</span><strong>{solarPanelPreview.score} / 100</strong></div>
-              <div><span>وضعیت</span><strong>{solarPanelPreview.levelLabel}</strong></div>
-            </div>
-            {solarPanelPreview.recommendations?.length ? (
-              <ul className="shil-warning-list">
-                {solarPanelPreview.recommendations.slice(0, 3).map((item) => <li key={item}>{item}</li>)}
-              </ul>
-            ) : null}
           </section>
         ) : null}
 
@@ -599,7 +574,6 @@ export default function CalculationInputs() {
             <div><span>جریان راه‌اندازی</span><strong>{enginePreview.startCurrentA} A</strong></div>
             <div><span>پیک استارت</span><strong>{enginePreview.surgePowerW} W</strong></div>
             <div><span>موتوری/سافت</span><strong>{enginePreview.motorCount || 0}/{enginePreview.softStarterCount || 0}</strong></div>
-            <div><span>باتری مرجع</span><strong>{Math.round(enginePreview.recommendedBatteryWh / 1000)} kWh</strong></div>
           </div>
           {showExpert ? (
             <div className="shil-expert-box">
