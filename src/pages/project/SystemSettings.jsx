@@ -187,7 +187,7 @@ function ConfigurationLinkedDetails({ design }) {
   );
 }
 
-function SolarPanelPowerResultTable({ design, solarPanelPowerInput = {}, batteryScope = "none" }) {
+function SolarPanelPowerResultTable({ design, solarPanelPowerInput = {}, batteryScope = "none", unifiedPvResult = null }) {
   const input = solarPanelPowerInput || {};
   const rawDaily = input.rawDailyEnergyKWh || (input.totalPanelPowerW && input.psh ? Math.round((input.totalPanelPowerW / 1000) * input.psh * 100) / 100 : null);
   const usableDaily = input.generatedDailyKWh || input.usableDailyEnergyKWh || design.panelPowerAnalysis?.array?.dailyEnergyKWh || design.solarSizing?.ePvDailyKWh;
@@ -198,18 +198,21 @@ function SolarPanelPowerResultTable({ design, solarPanelPowerInput = {}, battery
   const inputPanelPowerW = toNumber(input.panelPowerW || design.panel?.powerW, design.panel?.powerW || 0);
   const inputTotalPowerW = toNumber(input.totalPanelPowerW, inputPanelCount * inputPanelPowerW || design.pvArray?.arrayPowerW || 0);
   const effectivePowerW = toNumber(input.effectivePanelPowerW, inputTotalPowerW * Math.max(0, Math.min(1, (100 - toNumber(input.lossPercent, 0)) / 100)));
+  const s = unifiedPvResult?.summary?.important_results || {};
   const rows = [
-    ["توان پایه پنل‌ها", `${faNumber(inputTotalPowerW)} W`],
-    ["توان موثر پس از تلفات", `${faNumber(effectivePowerW)} W`],
+    ["روش محاسبات", unifiedPvResult?.summary?.title_fa || METHOD_TITLE_MAP[design?.settings?.calculationMethod] || "موتور یکپارچه PV"],
+    ["توان پنل", `${faNumber(s.panel_power_W || inputPanelPowerW || design.panel?.powerW)} W`],
+    ["توان مجموعه پنل‌ها", `${faNumber(s.panel_array_power_W || inputTotalPowerW)} W`],
+    ["توان موثر پس از تلفات", `${faNumber(s.effective_power_after_losses_W || effectivePowerW)} W`],
     ["ضریب راه‌اندازی", `${design.settings.reserveFactor || 1.2}`],
-    ["توان نهایی طراحی", `${faNumber(design.design.designPowerW)} W`],
-    ["اینورتر", `${optionTitle(design.inverter)} / ${faNumber(design.inverter.count)} عدد`],
-    ["تعداد MPPT", `${faNumber(design.inverterTopology?.mpptPerInverter || 1)} برای هر اینورتر`],
-    ["پنل خورشیدی", `${design.panel.title} / ${faNumber(inputPanelCount || design.pvArray.panelCount)} عدد`],
-    ["تقسیم پنل بین اینورترها", panelDistribution || "تک اینورتر"],
-    ["تولید خام روزانه", rawDaily ? `${rawDaily} kWh` : "-"],
-    ["تولید واقعی با تلفات", usableDaily ? `${usableDaily} kWh` : "-"],
-    ["باتری", toNumber(design.settings.autonomyDays, 0) > 0 ? `${batterySpecText(design.battery)} / ${batteryScope === "all" ? "اعمال برای همه اینورترها" : batteryScope === "none" ? "انتخاب نشده" : `اعمال برای اینورتر ${batteryScope}`}` : "انتخاب نشده"],
+    ["توان نهایی طراحی", `${faNumber(s.final_design_power_W || design.design.designPowerW)} W`],
+    ["توان اینورتر اعمال شده در بانک", `${faNumber(s.inverter_power_W || design.inverter?.ratedPowerW)} W`],
+    ["تعداد اینورتر مشخص شده", `${faNumber(s.inverter_count || design.inverter?.count || 1)} عدد`],
+    ["تولید خام روزانه", s.raw_daily_production_Wh ? `${Math.round(s.raw_daily_production_Wh / 100) / 10} kWh` : (rawDaily ? `${rawDaily} kWh` : "-")],
+    ["تولید واقعی با تلفات", s.real_daily_production_Wh ? `${Math.round(s.real_daily_production_Wh / 100) / 10} kWh` : (usableDaily ? `${usableDaily} kWh` : "-")],
+    ["باتری اعمال شده پیش فرض بانک", s.default_battery || design.battery?.battery?.title || "-"],
+    ["روزهای خودکفایی", `${faNumber(s.autonomy_days || design.settings?.autonomyDays || 0)} روز`],
+    ["باتری اعمال شده متناسب با روزهای خودکفایی", `${faNumber(s.battery_count_for_autonomy || design.battery?.totalCount || 0)} عدد`],
   ];
 
   return <ResultTableFrame rows={rows} ariaLabel="نتیجه پیکربندی مسیر توان پنل خورشیدی" />;
@@ -226,7 +229,6 @@ function GeneralLoadResultTable({ load = {}, design = {} }) {
     ["پیک استارت", `${faNumber(load.surgePowerW || 0)} W`],
     ["مسیر AC", load.phaseAC === "three" ? "۳۸۰ ولت سه‌فاز" : `${faNumber(load.voltageAC || 220)} ولت تک‌فاز`],
     ["اینورتر پیشنهادی", `${faNumber(load.recommendedInverterW || design.inverter?.ratedPowerW || 0)} W`],
-    ["باتری مرجع", `${Math.round(Number(load.recommendedBatteryWh || 0) / 1000)} kWh`],
   ];
   return <ResultTableFrame rows={rows} ariaLabel="نتیجه پیکربندی عمومی بار" />;
 }
@@ -468,14 +470,15 @@ export default function SystemSettings() {
   }), [systemType, activeCalculationMethod, autonomyDays, reserveFactor, equipmentManualMode, parameterManualMode, panelId, inverterId, batteryId, panelExtraFactor, inverterExtraFactor, batteryExtraFactor, projectScale, targetPlantPowerMW, powerBlockSizeKW, mvVoltageKV, blockStationMW, exportLimitMW, groundCoverageRatio, trackerMode, terrainSlopeDeg, usableLandPercent, gridShortCircuitMVA, estimatedMvFaultKA, plantAvailabilityPercent, annualDegradationPercent, solarPanelPowerInput, load, mpptCountPerInverter, batteryRequired, batteryScope, isSolarPanelPowerRoute]);
 
   const legacySolarDesign = useMemo(() => runSolarAutoDesign({ load, environment, settings }), [load, environment, settings]);
+  const useUnifiedPvEngine = !emergency && !utilityGateway;
   const unifiedPvResult = useMemo(() => {
-    if (!isSolarPanelPowerRoute) return null;
+    if (!useUnifiedPvEngine) return null;
     return runUnifiedPvForUi({ load, environment, settings, solarPanelPowerInput });
-  }, [isSolarPanelPowerRoute, load, environment, settings, solarPanelPowerInput]);
+  }, [useUnifiedPvEngine, load, environment, settings, solarPanelPowerInput]);
   const solarDesign = useMemo(() => {
-    if (!isSolarPanelPowerRoute || !unifiedPvResult) return legacySolarDesign;
+    if (!useUnifiedPvEngine || !unifiedPvResult) return legacySolarDesign;
     return unifiedPvToLegacyDesign(unifiedPvResult, legacySolarDesign);
-  }, [isSolarPanelPowerRoute, unifiedPvResult, legacySolarDesign]);
+  }, [useUnifiedPvEngine, unifiedPvResult, legacySolarDesign]);
   const scaleTargetPowerW = Number(solarDesign.systemScale?.targetPowerW || solarDesign.design?.designPowerW || 0);
   const utilityScaleActive = utilityGateway && (scaleTargetPowerW > 30000 || !["auto", "small"].includes(projectScale));
   const utilityScaleStatusText = utilityGateway
@@ -526,7 +529,7 @@ export default function SystemSettings() {
   };
 
   const confirmSolar = () => {
-    const finalDesign = { ...solarDesign, solarPanelPowerInput: isSolarPanelPowerRoute ? solarPanelPowerInput : {}, unifiedPvEngineResult: unifiedPvResult, batteryScope: isSolarPanelPowerRoute ? batteryScope : "default", confirmedAt: new Date().toISOString(), confirmedWithWarnings: !solarDesign.valid };
+    const finalDesign = { ...solarDesign, solarPanelPowerInput: isSolarPanelPowerRoute ? solarPanelPowerInput : {}, unifiedPvEngineResult: unifiedPvResult, batteryScope: isSolarPanelPowerRoute ? batteryScope : "default", unifiedEngineApplied: Boolean(unifiedPvResult), calculationPipeline: unifiedPvResult?.pipeline_order || [], confirmedAt: new Date().toISOString(), confirmedWithWarnings: !solarDesign.valid };
     approveProjectStep("system");
     localStorage.setItem("shil:solarSystemDesign", JSON.stringify(finalDesign));
     if (unifiedPvResult) localStorage.setItem("shil:unifiedPvEngineResult", JSON.stringify(unifiedPvResult));
@@ -700,7 +703,7 @@ export default function SystemSettings() {
             items={SHIL_SOLAR_INVERTERS}
             smartValue={`${kw(solarDesign.inverter.ratedPowerW)} × ${faNumber(solarDesign.inverter.count)} عدد / ${solarDesign.inverter.dcVoltage}V`}
             renderMeta={(item) => <>{item?.ratedPowerW}W / ورودی باتری {item?.dcVoltage}V / MPPT {item?.mpptMinV}-{item?.mpptMaxV}V / سقف PV {item?.maxPvPowerW}W</>}
-            renderReason={() => isSolarPanelPowerRoute ? <>اینورتر هوشمند بر اساس سهم توان هر اینورتر، ضریب راه‌اندازی {reserveFactor}، ولتاژ خروجی {solarDesign.settings.outputAcVoltage}V و نزدیک‌ترین ظرفیت بالاتر مجاز انتخاب می‌شود.</> : <>در مسیر لیست تجهیزات، اینورتر بر اساس توان مصرفی، پیک راه‌اندازی، نوع اجرا و ضریب اطمینان انتخاب می‌شود؛ تقسیم پنل و MPPT اختصاصی اینجا اعمال نمی‌شود.</>}
+            renderReason={() => <>اینورتر هوشمند از موتور یکپارچه PV انتخاب می‌شود؛ توان، MPPT، جریان، بانک تجهیزات و خطاهای ادامه مسیر از یک Pipeline واحد خوانده می‌شوند.</>}
           />
           <BankSelect
             title="بانک باتری"
@@ -722,13 +725,13 @@ export default function SystemSettings() {
             items={SHIL_SOLAR_PANELS}
             smartValue={isSolarPanelPowerRoute ? `${solarDesign.panel.powerW}W / ${faNumber(solarDesign.pvArray.panelCount)} عدد / تقسیم: ${(solarDesign.inverterTopology?.panelDistribution || []).join(" / ") || "خودکار"}` : `${solarDesign.panel.powerW}W / ${faNumber(solarDesign.pvArray.panelCount)} عدد`}
             renderMeta={(item) => <>{item?.powerW}W / Vmp {item?.vmp}V / Voc {item?.voc}V / مساحت تقریبی {item?.areaM2}m²</>}
-            renderReason={() => isSolarPanelPowerRoute ? <>این بانک همان پنل و تعداد ثبت‌شده در ورودی قبلی را نشان می‌دهد؛ در صورت تغییر پنل، توان کل، تولید روزانه، تقسیم اینورتر، MPPT، کابل و حفاظت دوباره محاسبه می‌شود.</> : <>در مسیر لیست تجهیزات، پنل فقط برای برآورد آرایه پیشنهادی استفاده می‌شود و تقسیم اختصاصی بین اینورترها نمایش داده نمی‌شود.</>}
+            renderReason={() => <>این بانک از خروجی موتور یکپارچه خوانده می‌شود؛ هر تغییر پنل، تعداد، اینورتر یا باتری بلافاصله در محاسبات MPPT، حفاظت و راندمان اعمال می‌شود.</>}
           />
         </div>
 
         <div className="shil-section-card shil-auto-result-card shil-result-card-final">
-          <div className="shil-section-head"><h2>{isSolarPanelPowerRoute ? "نتایج پیکربندی با استفاده از توان پنل خورشیدی" : "نتایج پیکربندی"}</h2><span>{solarDesign.valid ? "قابل تأیید" : "نیازمند اصلاح"}</span></div>
-          {isSolarPanelPowerRoute ? <SolarPanelPowerResultTable design={solarDesign} solarPanelPowerInput={solarPanelPowerInput} batteryScope={batteryScope} /> : <GeneralLoadResultTable load={load} design={solarDesign} />}
+          <div className="shil-section-head"><h2>{isSolarPanelPowerRoute ? "نتایج پیکربندی با استفاده از توان پنل خورشیدی" : "نتایج پیکربندی موتور یکپارچه"}</h2><span>{solarDesign.valid ? "قابل تأیید" : "نیازمند اصلاح"}</span></div>
+          {unifiedPvResult ? <SolarPanelPowerResultTable design={solarDesign} solarPanelPowerInput={solarPanelPowerInput} batteryScope={batteryScope} unifiedPvResult={unifiedPvResult} /> : <GeneralLoadResultTable load={load} design={solarDesign} />}
           {solarDesign.warnings.map((item) => <div key={item} className="shil-inline-warning">{item}</div>)}
         </div>
 

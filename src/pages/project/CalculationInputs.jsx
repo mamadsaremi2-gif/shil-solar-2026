@@ -5,7 +5,6 @@ import ProjectMiniRail from "../../components/ProjectMiniRail.jsx";
 import { consumerEquipmentLibrary, searchConsumerEquipment } from "../../data/catalogs/consumerEquipmentLibrary.js";
 import { buildScenarioCalculationInput } from "../../core/scenario/scenarioToEngineeringForm.js";
 import { METHOD_LABELS, persistLoadEngineResult, runLoadEngine } from "../../core/calculation/loadEngine.js";
-import { runSolarPanelPowerEngine } from "../../core/calculation/solarPanelPowerEngine.js";
 import { runUnifiedPvForUi } from "../../engine/unifiedPvUiAdapter.js";
 import { SHIL_SOLAR_PANELS, SHIL_LITHIUM_BATTERIES } from "../../data/shilSolarBanks.js";
 import { isScenarioFlowFor, startUtilityGateway } from "../../workflow/flowIsolation.js";
@@ -268,32 +267,28 @@ export default function CalculationInputs() {
 
   const solarPanelPreview = useMemo(() => {
     if (method !== "solar_panel_power") return null;
-    const count = Math.max(0, Math.round(toNumber(panelCount, 0)));
-    const pwr = toNumber(panelPowerW, 0);
-    const seriesCount = count > 0 ? Math.max(1, Math.min(count, Math.round(Math.sqrt(count)))) : 1;
-    const parallelCount = count > 0 ? Math.ceil(count / seriesCount) : 1;
-    const lossRatio = Math.min(0.95, Math.max(0, toNumber(lossPercent, 0) / 100));
-    const generatedDailyKWh = calculatedPvDailyKWh;
-    return {
-      ...runSolarPanelPowerEngine({
-        panel: { powerW: pwr, voc: selectedPanel.voc || 49.5, vmp: selectedPanel.vmp || 41.5, imp: selectedPanel.imp || (pwr > 0 ? pwr / 41.5 : 0), isc: selectedPanel.isc || (pwr > 0 ? (pwr / 41.5) * 1.08 : 0), areaM2: selectedPanel.areaM2 || 2.6, type: selectedPanel.type },
-        pvArray: { panelCount: count, seriesCount, parallelCount },
-        env: { psh: toNumber(psh, 0), effectiveEfficiency: 1 - lossRatio, minTempC: environmentAssessment?.minTempC ?? -5, maxTempC: environmentAssessment?.maxTempC ?? 45 },
-        load: { totalEnergyWh: generatedDailyKWh * 1000 },
-        solarSizing: { input: { P_panel: pwr, N_panel: count, PSH: toNumber(psh, 0), lossRatio } },
-      }),
-      generatedDailyKWh,
-      usableDailyEnergyKWh: generatedDailyKWh,
-      acVoltageRoute: toNumber(acVoltageRoute, 220),
-      inverterSplitCount: inverterCountNormalized,
-      inverterPanelDistribution: activePanelDistribution.map((value) => toNumber(value, 0)),
-      totalUsableAcPowerKW: Number((totalPanelPowerW / 1000).toFixed(2)),
-      inverterPowerShareKW: Number(((totalPanelPowerW / 1000) / inverterCountNormalized).toFixed(2)),
-      effectivePanelPowerW,
-      isUtilityPanelScale,
-      utilityScaleBasis: "effective_after_losses",
-    };
-  }, [method, panelPowerW, panelCount, psh, lossPercent, environmentAssessment, selectedPanel, acVoltageRoute, inverterSplitCount, totalPanelPowerW, effectivePanelPowerW, isUtilityPanelScale, calculatedPvDailyKWh, inverterCountNormalized, activePanelDistribution]);
+    return runUnifiedPvForUi({
+      load: { method, totalPowerW: totalPanelPowerW, totalEnergyKWh: calculatedPvDailyKWh, voltageAC: toNumber(acVoltageRoute, 220) },
+      environment,
+      settings: {
+        method: "solar_panel_power",
+        calculationMethod: "solar_panel_power",
+        panelId: selectedPanelId,
+        panelCount: Number(panelCount || 0),
+        outputAcVoltage: toNumber(acVoltageRoute, 220),
+      },
+      solarPanelPowerInput: {
+        selectedPanelId,
+        panelPowerW: Number(panelPowerW || 0),
+        panelCount: Number(panelCount || 0),
+        totalPanelPowerW,
+        psh: Number(psh || 0),
+        lossPercent: Number(lossPercent || 0),
+        generatedDailyKWh: calculatedPvDailyKWh,
+        acVoltageRoute: toNumber(acVoltageRoute, 220),
+      },
+    });
+  }, [method, selectedPanelId, panelPowerW, panelCount, psh, lossPercent, environment, acVoltageRoute, totalPanelPowerW, calculatedPvDailyKWh]);
 
   const toggleItem = (item) => {
     setSelectedIds((prev) => {
@@ -548,8 +543,7 @@ export default function CalculationInputs() {
                   <label>مسیر خروجی AC<select className="shil-input" value={acVoltageRoute} onChange={(e) => setAcVoltageRoute(e.target.value)}><option value="220">۲۲۰ ولت تک‌فاز</option><option value="380">۳۸۰ ولت سه‌فاز</option></select></label>
                 </div>
                 <div className="shil-summary-grid"><div><span>توان کل پنل‌ها</span><strong>{(totalPanelPowerW / 1000).toFixed(2)} kW</strong></div><div><span>تولید روزانه بدون تلفات</span><strong>{rawPvDailyKWh} kWh</strong></div><div><span>تولید روزانه با تلفات</span><strong>{calculatedPvDailyKWh} kWh</strong></div><div><span>توان موثر معیار مسیر</span><strong>{(effectivePanelPowerW / 1000).toFixed(2)} kW</strong></div><div><span>محدوده طراحی</span><strong>{isUtilityPanelScale ? "نیروگاهی / توان موثر بالای ۳۰kW" : "مصرفی عادی / توان موثر زیر ۳۰kW"}</strong></div><div><span>منبع PSH و تلفات</span><strong>{environment?.city || "شرایط محیطی"}</strong></div><div><span>راندمان مؤثر</span><strong>{(100 - toNumber(lossPercent, 0)).toFixed(1)}٪</strong></div><div><span>افت جهت/زاویه</span><strong>{envSolarDefaults.orientation.toFixed(1)}٪</strong></div></div>
-                {isUtilityPanelScale && !isUtilityGateway ? (<div className="shil-expert-box shil-utility-gateway-warning"><strong>توان از محدوده مسیر معمولی عبور کرده است.</strong><p>این مسیر برای طراحی خورشیدی معمولی و سبک نگه داشته می‌شود. برای توان موثر بالای ۳۰kW پس از تلفات/راندمان، بلوک‌های نیروگاهی داخل مسیر پنل یا برق اضطراری باز نمی‌شوند؛ از کارت مستقل «نیروگاهی» در صفحه انتخاب مسیر پروژه استفاده کن.</p><button type="button" className="shil-secondary-wide" onClick={goToUtilityGateway}>ورود به درگاه نیروگاهی</button></div>) : null}
-                {isUtilityPanelScale && isUtilityGateway ? (<div className="shil-expert-box"><strong>درگاه نیروگاهی فعال است.</strong><p>این مسیر مستقل برای طراحی‌های بالای ۳۰kW، بلوک‌بندی MW، MV، ترانس و Grid Study مقدماتی استفاده می‌شود.</p></div>) : null}
+                {isUtilityPanelScale && !isUtilityGateway ? (<div className="shil-inline-warning"><strong>توان موثر بالای ۳۰kW است.</strong><button type="button" className="shil-secondary-wide" onClick={goToUtilityGateway}>ورود به درگاه نیروگاهی</button></div>) : null}
               </>
             ) : (
               <div className="shil-form-grid">

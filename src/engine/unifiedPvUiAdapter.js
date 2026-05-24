@@ -25,6 +25,25 @@ function pickBattery(id) {
   return SHIL_LITHIUM_BATTERIES.find((item) => item.id === id) || SHIL_LITHIUM_BATTERIES.find((item) => n(item.nominalVoltage) >= 48) || SHIL_LITHIUM_BATTERIES[0] || {};
 }
 
+
+function normalizeUnifiedRoute(route) {
+  const key = String(route || '').trim();
+  const map = {
+    equipment: 'equipment_list',
+    equipment_list: 'equipment_list',
+    profile: 'load_profile',
+    load_profile: 'load_profile',
+    solar_panel_power: 'solar_panel_power',
+    power: 'total_power',
+    total_power: 'total_power',
+    current: 'total_current',
+    total_current: 'total_current',
+    energy: 'daily_energy',
+    daily_energy: 'daily_energy',
+  };
+  return map[key] || key || 'equipment_list';
+}
+
 function mapSoiling(environment = {}) {
   const soiling = n(environment.soilingLossPercent ?? environment.totalLossPercent, 4);
   if (soiling >= 10) return "high";
@@ -52,8 +71,9 @@ export function buildUnifiedPvInput({ load = {}, environment = {}, settings = {}
   const manualPanelCount = n(settings.panelCount || solarPanelPowerInput.panelCount, 0);
   const psh = n(solarPanelPowerInput.psh || environment.peakSunHours || environment.sunHours, 5);
   const lossPercent = n(solarPanelPowerInput.lossPercent || environment.totalLossPercent, 15);
+  const route = normalizeUnifiedRoute(settings.calculationMethod || settings.method || load.method || "equipment");
   return {
-    route: settings.calculationMethod || settings.method || load.method || "equipment_list",
+    route,
     panel: {
       model_name: panel.title || panel.model,
       P_panel: n(panel.powerW, 550),
