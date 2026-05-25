@@ -1,23 +1,23 @@
-﻿import React from "react";
+import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./ShilFrame.css";
 
 const titles = {
-  "/dashboard": "داشبورد SHIL",
-  "/new-project": "پروژه جدید",
-  "/new-project/info": "اطلاعات پروژه",
-  "/new-project/environment": "شرایط محیطی",
-  "/new-project/path": "انتخاب مسیر پروژه",
-  "/new-project/method": "روش محاسبات",
-  "/new-project/inputs": "ورودی محاسبات",
-  "/new-project/system": "تنظیمات سیستم",
-  "/new-project/summary": "چکیده اطلاعات",
-  "/new-project/run": "اجرای محاسبات",
-  "/projects": "مدیریت پروژه‌ها",
-  "/contact": "ارتباط با ما",
-  "/feedback": "نظرات کاربران",
-  "/assistant": "دستیار هوشمند",
-  "/education": "آموزش",
+  "/dashboard": "??????? SHIL",
+  "/new-project": "????? ????",
+  "/new-project/info": "??????? ?????",
+  "/new-project/environment": "????? ?????",
+  "/new-project/path": "?????? ???? ?????",
+  "/new-project/method": "??? ???????",
+  "/new-project/inputs": "????? ???????",
+  "/new-project/system": "??????? ?????",
+  "/new-project/summary": "????? ???????",
+  "/new-project/run": "????? ???????",
+  "/projects": "?????? ????????",
+  "/contact": "?????? ?? ??",
+  "/feedback": "????? ???????",
+  "/assistant": "?????? ??????",
+  "/education": "?????",
 };
 
 export default function ShilFrame({ children }) {
@@ -29,7 +29,7 @@ export default function ShilFrame({ children }) {
 
   const title =
     titles[path] ||
-    (path.startsWith("/new-project") ? "پروژه جدید" : "SHIL");
+    (path.startsWith("/new-project") ? "????? ????" : "SHIL");
 
   const isStepPage = path.startsWith("/new-project");
 
@@ -39,7 +39,7 @@ export default function ShilFrame({ children }) {
     <div className="shil-frame">
       <header className="shil-header">
         <button className="shil-header-btn" onClick={() => navigate(-1)}>
-          بازگشت
+          ??????
         </button>
 
         <div className="shil-header-title">
@@ -49,7 +49,7 @@ export default function ShilFrame({ children }) {
 
         <div className="shil-header-status">
           <i />
-          آنلاین
+          ??????
         </div>
       </header>
 
@@ -59,35 +59,35 @@ export default function ShilFrame({ children }) {
         {isStepPage ? (
           <>
             <button className="shil-footer-btn" onClick={() => navigate(-1)}>
-              مرحله قبل
+              ????? ???
             </button>
 
             <button
               className="shil-footer-btn"
               onClick={() => console.info("[SHIL] Draft saved")}
             >
-              ذخیره پیش‌نویس
+              ????? ????????
             </button>
 
             <button
               className="shil-footer-btn shil-footer-primary"
               onClick={() => console.info("[SHIL] Step confirmed")}
             >
-              تأیید مرحله
+              ????? ?????
             </button>
           </>
         ) : (
           <>
             <button className="shil-footer-btn" onClick={() => navigate("/dashboard")}>
-              خانه
+              ????
             </button>
 
             <button className="shil-footer-btn" onClick={() => navigate("/projects")}>
-              پروژه‌ها
+              ????????
             </button>
 
             <button className="shil-footer-btn shil-footer-primary" onClick={() => navigate("/new-project")}>
-              پروژه جدید
+              ????? ????
             </button>
           </>
         )}

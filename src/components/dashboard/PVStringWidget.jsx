@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 
 const strings = [
 
@@ -40,7 +40,7 @@ export default function PVStringWidget() {
 
           <span>PV STRING</span>
 
-          <h3>تحلیل استرینگ پنل‌ها</h3>
+          <h3>????? ??????? ??????</h3>
 
         </div>
 

@@ -1,55 +1,54 @@
-# SHIL Final Update Report
+# SHIL Final PWA Update Report
 
-## مبنا
-این نسخه بر پایه فایل اصلی کاربر و نسخه قبلی آپدیت‌شده ساخته شده است. هسته اصلی، `package.json`، `package-lock.json`، دیتای اپ، موتورهای محاسباتی و ساختار اصلی پروژه حفظ شده‌اند.
+## هدف آپدیت
+این نسخه برای رفع کمبودهای آخرین تست UI/Asset آماده شده است.
 
-## تغییرات متصل به هسته اپ
-- Routeهای فعال پروژه روی مسیر واحد `src/pages/project/*` متمرکز شدند.
-- صفحات تکراری سطح `src/pages` که نسخه قدیمی همین مراحل بودند حذف شدند تا دوباره‌کاری و باگ مسیریابی ایجاد نشود.
-- مسیرهای Solar و Emergency به جریان اصلی پروژه جدید متصل شدند.
-- مسیر برق اضطراری در UI از عنوان Emergency Core استفاده نمی‌کند، اما در لایه محاسبات با منطق اختصاصی برق اضطراری/Emergency-core طراحی شده است.
-- صفحه خروجی نهایی به `runEngineeringDesign` متصل شده است تا در Runtime به هسته اصلی محاسبات وصل بماند.
+## اصلاحات انجام‌شده
 
-## مسیرهای اصلی جدید
-- `/new-project/info`
-- `/new-project/environment`
-- `/new-project/path`
-- `/new-project/solar/select`
-- `/new-project/solar/offgrid`
-- `/new-project/solar/hybrid`
-- `/new-project/solar/ongrid`
-- `/new-project/emergency`
-- `/new-project/input/:domain/:method`
-- `/new-project/system/:domain`
-- `/new-project/summary/:domain`
-- `/new-project/run/:domain`
+### 1. آیکون‌ها
+- پس‌زمینه سفید/چکر آیکون‌های داشبورد و پروژه حذف شد.
+- آیکون‌ها به PNG شفاف 512x512 برای موبایل تبدیل شدند.
+- فایل‌های PNG به عنوان اولویت اصلی نگه داشته شدند.
+- فایل `output.png` برای جلوگیری از Broken Image در مسیرهای قدیمی اضافه شد.
 
-## حذف‌های کم‌ریسک برای جلوگیری از تکرار
-- `src/pages/ProjectInfo.jsx`
-- `src/pages/Environment.jsx`
-- `src/pages/ProjectPath.jsx`
-- `src/pages/CalculationMethod.jsx`
-- `src/pages/CalculationInputs.jsx`
-- `src/pages/SystemSettings.jsx`
-- `src/pages/Summary.jsx`
-- `dist/` خروجی build قدیمی
-- `temp_dashboard_imports.txt`
+### 2. قاب شیشه‌ای نئونی
+- قاب Glass برای همه آیکون‌های داشبورد، پروژه جدید و نوار مسیر پروژه اعمال شد.
+- نور نئونی آبی و بنفش به صورت CSS نهایی و بدون سنگین کردن Assetها اضافه شد.
+- قاب‌ها از طریق `src/styles/shil-final-hotfix.css` کنترل می‌شوند.
 
-## مواردی که حذف نشدند
-- `package.json`
-- `package-lock.json`
-- `src/data/*`
-- `src/calculation/*`
-- `src/engines/*`
-- `src/core/*`
-- `public/*`
-- فایل‌ها و دیتاهای اصلی اپ
+### 3. بک‌گراندها و مسیر Asset
+- ارجاع‌های SVG قدیمی بک‌گراند به WEBP اصلاح شدند.
+- مسیرهای Login/Main به فایل‌های زیر متصل شدند:
+  - `/assets/shil/background/login/shil-login-bg.webp`
+  - `/assets/shil/background/main/shil-main-bg.webp`
 
-## قوانین UI اعمال‌شده
-- Header و Footer ثابت
-- نوار ۹ آیکون پروژه جدید به صورت اسکرول افقی مستقل در صفحات دیتاسنگین
-- اسکرول عمودی مجاز در صفحات دیتاسنگین
-- اسکرول افقی فقط داخل بلوک‌های مشخص
-- Scrollbar افقی با رنگ مخالف برای رفاه کاربر
-- مخفی شدن هوشمند دیتا زیر Header/Footer هنگام اسکرول
-- آیکون‌ها با fallback داخلی در صورت نبود فایل تصویر
+### 4. کارت‌های انتخاب مسیر پروژه
+- مسیر تصاویر کارت‌های Project Path روی PNG تثبیت شد:
+  - `/assets/shil/execution/solar-execution.png`
+  - `/assets/shil/execution/emergency-inverter-battery.png`
+  - `/assets/shil/execution/utility-execution.png`
+
+### 5. اتصال صفحه تنظیمات سیستم
+- صفحه `SystemSettings` دوباره به مسیر قبل و بعد وصل شد.
+- دکمه‌های پایین صفحه اضافه شد:
+  - مرحله قبل
+  - ذخیره پیش‌نویس
+  - تأیید مرحله
+- مسیر خروجی Summary برای پروژه نیروگاهی اصلاح شد تا به `/new-project/summary/utility` برود.
+- مسیر برگشت برای Solar/Emergency/Utility جداگانه مدیریت شد.
+
+### 6. پاکسازی
+- فایل‌های بکاپ مزاحم از `src` حذف شدند.
+- `public/icons` و `src/mobile-ui/icons` حذف شدند تا تداخل Neon قدیمی برنگردد.
+
+## تست انجام‌شده
+- Smoke test پروژه اجرا شد و موفق بود.
+- Build کامل داخل محیط فعلی به دلیل ناقص بودن `node_modules` و نبود پکیج `@supabase/supabase-js` در محیط تست قابل تکمیل نبود. این پکیج داخل `package.json` و `package-lock.json` وجود دارد و بعد از `npm install` روی سیستم کاربر نصب می‌شود.
+
+## دستور تست محلی
+```powershell
+npm install
+Remove-Item dist -Recurse -Force -ErrorAction SilentlyContinue
+Remove-Item node_modules\.vite -Recurse -Force -ErrorAction SilentlyContinue
+npm run dev
+```

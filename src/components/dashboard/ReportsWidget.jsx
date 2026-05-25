@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 
 const reports = [
 
@@ -31,7 +31,7 @@ export default function ReportsWidget() {
 
           <span>REPORT CENTER</span>
 
-          <h3>گزارش‌های تولیدشده</h3>
+          <h3>????????? ????????</h3>
 
         </div>
 

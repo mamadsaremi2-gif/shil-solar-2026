@@ -2,7 +2,6 @@ import React, { useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import EngineeringPageShell from "../../components/EngineeringPageShell.jsx";
 import { approveProjectStep } from "../../workflow/projectWorkflow.js";
-import { runEmergencyPowerDesign } from "../../core/calculation/emergencyPowerEngine.js";
 import { buildMethodSummary, getActiveMethodKey } from "../../core/summary/methodSummaryEngine.js";
 import { createAIInstallationPreview } from "../../ai/installation/aiInstallationPreviewEngine.js";
 import { generateAIInstallationImage } from "../../ai/installation/aiInstallationImageService.js";
@@ -87,7 +86,7 @@ export default function SummaryPage() {
   const unifiedPvResult = useMemo(() => readDraft("shil:unifiedPvEngineResult", solarDesign?.unifiedPvEngineResult || systemSettings?.unifiedPvEngineResult || null), [solarDesign, systemSettings]);
   const selectedEquipment = useMemo(() => readDraft("shil:selectedEquipments", []), []);
   const environmentImage = useMemo(() => getFirstSiteImage(environment), [environment]);
-  const emergencyDesign = useMemo(() => emergency ? runEmergencyPowerDesign({ load: loadResult, settings: readDraft("shil:emergencyPowerSettings", {}) }) : null, [emergency, loadResult]);
+  const emergencyDesign = useMemo(() => emergency ? { ...loadResult, previewOnly: true, explanations: ["این صفحه فقط چکیده است؛ محاسبه قطعی در صفحه اجرای محاسبات انجام می‌شود."] } : null, [emergency, loadResult]);
 
   const [aiOpen, setAiOpen] = useState(false);
   const [imageTransferred, setImageTransferred] = useState(false);

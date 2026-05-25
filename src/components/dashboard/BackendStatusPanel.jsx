@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { Cloud, ShieldCheck, Database, UserCheck } from "lucide-react";
 import { useAuthStore } from "../../backend/auth/authStore.js";
 
@@ -10,7 +10,7 @@ export default function BackendStatusPanel() {
       <div className="widget-head-v15">
         <div>
           <span>BACKEND CORE</span>
-          <h3>وضعیت Backend / Auth / API</h3>
+          <h3>????? Backend / Auth / API</h3>
         </div>
 
         <div className={`backend-chip-v15 ${authenticated ? "online" : "offline"}`}>

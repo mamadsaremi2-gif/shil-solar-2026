@@ -13,10 +13,15 @@ export const SHIL_ASSETS = {
   },
   contact: {
     products: "/assets/shil/contact/shil-products-banner.webp",
-    qrWebsite: "/assets/shil/contact/qr-website.png",
-    qrSupport: "/assets/shil/contact/qr-support.png",
-    qrWhatsApp: "/assets/shil/contact/qr-whatsapp.png",
-    qrCatalog: "/assets/shil/contact/qr-catalog.png",
+    qrWebsite: "/assets/shil/contact/qr-website.webp",
+    qrSupport: "/assets/shil/contact/qr-support.webp",
+    qrWhatsApp: "/assets/shil/contact/qr-whatsapp.webp",
+    qrCatalog: "/assets/shil/contact/qr-catalog.webp",
+  },
+  execution: {
+    solar: "/assets/shil/execution/solar-execution.png",
+    emergency: "/assets/shil/execution/emergency-inverter-battery.png",
+    utility: "/assets/shil/execution/utility-execution.png",
   },
   icons: {
     dashboard: {

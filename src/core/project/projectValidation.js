@@ -1,4 +1,4 @@
-﻿export function validateProjectStep(step, data) {
+export function validateProjectStep(step, data) {
 
   switch(step) {
 

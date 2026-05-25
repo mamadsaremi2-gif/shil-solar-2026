@@ -1,1 +1,0 @@
-import{t as s}from"./vendor-react-k-T_8wpX.js";import{S as r}from"./ShilPageShell-D6UqrFPi.js";import{I as e,p as o}from"./shilFlowConfig-DzdBP_tr.js";function t(){return s.jsx(r,{title:"پروژه جدید",className:"shil-new-project-no-scroll",children:s.jsx(e,{items:o,gridClass:"new-project-grid-3x3"})})}export{t as default};

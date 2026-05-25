@@ -1,55 +1,47 @@
 import React from "react";
 import DashboardCard from "./DashboardCard.jsx";
 
-// آیکون‌های نئونی به‌صورت کامپوننت React
-import {
-  NeonProjects,
-  NeonNewProject,
-  NeonScenarios,
-  NeonContact,
-  NeonFeedback,
-  NeonAssistant,
-} from "../../mobile-ui/icons/NeonIcons.jsx";
+import { SHIL_ASSETS } from "../../config/shilAssetPaths.js";
 
 const dashboardItems = [
   {
     to: "/projects",
-    icon: <NeonProjects />,
+    icon: <img src={SHIL_ASSETS.icons.dashboard.projects} alt="" loading="lazy" decoding="async" />,
     title: "پروژه‌ها",
     subtitle: "جاری و نهایی",
     tone: "cyan",
   },
   {
     to: "/new-project",
-    icon: <NeonNewProject />,
+    icon: <img src={SHIL_ASSETS.icons.dashboard.newProject} alt="" loading="lazy" decoding="async" />,
     title: "پروژه جدید",
     subtitle: "مسیر ۸ مرحله‌ای",
     tone: "blue",
   },
   {
     to: "/scenarios",
-    icon: <NeonScenarios />,
+    icon: <img src={SHIL_ASSETS.icons.dashboard.scenarios} alt="" loading="lazy" decoding="async" />,
     title: "سناریوهای آماده",
     subtitle: "خورشیدی و اضطراری",
     tone: "amber",
   },
   {
     to: "/contact",
-    icon: <NeonContact />,
+    icon: <img src={SHIL_ASSETS.icons.dashboard.contact} alt="" loading="lazy" decoding="async" />,
     title: "ارتباط با ما",
     subtitle: "راه‌های تماس",
     tone: "purple",
   },
   {
     to: "/feedback",
-    icon: <NeonFeedback />,
+    icon: <img src={SHIL_ASSETS.icons.dashboard.feedback} alt="" loading="lazy" decoding="async" />,
     title: "بازخورد کاربر",
     subtitle: "ثبت مشکل/پیشنهاد",
     tone: "pink",
   },
   {
     to: "/assistant",
-    icon: <NeonAssistant />,
+    icon: <img src={SHIL_ASSETS.icons.dashboard.assistant} alt="" loading="lazy" decoding="async" />,
     title: "دستیار هوشمند",
     subtitle: "کنترل مهندسی",
     tone: "violet",

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * SHIL Sync Layer
  * Offline-first safe synchronization core.
  * Does not require backend yet.

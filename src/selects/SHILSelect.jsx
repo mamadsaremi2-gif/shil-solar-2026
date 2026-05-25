@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import Select from "react-select";
 
 export default function SHILSelect() {
@@ -9,17 +9,17 @@ export default function SHILSelect() {
       options={[
         {
           value: "ongrid",
-          label: "آنگرید",
+          label: "??????",
         },
 
         {
           value: "hybrid",
-          label: "هیبرید",
+          label: "??????",
         },
 
         {
           value: "offgrid",
-          label: "آفگرید",
+          label: "??????",
         },
       ]}
     />

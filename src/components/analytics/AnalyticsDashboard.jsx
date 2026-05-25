@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 
 import EngineeringComposedChart from "./EngineeringComposedChart.jsx";
 import EfficiencyGauge from "./EfficiencyGauge.jsx";

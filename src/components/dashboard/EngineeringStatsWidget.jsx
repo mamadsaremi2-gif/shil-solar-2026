@@ -1,24 +1,24 @@
-﻿import React from "react";
+import React from "react";
 
 const stats = [
 
   {
-    title: "توان سیستم",
+    title: "???? ?????",
     value: "12.5 kW",
   },
 
   {
-    title: "تعداد پنل",
+    title: "????? ???",
     value: "24",
   },
 
   {
-    title: "ولتاژ DC",
+    title: "????? DC",
     value: "480V",
   },
 
   {
-    title: "زمان برق اضطراری مورد نظر",
+    title: "???? ??? ??????? ???? ???",
     value: "8h",
   },
 
@@ -36,7 +36,7 @@ export default function EngineeringStatsWidget() {
 
           <span>ENGINEERING DATA</span>
 
-          <h3>مشخصات فنی سیستم</h3>
+          <h3>?????? ??? ?????</h3>
 
         </div>
 

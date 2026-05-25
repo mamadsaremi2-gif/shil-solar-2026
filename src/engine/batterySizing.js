@@ -1,4 +1,4 @@
-﻿export function calculateBattery(
+export function calculateBattery(
   dailyEnergy,
   voltage,
   dod

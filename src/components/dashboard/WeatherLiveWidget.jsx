@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 
 const weather = [
 
@@ -36,7 +36,7 @@ export default function WeatherLiveWidget() {
 
           <span>LIVE WEATHER</span>
 
-          <h3>وضعیت آب‌وهوا</h3>
+          <h3>????? ???????</h3>
 
         </div>
 

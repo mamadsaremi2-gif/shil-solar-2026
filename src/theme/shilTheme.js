@@ -1,4 +1,4 @@
-﻿export const SHIL_THEME = {
+export const SHIL_THEME = {
   colors: {
     background: "#020617",
     surface: "#081226",

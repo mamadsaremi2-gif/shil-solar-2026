@@ -1,4 +1,4 @@
-﻿import jsPDF from "jspdf";
+import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
 export function exportEngineeringPDF() {
@@ -8,7 +8,7 @@ export function exportEngineeringPDF() {
   pdf.text("SHIL Engineering Report", 14, 18);
 
   pdf.setFontSize(10);
-  pdf.text("Solar / Hybrid / پشتیبان Engineering Output", 14, 26);
+  pdf.text("Solar / Hybrid / ??????? Engineering Output", 14, 26);
 
   autoTable(pdf, {
     startY: 36,

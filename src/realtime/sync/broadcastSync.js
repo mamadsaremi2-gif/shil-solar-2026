@@ -1,4 +1,4 @@
-﻿import { BroadcastChannel } from "broadcast-channel";
+import { BroadcastChannel } from "broadcast-channel";
 
 export const realtimeChannel =
   new BroadcastChannel("SHIL_REALTIME");

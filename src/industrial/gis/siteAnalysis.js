@@ -1,4 +1,4 @@
-﻿import { getDistance } from "geolib";
+import { getDistance } from "geolib";
 import * as turf from "@turf/turf";
 
 export function calculateSiteDistance(start, end) {

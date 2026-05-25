@@ -1,4 +1,4 @@
-﻿import * as XLSX
+import * as XLSX
 from "xlsx";
 
 export function exportExcel(

@@ -1,11 +1,11 @@
-﻿import React, { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabase/client.js";
 import { createSession } from "../auth/session.js";
 
 const AUTH_TIMEOUT_MS = 12000;
 
-function withTimeout(promise, message = "زمان اتصال تمام شد.") {
+function withTimeout(promise, message = "زمان پاسخ‌گویی سرور تمام شد.") {
   return Promise.race([
     promise,
     new Promise((_, reject) =>
@@ -26,7 +26,7 @@ export default function LoginPage() {
       role: "guest",
       authType: "guest",
       displayName: "کاربر مهمان",
-      login: "guest"
+      login: "guest",
     });
 
     navigate("/dashboard", { replace: true });
@@ -39,12 +39,12 @@ export default function LoginPage() {
     const email = login.trim().toLowerCase();
 
     if (!email || !password.trim()) {
-      setError("برای ورود، ایمیل و رمز عبور را وارد کنید.");
+      setError("لطفاً ایمیل و رمز عبور را وارد کنید.");
       return;
     }
 
     if (!email.includes("@")) {
-      setError("ورود آنلاین فقط با ایمیل معتبر انجام می‌شود.");
+      setError("فرمت ایمیل واردشده معتبر نیست.");
       return;
     }
 
@@ -52,15 +52,12 @@ export default function LoginPage() {
       setLoading(true);
 
       const { data, error: authError } = await withTimeout(
-        supabase.auth.signInWithPassword({
-          email,
-          password,
-        }),
+        supabase.auth.signInWithPassword({ email, password }),
         "اتصال به Supabase برقرار نشد."
       );
 
       if (authError || !data?.user?.id) {
-        setError("ایمیل یا رمز عبور اشتباه است.");
+        setError("ورود ناموفق بود. اطلاعات را بررسی کنید.");
         return;
       }
 
@@ -70,11 +67,11 @@ export default function LoginPage() {
           .select("id,email,role,status,full_name")
           .eq("id", data.user.id)
           .single(),
-        "خواندن نقش کاربر از Supabase انجام نشد."
+        "دریافت پروفایل کاربر انجام نشد."
       );
 
       if (profileError || !profile) {
-        setError("پروفایل کاربر در Supabase پیدا نشد.");
+        setError("پروفایل کاربر در سیستم پیدا نشد.");
         return;
       }
 
@@ -85,11 +82,10 @@ export default function LoginPage() {
         login: email,
         authType: "supabase",
         displayName: profile.full_name || email,
-        userId: data.user.id
+        userId: data.user.id,
       });
 
       localStorage.setItem("shil_profile", JSON.stringify(profile));
-
       navigate(isAdmin ? "/admin" : "/dashboard", { replace: true });
     } catch (err) {
       console.error("SHIL login error:", err);
@@ -135,8 +131,7 @@ export default function LoginPage() {
         </button>
 
         <p className="shil-auth-note">
-          هر کاربر، حتی مهمان، فضای پروژه‌ها، سوالات و نظرات اختصاصی خودش را دارد.
-          ادمین با ایمیل و رمز عبور تایید شده وارد کارتابل مدیریتی می‌شود.
+          هر کاربر حتی مهمان، فضای پروژه‌ها، سوالات و نظرات اختصاصی خودش را دارد. ادمین با ایمیل و رمز عبور تأیید شده وارد کارتابل مدیریتی می‌شود.
         </p>
       </section>
     </div>

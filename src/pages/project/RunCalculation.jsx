@@ -5,7 +5,6 @@ import { approveProjectStep } from "../../workflow/projectWorkflow.js";
 import { markCurrentProjectFinal, showUxToast } from "../../workflow/uxFlowController.js";
 import { runEngineeringDesign } from "../../runEngineeringDesign.js";
 import { buildScenarioCalculationInput } from "../../core/scenario/scenarioToEngineeringForm.js";
-import { runEmergencyPowerDesign } from "../../core/calculation/emergencyPowerEngine.js";
 import { buildMethodSummary, getActiveMethodKey } from "../../core/summary/methodSummaryEngine.js";
 import {
   buildFinalEngineeringDelivery,
@@ -46,7 +45,8 @@ function readCalculationInput() {
 
 function runCore(domain) {
   if (domain === "emergency") {
-    return { result: runEmergencyPowerDesign({ load: readDraft("shil:loadEngineResult", {}), settings: readDraft("shil:emergencyPowerSettings", {}) }) };
+    const form = { ...makeFallbackForm("emergency"), load: readDraft("shil:loadEngineResult", {}), settings: readDraft("shil:emergencyPowerSettings", {}), designDomain: "emergency" };
+    return { result: runEngineeringDesign(form, { domain: "emergency", mode: "final-core", stopOnValidationError: false }) };
   }
   try {
     const calculationInput = readCalculationInput();

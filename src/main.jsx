@@ -7,6 +7,7 @@ import "./styles/app.css";
 import "./styles/shil-ui-final-100.css";
 import "./styles/shil-ux-flow-100.css";
 import "./styles/shil-project-management-100.css";
+import "./styles/shil-final-hotfix.css";
 
 window.React = React;
 

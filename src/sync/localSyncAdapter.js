@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Temporary local adapter.
  * Backend/Supabase adapter can replace this later.
  */

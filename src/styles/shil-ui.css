@@ -1,3 +1,6 @@
+* {
+  font-family: Vazirmatn, Tahoma, Arial, sans-serif;
+}
 *{
   box-sizing:border-box;
 }
@@ -8621,7 +8624,7 @@ html,body,#root{width:100%;max-width:100%;min-height:100%;overflow-x:hidden;}
   }
 }
 
-@import "./app.css";
+/* removed late app.css import; app.css is imported from main.jsx */
 
 /* SHIL optional AI installation visualization block - summary page */
 .shil-ai-preview-card{
@@ -9809,4 +9812,59 @@ select,
 .shil-admin-field-wide { grid-column: 1 / -1; }
 @media (max-width: 720px) {
   .shil-admin-record-head { flex-direction: column; }
+}
+
+
+.shil-login-page,
+.shil-welcome-page {
+  background-image:
+    linear-gradient(180deg, rgba(4,10,19,.28), rgba(4,10,19,.72)),
+    url('/assets/shil/background/login/shil-login-bg.webp') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+}
+
+
+/* SHIL final asset binding patch */
+:root {
+  --shil-login-bg: url('/assets/shil/background/login/shil-login-bg.webp');
+  --shil-main-bg: url('/assets/shil/background/main/shil-main-bg.webp');
+}
+
+* {
+  font-family: Vazirmatn, Tahoma, Arial, sans-serif;
+}
+
+.shil-auth-page,
+.shil-login-page,
+.shil-welcome-page {
+  background-image:
+    linear-gradient(180deg, rgba(4, 10, 19, .18), rgba(4, 10, 19, .72)),
+    var(--shil-login-bg) !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+}
+
+.shil-dashboard-shell,
+.shil-engineering-shell,
+.shil-page-shell,
+.shil-app-bg {
+  background-image:
+    linear-gradient(180deg, rgba(4, 10, 19, .24), rgba(4, 10, 19, .74)),
+    var(--shil-main-bg) !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+}
+
+.shil-ios-icon-img img,
+.shil-step-icon img,
+.shil-execution-image,
+.shil-utility-select-button img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
 }

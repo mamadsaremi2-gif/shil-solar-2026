@@ -2,8 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import EngineeringPageShell from "../../components/EngineeringPageShell.jsx";
 import { approveProjectStep } from "../../workflow/projectWorkflow.js";
-import { runSolarAutoDesign } from "../../core/calculation/solarAutoDesignEngine.js";
-import { runUnifiedPvForUi, unifiedPvToLegacyDesign } from "../../engine/unifiedPvUiAdapter.js";
+import { runSurfacePvPreview as runUnifiedPvForUi, pvPreviewToLegacyDesign as unifiedPvToLegacyDesign } from "../../calculationGateway/surfacePreviewData.js";
 import { SHIL_LITHIUM_BATTERIES, SHIL_SOLAR_INVERTERS, SHIL_SOLAR_PANELS } from "../../data/shilSolarBanks.js";
 
 function readDraft(key, fallback = null) {
@@ -386,8 +385,10 @@ function InverterMpptTopologyCard({ design, mpptCount, onMpptCount, enabled }) {
 }
 
 export default function SystemSettings() {
-  const { domain = "solar" } = useParams();
+  const { domain: routeDomain } = useParams();
   const navigate = useNavigate();
+  const storedDomain = localStorage.getItem("shil:calculationDomain") || "";
+  const domain = routeDomain || storedDomain || "solar";
   const emergency = domain === "emergency";
   const utilityGateway = domain === "utility";
   const load = useMemo(() => readDraft("shil:loadEngineResult", {}), []);
@@ -427,6 +428,27 @@ export default function SystemSettings() {
   const [annualDegradationPercent, setAnnualDegradationPercent] = useState("");
   const [mpptCountPerInverter, setMpptCountPerInverter] = useState("1");
   const [warning, setWarning] = useState("");
+
+  const saveSystemDraftOnly = () => {
+    try {
+      localStorage.setItem("shil:systemSettingsDraft", JSON.stringify({ domain, ...settings, savedAt: new Date().toISOString() }));
+      setWarning("پیش‌نویس تنظیمات سیستم ذخیره شد.");
+    } catch {
+      setWarning("ذخیره پیش‌نویس انجام نشد؛ حافظه مرورگر را بررسی کنید.");
+    }
+  };
+
+  const goPreviousFromSystem = () => {
+    if (emergency) {
+      navigate("/new-project/emergency?domain=emergency&from=system");
+      return;
+    }
+    if (utilityGateway) {
+      navigate("/new-project/path?from=system&gateway=utility");
+      return;
+    }
+    navigate(`/new-project/inputs/${domain || "solar"}?from=system`);
+  };
 
   const activeCalculationMethod = localStorage.getItem("shil:calculationMethod") || (isSolarPanelPowerRoute ? "solar_panel_power" : "equipment");
 
@@ -469,7 +491,7 @@ export default function SystemSettings() {
     parameterManualMode
   }), [systemType, activeCalculationMethod, autonomyDays, reserveFactor, equipmentManualMode, parameterManualMode, panelId, inverterId, batteryId, panelExtraFactor, inverterExtraFactor, batteryExtraFactor, projectScale, targetPlantPowerMW, powerBlockSizeKW, mvVoltageKV, blockStationMW, exportLimitMW, groundCoverageRatio, trackerMode, terrainSlopeDeg, usableLandPercent, gridShortCircuitMVA, estimatedMvFaultKA, plantAvailabilityPercent, annualDegradationPercent, solarPanelPowerInput, load, mpptCountPerInverter, batteryRequired, batteryScope, isSolarPanelPowerRoute]);
 
-  const legacySolarDesign = useMemo(() => runSolarAutoDesign({ load, environment, settings }), [load, environment, settings]);
+  const legacySolarDesign = useMemo(() => ({ valid: true, previewOnly: true, panel: { title: "پنل پیشنهادی", powerW: settings?.panelPowerW || 620 }, inverter: { title: "اینورتر پیشنهادی", count: 1, ratedPowerW: load?.totalPowerW || 3000 }, battery: { totalCount: settings?.autonomyDays > 0 ? 1 : 0 }, pvArray: { panelCount: settings?.panelCount || 0, arrayPowerW: (settings?.panelCount || 0) * (settings?.panelPowerW || 620) }, explanations: ["این صفحه فقط پیش‌نمایش روکشی است؛ محاسبه قطعی در مرحله نهایی انجام می‌شود."] }), [load, settings]);
   const useUnifiedPvEngine = !emergency && !utilityGateway;
   const unifiedPvResult = useMemo(() => {
     if (!useUnifiedPvEngine) return null;
@@ -537,7 +559,7 @@ export default function SystemSettings() {
     if (!solarDesign.valid) {
       setWarning(solarDesign.nextBlockedReason || "پیکربندی با هشدار ثبت شد و در چکیده قابل بررسی است.");
     }
-    navigate("/new-project/summary/solar");
+    navigate(`/new-project/summary/${utilityGateway ? "utility" : "solar"}`);
   };
 
   const confirmEmergency = () => {
@@ -554,7 +576,7 @@ export default function SystemSettings() {
             <div className="shil-section-head"><h2>پیکربندی برق اضطراری</h2><span>Battery + Inverter Core</span></div>
             <p className="shil-muted-line">مسیر برق اضطراری از همان بانک باتری و اینورتر استفاده می‌کند و در چکیده نهایی ثبت می‌شود.</p>
           </div>
-          <button type="button" className="shil-primary-wide" onClick={confirmEmergency}>تأیید و مشاهده چکیده</button>
+          <div className="shil-system-nav-row"><button type="button" className="shil-soft-button" onClick={goPreviousFromSystem}>مرحله قبل</button><button type="button" className="shil-soft-button" onClick={saveSystemDraftOnly}>ذخیره پیش‌نویس</button><button type="button" className="shil-primary-wide" onClick={confirmEmergency}>تأیید مرحله</button></div>
         </section>
       </EngineeringPageShell>
     );
@@ -735,7 +757,7 @@ export default function SystemSettings() {
           {solarDesign.warnings.map((item) => <div key={item} className="shil-inline-warning">{item}</div>)}
         </div>
 
-        <button type="button" className="shil-primary-wide shil-confirm-config-button" onClick={confirmSolar}>تأیید پیکربندی و رفتن به چکیده</button>
+        <div className="shil-system-nav-row shil-system-nav-row-final"><button type="button" className="shil-soft-button" onClick={goPreviousFromSystem}>مرحله قبل</button><button type="button" className="shil-soft-button" onClick={saveSystemDraftOnly}>ذخیره پیش‌نویس</button><button type="button" className="shil-primary-wide shil-confirm-config-button" onClick={confirmSolar}>تأیید مرحله</button></div>
       </section>
     </EngineeringPageShell>
   );

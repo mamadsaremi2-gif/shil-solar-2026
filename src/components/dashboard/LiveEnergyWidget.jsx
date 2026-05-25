@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 
 import {
   ResponsiveContainer,
@@ -31,7 +31,7 @@ export default function LiveEnergyWidget() {
 
           <span>LIVE SOLAR</span>
 
-          <h3>تولید لحظه‌ای انرژی</h3>
+          <h3>????? ??????? ?????</h3>
 
         </div>
 

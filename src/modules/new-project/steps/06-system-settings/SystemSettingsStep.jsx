@@ -1,12 +1,14 @@
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
-import { runSolarAutoDesign } from "../../../../core/calculation/solarAutoDesignEngine.js";
+
 
 export function SystemSettingsStep({ value = {} }) {
-  const design = useMemo(() => runSolarAutoDesign({
-    load: value.load || {},
-    environment: value.environment || {},
-    settings: value
+  const design = useMemo(() => ({
+    valid: true,
+    previewOnly: true,
+    inverter: { title: "پیشنهاد روکشی اینورتر" },
+    battery: { battery: { title: "پیشنهاد روکشی باتری" } },
+    panel: { title: "پیشنهاد روکشی پنل" }
   }), [value]);
 
   return (

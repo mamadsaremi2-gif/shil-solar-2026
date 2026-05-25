@@ -1,4 +1,4 @@
-﻿export function calculateSystemLosses({
+export function calculateSystemLosses({
   temperatureLoss = 6,
   cableLoss = 2,
   inverterLoss = 4,

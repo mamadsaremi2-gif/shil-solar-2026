@@ -1,4 +1,4 @@
-﻿export const projectStatuses = [
+export const projectStatuses = [
   "draft",
   "environment-ready",
   "equipment-ready",
