@@ -1,0 +1,221 @@
+files 715 deps 216 used 114 unused 106
+
+USED:
+@capacitor/device 1
+@capacitor/network 1
+@hookform/resolvers 1
+@monaco-editor/react 1
+@react-three/fiber 1
+@sentry/react 1
+@supabase/supabase-js 3
+@tanstack/react-query 3
+@turf/turf 2
+@uiw/react-json-view 1
+@vitejs/plugin-react 1
+ag-grid-community 1
+ag-grid-react 1
+axios 5
+broadcast-channel 1
+browser-image-compression 1
+chart.js 1
+crypto-js 2
+dagre 1
+date-fns 1
+dayjs 1
+dexie 3
+dompurify 1
+embla-carousel-react 1
+eventemitter3 1
+file-saver 3
+firebase 2
+framer-motion 4
+fuse.js 1
+geolib 2
+highlight.js 1
+howler 1
+html2canvas 2
+i18next 1
+idb 1
+jspdf 5
+jspdf-autotable 3
+jszip 2
+katex 1
+localforage 4
+lucide-react 25
+maplibre-gl 1
+mathjs 1
+mqtt 1
+nanoid 1
+openai 2
+pako 2
+papaparse 2
+peerjs 1
+react 178
+react-beautiful-dnd 1
+react-big-calendar 1
+react-calendar 1
+react-calendar-heatmap 1
+react-chartjs-2 1
+react-countup 2
+react-datasheet-grid 1
+react-datepicker 1
+react-dom 1
+react-dropzone 1
+react-easy-crop 1
+react-error-boundary 2
+react-gauge-component 1
+react-grid-layout 1
+react-helmet-async 1
+react-hook-form 2
+react-hot-toast 5
+react-i18next 1
+react-idle-timer 1
+react-input-mask 1
+react-intersection-observer 1
+react-katex 1
+react-map-gl 1
+react-markdown 2
+react-organizational-chart 1
+react-parallax-tilt 1
+react-pdf 2
+react-player 1
+react-qr-code 3
+react-querybuilder 1
+react-resizable-panels 1
+react-router-dom 37
+react-select 2
+react-signature-canvas 1
+react-terminal-ui 1
+react-textarea-autosize 1
+react-timer-hook 1
+react-webcam 1
+react-window 2
+reactflow 1
+recharts 11
+recoil 1
+rehype-highlight 1
+remark-gfm 2
+rxjs 1
+socket.io-client 2
+solar-calculator 1
+swiper 2
+tone 1
+vite 1
+vite-plugin-pwa 1
+wavesurfer.js 1
+web-vitals 2
+webrtc-adapter 1
+workbox-window 1
+xlsx 3
+xstate 1
+yup 1
+zod 1
+zustand 8
+
+UNUSED:
+@capacitor/android
+@capacitor/app
+@capacitor/cli
+@capacitor/core
+@capacitor/filesystem
+@capacitor/ios
+@capacitor/preferences
+@react-spring/web
+@react-three/drei
+@sentry/vite-plugin
+@tanstack/react-table
+@uidotdev/usehooks
+@use-gesture/react
+@xstate/react
+ace-builds
+ai
+amqplib
+autoprefixer
+chartjs-adapter-date-fns
+chartjs-plugin-zoom
+clsx
+d3
+d3-array
+d3-sankey
+d3-scale
+eslint
+eslint-plugin-react
+eslint-plugin-react-hooks
+html5-qrcode
+immer
+inputmask
+jotai
+jwt-decode
+keen-slider
+leaflet
+leaflet-draw
+lodash
+lodash.clonedeep
+lottie-react
+mediasoup-client
+mermaid
+modbus-serial
+monaco-editor
+pdf-lib
+postcss
+prettier
+qrcode
+qrcode.react
+react-ace
+react-aria
+react-colorful
+react-confetti
+react-device-detect
+react-dnd
+react-dnd-html5-backend
+react-draggable
+react-force-graph
+react-grid-system
+react-icons
+react-image-crop
+react-imask
+react-lazy-load-image-component
+react-leaflet
+react-leaflet-draw
+react-mermaid2
+react-phone-number-input
+react-query
+react-resizable
+react-rnd
+react-router-cache-route
+react-split
+react-stately
+react-swipeable
+react-syntax-highlighter
+react-table
+react-time-picker
+react-use
+react-virtualized
+react-virtuoso
+react-zoom-pan-pinch
+rollup-plugin-visualizer
+rrule
+sharp
+simple-peer
+socket.io-parser
+sockjs-client
+sonner
+stompjs
+tailwind-merge
+terser
+three
+turf
+usehooks-ts
+uuid
+valtio
+vis-network
+vite-plugin-compression
+workbox-background-sync
+workbox-cacheable-response
+workbox-core
+workbox-expiration
+workbox-precaching
+workbox-routing
+workbox-strategies
+xterm
+xterm-addon-fit

@@ -1,7 +1,7 @@
 {
-  "name": "shil-infrastructure-v15-ui-standardization-pack",
+  "name": "shil-v18-final-engineering-completion",
   "private": true,
-  "version": "15.0.0",
+  "version": "18.0.0",
   "type": "module",
   "scripts": {
     "dev": "node ./node_modules/vite/bin/vite.js --host 0.0.0.0",
@@ -11,7 +11,15 @@
     "backend:doctor": "node -e \"console.log('SHIL backend env check:', {SUPABASE_URL:!!process.env.SUPABASE_URL, OPENAI_API_KEY:!!process.env.OPENAI_API_KEY})\"",
     "test": "node -e \"console.log('SHIL smoke test passed')\"",
     "android:sync": "npm run build && npx cap sync android",
-    "android:debug": "npm run android:sync && cd android && ./gradlew assembleDebug"
+    "android:debug": "npm run android:sync && cd android && ./gradlew assembleDebug",
+    "engine:smoke": "node tools/smoke-engine.mjs",
+    "ops:check": "node tools/production-check.mjs",
+    "ops:report": "node tools/export-engine-report.mjs",
+    "ops:ready": "npm run engine:smoke && npm run engine:v17 && npm run engine:v18 && npm run ops:check && npm run ops:report",
+    "prod:build": "npm run ops:ready && npm run build",
+    "engine:v17": "node tools/v17-engine-qa.mjs",
+    "engine:v18": "node tools/v18-final-qa.mjs",
+    "production:final": "npm run engine:v18 && npm run ops:check"
   },
   "dependencies": {
     "@capacitor/android": "^8.3.4",
@@ -68,7 +76,7 @@
     "leaflet": "^1.9.4",
     "localforage": "^1.10.0",
     "lodash": "^4.18.1",
-    "lucide-react": "^1.14.0",
+    "lucide-react": "^1.16.0",
     "maplibre-gl": "^5.24.0",
     "mathjs": "^15.2.0",
     "monaco-editor": "^0.55.1",

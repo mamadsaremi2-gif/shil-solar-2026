@@ -1,8 +1,3 @@
-import { runUnifiedEngineForLegacyUI } from "../../calculationGateway/legacyEngineeringAdapter.js";
-
 export function runEngineeringEngine(input = {}, options = {}) {
-  return runUnifiedEngineForLegacyUI(input, {
-    ...options,
-    source: options.source || "engineering-engine-legacy-entrypoint",
-  });
+  return { status: "disabled", valid: true, canContinue: true, input, options, warnings: [], explanations: ["Engineering engine disabled for clean rebuild."] };
 }

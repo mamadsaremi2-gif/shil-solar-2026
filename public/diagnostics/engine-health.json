@@ -1,0 +1,94 @@
+{
+  "generatedAt": "2026-05-26T06:48:01.455Z",
+  "package": "SHIL operational engine readiness report",
+  "input": {
+    "scenario": "hybrid",
+    "dailyEnergyKWh": 18,
+    "peakLoadW": 5200,
+    "backupHours": 6,
+    "sunHours": 5.2,
+    "environmentType": "roof",
+    "ambientMinC": -5,
+    "ambientMaxC": 45
+  },
+  "operational": {
+    "ready": true,
+    "profile": "SAFE_PRODUCTION",
+    "status": "READY_FOR_OPERATION",
+    "errorCount": 0,
+    "warningCount": 0,
+    "missingSummary": [],
+    "checkedAt": "2026-05-26T06:48:01.455Z"
+  },
+  "appliedRules": [
+    "validation",
+    "loadEstimation",
+    "panelSelection",
+    "inverterSelection",
+    "batterySelection",
+    "stringDesign",
+    "voltage",
+    "environment",
+    "protection",
+    "cable",
+    "resultSummary"
+  ],
+  "warnings": [],
+  "errors": [],
+  "summary": {
+    "scenario": "hybrid",
+    "pv": {
+      "panel": "SHIL 600-715W TOPCon",
+      "count": 8,
+      "installedPowerKW": 5.6,
+      "stringDesign": "8S × 1P"
+    },
+    "inverter": "SHIL HI2 8KW 48V",
+    "battery": {
+      "model": "SHIL LiFePO4 51.2V 100Ah",
+      "count": 11,
+      "usableEnergyKWh": 47.65
+    },
+    "electrical": {
+      "cables": {}
+    },
+    "protection": {}
+  },
+  "values": {
+    "scenario": "hybrid",
+    "dailyEnergyKWh": 18,
+    "peakLoadW": 5200,
+    "backupHours": 6,
+    "sunHours": 5.2,
+    "designLoadW": 6500,
+    "designDailyEnergyKWh": 20.7,
+    "loadSafetyFactor": 1.25,
+    "energySafetyFactor": 1.15,
+    "pvDerate": 0.78,
+    "targetPvPowerW": 5104,
+    "panelCount": 8,
+    "installedPvPowerW": 5600,
+    "installedPvPowerKW": 5.6,
+    "inverterRatedPowerW": 8000,
+    "inverterBatteryVoltage": 48,
+    "inverterMpptCount": 2,
+    "inverterMpptMinV": 120,
+    "inverterMpptMaxV": 500,
+    "inverterMaxPvVocV": 500,
+    "inverterMaxPvPowerW": 11000,
+    "requiredBatteryEnergyKWh": 43.33,
+    "batteryEnergyKWh": 5.12,
+    "usableBatteryEnergyKWh": 4.33,
+    "batteryCount": 11,
+    "totalUsableBatteryEnergyKWh": 47.65,
+    "seriesPanels": 8,
+    "parallelStrings": 1,
+    "panelsUsed": 8,
+    "stringVmp": 352,
+    "stringVocCold": 455.8,
+    "pvCurrentA": 16,
+    "stringsPerMppt": 1,
+    "mpptCount": 2,
+    "summaryReady": true
+  }
+}

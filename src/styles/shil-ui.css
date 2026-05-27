@@ -6803,7 +6803,7 @@ button, input, textarea, select { font: inherit; }
 .shil-welcome-page,
 .shil-dashboard-home,
 .shil-page-shell {
-  background-image: linear-gradient(180deg, rgba(4, 10, 19, 0.38), rgba(4, 10, 19, 0.78)), url('/assets/shil/background/main/shil-main-bg.webp');
+  background-image: linear-gradient(180deg, rgba(4, 10, 19, 0.38), rgba(4, 10, 19, 0.78)), url('/assets/shil/background/main/shil-main-bg.svg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -7046,9 +7046,9 @@ button, input, textarea, select { font: inherit; }
 }
 
 /* SHIL final flow integration patch - safe mobile-first layer */
-.shil-welcome-page { background-image: linear-gradient(180deg, rgba(4,10,19,.28), rgba(4,10,19,.72)), url('/assets/shil/background/login/shil-login-bg.webp'), url('/assets/shil/background/main/shil-main-bg.webp'); }
-.shil-dashboard-home { background-image: linear-gradient(180deg, rgba(4,10,19,.34), rgba(4,10,19,.76)), url('/assets/shil/background/main/shil-main-bg.webp'), url('/assets/shil/background/main/shil-main-bg.webp'); }
-.shil-page-shell { background-image: linear-gradient(180deg, rgba(4,10,19,.44), rgba(4,10,19,.84)), url('/assets/shil/background/main/shil-main-bg.webp'), url('/assets/shil/background/main/shil-main-bg.webp'); }
+.shil-welcome-page { background-image: linear-gradient(180deg, rgba(4,10,19,.28), rgba(4,10,19,.72)), url('/assets/shil/background/login/shil-login-bg.svg'), url('/assets/shil/background/main/shil-main-bg.svg'); }
+.shil-dashboard-home { background-image: linear-gradient(180deg, rgba(4,10,19,.34), rgba(4,10,19,.76)), url('/assets/shil/background/main/shil-main-bg.svg'), url('/assets/shil/background/main/shil-main-bg.svg'); }
+.shil-page-shell { background-image: linear-gradient(180deg, rgba(4,10,19,.44), rgba(4,10,19,.84)), url('/assets/shil/background/main/shil-main-bg.svg'), url('/assets/shil/background/main/shil-main-bg.svg'); }
 
 .shil-engineering-shell .shil-page-content {
   padding-top: calc(var(--shil-header-h) + env(safe-area-inset-top) + 10px);
@@ -7238,14 +7238,14 @@ html,body,#root{width:100%;max-width:100%;min-height:100%;overflow-x:hidden;}
   position:fixed;
   inset:0;
   z-index:0;
-  background-image:linear-gradient(180deg,rgba(4,10,19,.46),rgba(4,10,19,.84)),url('/assets/shil/background/main/shil-main-bg.webp');
+  background-image:linear-gradient(180deg,rgba(4,10,19,.46),rgba(4,10,19,.84)),url('/assets/shil/background/main/shil-main-bg.svg');
   background-size:cover;
   background-position:center;
   filter:saturate(1.05);
 }
 .shil-welcome-page .shil-master-bg,
 .shil-welcome-page{
-  background-image:linear-gradient(180deg,rgba(4,10,19,.22),rgba(4,10,19,.66)),url('/assets/shil/background/login/shil-login-bg.webp') !important;
+  background-image:linear-gradient(180deg,rgba(4,10,19,.22),rgba(4,10,19,.66)),url('/assets/shil/background/login/shil-login-bg.svg') !important;
   background-size:cover !important;
   background-position:center !important;
 }
@@ -8624,7 +8624,6 @@ html,body,#root{width:100%;max-width:100%;min-height:100%;overflow-x:hidden;}
   }
 }
 
-/* removed late app.css import; app.css is imported from main.jsx */
 
 /* SHIL optional AI installation visualization block - summary page */
 .shil-ai-preview-card{
@@ -9823,48 +9822,4 @@ select,
   background-size: cover !important;
   background-position: center !important;
   background-repeat: no-repeat !important;
-}
-
-
-/* SHIL final asset binding patch */
-:root {
-  --shil-login-bg: url('/assets/shil/background/login/shil-login-bg.webp');
-  --shil-main-bg: url('/assets/shil/background/main/shil-main-bg.webp');
-}
-
-* {
-  font-family: Vazirmatn, Tahoma, Arial, sans-serif;
-}
-
-.shil-auth-page,
-.shil-login-page,
-.shil-welcome-page {
-  background-image:
-    linear-gradient(180deg, rgba(4, 10, 19, .18), rgba(4, 10, 19, .72)),
-    var(--shil-login-bg) !important;
-  background-size: cover !important;
-  background-position: center !important;
-  background-repeat: no-repeat !important;
-}
-
-.shil-dashboard-shell,
-.shil-engineering-shell,
-.shil-page-shell,
-.shil-app-bg {
-  background-image:
-    linear-gradient(180deg, rgba(4, 10, 19, .24), rgba(4, 10, 19, .74)),
-    var(--shil-main-bg) !important;
-  background-size: cover !important;
-  background-position: center !important;
-  background-repeat: no-repeat !important;
-}
-
-.shil-ios-icon-img img,
-.shil-step-icon img,
-.shil-execution-image,
-.shil-utility-select-button img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  display: block;
 }

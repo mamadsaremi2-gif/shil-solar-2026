@@ -1,27 +1,22 @@
-export const SHIL_ASSETS = {
+﻿export const SHIL_ASSETS = {
   backgrounds: {
     login: "/assets/shil/background/login/shil-login-bg.webp",
-    dashboard: "/assets/shil/background/main/shil-main-bg.webp",
-    app: "/assets/shil/background/main/shil-main-bg.webp",
+    dashboard: "/assets/shil/background/main/shil-main-bg.png",
+    app: "/assets/shil/background/main/shil-main-bg.png",
     welcome: "/assets/shil/background/login/shil-login-bg.webp",
   },
   logos: {
-    main: "/assets/shil/logo/welcome/shil-welcome-logo.webp",
+    main: "/assets/shil/logo/welcome/shil-welcome-logo.png",
   },
   maps: {
-    iranHeatmap: "/assets/shil/map/iran-heatmap.webp",
+    iranHeatmap: "/assets/shil/map/iran-heatmap.png",
   },
   contact: {
-    products: "/assets/shil/contact/shil-products-banner.webp",
-    qrWebsite: "/assets/shil/contact/qr-website.webp",
-    qrSupport: "/assets/shil/contact/qr-support.webp",
-    qrWhatsApp: "/assets/shil/contact/qr-whatsapp.webp",
-    qrCatalog: "/assets/shil/contact/qr-catalog.webp",
-  },
-  execution: {
-    solar: "/assets/shil/execution/solar-execution.png",
-    emergency: "/assets/shil/execution/emergency-inverter-battery.png",
-    utility: "/assets/shil/execution/utility-execution.png",
+    products: "/assets/shil/contact/shil-products-banner.png",
+    qrWebsite: "/assets/shil/contact/qr-website.png",
+    qrSupport: "/assets/shil/contact/qr-support.png",
+    qrWhatsApp: "/assets/shil/contact/qr-whatsapp.png",
+    qrCatalog: "/assets/shil/contact/qr-catalog.png",
   },
   icons: {
     dashboard: {
@@ -48,3 +43,6 @@ export const SHIL_ASSETS = {
     },
   },
 };
+
+
+

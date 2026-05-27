@@ -1,3 +1,3 @@
-# Projects Module
+# Projects Partition
 
-در این ماژول کلمه «سناریو» ممنوع است؛ همه چیز پروژه است.
+Owns project list, running/final/archived project views, and project cards.

@@ -15,7 +15,6 @@ export default defineConfig({
         "icon-512.png",
         "pwa-icons/icon-192.png",
         "pwa-icons/icon-512.png",
-        "assets/**/*",
       ],
       manifestFilename: "manifest.webmanifest",
       manifest: {
@@ -63,7 +62,7 @@ export default defineConfig({
             urlPattern: ({ request }) => request.mode === "navigate",
             handler: "NetworkFirst",
             options: {
-              cacheName: "shil-html-routes-v1",
+              cacheName: "shil-html-routes-v2",
               networkTimeoutSeconds: 3,
               expiration: {
                 maxEntries: 60,
@@ -78,10 +77,10 @@ export default defineConfig({
             urlPattern: ({ request }) => ["style", "script", "worker"].includes(request.destination),
             handler: "StaleWhileRevalidate",
             options: {
-              cacheName: "shil-static-runtime-v1",
+              cacheName: "shil-static-runtime-v2",
               expiration: {
-                maxEntries: 180,
-                maxAgeSeconds: 90 * 24 * 60 * 60,
+                maxEntries: 80,
+                maxAgeSeconds: 30 * 24 * 60 * 60,
               },
               cacheableResponse: {
                 statuses: [0, 200],
@@ -92,10 +91,10 @@ export default defineConfig({
             urlPattern: ({ request }) => ["image", "font"].includes(request.destination),
             handler: "CacheFirst",
             options: {
-              cacheName: "shil-media-fonts-v1",
+              cacheName: "shil-media-fonts-v2",
               expiration: {
-                maxEntries: 260,
-                maxAgeSeconds: 180 * 24 * 60 * 60,
+                maxEntries: 80,
+                maxAgeSeconds: 30 * 24 * 60 * 60,
               },
               cacheableResponse: {
                 statuses: [0, 200],
@@ -106,7 +105,7 @@ export default defineConfig({
             urlPattern: ({ url }) => url.pathname.startsWith("/api/"),
             handler: "NetworkFirst",
             options: {
-              cacheName: "shil-api-cache-v1",
+              cacheName: "shil-api-cache-v2",
               networkTimeoutSeconds: 4,
               expiration: {
                 maxEntries: 80,

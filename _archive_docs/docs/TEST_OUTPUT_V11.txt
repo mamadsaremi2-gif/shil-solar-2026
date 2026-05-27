@@ -1,0 +1,60 @@
+workflowStore.test passed
+validationEngine.test passed
+pvEngine.test passed
+batteryEngine.test passed
+inverterEngine.test passed
+cableEngine.test passed
+enginePipeline.test passed
+All engineering tests passed
+catalogs.test passed
+loadProfile.test passed
+sizingStrategies.test passed
+scenarioStrategies.test passed
+diagnostics.test passed
+reportBuilder.test passed
+conflictResolution.test passed
+stressScenarios.test passed
+formRegistry.test passed
+permissionService.test passed
+reportExport.test passed
+workflowOrchestrator.test passed
+equipmentDatabase.test passed
+climateMonthly.test passed
+protectionSizing.test passed
+equipmentCompatibility.test passed
+ciReadiness.test passed
+advancedEngineering.test passed
+qualityGates.test passed
+pluginSystem.test passed
+rulesetVersioning.test passed
+performanceBenchmark.test passed
+audit.test passed
+security.test passed
+errorRecovery.test passed
+settingsService.test passed
+pwaAdapter.test passed
+backupRestore.test passed
+dataLayer.test passed
+migrationRunner.test passed
+telemetry.test passed
+dataLayerComplete.test passed
+dataIntegrity.test passed
+healthCheck.test passed
+offlineSync.test passed
+offlineBackupComplete.test passed
+projectServiceReport.test passed
+All calculation tests passed
+importExport.test passed
+All QA/production readiness tests passed
+shilProjectService.test passed
+All data/offline tests passed
+appKernel.test passed
+All app foundation tests passed
+appKernelV10.test passed
+All V10 pre-UI final core tests passed
+appKernelV9.test passed
+All V9 complete-core tests passed
+appKernelV11.test passed
+productionRuntime.test passed
+All V11 production-engineering complete tests passed
+All SHIL V11 tests passed

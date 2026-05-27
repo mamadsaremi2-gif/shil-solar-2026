@@ -33,7 +33,7 @@ export const DEFAULT_PROJECT_PATH_CARDS = [
     key: "future",
     title: "توسعه",
     description: "در حال توسعه",
-    image: "/assets/shil/execution/future.png",
+    image: "/assets/shil/execution/future.svg",
     calculationDomain: "future",
     active: true,
     order: 3,

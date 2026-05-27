@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ShilPageShell from "../components/ShilPageShell.jsx";
 import { getScenarioList, levelMeta } from "../data/scenarios/scenarioLibrary.js";
@@ -20,10 +20,32 @@ export default function Scenarios() {
   const navigate = useNavigate();
   const { domain, level } = useParams();
 
+  const [query, setQuery] = useState("");
+
   const scenarios = useMemo(() => {
     if (!domain || !level) return [];
-    return getScenarioList(domain, level).slice(0, 100);
-  }, [domain, level]);
+    const q = query.trim().toLowerCase();
+    const list = getScenarioList(domain, level).slice(0, 100);
+    if (!q) return list;
+    return list.filter((scenario) => {
+      const searchable = [
+        scenario.title,
+        scenario.description,
+        scenario.category,
+        scenario.level,
+        scenario.city,
+        scenario.province,
+        scenario.inverter,
+        scenario.batteryType,
+        scenario.suggestedBattery,
+        scenario.suggestedPanels,
+        scenario.loadEstimate,
+        scenario.dailyEnergyWh,
+        ...(scenario.requiredEquipment?.recommendedItems || []),
+      ].filter(Boolean).join(" ").toLowerCase();
+      return searchable.includes(q);
+    });
+  }, [domain, level, query]);
 
   const selectScenario = (scenario) => {
     const form = scenarioToEngineeringForm(scenario);
@@ -70,6 +92,18 @@ export default function Scenarios() {
 
   return (
     <ShilPageShell title={`${domainLabels[domain]} - ${levelLabels[level] || levelMeta[level]?.fa || ""}`}>
+      <div className="shil-scenario-search-card" dir="auto">
+        <label htmlFor="scenario-search">جستجوی سناریو</label>
+        <input
+          id="scenario-search"
+          type="search"
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder="جستجو بر اساس شهر، توان، جریان، تجهیزات، باتری، اینورتر..."
+          dir="auto"
+        />
+        <small>{scenarios.length} سناریو مطابق جستجو آماده انتخاب است. بعد از انتخاب، مسیر به شرایط محیطی و سپس لیست تجهیزات همان شاخه متصل می‌شود.</small>
+      </div>
       <div className="shil-scenario-page">
         {scenarios.map((scenario) => (
           <article key={scenario.id} className="shil-scenario-detail-card">

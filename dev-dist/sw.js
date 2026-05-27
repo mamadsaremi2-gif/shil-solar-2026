@@ -81,7 +81,7 @@ define(['./workbox-13942bd7'], (function (workbox) { 'use strict';
     "revision": "3ca0b8505b4bec776b69afdba2768812"
   }, {
     "url": "/index.html",
-    "revision": "0.lugq6vnmngo"
+    "revision": "0.oe3pnb7u62k"
   }], {});
   workbox.cleanupOutdatedCaches();
   workbox.registerRoute(new workbox.NavigationRoute(workbox.createHandlerBoundToURL("/index.html"), {
@@ -90,7 +90,7 @@ define(['./workbox-13942bd7'], (function (workbox) { 'use strict';
   workbox.registerRoute(({
     request
   }) => request.mode === "navigate", new workbox.NetworkFirst({
-    "cacheName": "shil-html-routes-v1",
+    "cacheName": "shil-html-routes-v2",
     "networkTimeoutSeconds": 3,
     plugins: [new workbox.ExpirationPlugin({
       maxEntries: 60,
@@ -102,10 +102,10 @@ define(['./workbox-13942bd7'], (function (workbox) { 'use strict';
   workbox.registerRoute(({
     request
   }) => ["style", "script", "worker"].includes(request.destination), new workbox.StaleWhileRevalidate({
-    "cacheName": "shil-static-runtime-v1",
+    "cacheName": "shil-static-runtime-v2",
     plugins: [new workbox.ExpirationPlugin({
-      maxEntries: 180,
-      maxAgeSeconds: 7776000
+      maxEntries: 80,
+      maxAgeSeconds: 2592000
     }), new workbox.CacheableResponsePlugin({
       statuses: [0, 200]
     })]
@@ -113,10 +113,10 @@ define(['./workbox-13942bd7'], (function (workbox) { 'use strict';
   workbox.registerRoute(({
     request
   }) => ["image", "font"].includes(request.destination), new workbox.CacheFirst({
-    "cacheName": "shil-media-fonts-v1",
+    "cacheName": "shil-media-fonts-v2",
     plugins: [new workbox.ExpirationPlugin({
-      maxEntries: 260,
-      maxAgeSeconds: 15552000
+      maxEntries: 80,
+      maxAgeSeconds: 2592000
     }), new workbox.CacheableResponsePlugin({
       statuses: [0, 200]
     })]
@@ -124,7 +124,7 @@ define(['./workbox-13942bd7'], (function (workbox) { 'use strict';
   workbox.registerRoute(({
     url
   }) => url.pathname.startsWith("/api/"), new workbox.NetworkFirst({
-    "cacheName": "shil-api-cache-v1",
+    "cacheName": "shil-api-cache-v2",
     "networkTimeoutSeconds": 4,
     plugins: [new workbox.ExpirationPlugin({
       maxEntries: 80,

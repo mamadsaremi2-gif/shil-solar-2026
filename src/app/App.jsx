@@ -4,31 +4,32 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import UXFlowController from "../components/UXFlowController.jsx";
 import OfflineStatusBadge from "../components/offline/OfflineStatusBadge.jsx";
 import WorkflowRouteGuard from "../components/WorkflowRouteGuard.jsx";
+import GlobalErrorBoundary from "../components/error/GlobalErrorBoundary.jsx";
 
-const LoginPage = lazy(() => import("../pages/LoginPage.jsx"));
-const WelcomePage = lazy(() => import("../pages/WelcomePage.jsx"));
-const Dashboard = lazy(() => import("../pages/Dashboard.jsx"));
-const AdminDashboard = lazy(() => import("../pages/AdminDashboard.jsx"));
-const NewProject = lazy(() => import("../pages/NewProject.jsx"));
-const Projects = lazy(() => import("../pages/Projects.jsx"));
-const Contact = lazy(() => import("../pages/Contact.jsx"));
-const Feedback = lazy(() => import("../pages/Feedback.jsx"));
-const Scenarios = lazy(() => import("../pages/Scenarios.jsx"));
-const Assistant = lazy(() => import("../pages/Assistant.jsx"));
-const Education = lazy(() => import("../pages/Education.jsx"));
-const NotFoundPage = lazy(() => import("../pages/NotFoundPage.jsx"));
+const LoginPage = lazy(() => import("../modules/auth/pages/LoginPage.jsx"));
+const WelcomePage = lazy(() => import("../modules/auth/pages/WelcomePage.jsx"));
+const Dashboard = lazy(() => import("../modules/dashboard/pages/Dashboard.jsx"));
+const AdminDashboard = lazy(() => import("../modules/admin/pages/AdminDashboard.jsx"));
+const NewProject = lazy(() => import("../modules/new-project/pages/NewProject.jsx"));
+const Projects = lazy(() => import("../modules/projects/pages/Projects.jsx"));
+const Contact = lazy(() => import("../modules/contact/pages/Contact.jsx"));
+const Feedback = lazy(() => import("../modules/feedback/pages/Feedback.jsx"));
+const Scenarios = lazy(() => import("../modules/scenarios/pages/Scenarios.jsx"));
+const Assistant = lazy(() => import("../modules/assistant/pages/Assistant.jsx"));
+const Education = lazy(() => import("../modules/assistant/pages/Education.jsx"));
+const NotFoundPage = lazy(() => import("../modules/common/pages/NotFoundPage.jsx"));
 
-const ProjectInfo = lazy(() => import("../pages/project/ProjectInfo.jsx"));
-const Environment = lazy(() => import("../pages/project/Environment.jsx"));
-const ProjectPath = lazy(() => import("../pages/project/ProjectPath.jsx"));
-const SolarSystemType = lazy(() => import("../pages/project/SolarSystemType.jsx"));
-const CalculationMethod = lazy(() => import("../pages/project/CalculationMethod.jsx"));
-const CalculationInputs = lazy(() => import("../pages/project/CalculationInputs.jsx"));
-const ExecutionMethod = lazy(() => import("../pages/project/ExecutionMethod.jsx"));
-const SystemSettings = lazy(() => import("../pages/project/SystemSettings.jsx"));
-const SummaryPage = lazy(() => import("../pages/project/SummaryPage.jsx"));
-const RunCalculation = lazy(() => import("../pages/project/RunCalculation.jsx"));
-const UnderDevelopment = lazy(() => import("../pages/project/UnderDevelopment.jsx"));
+const ProjectInfo = lazy(() => import("../modules/new-project/pages/ProjectInfo.jsx"));
+const Environment = lazy(() => import("../modules/new-project/pages/Environment.jsx"));
+const ProjectPath = lazy(() => import("../modules/new-project/pages/ProjectPath.jsx"));
+const SolarSystemType = lazy(() => import("../modules/new-project/pages/SolarSystemType.jsx"));
+const CalculationMethod = lazy(() => import("../modules/new-project/pages/CalculationMethod.jsx"));
+const CalculationInputs = lazy(() => import("../modules/new-project/pages/CalculationInputs.jsx"));
+const ExecutionMethod = lazy(() => import("../modules/new-project/pages/ExecutionMethod.jsx"));
+const SystemSettings = lazy(() => import("../modules/new-project/pages/SystemSettings.jsx"));
+const SummaryPage = lazy(() => import("../modules/new-project/pages/SummaryPage.jsx"));
+const RunCalculation = lazy(() => import("../modules/new-project/pages/RunCalculation.jsx"));
+const UnderDevelopment = lazy(() => import("../modules/new-project/pages/UnderDevelopment.jsx"));
 
 function RouteFallback() {
   return <div className="shil-route-fallback" aria-live="polite" />;
@@ -40,6 +41,7 @@ export default function App() {
       <UXFlowController />
       <OfflineStatusBadge />
       <WorkflowRouteGuard />
+      <GlobalErrorBoundary>
       <Suspense fallback={<RouteFallback />}>
         <Routes>
           <Route path="/" element={<Navigate to="/login" replace />} />
@@ -84,6 +86,7 @@ export default function App() {
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Suspense>
+      </GlobalErrorBoundary>
     </BrowserRouter>
   );
 }

@@ -1,0 +1,5 @@
+
+> shil-infrastructure-v15-ui-standardization-pack@15.0.0 test
+> node -e "console.log('SHIL smoke test passed')"
+
+SHIL smoke test passed

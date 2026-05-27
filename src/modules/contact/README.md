@@ -1,3 +1,3 @@
-# Contact Module
+# Contact Partition
 
-ارتباط با ما.
+Owns contact/support/catalog screens.

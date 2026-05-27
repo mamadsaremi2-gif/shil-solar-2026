@@ -26,7 +26,7 @@ export default function LoginPage() {
       role: "guest",
       authType: "guest",
       displayName: "کاربر مهمان",
-      login: "guest",
+      login: "guest"
     });
 
     navigate("/dashboard", { replace: true });
@@ -44,7 +44,7 @@ export default function LoginPage() {
     }
 
     if (!email.includes("@")) {
-      setError("فرمت ایمیل واردشده معتبر نیست.");
+      setError("فرمت ایمیل معتبر نیست.");
       return;
     }
 
@@ -52,12 +52,15 @@ export default function LoginPage() {
       setLoading(true);
 
       const { data, error: authError } = await withTimeout(
-        supabase.auth.signInWithPassword({ email, password }),
-        "اتصال به Supabase برقرار نشد."
+        supabase.auth.signInWithPassword({
+          email,
+          password,
+        }),
+        "اتصال به Supabase انجام نشد."
       );
 
       if (authError || !data?.user?.id) {
-        setError("ورود ناموفق بود. اطلاعات را بررسی کنید.");
+        setError("ورود با این اطلاعات انجام نشد.");
         return;
       }
 
@@ -67,11 +70,11 @@ export default function LoginPage() {
           .select("id,email,role,status,full_name")
           .eq("id", data.user.id)
           .single(),
-        "دریافت پروفایل کاربر انجام نشد."
+        "دریافت پروفایل کاربر از Supabase انجام نشد."
       );
 
       if (profileError || !profile) {
-        setError("پروفایل کاربر در سیستم پیدا نشد.");
+        setError("پروفایل کاربر پیدا نشد.");
         return;
       }
 
@@ -82,10 +85,11 @@ export default function LoginPage() {
         login: email,
         authType: "supabase",
         displayName: profile.full_name || email,
-        userId: data.user.id,
+        userId: data.user.id
       });
 
       localStorage.setItem("shil_profile", JSON.stringify(profile));
+
       navigate(isAdmin ? "/admin" : "/dashboard", { replace: true });
     } catch (err) {
       console.error("SHIL login error:", err);
@@ -100,7 +104,7 @@ export default function LoginPage() {
       <section className="shil-auth-card">
         <div className="shil-auth-brand">
           <strong>SHIL</strong>
-          <span>ورود امن به فضای اختصاصی طراحی پروژه‌های خورشیدی و برق اضطراری</span>
+          <span>سامانه طراحی، پیکربندی و گزارش‌گیری سیستم‌های خورشیدی و برق اضطراری</span>
         </div>
 
         <form className="shil-auth-form" onSubmit={handleSubmit}>
@@ -109,6 +113,7 @@ export default function LoginPage() {
             onChange={(event) => setLogin(event.target.value)}
             placeholder="ایمیل"
             autoComplete="username"
+            dir="ltr"
           />
 
           <input
@@ -117,6 +122,7 @@ export default function LoginPage() {
             onChange={(event) => setPassword(event.target.value)}
             placeholder="رمز عبور"
             autoComplete="current-password"
+            dir="ltr"
           />
 
           {error ? <p className="shil-auth-error">{error}</p> : null}
@@ -127,11 +133,11 @@ export default function LoginPage() {
         </form>
 
         <button type="button" className="shil-guest-btn" onClick={handleGuest}>
-          ورود سریع به عنوان مهمان
+          ورود موقت به نسخه آزمایشی
         </button>
 
         <p className="shil-auth-note">
-          هر کاربر حتی مهمان، فضای پروژه‌ها، سوالات و نظرات اختصاصی خودش را دارد. ادمین با ایمیل و رمز عبور تأیید شده وارد کارتابل مدیریتی می‌شود.
+          اگر حساب کاربری فعال ندارید، از ورود موقت استفاده کنید. دسترسی مدیر پس از تأیید حساب فعال می‌شود.
         </p>
       </section>
     </div>

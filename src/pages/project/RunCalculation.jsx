@@ -6,6 +6,7 @@ import { markCurrentProjectFinal, showUxToast } from "../../workflow/uxFlowContr
 import { runEngineeringDesign } from "../../runEngineeringDesign.js";
 import { buildScenarioCalculationInput } from "../../core/scenario/scenarioToEngineeringForm.js";
 import { buildMethodSummary, getActiveMethodKey } from "../../core/summary/methodSummaryEngine.js";
+import { safeText, safeList, safeKey, toFaDigits } from "../../utils/safeRender.js";
 import {
   buildFinalEngineeringDelivery,
   exportElementAsPdf,
@@ -61,12 +62,45 @@ function runCore(domain) {
   }
 }
 
+
+function MixedValue({ children, fa = false }) {
+  return <strong dir="auto">{fa ? toFaDigits(children) : safeText(children)}</strong>;
+}
+
+function FinalResultFields({ result = {}, solarDesign = {} }) {
+  const summary = result.summary || {};
+  const values = result.values || {};
+  const bom = summary.billOfMaterials || values.billOfMaterials || {};
+  const fields = summary.resultFields || {};
+  const protection = result.values?.protection || summary.protection || {};
+  const cables = values.cables || fields.cables || {};
+  return (
+    <div className="shil-final-sheet-block shil-final-result-fields">
+      <h3>فیلد نتیجه تفکیکی</h3>
+      <div className="shil-result-field-grid">
+        <div><span>تعداد اینورتر</span><MixedValue fa>{fields.inverterCount || values.inverterCount || 1} عدد</MixedValue></div>
+        <div><span>تعداد پنل</span><MixedValue fa>{fields.panelCount || values.panelCount || 0} عدد</MixedValue></div>
+        <div><span>تعداد باتری</span><MixedValue fa>{fields.batteryCount || values.batteryCount || 0} عدد</MixedValue></div>
+        <div><span>تعداد MPPT</span><MixedValue fa>{fields.mpptCount || values.mpptCount || values.inverterMpptCount || 1} کانال</MixedValue></div>
+        <div><span>توان نصب‌شده PV</span><MixedValue>{values.installedPvPowerKW || summary.pv?.installedPowerKW || 0} kW</MixedValue></div>
+        <div><span>فضای نصب کل</span><MixedValue fa>{fields.installationAreaM2 || values.installationAreaM2 || bom.space?.requiredInstallationAreaM2 || 0} متر مربع</MixedValue></div>
+      </div>
+      <div className="shil-result-partitions">
+        <section><h4>تجهیزات حفاظتی PV</h4><p>{safeText(protection.pvDc?.breaker)} / {safeText(protection.pvDc?.spd)} / {safeText(protection.pvDc?.poles)}</p><small>ولتاژ: {safeText(protection.pvDc?.designVoltageV)}V | جریان: {safeText(protection.pvDc?.currentA)}A</small></section>
+        <section><h4>حفاظت باتری</h4><p>{safeText(protection.batteryDc?.fuse)}</p><small>ولتاژ: {safeText(protection.batteryDc?.designVoltageV)}V | جریان: {safeText(protection.batteryDc?.currentA)}A</small></section>
+        <section><h4>حفاظت AC</h4><p>{safeText(protection.ac?.breaker)} / {safeText(protection.ac?.poles)}</p><small>ولتاژ: {safeText(protection.ac?.designVoltageV)}V | جریان: {safeText(protection.ac?.currentA)}A</small></section>
+        <section><h4>کابل‌ها</h4><p>PV: {safeText(cables.pv)}</p><p>Battery: {safeText(cables.battery)}</p><p>AC: {safeText(cables.ac)}</p></section>
+      </div>
+    </div>
+  );
+}
+
 function Row({ label, value, note }) {
   return (
     <div className="shil-final-compact-row">
       <span>{label}</span>
-      <strong>{value || "ثبت نشده"}</strong>
-      {note ? <small>{note}</small> : null}
+      <strong>{safeText(value, "ثبت نشده")}</strong>
+      {note ? <small>{safeText(note)}</small> : null}
     </div>
   );
 }
@@ -78,11 +112,11 @@ function CompactEquipmentTable({ title, rows }) {
       <h3>{title}</h3>
       <div className="shil-final-equipment-table">
         <div className="head"><span>تجهیز</span><span>تعداد / مشخصات</span><span>دلیل انتخاب</span></div>
-        {visibleRows.map((row) => (
-          <div key={row.label || row.item}>
-            <span>{row.label || row.item}</span>
-            <strong>{row.value || [row.qty, row.spec].filter(Boolean).join(" / ")}</strong>
-            <small>{row.note || row.reason}</small>
+        {visibleRows.map((row, index) => (
+          <div key={safeKey(row.label || row.item || row, index)}>
+            <span>{safeText(row.label || row.item || row.title || row.name)}</span>
+            <strong>{safeText(row.value || [row.qty, row.spec].filter(Boolean).join(" / "))}</strong>
+            <small>{safeText(row.note || row.reason || row.message)}</small>
           </div>
         ))}
       </div>
@@ -97,11 +131,11 @@ function DistributedInverterTable({ systems = [] }) {
       <h3>تقسیم زیرسیستم‌ها برای هر اینورتر</h3>
       <div className="shil-final-equipment-table">
         <div className="head"><span>اینورتر</span><span>پنل / باتری / فضا</span><span>حفاظت و کابل مستقل</span></div>
-        {systems.slice(0, 12).map((system) => (
-          <div key={system.id || system.title}>
-            <span>{system.title || system.id}</span>
-            <strong>{system?.pv?.panelCount || 0} پنل / {system?.battery?.count || 0} باتری / {system?.space?.maintenanceAreaM2 || "-"}m²</strong>
-            <small>DC {system?.protection?.dcBreakerA || "-"}A / AC {system?.protection?.acBreakerA || "-"}A / کابل {system?.protection?.dcCable || "-"} و {system?.protection?.acCable || "-"}</small>
+        {systems.slice(0, 12).map((system, index) => (
+          <div key={safeKey(system.id || system.title || system, index)}>
+            <span>{safeText(system.title || system.id, `اینورتر ${index + 1}`)}</span>
+            <strong>{safeText(system?.pv?.panelCount, "0")} پنل / {safeText(system?.battery?.count, "0")} باتری / {safeText(system?.space?.maintenanceAreaM2)}m²</strong>
+            <small>DC {safeText(system?.protection?.dcBreakerA)}A / AC {safeText(system?.protection?.acBreakerA)}A / کابل {safeText(system?.protection?.dcCable)} و {safeText(system?.protection?.acCable)}</small>
           </div>
         ))}
       </div>
@@ -113,17 +147,17 @@ function DecisionPath({ methodSummary, result, calculationInput, solarDesign, em
   const scenarioTitle = calculationInput?.scenario?.title || methodSummary.title || (emergency ? "برق اضطراری" : "خورشیدی");
   const designStatus = result?.valid === false ? "نیازمند بازبینی" : "قابل ارائه";
   const keyInputs = [
-    solarDesign?.load?.dailyEnergyWh ? `مصرف روزانه ${solarDesign.load.dailyEnergyWh}Wh` : null,
-    solarDesign?.load?.peakLoadW ? `توان پیک ${solarDesign.load.peakLoadW}W` : null,
-    solarDesign?.environment?.peakSunHours ? `ساعت آفتابی ${solarDesign.environment.peakSunHours}` : null,
+    solarDesign?.load?.dailyEnergyWh ? `مصرف روزانه ${safeText(solarDesign.load.dailyEnergyWh)}Wh` : null,
+    solarDesign?.load?.peakLoadW ? `توان پیک ${safeText(solarDesign.load.peakLoadW)}W` : null,
+    solarDesign?.environment?.peakSunHours ? `ساعت آفتابی ${safeText(solarDesign.environment.peakSunHours)}` : null,
   ].filter(Boolean).join(" / ") || "ورودی‌های کلیدی از مراحل قبلی پروژه خوانده شده‌اند";
 
   return (
     <div className="shil-final-sheet-block shil-final-path-block">
       <h3>مسیر رسیدن به نتیجه</h3>
       <ol>
-        <li><b>انتخاب سناریو:</b> {scenarioTitle}</li>
-        <li><b>ورودی‌های کلیدی:</b> {keyInputs}</li>
+        <li><b>انتخاب سناریو:</b> {safeText(scenarioTitle)}</li>
+        <li><b>ورودی‌های کلیدی:</b> {safeText(keyInputs)}</li>
         <li><b>منطق محاسبه:</b> بار، شرایط محیطی، تجهیزات و قیود حفاظتی توسط موتور محاسبات SHIL ترکیب شدند.</li>
         <li><b>نتیجه نهایی:</b> {designStatus}</li>
       </ol>
@@ -168,8 +202,8 @@ export default function RunCalculation() {
   });
 
   const diagnostics = solarDesign?.diagnostics || result?.diagnostics || null;
-  const importantNotes = (result?.explanations || solarDesign?.explanations || delivery.notes || ["محاسبات بر اساس داده‌های ثبت‌شده پروژه انجام شد."]).slice(0, 3);
-  const warnings = (result?.warnings || delivery.warnings || []).slice(0, 2);
+  const importantNotes = safeList(result?.explanations || solarDesign?.explanations || delivery.notes || ["محاسبات بر اساس داده‌های ثبت‌شده پروژه انجام شد."]).slice(0, 3);
+  const warnings = safeList(result?.warnings || delivery.warnings || []).slice(0, 4);
 
   function saveFinalProject() {
     approveProjectStep("run");
@@ -237,13 +271,14 @@ export default function RunCalculation() {
 
           <DecisionPath methodSummary={methodSummary} result={result} calculationInput={calculationInput} solarDesign={solarDesign} emergency={emergency} />
           <CompactEquipmentTable title="خلاصه محصولات و تجهیزات" rows={delivery.equipment.length ? delivery.equipment : methodSummary.rows} />
-          <DistributedInverterTable systems={solarDesign?.distributedInverterSystems || result?.distributedInverterSystems || []} />
+          <FinalResultFields result={result} solarDesign={solarDesign} />
+          <DistributedInverterTable systems={solarDesign?.distributedInverterSystems || result?.values?.distributedInverterSystems || result?.summary?.distributedInverterSystems || []} />
 
           <div className="shil-final-sheet-block shil-final-result-block">
             <h3>نتایج و نکات مهم</h3>
             <ul>
-              {importantNotes.map((item) => <li key={item}>{item}</li>)}
-              {warnings.map((item) => <li className="warning" key={item}>هشدار: {item}</li>)}
+              {importantNotes.map((item, index) => <li key={safeKey(item, index)}>{safeText(item)}</li>)}
+              {warnings.map((item, index) => <li className="warning" key={safeKey(item, index)}>هشدار: {safeText(item)}</li>)}
               {!warnings.length ? <li>طراحی برای ارائه خروجی نهایی آماده است.</li> : null}
             </ul>
           </div>

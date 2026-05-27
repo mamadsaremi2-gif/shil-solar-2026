@@ -35,7 +35,7 @@ body,
   padding: 20px !important;
   background-image:
     linear-gradient(rgba(0, 0, 0, .35), rgba(0, 0, 0, .48)),
-    url('/assets/shil/background/login/shil-login-bg.webp') !important;
+    url('/assets/shil/background/login/shil-login-bg.svg') !important;
   background-size: cover !important;
   background-position: center !important;
   background-repeat: no-repeat !important;
@@ -69,7 +69,7 @@ body,
   z-index: -2 !important;
   background-image:
     radial-gradient(circle at 50% 0%, rgba(23, 92, 79, .30), rgba(2, 11, 15, .92) 64%),
-    url('/assets/shil/background/main/shil-main-bg.webp') !important;
+    url('/assets/shil/background/main/shil-main-bg.svg') !important;
   background-size: cover !important;
   background-position: center !important;
   background-repeat: no-repeat !important;

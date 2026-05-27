@@ -1,0 +1,13 @@
+SHIL cleanup report - 2026-05-25
+
+Removed conservative dead/raw/duplicate files:
+legacy/calculation-disabled/
+public/assets/shil/background/login/#U06f1
+public/assets/shil/background/main/#U06f1
+public/assets/shil/welcome/#U06f1
+public/assets/shil/background/login/shil-login-bg.png
+public/assets/shil/background/main/shil-main-bg.png
+public/assets/shil/contact/shil-products-banner.jpg
+public/assets/shil/map/iran-heatmap.jpg
+
+Preserved: src pages, calculation engines, Android/Capacitor structure, PWA icons, active WebP/PNG/SVG assets, execution images, docs and SQL schema.

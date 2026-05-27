@@ -1,9 +1,3 @@
-# Dashboard Module
+# Dashboard Partition
 
-مسئولیت:
-- آیکون‌های داشبورد
-- چیدمان شناور
-- ذخیره ترتیب آیکون‌ها
-- کارت معرفی SHIL
-
-هر تغییر مربوط به داشبورد فقط در همین شاخه انجام شود.
+Owns main dashboard tiles, navigation cards, and dashboard-only state.

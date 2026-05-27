@@ -1,5 +1,5 @@
-# New Project Module
+# New Project Partition
 
-این ماژول مادر Workflow محاسبات است.
+Owns the complete new-project wizard from project info to summary/run calculation.
 
-هر مرحله مستقل است و تغییرات آن باید فقط در فولدر همان مرحله اعمال شود.
+Rule execution must go through services/projectEngineGateway.js, which currently calls the passive central engine.
