@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import * as React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import EngineeringPageShell from "../../components/EngineeringPageShell.jsx";
 import { approveProjectStep } from "../../workflow/projectWorkflow.js";
@@ -31,11 +31,11 @@ export default function ExecutionMethod() {
   const navigate = useNavigate();
   const params = useParams();
   const preferredDomain = params.domain || localStorage.getItem("shil:calculationDomain") || localStorage.getItem("shil:scenarioDomain") || "solar";
-  const [selected, setSelected] = useState(preferredDomain === "emergency" ? "emergency" : "solar");
-  const [warning, setWarning] = useState("");
+  const [selected, setSelected] = React.useState(preferredDomain === "emergency" ? "emergency" : "solar");
+  const [warning, setWarning] = React.useState("");
 
-  const load = useMemo(() => readDraft("shil:loadEngineResult"), []);
-  const environment = useMemo(() => readDraft("shil:environmentDraft"), []);
+  const load = React.useMemo(() => readDraft("shil:loadEngineResult"), []);
+  const environment = React.useMemo(() => readDraft("shil:environmentDraft"), []);
   const selectedOption = EXECUTION_OPTIONS.find((item) => item.key === selected);
 
   const confirm = () => {

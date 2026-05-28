@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import { approveProjectStep } from "../../workflow/projectWorkflow.js";
 import { clearScenarioFlow, startUtilityGateway, setWorkflowMode, FLOW_MODES } from "../../workflow/flowIsolation.js";
@@ -56,11 +56,11 @@ function normalizeCards(cards) {
 
 export default function ProjectPath() {
   const navigate = useNavigate();
-  const [selected, setSelected] = useState("");
-  const [warning, setWarning] = useState("");
-  const [options, setOptions] = useState(() => normalizeCards(readAdminProjectPathCards()));
+  const [selected, setSelected] = React.useState("");
+  const [warning, setWarning] = React.useState("");
+  const [options, setOptions] = React.useState(() => normalizeCards(readAdminProjectPathCards()));
 
-  useEffect(() => {
+  React.useEffect(() => {
     let alive = true;
     const adminCards = normalizeCards(readAdminProjectPathCards());
     if (adminCards.length) {
@@ -80,17 +80,17 @@ export default function ProjectPath() {
     return () => { alive = false; };
   }, []);
 
-  const mainOptions = useMemo(
+  const mainOptions = React.useMemo(
     () => options.filter((item) => !(item.calculationDomain === "utility" || item.key === "utility")),
     [options]
   );
 
-  const utilityOption = useMemo(
+  const utilityOption = React.useMemo(
     () => options.find((item) => item.calculationDomain === "utility" || item.key === "utility"),
     [options]
   );
 
-  const selectedOption = useMemo(
+  const selectedOption = React.useMemo(
     () => options.find((item) => item.key === selected),
     [options, selected]
   );

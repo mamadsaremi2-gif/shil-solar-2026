@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import * as React from "react";
 import { Link } from "react-router-dom";
 
 function IconVisual({ item }) {
-  const [failed, setFailed] = useState(false);
+  const [failed, setFailed] = React.useState(false);
   if (item.image && !failed) {
     return <img src={item.image} alt="" onError={() => setFailed(true)} />;
   }

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import * as React from "react";
 import { getCurrentUser } from "./authService.js";
 import { useAuthStore } from "./authStore.js";
 
@@ -6,7 +6,7 @@ export function useAuthBootstrap() {
   const setUser = useAuthStore((state) => state.setUser);
   const setLoading = useAuthStore((state) => state.setLoading);
 
-  useEffect(() => {
+  React.useEffect(() => {
     async function boot() {
       setLoading(true);
 

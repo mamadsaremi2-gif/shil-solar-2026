@@ -1,7 +1,7 @@
-import { useEffect } from "react";
+import * as React from "react";
 
 export default function useDraftSave(key, data) {
-  useEffect(() => {
+  React.useEffect(() => {
     localStorage.setItem(key, JSON.stringify(data));
   }, [key, data]);
 }

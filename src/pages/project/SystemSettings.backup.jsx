@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import * as React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import EngineeringPageShell from "../../components/EngineeringPageShell.jsx";
 import { approveProjectStep } from "../../workflow/projectWorkflow.js";
@@ -19,7 +19,7 @@ const faNumber = (value) => Number(value || 0).toLocaleString("fa-IR");
 const kw = (w) => `${faNumber(Math.round(Number(w || 0) / 100) / 10)} Ú©ÛŒÙ„ÙˆÙˆØ§Øª`;
 
 function DetailsToggle({ title, children, defaultOpen = false, attached = false }) {
-  const [open, setOpen] = useState(defaultOpen);
+  const [open, setOpen] = React.useState(defaultOpen);
   return (
     <div className={attached ? "shil-details-box shil-details-attached" : "shil-details-box"}>
       <button type="button" className="shil-details-toggle" onClick={() => setOpen(!open)} aria-expanded={open}>
@@ -192,23 +192,23 @@ export default function SystemSettings() {
   const { domain = "solar" } = useParams();
   const navigate = useNavigate();
   const emergency = domain === "emergency";
-  const load = useMemo(() => readDraft("shil:loadEngineResult", {}), []);
-  const environment = useMemo(() => readDraft("shil:environmentDraft", {}), []);
+  const load = React.useMemo(() => readDraft("shil:loadEngineResult", {}), []);
+  const environment = React.useMemo(() => readDraft("shil:environmentDraft", {}), []);
 
-  const [systemType, setSystemType] = useState("offgrid");
-  const [autonomyDays, setAutonomyDays] = useState(1);
-  const [reserveFactor, setReserveFactor] = useState(1.2);
-  const [equipmentManualMode, setEquipmentManualMode] = useState(false);
-  const [parameterManualMode, setParameterManualMode] = useState(false);
-  const [panelId, setPanelId] = useState(SHIL_SOLAR_PANELS.at(-1)?.id || "");
-  const [inverterId, setInverterId] = useState(SHIL_SOLAR_INVERTERS.find((i) => i.ratedPowerW >= 5000)?.id || SHIL_SOLAR_INVERTERS[0]?.id || "");
-  const [batteryId, setBatteryId] = useState(SHIL_LITHIUM_BATTERIES.find((b) => b.nominalVoltage === 48 && b.capacityAh === 200)?.id || SHIL_LITHIUM_BATTERIES[0]?.id || "");
-  const [panelExtraFactor, setPanelExtraFactor] = useState(1);
-  const [inverterExtraFactor, setInverterExtraFactor] = useState(1);
-  const [batteryExtraFactor, setBatteryExtraFactor] = useState(1);
-  const [warning, setWarning] = useState("");
+  const [systemType, setSystemType] = React.useState("offgrid");
+  const [autonomyDays, setAutonomyDays] = React.useState(1);
+  const [reserveFactor, setReserveFactor] = React.useState(1.2);
+  const [equipmentManualMode, setEquipmentManualMode] = React.useState(false);
+  const [parameterManualMode, setParameterManualMode] = React.useState(false);
+  const [panelId, setPanelId] = React.useState(SHIL_SOLAR_PANELS.at(-1)?.id || "");
+  const [inverterId, setInverterId] = React.useState(SHIL_SOLAR_INVERTERS.find((i) => i.ratedPowerW >= 5000)?.id || SHIL_SOLAR_INVERTERS[0]?.id || "");
+  const [batteryId, setBatteryId] = React.useState(SHIL_LITHIUM_BATTERIES.find((b) => b.nominalVoltage === 48 && b.capacityAh === 200)?.id || SHIL_LITHIUM_BATTERIES[0]?.id || "");
+  const [panelExtraFactor, setPanelExtraFactor] = React.useState(1);
+  const [inverterExtraFactor, setInverterExtraFactor] = React.useState(1);
+  const [batteryExtraFactor, setBatteryExtraFactor] = React.useState(1);
+  const [warning, setWarning] = React.useState("");
 
-  const settings = useMemo(() => ({
+  const settings = React.useMemo(() => ({
     systemType,
     autonomyDays: Number(autonomyDays) || 1,
     reserveFactor: Number(reserveFactor) || 1.2,
@@ -223,16 +223,16 @@ export default function SystemSettings() {
     parameterManualMode
   }), [systemType, autonomyDays, reserveFactor, equipmentManualMode, parameterManualMode, panelId, inverterId, batteryId, panelExtraFactor, inverterExtraFactor, batteryExtraFactor]);
 
-  const solarDesign = useMemo(() => runSolarAutoDesign({ load, environment, settings }), [load, environment, settings]);
+  const solarDesign = React.useMemo(() => runSolarAutoDesign({ load, environment, settings }), [load, environment, settings]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (equipmentManualMode) return;
     setPanelId(solarDesign.panel.id);
     setInverterId(solarDesign.inverter.id);
     setBatteryId(solarDesign.battery.battery.id);
   }, [equipmentManualMode, solarDesign.panel.id, solarDesign.inverter.id, solarDesign.battery.battery.id]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!warning) return undefined;
     const timer = setTimeout(() => setWarning(""), 5200);
     return () => clearTimeout(timer);

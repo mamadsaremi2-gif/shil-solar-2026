@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import * as React from "react";
 import { IRAN_CITIES } from "../data/seed/iranCities.js";
 
 function normalizePersian(value = "") {
@@ -36,10 +36,10 @@ export default function SmartCityInput({
   placeholder = "نام شهر را وارد کن؛ مثلاً اصفهان",
   name = "city",
 }) {
-  const [focused, setFocused] = useState(false);
+  const [focused, setFocused] = React.useState(false);
   const query = normalizePersian(value);
 
-  const matches = useMemo(() => {
+  const matches = React.useMemo(() => {
     const scored = IRAN_CITIES.map((item) => {
       const city = normalizePersian(item.name);
       const province = normalizePersian(item.province);

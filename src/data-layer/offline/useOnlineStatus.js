@@ -1,10 +1,10 @@
-import { useEffect } from "react";
+import * as React from "react";
 import { useDataLayerStore } from "./dataLayerStore.js";
 
 export function useOnlineStatus() {
   const setOnline = useDataLayerStore((state) => state.setOnline);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const handleOnline = () => setOnline(true);
     const handleOffline = () => setOnline(false);
 

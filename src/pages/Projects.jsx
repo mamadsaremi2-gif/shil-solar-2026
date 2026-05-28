@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import * as React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Archive, CheckCircle2, Clock3, Download, RotateCcw, Trash2 } from "lucide-react";
 import ShilPageShell from "../components/ShilPageShell.jsx";
@@ -73,10 +73,10 @@ function ProjectCard({ row, type, onRefresh }) {
 
 function ProjectList({ type }) {
   const title = type === "final" ? "پروژه‌های نهایی" : type === "archived" ? "آرشیو پروژه‌ها" : "پروژه‌های در حال اجرا";
-  const [rows, setRows] = useState([]);
+  const [rows, setRows] = React.useState([]);
   const refresh = () => setRows(listManagedProjects(type));
 
-  useEffect(() => {
+  React.useEffect(() => {
     refresh();
     const handler = () => refresh();
     window.addEventListener("storage", handler);

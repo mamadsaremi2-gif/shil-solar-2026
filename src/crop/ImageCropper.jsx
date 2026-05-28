@@ -1,6 +1,4 @@
-import React, {
-  useState
-} from "react";
+import * as React from "react";
 
 import Cropper
 from "react-easy-crop";
@@ -8,10 +6,10 @@ from "react-easy-crop";
 export default function ImageCropper() {
 
   const [crop, setCrop] =
-    useState({ x: 0, y: 0 });
+    React.useState({ x: 0, y: 0 });
 
   const [zoom, setZoom] =
-    useState(1);
+    React.useState(1);
 
   return (
 

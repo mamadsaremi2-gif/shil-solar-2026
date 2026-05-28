@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import * as React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ShilPageShell from "../../components/ShilPageShell.jsx";
 import ProjectMiniRail from "../../components/ProjectMiniRail.jsx";
@@ -118,61 +118,61 @@ export default function CalculationInputs() {
   const domain = params.domain || localStorage.getItem("shil:calculationDomain") || localStorage.getItem("shil:scenarioDomain") || "solar";
   const method = params.method || localStorage.getItem("shil:calculationMethod") || "equipment";
 
-  const [query, setQuery] = useState("");
-  const [isEquipmentPickerOpen, setIsEquipmentPickerOpen] = useState(false);
-  const [scaleWarning, setScaleWarning] = useState("");
-  const scenario = useMemo(() => readDraft("shil:selectedScenario"), []);
-  const scenarioSeededItems = useMemo(() => matchScenarioEquipmentItems(scenario), [scenario]);
+  const [query, setQuery] = React.useState("");
+  const [isEquipmentPickerOpen, setIsEquipmentPickerOpen] = React.useState(false);
+  const [scaleWarning, setScaleWarning] = React.useState("");
+  const scenario = React.useMemo(() => readDraft("shil:selectedScenario"), []);
+  const scenarioSeededItems = React.useMemo(() => matchScenarioEquipmentItems(scenario), [scenario]);
   const isReadyScenarioEquipmentFlow = isScenarioFlowFor(domain) && method === "equipment" && ["solar", "emergency"].includes(domain);
 
-  const [selectedIds, setSelectedIds] = useState(() => new Set(isReadyScenarioEquipmentFlow ? scenarioSeededItems.map((item) => item.id) : []));
-  const [itemOverrides, setItemOverrides] = useState(() => isReadyScenarioEquipmentFlow ? buildScenarioEquipmentOverrides(scenario, scenarioSeededItems) : {});
-  const [showExpert, setShowExpert] = useState(false);
-  const [manualEnergyKWh, setManualEnergyKWh] = useState("");
-  const [manualPowerW, setManualPowerW] = useState("");
-  const [manualCurrentA, setManualCurrentA] = useState("");
-  const [manualVoltage, setManualVoltage] = useState(domain === "emergency" ? "220" : "220");
-  const [manualHours, setManualHours] = useState(domain === "emergency" ? "6" : "5");
-  const [profileVoltage, setProfileVoltage] = useState("220");
-  const [profilePowerW, setProfilePowerW] = useState("1000");
-  const [profileMorningKWh, setProfileMorningKWh] = useState("1");
-  const [profileNoonKWh, setProfileNoonKWh] = useState("1");
-  const [profileEveningKWh, setProfileEveningKWh] = useState("2");
-  const [profileNightKWh, setProfileNightKWh] = useState("1");
-  const [profileStartFactor, setProfileStartFactor] = useState("1.6");
+  const [selectedIds, setSelectedIds] = React.useState(() => new Set(isReadyScenarioEquipmentFlow ? scenarioSeededItems.map((item) => item.id) : []));
+  const [itemOverrides, setItemOverrides] = React.useState(() => isReadyScenarioEquipmentFlow ? buildScenarioEquipmentOverrides(scenario, scenarioSeededItems) : {});
+  const [showExpert, setShowExpert] = React.useState(false);
+  const [manualEnergyKWh, setManualEnergyKWh] = React.useState("");
+  const [manualPowerW, setManualPowerW] = React.useState("");
+  const [manualCurrentA, setManualCurrentA] = React.useState("");
+  const [manualVoltage, setManualVoltage] = React.useState(domain === "emergency" ? "220" : "220");
+  const [manualHours, setManualHours] = React.useState(domain === "emergency" ? "6" : "5");
+  const [profileVoltage, setProfileVoltage] = React.useState("220");
+  const [profilePowerW, setProfilePowerW] = React.useState("1000");
+  const [profileMorningKWh, setProfileMorningKWh] = React.useState("1");
+  const [profileNoonKWh, setProfileNoonKWh] = React.useState("1");
+  const [profileEveningKWh, setProfileEveningKWh] = React.useState("2");
+  const [profileNightKWh, setProfileNightKWh] = React.useState("1");
+  const [profileStartFactor, setProfileStartFactor] = React.useState("1.6");
 
-  const environment = useMemo(() => readDraft("shil:environmentDraft") || {}, []);
-  const environmentAssessment = useMemo(() => readDraft("shil:environmentAssessment") || {}, []);
-  const envSolarDefaults = useMemo(() => getEnvironmentSolarDefaults(environment, environmentAssessment), [environment, environmentAssessment]);
+  const environment = React.useMemo(() => readDraft("shil:environmentDraft") || {}, []);
+  const environmentAssessment = React.useMemo(() => readDraft("shil:environmentAssessment") || {}, []);
+  const envSolarDefaults = React.useMemo(() => getEnvironmentSolarDefaults(environment, environmentAssessment), [environment, environmentAssessment]);
 
   const defaultPanel = SHIL_SOLAR_PANELS.find((p) => p.powerW === 620) || SHIL_SOLAR_PANELS[0];
   const defaultBattery = SHIL_LITHIUM_BATTERIES.find((b) => b.nominalVoltage === 48 && b.capacityAh === 200) || SHIL_LITHIUM_BATTERIES[0];
-  const [selectedPanelId, setSelectedPanelId] = useState(defaultPanel?.id || "");
-  const [panelCount, setPanelCount] = useState("10");
-  const [psh, setPsh] = useState(String(envSolarDefaults.psh));
-  const [lossPercent, setLossPercent] = useState(String(envSolarDefaults.totalLoss));
-  const [dailyLoadKWh, setDailyLoadKWh] = useState("");
-  const [acVoltageRoute, setAcVoltageRoute] = useState("220");
-  const [inverterSplitCount, setInverterSplitCount] = useState("1");
-  const [needsBattery, setNeedsBattery] = useState(false);
-  const [daysAutonomy, setDaysAutonomy] = useState("1");
-  const [batteryId, setBatteryId] = useState(defaultBattery?.id || "");
-  const [batteryDod, setBatteryDod] = useState(String(defaultBattery?.usableDod || 0.85));
-  const [systemEta, setSystemEta] = useState(String(defaultBattery?.efficiency || 0.94));
+  const [selectedPanelId, setSelectedPanelId] = React.useState(defaultPanel?.id || "");
+  const [panelCount, setPanelCount] = React.useState("10");
+  const [psh, setPsh] = React.useState(String(envSolarDefaults.psh));
+  const [lossPercent, setLossPercent] = React.useState(String(envSolarDefaults.totalLoss));
+  const [dailyLoadKWh, setDailyLoadKWh] = React.useState("");
+  const [acVoltageRoute, setAcVoltageRoute] = React.useState("220");
+  const [inverterSplitCount, setInverterSplitCount] = React.useState("1");
+  const [needsBattery, setNeedsBattery] = React.useState(false);
+  const [daysAutonomy, setDaysAutonomy] = React.useState("1");
+  const [batteryId, setBatteryId] = React.useState(defaultBattery?.id || "");
+  const [batteryDod, setBatteryDod] = React.useState(String(defaultBattery?.usableDod || 0.85));
+  const [systemEta, setSystemEta] = React.useState(String(defaultBattery?.efficiency || 0.94));
 
-  const items = useMemo(() => {
+  const items = React.useMemo(() => {
     const results = searchConsumerEquipment(query);
     return results.slice(0, 250);
   }, [query]);
 
-  const selectedItems = useMemo(() => {
+  const selectedItems = React.useMemo(() => {
     return consumerEquipmentLibrary
       .filter((item) => selectedIds.has(item.id))
       .map((item) => mergeItemWithOverride(item, itemOverrides[item.id]));
   }, [selectedIds, itemOverrides]);
 
-  const selectedPanel = useMemo(() => SHIL_SOLAR_PANELS.find((item) => item.id === selectedPanelId) || defaultPanel || {}, [selectedPanelId, defaultPanel]);
-  const selectedBattery = useMemo(() => SHIL_LITHIUM_BATTERIES.find((item) => item.id === batteryId) || defaultBattery || {}, [batteryId, defaultBattery]);
+  const selectedPanel = React.useMemo(() => SHIL_SOLAR_PANELS.find((item) => item.id === selectedPanelId) || defaultPanel || {}, [selectedPanelId, defaultPanel]);
+  const selectedBattery = React.useMemo(() => SHIL_LITHIUM_BATTERIES.find((item) => item.id === batteryId) || defaultBattery || {}, [batteryId, defaultBattery]);
   const panelPowerW = toNumber(selectedPanel.powerW, 0);
   const batteryUnitKWh = toNumber(selectedBattery.energyWh || (toNumber(selectedBattery.nominalVoltage, 0) * toNumber(selectedBattery.capacityAh, 0)), 0) / 1000;
   const totalPanelPowerW = toNumber(panelPowerW, 0) * toNumber(panelCount, 0);
@@ -187,7 +187,7 @@ export default function CalculationInputs() {
   const isUtilityPanelScale = effectivePanelPowerW > 30000;
   const isUtilityGateway = domain === "utility";
 
-  const defaultPanelDistribution = useMemo(() => {
+  const defaultPanelDistribution = React.useMemo(() => {
     const invCount = Math.max(1, Math.round(toNumber(inverterSplitCount, 1)));
     const total = Math.max(0, Math.round(toNumber(panelCount, 0)));
     const base = Math.floor(total / invCount);
@@ -195,10 +195,10 @@ export default function CalculationInputs() {
     return Array.from({ length: invCount }, (_, index) => base + (index < rest ? 1 : 0));
   }, [panelCount, inverterSplitCount]);
 
-  const [showManualPanelSplit, setShowManualPanelSplit] = useState(false);
-  const [manualPanelDistribution, setManualPanelDistribution] = useState([]);
+  const [showManualPanelSplit, setShowManualPanelSplit] = React.useState(false);
+  const [manualPanelDistribution, setManualPanelDistribution] = React.useState([]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     setManualPanelDistribution((prev) => {
       const invCount = Math.max(1, Math.round(toNumber(inverterSplitCount, 1)));
       const next = Array.from({ length: invCount }, (_, index) => toNumber(prev[index] ?? defaultPanelDistribution[index] ?? 0, 0));
@@ -210,7 +210,7 @@ export default function CalculationInputs() {
   const distributionTotal = activePanelDistribution.reduce((sum, value) => sum + toNumber(value, 0), 0);
   const distributionMismatch = showManualPanelSplit && distributionTotal !== panelCountNormalized;
 
-  const inverterPanelLayouts = useMemo(() => {
+  const inverterPanelLayouts = React.useMemo(() => {
     return activePanelDistribution.map((panelQty, index) => {
       const count = Math.max(0, Math.round(toNumber(panelQty, 0)));
       const series = count > 0 ? Math.max(1, Math.min(count, Math.round(Math.sqrt(count)))) : 0;
@@ -221,28 +221,29 @@ export default function CalculationInputs() {
   }, [activePanelDistribution, panelPowerW]);
 
 
-  const profileBucketsWh = useMemo(() => ({
+  const profileBucketsWh = React.useMemo(() => ({
     morning: Math.max(0, toNumber(profileMorningKWh, 0) * 1000),
     noon: Math.max(0, toNumber(profileNoonKWh, 0) * 1000),
     evening: Math.max(0, toNumber(profileEveningKWh, 0) * 1000),
     night: Math.max(0, toNumber(profileNightKWh, 0) * 1000),
   }), [profileMorningKWh, profileNoonKWh, profileEveningKWh, profileNightKWh]);
 
-  const profileTotalEnergyWh = useMemo(() => Object.values(profileBucketsWh).reduce((sum, value) => sum + value, 0), [profileBucketsWh]);
-  const profilePeakBucketWh = useMemo(() => Math.max(...Object.values(profileBucketsWh), 0), [profileBucketsWh]);
-  const profilePeakPowerW = useMemo(() => Math.max(toNumber(profilePowerW, 0), profilePeakBucketWh / 3), [profilePowerW, profilePeakBucketWh]);
-  const profileSurgePowerW = useMemo(() => Math.round(profilePeakPowerW * Math.max(1, toNumber(profileStartFactor, 1.6))), [profilePeakPowerW, profileStartFactor]);
+  const profileTotalEnergyWh = React.useMemo(() => Object.values(profileBucketsWh).reduce((sum, value) => sum + value, 0), [profileBucketsWh]);
+  const profilePeakBucketWh = React.useMemo(() => Math.max(...Object.values(profileBucketsWh), 0), [profileBucketsWh]);
+  const profilePeakPowerW = React.useMemo(() => Math.max(toNumber(profilePowerW, 0), profilePeakBucketWh / 3), [profilePowerW, profilePeakBucketWh]);
+  const profileSurgePowerW = React.useMemo(() => Math.round(profilePeakPowerW * Math.max(1, toNumber(profileStartFactor, 1.6))), [profilePeakPowerW, profileStartFactor]);
 
-  const profileLoadProfile = useMemo(() => ({
+  const profileLoadProfile = React.useMemo(() => ({
     buckets: profileBucketsWh,
     peakBucket: Object.entries(profileBucketsWh).sort((a, b) => b[1] - a[1])[0]?.[0] || "evening",
     peakHours: [18, 19, 20, 21],
     simultaneityFactor: 1,
   }), [profileBucketsWh]);
 
-  const enginePreview = useMemo(() => {
+  const enginePreview = React.useMemo(() => {
     const voltage = toNumber(method === "solar_panel_power" ? acVoltageRoute : method === "profile" ? profileVoltage : manualVoltage || 220, 220);
-    const powerFromCurrent = method === "current" && manualCurrentA ? toNumber(manualCurrentA, 0) * voltage : 0;
+    const currentVoltageFactor = voltage >= 380 ? Math.sqrt(3) : 1;
+    const powerFromCurrent = method === "current" && manualCurrentA ? Math.round(toNumber(manualCurrentA, 0) * voltage * currentVoltageFactor) : 0;
     const energyFromManual = method === "energy" && manualEnergyKWh ? toNumber(manualEnergyKWh, 0) * 1000 : method === "profile" ? profileTotalEnergyWh : 0;
     const powerFromManual = method === "power" && manualPowerW ? toNumber(manualPowerW, 0) : method === "profile" ? profilePeakPowerW : 0;
     const solarPanelEnergyWh = method === "solar_panel_power" ? calculatedPvDailyKWh * 1000 : 0;
@@ -264,7 +265,7 @@ export default function CalculationInputs() {
     });
   }, [domain, method, scenario, environment, environmentAssessment, selectedItems, manualEnergyKWh, manualPowerW, manualCurrentA, manualVoltage, manualHours, panelPowerW, panelCount, psh, acVoltageRoute, totalPanelPowerW, calculatedPvDailyKWh, profileVoltage, profileTotalEnergyWh, profilePeakPowerW, profileSurgePowerW, profileLoadProfile]);
 
-  const solarPanelPreview = useMemo(() => {
+  const solarPanelPreview = React.useMemo(() => {
     if (method !== "solar_panel_power") return null;
     return runUnifiedPvForUi({
       load: { method, totalPowerW: totalPanelPowerW, totalEnergyKWh: calculatedPvDailyKWh, voltageAC: toNumber(acVoltageRoute, 220) },
@@ -288,6 +289,16 @@ export default function CalculationInputs() {
       },
     });
   }, [method, selectedPanelId, panelPowerW, panelCount, psh, lossPercent, environment, acVoltageRoute, totalPanelPowerW, calculatedPvDailyKWh]);
+
+  const contextMethodLabel = METHOD_LABELS[method] || method;
+  const contextScenarioLabel = scenario?.title || "دستی";
+  const contextCityLabel = environment?.city || "اصفهان";
+  const manualVoltageNumber = toNumber(manualVoltage || 220, 220);
+  const manualPhaseLabel = manualVoltageNumber >= 380 ? "۳۸۰ ولت سه‌فاز" : "۲۲۰ ولت تک‌فاز";
+  const currentDerivedPowerW = Math.round(toNumber(manualCurrentA, 0) * manualVoltageNumber * (manualVoltageNumber >= 380 ? Math.sqrt(3) : 1));
+  const selectedEquipmentTitles = selectedItems.map((item) => item.title).filter(Boolean).join("، ");
+  const methodResultTitle = method === "equipment" ? "نتایج لیست تجهیزات" : method === "energy" ? "نتایج انرژی روزانه" : method === "power" ? "نتایج توان کل" : method === "profile" ? "نتایج پروفایل مصرف" : method === "solar_panel_power" ? "نتایج توان پنل خورشیدی" : method === "current" ? "نتایج جریان کل" : "نتایج محاسبات";
+  const safeLoadBuckets = enginePreview?.loadProfile?.buckets || profileBucketsWh;
 
   const toggleItem = (item) => {
     setSelectedIds((prev) => {
@@ -411,7 +422,7 @@ export default function CalculationInputs() {
       voltageAC: toNumber(method === "solar_panel_power" ? acVoltageRoute : method === "profile" ? profileVoltage : manualVoltage || 220, 220),
       phaseAC: toNumber(method === "solar_panel_power" ? acVoltageRoute : method === "profile" ? profileVoltage : manualVoltage || 220, 220) >= 380 ? "three" : "single",
       manualEnergyWh: method === "energy" && manualEnergyKWh ? toNumber(manualEnergyKWh, 0) * 1000 : method === "profile" ? profileTotalEnergyWh : method === "solar_panel_power" ? calculatedPvDailyKWh * 1000 : 0,
-      manualPowerW: method === "current" && manualCurrentA ? toNumber(manualCurrentA, 0) * toNumber(manualVoltage || 220, 220) : method === "profile" ? profilePeakPowerW : method === "solar_panel_power" ? totalPanelPowerW : toNumber(manualPowerW, 0),
+      manualPowerW: method === "current" && manualCurrentA ? Math.round(toNumber(manualCurrentA, 0) * toNumber(manualVoltage || 220, 220) * (toNumber(manualVoltage || 220, 220) >= 380 ? Math.sqrt(3) : 1)) : method === "profile" ? profilePeakPowerW : method === "solar_panel_power" ? totalPanelPowerW : toNumber(manualPowerW, 0),
       manualSurgeW: method === "profile" ? profileSurgePowerW : 0,
       manualHours: toNumber(method === "solar_panel_power" ? psh || 0 : method === "profile" ? 1 : manualHours || 0, 0),
       loadProfile: method === "profile" ? profileLoadProfile : undefined,
@@ -449,16 +460,16 @@ export default function CalculationInputs() {
             <p className="shil-muted-note">{domain === "emergency" ? "سناریوی آماده برق اضطراری" : "سناریوی آماده خورشیدی"} بعد از تأیید شرایط محیطی وارد این لیست شده است. تجهیزات پیشنهادی سناریو از قبل انتخاب شده‌اند؛ می‌توانی حذف، اضافه یا تعداد و ساعت مصرف را اصلاح کنی و بعد مسیر اصلی پروژه با موتور محاسباتی همان شاخه ادامه پیدا می‌کند.</p>
           ) : null}
           <div className="shil-summary-grid">
-            <div><span>روش</span><strong>{METHOD_LABELS[method] || method}</strong></div>
+            <div><span>روش</span><strong>{contextMethodLabel}</strong></div>
             <div><span>هسته</span><strong>{domain === "emergency" ? "برق اضطراری" : "خورشیدی"}</strong></div>
-            <div><span>سناریو</span><strong>{scenario?.title || "دستی"}</strong></div>
-            <div><span>شهر</span><strong>{environment?.city || "اصفهان"}</strong></div>
+            <div><span>سناریو</span><strong>{contextScenarioLabel}</strong></div>
+            <div><span>شهر</span><strong>{contextCityLabel}</strong></div>
           </div>
         </section>
 
         {method === "equipment" ? (
           <section className="shil-env-card shil-equipment-picker-card">
-            <h3 className="shil-section-title">{isReadyScenarioEquipmentFlow ? (domain === "emergency" ? "لیست تجهیزات سناریوی آماده برق اضطراری" : "لیست تجهیزات سناریوی آماده خورشیدی") : "لیست تجهیزات"}</h3>
+            <h3 className="shil-section-title">لیست تجهیزات شما را مشخص کنید</h3>
             <button type="button" className="shil-equipment-field" onClick={() => setIsEquipmentPickerOpen((v) => !v)}>
               <span>{isReadyScenarioEquipmentFlow ? "اصلاح تجهیزات سناریوی انتخابی" : "انتخاب از بانک ۲۵۰ تجهیز"}</span>
               <strong>{selectedItems.length ? `${selectedItems.length} تجهیز انتخاب شده` : "باز کردن لیست"}</strong>
@@ -541,16 +552,27 @@ export default function CalculationInputs() {
                   <label>راندمان مؤثر سیستم ٪<input className="shil-input" value={(100 - toNumber(lossPercent, 0)).toFixed(1)} onChange={(e) => { const efficiency = Math.max(5, Math.min(100, toNumber(e.target.value, 0))); setLossPercent(String((100 - efficiency).toFixed(1))); }} placeholder="محاسبه از شرایط محیطی" inputMode="decimal" /></label>
                   <label>مسیر خروجی AC<select className="shil-input" value={acVoltageRoute} onChange={(e) => setAcVoltageRoute(e.target.value)}><option value="220">۲۲۰ ولت تک‌فاز</option><option value="380">۳۸۰ ولت سه‌فاز</option></select></label>
                 </div>
-                <div className="shil-summary-grid"><div><span>توان کل پنل‌ها</span><strong>{(totalPanelPowerW / 1000).toFixed(2)} kW</strong></div><div><span>تولید روزانه بدون تلفات</span><strong>{rawPvDailyKWh} kWh</strong></div><div><span>تولید روزانه با تلفات</span><strong>{calculatedPvDailyKWh} kWh</strong></div><div><span>توان موثر معیار مسیر</span><strong>{(effectivePanelPowerW / 1000).toFixed(2)} kW</strong></div><div><span>محدوده طراحی</span><strong>{isUtilityPanelScale ? "نیروگاهی / توان موثر بالای ۳۰kW" : "مصرفی عادی / توان موثر زیر ۳۰kW"}</strong></div><div><span>منبع PSH و تلفات</span><strong>{environment?.city || "شرایط محیطی"}</strong></div><div><span>راندمان مؤثر</span><strong>{(100 - toNumber(lossPercent, 0)).toFixed(1)}٪</strong></div><div><span>افت جهت/زاویه</span><strong>{envSolarDefaults.orientation.toFixed(1)}٪</strong></div></div>
+                <h3 className="shil-section-title">نتایج توان پنل خورشیدی</h3>
+                <div className="shil-summary-grid">
+                  <div><span>توان کل پنل‌ها</span><strong>{(totalPanelPowerW / 1000).toFixed(2)} kW</strong></div>
+                  <div><span>تولید روزانه بدون تلفات</span><strong>{rawPvDailyKWh} kWh</strong></div>
+                  <div><span>منبع PSH و تلفات</span><strong>{contextCityLabel}</strong></div>
+                  <div><span>راندمان مؤثر</span><strong>{(100 - toNumber(lossPercent, 0)).toFixed(1)}٪</strong></div>
+                  <div><span>جهت و زاویه مطابق شرایط محیطی</span><strong>{envSolarDefaults.orientation.toFixed(1)}٪</strong></div>
+                </div>
                 {isUtilityPanelScale && !isUtilityGateway ? (<div className="shil-inline-warning"><strong>توان موثر بالای ۳۰kW است.</strong><button type="button" className="shil-secondary-wide" onClick={goToUtilityGateway}>ورود به درگاه نیروگاهی</button></div>) : null}
               </>
             ) : (
               <div className="shil-form-grid">
                 {method === "energy" ? <label>انرژی روزانه kWh<input className="shil-input" value={manualEnergyKWh} onChange={(e) => setManualEnergyKWh(e.target.value)} placeholder="مثلاً 12.5" inputMode="decimal" /></label> : null}
-                {method === "power" ? <label>توان کل W<input className="shil-input" value={manualPowerW} onChange={(e) => setManualPowerW(e.target.value)} placeholder="مثلاً 3500" inputMode="numeric" /></label> : null}
+                {method === "power" ? <label>توان مدنظر پروژه W<input className="shil-input" value={manualPowerW} onChange={(e) => setManualPowerW(e.target.value)} placeholder="مثلاً 3500" inputMode="numeric" /></label> : null}
                 {method === "current" ? <label>جریان کل A<input className="shil-input" value={manualCurrentA} onChange={(e) => setManualCurrentA(e.target.value)} placeholder="مثلاً 16" inputMode="decimal" /></label> : null}
-                <label>ولتاژ AC<input className="shil-input" value={manualVoltage} onChange={(e) => setManualVoltage(e.target.value)} inputMode="numeric" /></label>
-                <label>ساعت استفاده / زمان برق اضطراری مورد نظر<input className="shil-input" value={manualHours} onChange={(e) => setManualHours(e.target.value)} inputMode="decimal" /></label>
+                {(method === "power" || method === "current") ? (
+                  <label>ولتاژ شبکه<select className="shil-input" value={manualVoltage} onChange={(e) => setManualVoltage(e.target.value)}><option value="220">۲۲۰ ولت تک‌فاز</option><option value="380">۳۸۰ ولت سه‌فاز</option></select></label>
+                ) : (
+                  <label>ولتاژ AC<input className="shil-input" value={manualVoltage} onChange={(e) => setManualVoltage(e.target.value)} inputMode="numeric" /></label>
+                )}
+                {method !== "power" && method !== "current" ? <label>ساعت استفاده / زمان برق اضطراری مورد نظر<input className="shil-input" value={manualHours} onChange={(e) => setManualHours(e.target.value)} inputMode="decimal" /></label> : null}
               </div>
             )}
           </section>
@@ -558,17 +580,22 @@ export default function CalculationInputs() {
 
         {method !== "solar_panel_power" ? (
         <section className="shil-env-card">
-          <h3 className="shil-section-title">خروجی زنده موتور بار</h3>
+          <h3 className="shil-section-title">
+            {methodResultTitle}
+          </h3>
           <div className="shil-summary-grid">
-            <div><span>تعداد تجهیزات</span><strong>{enginePreview.selectedCount || "Auto"}</strong></div>
-            <div><span>توان کل</span><strong>{enginePreview.totalPowerW} W</strong></div>
-            <div><span>انرژی روزانه</span><strong>{enginePreview.totalEnergyKWh} kWh</strong></div>
-            <div><span>جریان AC</span><strong>{enginePreview.acCurrentA} A</strong></div>
-            <div><span>جریان راه‌اندازی</span><strong>{enginePreview.startCurrentA} A</strong></div>
-            <div><span>پیک استارت</span><strong>{enginePreview.surgePowerW} W</strong></div>
-            <div><span>موتوری/سافت</span><strong>{enginePreview.motorCount || 0}/{enginePreview.softStarterCount || 0}</strong></div>
+            {method === "equipment" ? <div><span>تجهیزات انتخاب‌شده</span><strong>{selectedEquipmentTitles || "ثبت نشده"}</strong></div> : null}
+            {method !== "power" && method !== "current" ? <div><span>تعداد تجهیزات</span><strong>{enginePreview.selectedCount || "Auto"}</strong></div> : null}
+            {method !== "current" ? <div><span>توان کل</span><strong>{enginePreview.totalPowerW} W</strong></div> : null}
+            {method !== "current" ? <div><span>انرژی روزانه</span><strong>{enginePreview.totalEnergyKWh} kWh</strong></div> : null}
+            {method === "current" ? <div><span>جریان کل واردشده</span><strong>{toNumber(manualCurrentA, 0)} A</strong></div> : <div><span>جریان AC</span><strong>{enginePreview.acCurrentA} A</strong></div>}
+            {method === "current" ? <div><span>ولتاژ شبکه</span><strong>{manualPhaseLabel}</strong></div> : null}
+            {method === "current" ? <div><span>توان محاسبه‌شده</span><strong>{currentDerivedPowerW} W</strong></div> : null}
+            {method !== "power" && method !== "current" ? <div><span>جریان راه‌اندازی</span><strong>{enginePreview.startCurrentA} A</strong></div> : null}
+            {method !== "power" && method !== "current" ? <div><span>پیک استارت</span><strong>{enginePreview.surgePowerW} W</strong></div> : null}
+            {method !== "power" && method !== "current" ? <div><span>موتوری/سافت</span><strong>{enginePreview.motorCount || 0}/{enginePreview.softStarterCount || 0}</strong></div> : null}
           </div>
-          {showExpert ? (
+          {showExpert && method !== "power" && method !== "current" ? (
             <div className="shil-expert-box">
               <strong>منطق پشت پرده:</strong>
               <p>{enginePreview.expertSummary?.rule}</p>
@@ -585,12 +612,12 @@ export default function CalculationInputs() {
 
         {method === "profile" ? (
           <section className="shil-env-card">
-            <h3 className="shil-section-title">پروفایل مصرف تخمینی</h3>
+            <h3 className="shil-section-title">جزئیات نتایج پروفایل مصرف</h3>
             <div className="shil-summary-grid">
-              <div><span>صبح</span><strong>{Math.round(enginePreview.loadProfile.buckets.morning / 1000)} kWh</strong></div>
-              <div><span>ظهر</span><strong>{Math.round(enginePreview.loadProfile.buckets.noon / 1000)} kWh</strong></div>
-              <div><span>عصر</span><strong>{Math.round(enginePreview.loadProfile.buckets.evening / 1000)} kWh</strong></div>
-              <div><span>شب</span><strong>{Math.round(enginePreview.loadProfile.buckets.night / 1000)} kWh</strong></div>
+              <div><span>صبح</span><strong>{Math.round(safeLoadBuckets.morning / 1000)} kWh</strong></div>
+              <div><span>ظهر</span><strong>{Math.round(safeLoadBuckets.noon / 1000)} kWh</strong></div>
+              <div><span>عصر</span><strong>{Math.round(safeLoadBuckets.evening / 1000)} kWh</strong></div>
+              <div><span>شب</span><strong>{Math.round(safeLoadBuckets.night / 1000)} kWh</strong></div>
             </div>
           </section>
         ) : null}

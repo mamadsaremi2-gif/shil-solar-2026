@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import * as React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ShilPageShell from "../components/ShilPageShell.jsx";
 import { getScenarioList, levelMeta } from "../data/scenarios/scenarioLibrary.js";
@@ -20,9 +20,9 @@ export default function Scenarios() {
   const navigate = useNavigate();
   const { domain, level } = useParams();
 
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = React.useState("");
 
-  const scenarios = useMemo(() => {
+  const scenarios = React.useMemo(() => {
     if (!domain || !level) return [];
     const q = query.trim().toLowerCase();
     const list = getScenarioList(domain, level).slice(0, 100);

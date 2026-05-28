@@ -1,4 +1,4 @@
-* {
+﻿* {
   font-family: Vazirmatn, Tahoma, Arial, sans-serif;
 }
 *{
@@ -8624,6 +8624,7 @@ html,body,#root{width:100%;max-width:100%;min-height:100%;overflow-x:hidden;}
   }
 }
 
+@import "./app.css";
 
 /* SHIL optional AI installation visualization block - summary page */
 .shil-ai-preview-card{

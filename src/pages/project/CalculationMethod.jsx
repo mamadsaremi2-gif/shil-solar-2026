@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import * as React from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { approveProjectStep } from "../../workflow/projectWorkflow.js";
 import EngineeringPageShell from "../../components/EngineeringPageShell.jsx";
@@ -41,14 +41,14 @@ export default function CalculationMethod() {
   const domain = isEmergency ? "emergency" : "solar";
   const subtype = params.connection || (isEmergency ? "emergency" : "solar");
   const title = isEmergency ? "روش محاسبات برق اضطراری" : `روش محاسبات ${labels[subtype] || labels[domain]}`;
-  const [methodCards, setMethodCards] = useState(fallbackMethodCards);
+  const [methodCards, setMethodCards] = React.useState(fallbackMethodCards);
 
-  const context = useMemo(() => ({
+  const context = React.useMemo(() => ({
     scenario: readDraft("shil:selectedScenario"),
     environment: readDraft("shil:environmentDraft"),
   }), []);
 
-  useEffect(() => {
+  React.useEffect(() => {
     let alive = true;
     fetch("/calculation-method-cards.json", { cache: "no-store" })
       .then((res) => (res.ok ? res.json() : null))

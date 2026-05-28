@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from "react";
+import * as React from "react";
 import { Link, useParams } from "react-router-dom";
 import EngineeringPageShell from "../../components/EngineeringPageShell.jsx";
 import { approveProjectStep } from "../../workflow/projectWorkflow.js";
@@ -168,10 +168,10 @@ function DecisionPath({ methodSummary, result, calculationInput, solarDesign, em
 export default function RunCalculation() {
   const { domain = "solar" } = useParams();
   const emergency = domain === "emergency";
-  const [ran, setRan] = useState(false);
-  const [exporting, setExporting] = useState("");
-  const exportSheetRef = useRef(null);
-  const coreRun = useMemo(() => runCore(domain), [domain]);
+  const [ran, setRan] = React.useState(false);
+  const [exporting, setExporting] = React.useState("");
+  const exportSheetRef = React.useRef(null);
+  const coreRun = React.useMemo(() => runCore(domain), [domain]);
   const result = coreRun.result;
   const project = readDraft("shil:projectInfoDraft", {});
   const summary = readDraft("shil:summaryDraft", {});
@@ -184,7 +184,7 @@ export default function RunCalculation() {
   const methodKey = getActiveMethodKey({ domain });
   const aiPreview = readDraft("shil:aiInstallationPreview", null);
   const projectTitle = project.projectName || project.name || (emergency ? "پروژه برق اضطراری" : "پروژه خورشیدی");
-  const delivery = useMemo(
+  const delivery = React.useMemo(
     () => buildFinalEngineeringDelivery({ domain, project, summary, result, solarDesign, aiPreview }),
     [domain, project, summary, result, solarDesign, aiPreview]
   );

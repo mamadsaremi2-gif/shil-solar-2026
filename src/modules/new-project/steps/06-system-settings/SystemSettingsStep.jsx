@@ -1,9 +1,9 @@
-import { useMemo } from "react";
+import * as React from "react";
 import { Link } from "react-router-dom";
 
 
 export function SystemSettingsStep({ value = {} }) {
-  const design = useMemo(() => ({
+  const design = React.useMemo(() => ({
     valid: true,
     previewOnly: true,
     inverter: { title: "پیشنهاد روکشی اینورتر" },

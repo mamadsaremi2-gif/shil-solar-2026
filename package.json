@@ -93,6 +93,7 @@
     "react-calendar-heatmap": "^1.10.0",
     "react-chartjs-2": "^5.3.1",
     "react-countup": "^6.5.3",
+    "react-csv": "^2.2.2",
     "react-datasheet-grid": "^4.11.6",
     "react-datepicker": "^9.1.0",
     "react-dom": "^18.3.1",
@@ -147,14 +148,17 @@
     "xstate": "^5.31.1",
     "yup": "^1.7.1",
     "zod": "^4.4.3",
-    "zustand": "^5.0.13",
-    "react-csv": "^2.2.2"
+    "zustand": "^5.0.13"
   },
   "devDependencies": {
     "autoprefixer": "^10.5.0",
     "eslint": "^9.39.4",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.1.1",
+    "imagemin": "^9.0.1",
+    "imagemin-mozjpeg": "^10.0.0",
+    "imagemin-pngquant": "^10.0.0",
+    "imagemin-webp": "^8.0.0",
     "postcss": "^8.5.14",
     "prettier": "^3.8.3",
     "sharp": "^0.34.5",

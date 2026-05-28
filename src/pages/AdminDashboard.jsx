@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import * as React from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import ShilPageShell from "../components/ShilPageShell.jsx";
 import {
@@ -183,8 +183,8 @@ function normalizeNumber(value, fallback = 0) {
 }
 
 function AdminGate({ onVerified }) {
-  const [pin, setPin] = useState("");
-  const [error, setError] = useState("");
+  const [pin, setPin] = React.useState("");
+  const [error, setError] = React.useState("");
   return (
     <ShilPageShell title="ورود ادمین">
       <section className="shil-admin-lock">
@@ -228,33 +228,33 @@ function RecordCard({ item, type, onPatch, onDelete, onReply }) {
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const session = getCurrentSession();
-  const importRef = useRef(null);
+  const importRef = React.useRef(null);
 
-  const [unlocked, setUnlocked] = useState(() => isAdminPinVerified());
-  const [tab, setTab] = useState("overview");
-  const [cards, setCards] = useState(() => readAdminProjectPathCards());
-  const [catalog, setCatalog] = useState(() => readAdminCatalog());
-  const [defaults, setDefaults] = useState(() => readAdminDefaults());
-  const [audit, setAudit] = useState(() => readAdminAuditLog());
-  const [snapshots, setSnapshots] = useState(() => readAdminSnapshots());
-  const [security, setSecurity] = useState(() => readAdminSecurity());
-  const [message, setMessage] = useState("");
-  const [newPin, setNewPin] = useState("");
-  const [health, setHealth] = useState(() => validateAdminSystem());
-  const [adminCredentials, setAdminCredentials] = useState(() => readAdminLoginCredentials());
-  const [dataVersion, setDataVersion] = useState(0);
-  const [replyDraft, setReplyDraft] = useState({ id: "", sourceKey: "", text: "" });
-  const [cloudData, setCloudData] = useState(null);
-  const [cloudStatus, setCloudStatus] = useState(() => ({ online: isSupabaseReady(), loading: false, message: getCloudModeLabel() }));
+  const [unlocked, setUnlocked] = React.useState(() => isAdminPinVerified());
+  const [tab, setTab] = React.useState("overview");
+  const [cards, setCards] = React.useState(() => readAdminProjectPathCards());
+  const [catalog, setCatalog] = React.useState(() => readAdminCatalog());
+  const [defaults, setDefaults] = React.useState(() => readAdminDefaults());
+  const [audit, setAudit] = React.useState(() => readAdminAuditLog());
+  const [snapshots, setSnapshots] = React.useState(() => readAdminSnapshots());
+  const [security, setSecurity] = React.useState(() => readAdminSecurity());
+  const [message, setMessage] = React.useState("");
+  const [newPin, setNewPin] = React.useState("");
+  const [health, setHealth] = React.useState(() => validateAdminSystem());
+  const [adminCredentials, setAdminCredentials] = React.useState(() => readAdminLoginCredentials());
+  const [dataVersion, setDataVersion] = React.useState(0);
+  const [replyDraft, setReplyDraft] = React.useState({ id: "", sourceKey: "", text: "" });
+  const [cloudData, setCloudData] = React.useState(null);
+  const [cloudStatus, setCloudStatus] = React.useState(() => ({ online: isSupabaseReady(), loading: false, message: getCloudModeLabel() }));
 
-  const localData = useMemo(() => readAdminDataSnapshot(), [dataVersion]);
+  const localData = React.useMemo(() => readAdminDataSnapshot(), [dataVersion]);
   const data = cloudData?.online ? cloudData : localData;
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (session?.role === "admin") loadCloudData(false);
   }, []);
 
-  const catalogStats = useMemo(() => ({
+  const catalogStats = React.useMemo(() => ({
     panels: catalog.solarPanels?.filter((item) => item.active !== false).length || 0,
     inverters: catalog.solarInverters?.filter((item) => item.active !== false).length || 0,
     batteries: catalog.batteries?.filter((item) => item.active !== false).length || 0,

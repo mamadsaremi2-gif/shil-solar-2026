@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
+import * as React from "react";
 
 export default function OfflineStatusBadge() {
-  const [online, setOnline] = useState(typeof navigator === "undefined" ? true : navigator.onLine);
-  const [offlineReady, setOfflineReady] = useState(
+  const [online, setOnline] = React.useState(typeof navigator === "undefined" ? true : navigator.onLine);
+  const [offlineReady, setOfflineReady] = React.useState(
     typeof document !== "undefined" && document.documentElement.dataset.shilOfflineReady === "true"
   );
 
-  useEffect(() => {
+  React.useEffect(() => {
     const refresh = () => setOnline(navigator.onLine);
     const ready = () => setOfflineReady(true);
     window.addEventListener("online", refresh);

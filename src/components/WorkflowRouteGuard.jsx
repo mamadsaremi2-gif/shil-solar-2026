@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import * as React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getFlowSafeRedirect } from "../workflow/flowIsolation.js";
 import { showUxToast } from "../workflow/uxFlowController.js";
@@ -7,7 +7,7 @@ export default function WorkflowRouteGuard() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  useEffect(() => {
+  React.useEffect(() => {
     const redirect = getFlowSafeRedirect(location.pathname, location.search);
     if (!redirect) return;
 

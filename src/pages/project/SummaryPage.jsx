@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import * as React from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import EngineeringPageShell from "../../components/EngineeringPageShell.jsx";
 import { approveProjectStep } from "../../workflow/projectWorkflow.js";
@@ -78,23 +78,23 @@ export default function SummaryPage() {
   const solarPanelPowerInput = readDraft("shil:solarPanelPowerInput", {});
   const isSolarPanelPowerRoute = !emergency && methodKey === "solar_panel_power";
 
-  const project = useMemo(() => readDraft("shil:projectInfoDraft", {}), []);
-  const environment = useMemo(() => readDraft("shil:environmentDraft", {}), []);
-  const loadResult = useMemo(() => readDraft("shil:loadEngineResult", {}), []);
-  const systemSettings = useMemo(() => readDraft("shil:systemSettingsDraft", {}), []);
-  const solarDesign = useMemo(() => readDraft("shil:solarSystemDesign", systemSettings?.design || {}), [systemSettings]);
-  const unifiedPvResult = useMemo(() => readDraft("shil:unifiedPvEngineResult", solarDesign?.unifiedPvEngineResult || systemSettings?.unifiedPvEngineResult || null), [solarDesign, systemSettings]);
-  const selectedEquipment = useMemo(() => readDraft("shil:selectedEquipments", []), []);
-  const environmentImage = useMemo(() => getFirstSiteImage(environment), [environment]);
-  const emergencyDesign = useMemo(() => emergency ? { ...loadResult, previewOnly: true, explanations: ["این صفحه فقط چکیده است؛ محاسبه قطعی در صفحه اجرای محاسبات انجام می‌شود."] } : null, [emergency, loadResult]);
+  const project = React.useMemo(() => readDraft("shil:projectInfoDraft", {}), []);
+  const environment = React.useMemo(() => readDraft("shil:environmentDraft", {}), []);
+  const loadResult = React.useMemo(() => readDraft("shil:loadEngineResult", {}), []);
+  const systemSettings = React.useMemo(() => readDraft("shil:systemSettingsDraft", {}), []);
+  const solarDesign = React.useMemo(() => readDraft("shil:solarSystemDesign", systemSettings?.design || {}), [systemSettings]);
+  const unifiedPvResult = React.useMemo(() => readDraft("shil:unifiedPvEngineResult", solarDesign?.unifiedPvEngineResult || systemSettings?.unifiedPvEngineResult || null), [solarDesign, systemSettings]);
+  const selectedEquipment = React.useMemo(() => readDraft("shil:selectedEquipments", []), []);
+  const environmentImage = React.useMemo(() => getFirstSiteImage(environment), [environment]);
+  const emergencyDesign = React.useMemo(() => emergency ? { ...loadResult, previewOnly: true, explanations: ["این صفحه فقط چکیده است؛ محاسبه قطعی در صفحه اجرای محاسبات انجام می‌شود."] } : null, [emergency, loadResult]);
 
-  const [aiOpen, setAiOpen] = useState(false);
-  const [imageTransferred, setImageTransferred] = useState(false);
-  const [aiApplied, setAiApplied] = useState(Boolean(readDraft("shil:aiInstallationPreview", null)));
-  const [aiResult, setAiResult] = useState(() => readDraft("shil:aiInstallationPreview", null));
-  const [aiMessage, setAiMessage] = useState("");
-  const [aiGenerating, setAiGenerating] = useState(false);
-  const [installMode, setInstallMode] = useState("roof");
+  const [aiOpen, setAiOpen] = React.useState(false);
+  const [imageTransferred, setImageTransferred] = React.useState(false);
+  const [aiApplied, setAiApplied] = React.useState(Boolean(readDraft("shil:aiInstallationPreview", null)));
+  const [aiResult, setAiResult] = React.useState(() => readDraft("shil:aiInstallationPreview", null));
+  const [aiMessage, setAiMessage] = React.useState("");
+  const [aiGenerating, setAiGenerating] = React.useState(false);
+  const [installMode, setInstallMode] = React.useState("roof");
 
   const sitePhotoCount = Number(environment.siteAttachments?.length || (environment.siteAttachment ? 1 : 0) || (environmentImage ? 1 : 0));
   const hasSitePhoto = sitePhotoCount > 0 && Boolean(environmentImage?.src || environmentImage?.title);

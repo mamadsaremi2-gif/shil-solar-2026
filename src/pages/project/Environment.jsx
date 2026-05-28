@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import * as React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ShilPageShell from "../../components/ShilPageShell";
 import ProjectMiniRail from "../../components/ProjectMiniRail.jsx";
@@ -90,31 +90,31 @@ export default function Environment() {
   const navigate = useNavigate();
   const { domain = localStorage.getItem("shil:scenarioDomain") || "solar" } = useParams();
 
-  const [city, setCity] = useState(isfahan?.name || "اصفهان");
-  const [selectedCity, setSelectedCity] = useState(isfahan || null);
-  const [manualOverride, setManualOverride] = useState(false);
-  const [address, setAddress] = useState("");
-  const [gpsMode, setGpsMode] = useState("auto");
-  const [latitude, setLatitude] = useState(String(defaultClimate.latitude));
-  const [longitude, setLongitude] = useState(String(defaultClimate.longitude));
-  const [installType, setInstallType] = useState("urban");
-  const [manualClimate, setManualClimate] = useState(() => cityToClimate(isfahan, domain, "urban"));
-  const [compassAttachment, setCompassAttachment] = useState(null);
-  const [siteAttachments, setSiteAttachments] = useState([]);
-  const [compassPreview, setCompassPreview] = useState("");
-  const [sitePreviews, setSitePreviews] = useState([]);
-  const [savedSiteImageCount, setSavedSiteImageCount] = useState(() => Number(localStorage.getItem("shil:environmentSiteImageCount") || 0));
-  const [savedCompassImage, setSavedCompassImage] = useState(() => localStorage.getItem("shil:environmentCompassSaved") === "true");
-  const [compassUploadChoice, setCompassUploadChoice] = useState("ask");
-  const [gpsStatus, setGpsStatus] = useState("");
-  const [validationMessage, setValidationMessage] = useState("");
-  const [installTiltDeg, setInstallTiltDeg] = useState(String(estimateRecommendedTilt(defaultClimate.latitude)));
-  const [installAzimuthDeg, setInstallAzimuthDeg] = useState("180");
-  const [directionSlots, setDirectionSlots] = useState(defaultDirectionSlots);
+  const [city, setCity] = React.useState(isfahan?.name || "اصفهان");
+  const [selectedCity, setSelectedCity] = React.useState(isfahan || null);
+  const [manualOverride, setManualOverride] = React.useState(false);
+  const [address, setAddress] = React.useState("");
+  const [gpsMode, setGpsMode] = React.useState("auto");
+  const [latitude, setLatitude] = React.useState(String(defaultClimate.latitude));
+  const [longitude, setLongitude] = React.useState(String(defaultClimate.longitude));
+  const [installType, setInstallType] = React.useState("urban");
+  const [manualClimate, setManualClimate] = React.useState(() => cityToClimate(isfahan, domain, "urban"));
+  const [compassAttachment, setCompassAttachment] = React.useState(null);
+  const [siteAttachments, setSiteAttachments] = React.useState([]);
+  const [compassPreview, setCompassPreview] = React.useState("");
+  const [sitePreviews, setSitePreviews] = React.useState([]);
+  const [savedSiteImageCount, setSavedSiteImageCount] = React.useState(() => Number(localStorage.getItem("shil:environmentSiteImageCount") || 0));
+  const [savedCompassImage, setSavedCompassImage] = React.useState(() => localStorage.getItem("shil:environmentCompassSaved") === "true");
+  const [compassUploadChoice, setCompassUploadChoice] = React.useState("ask");
+  const [gpsStatus, setGpsStatus] = React.useState("");
+  const [validationMessage, setValidationMessage] = React.useState("");
+  const [installTiltDeg, setInstallTiltDeg] = React.useState(String(estimateRecommendedTilt(defaultClimate.latitude)));
+  const [installAzimuthDeg, setInstallAzimuthDeg] = React.useState("180");
+  const [directionSlots, setDirectionSlots] = React.useState(defaultDirectionSlots);
 
   const activeInstallType = installTypes.find((item) => item.key === installType) || installTypes[0];
 
-  useEffect(() => {
+  React.useEffect(() => {
     const resolved = findIranCityByName(city) || selectedCity;
     if (!resolved || manualOverride) return;
     const nextClimate = cityToClimate(resolved, domain, installType);
@@ -126,7 +126,7 @@ export default function Environment() {
     }
   }, [city, selectedCity, domain, installType, gpsMode, manualOverride]);
 
-  const climate = useMemo(() => ({
+  const climate = React.useMemo(() => ({
     temperature: Number(manualClimate.temperature),
     temperatureMinC: Number(manualClimate.temperatureMinC),
     temperatureMaxC: Number(manualClimate.temperatureMaxC),
@@ -137,7 +137,7 @@ export default function Environment() {
     longitude,
   }), [manualClimate, domain, latitude, longitude]);
 
-  const assessment = useMemo(() => analyzeEnvironmentForEngineering({
+  const assessment = React.useMemo(() => analyzeEnvironmentForEngineering({
     domain,
     city,
     province: selectedCity?.province || "اصفهان",
@@ -209,7 +209,7 @@ export default function Environment() {
   };
 
   const handleSiteUpload = (event) => {
-    const files = Array.from(event.target.files || []);
+    const files = Array.from(event.target.files || []).slice(0, 4);
     setSiteAttachments(files.map((file) => fileToAttachment(file, "site-photo", latitude, longitude)).filter(Boolean));
 
     if (!files.length) {
@@ -237,7 +237,7 @@ export default function Environment() {
     }
   };
 
-  const routeStatusLabel = useMemo(() => {
+  const routeStatusLabel = React.useMemo(() => {
     if (gpsMode === "manual") return gpsStatus ? "مسیر با لوکیشن دستگاه ثبت شده است" : "مسیر با مختصات دستی پیش رفته است";
     if (manualOverride) return "مسیر با داده‌های دستی اقلیمی پیش رفته است";
     if (selectedCity) return `مسیر با شهر ${selectedCity.name} پیش رفته است`;
@@ -453,6 +453,7 @@ export default function Environment() {
             <label className="shil-upload-box shil-site-upload-box">
               <span>تصاویر محل نصب</span>
               <input type="file" accept="image/*" multiple onChange={handleSiteUpload} />
+              <small className="shil-env-hint">پس از انتخاب عکس اول، همین فیلد اجازه افزودن عکس دوم، سوم و چهارم محل نصب را می‌دهد.</small>
               {sitePreviews.length ? (
                 <div className="shil-site-preview-grid shil-site-preview-contain-grid">
                   {sitePreviews.map((src, index) => (
@@ -484,7 +485,7 @@ export default function Environment() {
         </section>
 
         <section className="shil-env-card">
-          <h3 className="shil-section-title">تحلیل مهندسی خودکار</h3>
+          <h3 className="shil-section-title">نتایج شرایط محیطی</h3>
           <div className="shil-climate-grid">
             <div className="shil-climate-box"><span>زاویه پیشنهادی پنل</span><strong>{assessment.recommendedTiltDeg}°</strong></div>
             <div className="shil-climate-box"><span>زاویه اعمال‌شده</span><strong>{assessment.selectedTiltDeg}°</strong></div>
@@ -492,8 +493,10 @@ export default function Environment() {
             <div className="shil-climate-box"><span>جهت اعمال‌شده</span><strong>{assessment.selectedAzimuthDeg}°</strong></div>
             <div className="shil-climate-box"><span>افت حرارتی</span><strong>{assessment.thermalDeratePercent}%</strong></div>
             <div className="shil-climate-box"><span>افت جهت/زاویه</span><strong>{assessment.totalOrientationLossPercent}%</strong></div>
-            <div className="shil-climate-box"><span>ریسک خوردگی</span><strong>{assessment.corrosionRisk}</strong></div>
-            <div className="shil-climate-box"><span>درجه حفاظت</span><strong>{assessment.recommendedIngressProtection}</strong></div>
+            <div className="shil-climate-box"><span>ساعت آفتابی مؤثر</span><strong>{climate.peakSunHours} h</strong></div>
+            <div className="shil-climate-box"><span>تلفات کل مؤثر</span><strong>{assessment.totalLossPercent}%</strong></div>
+            <div className="shil-climate-box"><span>راندمان مؤثر</span><strong>{Math.round((assessment.effectiveEfficiency || 1) * 100)}%</strong></div>
+            <div className="shil-climate-box"><span>درجه حفاظت پیشنهادی</span><strong>{assessment.recommendedIngressProtection}</strong></div>
             <div className="shil-climate-box"><span>وضعیت مسیر</span><strong>{routeStatusLabel}</strong></div>
           </div>
           {assessment.warnings.length ? (

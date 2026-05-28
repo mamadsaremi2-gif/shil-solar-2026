@@ -1,7 +1,4 @@
-import React, {
-  useEffect,
-  useState,
-} from "react";
+import * as React from "react";
 
 import {
   Smartphone,
@@ -16,12 +13,12 @@ import {
 export default function NativeMobilePanel() {
 
   const [device, setDevice] =
-    useState(null);
+    React.useState(null);
 
   const [network, setNetwork] =
-    useState(null);
+    React.useState(null);
 
-  useEffect(()=>{
+  React.useEffect(()=>{
 
     async function load() {
 

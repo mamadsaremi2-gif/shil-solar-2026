@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import * as React from "react";
 
 export default function useLocalProjects() {
 
   const [projects, setProjects] =
-    useState([]);
+    React.useState([]);
 
-  useEffect(() => {
+  React.useEffect(() => {
 
     const stored =
       JSON.parse(
