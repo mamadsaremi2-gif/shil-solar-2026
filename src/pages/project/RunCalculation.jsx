@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import EngineeringPageShell from "../../components/EngineeringPageShell.jsx";
 import { approveProjectStep } from "../../workflow/projectWorkflow.js";
@@ -76,18 +76,18 @@ function FinalResultFields({ result = {}, solarDesign = {} }) {
   const cables = values.cables || fields.cables || {};
   return (
     <div className="shil-final-sheet-block shil-final-result-fields">
-      <h3>فیلد نتیجه تفکیکی</h3>
+      <h3>ÙÛŒÙ„Ø¯ Ù†ØªÛŒØ¬Ù‡ ØªÙÚ©ÛŒÚ©ÛŒ</h3>
       <div className="shil-result-field-grid">
-        <div><span>تعداد اینورتر</span><MixedValue fa>{fields.inverterCount || values.inverterCount || 1} عدد</MixedValue></div>
-        <div><span>تعداد پنل</span><MixedValue fa>{fields.panelCount || values.panelCount || 0} عدد</MixedValue></div>
-        <div><span>تعداد باتری</span><MixedValue fa>{fields.batteryCount || values.batteryCount || 0} عدد</MixedValue></div>
-        <div><span>تعداد MPPT</span><MixedValue fa>{fields.mpptCount || values.mpptCount || values.inverterMpptCount || 1} کانال</MixedValue></div>
-        <div><span>توان نصب‌شده PV</span><MixedValue>{values.installedPvPowerKW || summary.pv?.installedPowerKW || 0} kW</MixedValue></div>
-        <div><span>فضای نصب کل</span><MixedValue fa>{fields.installationAreaM2 || values.installationAreaM2 || bom.space?.requiredInstallationAreaM2 || 0} متر مربع</MixedValue></div>
+        <div><span>ØªØ¹Ø¯Ø§Ø¯ Ø§ÛŒÙ†ÙˆØ±ØªØ±</span><MixedValue fa>{fields.inverterCount || values.inverterCount || 1} Ø¹Ø¯Ø¯</MixedValue></div>
+        <div><span>ØªØ¹Ø¯Ø§Ø¯ Ù¾Ù†Ù„</span><MixedValue fa>{fields.panelCount || values.panelCount || 0} Ø¹Ø¯Ø¯</MixedValue></div>
+        <div><span>ØªØ¹Ø¯Ø§Ø¯ Ø¨Ø§ØªØ±ÛŒ</span><MixedValue fa>{fields.batteryCount || values.batteryCount || 0} Ø¹Ø¯Ø¯</MixedValue></div>
+        <div><span>ØªØ¹Ø¯Ø§Ø¯ MPPT</span><MixedValue fa>{fields.mpptCount || values.mpptCount || values.inverterMpptCount || 1} Ú©Ø§Ù†Ø§Ù„</MixedValue></div>
+        <div><span>ØªÙˆØ§Ù† Ù†ØµØ¨â€ŒØ´Ø¯Ù‡ PV</span><MixedValue>{values.installedPvPowerKW || summary.pv?.installedPowerKW || 0} kW</MixedValue></div>
+        <div><span>ÙØ¶Ø§ÛŒ Ù†ØµØ¨ Ú©Ù„</span><MixedValue fa>{fields.installationAreaM2 || values.installationAreaM2 || bom.space?.requiredInstallationAreaM2 || 0} Ù…ØªØ± Ù…Ø±Ø¨Ø¹</MixedValue></div>
       </div>
       <div className="shil-result-partitions">
-        <section><h4>تجهیزات حفاظتی PV</h4><p>{safeText(protection.pvDc?.breaker)} / {safeText(protection.pvDc?.spd)} / {safeText(protection.pvDc?.poles)}</p><small>ولتاژ: {safeText(protection.pvDc?.designVoltageV)}V | جریان: {safeText(protection.pvDc?.currentA)}A</small></section>
-        <section><h4>حفاظت باتری</h4><p>{safeText(protection.batteryDc?.fuse)}</p><small>ولتاژ: {safeText(protection.batteryDc?.designVoltageV)}V | جریان: {safeText(protection.batteryDc?.currentA)}A</small></section>
+        <section><h4>ØªØ¬Ù‡ÛŒØ²Ø§Øª Ø­ÙØ§Ø¸ØªÛŒ PV</h4><p>{safeText(protection.pvDc?.breaker)} / {safeText(protection.pvDc?.spd)} / {safeText(protection.pvDc?.poles)}</p><small>ÙˆÙ„ØªØ§Ú˜: {safeText(protection.pvDc?.designVoltageV)}V | Ø¬Ø±ÛŒØ§Ù†: {safeText(protection.pvDc?.currentA)}A</small></section>
+        <section><h4>Ø­Ùاظت باتری</h4><p>{safeText(protection.batteryDc?.fuse)}</p><small>ولتاژ: {safeText(protection.batteryDc?.designVoltageV)}V | جریان: {safeText(protection.batteryDc?.currentA)}A</small></section>
         <section><h4>حفاظت AC</h4><p>{safeText(protection.ac?.breaker)} / {safeText(protection.ac?.poles)}</p><small>ولتاژ: {safeText(protection.ac?.designVoltageV)}V | جریان: {safeText(protection.ac?.currentA)}A</small></section>
         <section><h4>کابل‌ها</h4><p>PV: {safeText(cables.pv)}</p><p>Battery: {safeText(cables.battery)}</p><p>AC: {safeText(cables.ac)}</p></section>
       </div>
@@ -165,13 +165,158 @@ function DecisionPath({ methodSummary, result, calculationInput, solarDesign, em
   );
 }
 
+
+function toEnglishDigits(value, fallback = "-") {
+  if (value === null || value === undefined || value === "") return fallback;
+  const text = String(value);
+  return text
+    .replace(/[۰-۹]/g, (d) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)))
+    .replace(/[٠-٩]/g, (d) => String("٠١٢٣٤٥٦٧٨٩".indexOf(d)));
+}
+
+function cleanValue(value, fallback = "ثبت نشده") {
+  return toEnglishDigits(safeText(value, fallback), fallback);
+}
+
+function pick(...values) {
+  for (const value of values) {
+    if (value !== null && value !== undefined && value !== "" && value !== 0 && value !== "0") return value;
+  }
+  return values.find((value) => value === 0 || value === "0") ?? "-";
+}
+
+function ReadOnlyBlock({ title, badge, rows = [], children }) {
+  const visibleRows = rows.filter((row) => row && row.label);
+  return (
+    <div className="shil-final-sheet-block shil-final-readonly-block">
+      <div className="shil-section-head"><h3>{title}</h3>{badge ? <span>{badge}</span> : null}</div>
+      {visibleRows.length ? (
+        <div className="shil-final-sheet-grid shil-final-two-column-grid">
+          {visibleRows.map((row, index) => <Row key={`${title}-${index}-${row.label}`} label={row.label} value={row.value} note={row.note} />)}
+        </div>
+      ) : null}
+      {children}
+    </div>
+  );
+}
+
+function buildExecutionContext({ domain, project, summary, result, solarDesign, systemSettings, methodSummary, methodKey, calculationInput, emergency }) {
+  const environment = readDraft("shil:environmentDraft", {});
+  const environmentAssessment = readDraft("shil:environmentAssessment", {});
+  const selectedPath = readDraft("shil:selectedProjectPath", {});
+  const projectPathTitle = localStorage.getItem("shil:projectPathTitle") || selectedPath?.title || (domain === "emergency" ? "برق اضطراری" : "برق خورشیدی با پنل");
+  const selectedMethod = readDraft("shil:selectedCalculationMethod", {});
+  const registered = readDraft("shil:registeredCalculationParameters", readDraft("shil:registeredMethodParameters", {}));
+  const finalParams = systemSettings?.finalParameters || systemSettings?.appliedParameters || systemSettings?.registeredParameters || registered || {};
+  const design = solarDesign?.design || systemSettings?.design || solarDesign || {};
+  const values = result?.values || {};
+  const resultSummary = result?.summary || {};
+  const fields = resultSummary?.resultFields || {};
+  const panel = design?.panel || solarDesign?.panel || systemSettings?.panel || values?.panel || {};
+  const pvArray = design?.pvArray || solarDesign?.pvArray || systemSettings?.pvArray || values?.pvArray || {};
+  const inverter = design?.inverter || solarDesign?.inverter || systemSettings?.inverter || values?.inverter || {};
+  const battery = design?.battery || solarDesign?.battery || systemSettings?.battery || values?.battery || {};
+  const protection = values?.protection || resultSummary?.protection || systemSettings?.protection || {};
+  const cables = values?.cables || fields?.cables || systemSettings?.cables || {};
+  const batteryBank = battery?.battery || battery;
+
+  const safetyFactor = pick(systemSettings?.safetyFactor, systemSettings?.standardSafetyFactor, finalParams?.safetyFactor, 1.2);
+  const autonomyDays = pick(systemSettings?.autonomyDays, finalParams?.autonomyDays, battery?.autonomyDays, 0);
+  const basePowerW = pick(finalParams?.basePowerW, finalParams?.totalPowerW, systemSettings?.basePowerW, systemSettings?.loadPowerW, solarDesign?.load?.peakLoadW, values?.loadPowerW, 0);
+  const powerAfterFactorW = pick(finalParams?.powerAfterFactorW, finalParams?.finalPowerW, systemSettings?.powerAfterFactorW, systemSettings?.finalPowerW, Number(basePowerW || 0) * Number(safetyFactor || 1), values?.finalPowerW);
+  const dailyEnergyWh = pick(finalParams?.dailyEnergyAfterFactorWh, finalParams?.dailyEnergyWh, systemSettings?.dailyEnergyAfterFactorWh, systemSettings?.dailyEnergyWh, solarDesign?.load?.dailyEnergyWh, values?.dailyEnergyWh, 0);
+  const panelPowerW = pick(panel?.powerW, panel?.ratedPowerW, systemSettings?.panelPowerW, pvArray?.panelPowerW, 620);
+  const panelVoltage = pick(panel?.vmp, panel?.vmpV, panel?.voltageV, systemSettings?.panelVoltageV, pvArray?.panelVoltageV, "-");
+  const panelCurrent = pick(panel?.imp, panel?.impA, panel?.currentA, systemSettings?.panelCurrentA, pvArray?.panelCurrentA, "-");
+  const panelCount = pick(pvArray?.panelCount, systemSettings?.panelCount, values?.panelCount, fields?.panelCount, 0);
+  const arrayPowerW = pick(pvArray?.installedPowerW, Number(panelCount || 0) * Number(panelPowerW || 0), values?.installedPvPowerW, 0);
+  const inverterCount = pick(inverter?.count, systemSettings?.inverterCount, values?.inverterCount, fields?.inverterCount, 1);
+  const mpptEach = pick(inverter?.mpptCount, inverter?.mpptChannels, systemSettings?.mpptCount, values?.mpptCount, values?.inverterMpptCount, fields?.mpptCount, 1);
+  const dcVoltage = pick(inverter?.dcVoltageV, inverter?.batteryVoltageV, inverter?.nominalDcVoltageV, systemSettings?.inverterDcVoltageV, 48);
+  const batteryVoltage = pick(batteryBank?.voltageV, battery?.voltageV, battery?.nominalVoltage, systemSettings?.batteryVoltageV, "-");
+  const batteryCurrent = pick(batteryBank?.capacityAh, battery?.capacityAh, battery?.bankCurrentAh, systemSettings?.batteryCurrentAh, "-");
+  const batteryEnergyKWh = pick(batteryBank?.energyKWh, battery?.unitEnergyKWh, battery?.batteryEnergyKWh, "-");
+  const batteryCount = pick(battery?.count, battery?.batteryCount, systemSettings?.batteryCount, values?.batteryCount, fields?.batteryCount, 0);
+  const batteryTotalKWh = pick(battery?.totalEnergyKWh, systemSettings?.batteryTotalKWh, values?.batteryTotalKWh, Number(batteryCount || 0) * Number(batteryEnergyKWh || 0), 0);
+  const requiredStorageKWh = pick(battery?.requiredStorageKWh, systemSettings?.requiredStorageKWh, finalParams?.requiredStorageKWh, Number(dailyEnergyWh || 0) / 1000 * Number(autonomyDays || 0), 0);
+  const city = pick(environment?.city, environmentAssessment?.city, project?.city, "-");
+  const psh = pick(environment?.peakSunHours, environment?.psh, environmentAssessment?.peakSunHours, environmentAssessment?.psh, solarDesign?.environment?.peakSunHours, "-");
+  const direction = pick(environment?.direction, environment?.azimuthLabel, environmentAssessment?.direction, environmentAssessment?.recommendedDirection, "جنوب");
+  const tilt = pick(environment?.tilt, environment?.tiltDeg, environmentAssessment?.tilt, environmentAssessment?.recommendedTiltDeg, "-");
+  const envEfficiency = pick(environment?.finalEfficiency, environment?.efficiency, environmentAssessment?.finalEfficiency, systemSettings?.environmentEfficiency, "-");
+  const designType = pick(systemSettings?.designModeTitle, systemSettings?.designType, systemSettings?.modeTitle, systemSettings?.mode, emergency ? "برق اضطراری" : "خورشیدی");
+  const coreTitle = domain === "emergency" ? "برق اضطراری" : "خورشیدی";
+  const methodTitle = selectedMethod?.title || methodSummary?.title || methodKey || "لیست تجهیزات";
+
+  return {
+    environment, environmentAssessment, selectedPath, projectPathTitle, methodTitle, coreTitle, designType,
+    safetyFactor, autonomyDays, powerAfterFactorW, dailyEnergyWh,
+    city, psh, direction, tilt, envEfficiency,
+    panel, pvArray, inverter, battery, batteryBank, protection, cables,
+    panelPowerW, panelVoltage, panelCurrent, panelCount, arrayPowerW,
+    inverterCount, mpptEach, dcVoltage,
+    batteryVoltage, batteryCurrent, batteryEnergyKWh, batteryCount, batteryTotalKWh, requiredStorageKWh,
+  };
+}
+
+function buildProtectionRows(ctx) {
+  const inverterCount = Math.max(1, Number(ctx.inverterCount) || 1);
+  const mpptEach = Math.max(1, Number(ctx.mpptEach) || 1);
+  const panelCount = Number(ctx.panelCount) || 0;
+  const stringsPerInverter = Math.max(1, Math.ceil((panelCount || 1) / inverterCount / mpptEach));
+  const pvCurrent = pick(ctx.panelCurrent, ctx.protection?.pvDc?.currentA, 15);
+  const pvVoltage = pick(ctx.panelVoltage, ctx.protection?.pvDc?.designVoltageV, ctx.dcVoltage);
+  const batteryCurrent = pick(ctx.protection?.batteryDc?.currentA, ctx.batteryCurrent, "-");
+  const acCurrent = pick(ctx.protection?.ac?.currentA, "-");
+  return [
+    { label: "تجهیزات حفاظتی PV", value: `SHIL DC MCB × ${inverterCount * mpptEach}`, note: `برای ${inverterCount} اینورتر و ${mpptEach} MPPT برای هر اینورتر` },
+    { label: "حفاظت باتری", value: `SHIL Battery Fuse × ${inverterCount}`, note: `برای مسیر DC باتری به اینورتر / جریان ${batteryCurrent}A` },
+    { label: "حفاظت AC", value: `SHIL AC Breaker × ${inverterCount}`, note: `برای خروجی AC هر اینورتر / جریان ${acCurrent}A` },
+    { label: "کابل‌ها - PV", value: `PV Cable برای ${inverterCount * mpptEach} شاخه`, note: `بر اساس ${stringsPerInverter} استرینگ در هر MPPT / حدود ${pvCurrent}A / ${pvVoltage}V` },
+    { label: "کابل‌ها - Battery", value: `Battery Cable برای ${inverterCount} مسیر`, note: `متناسب با ولتاژ DC اینورتر ${ctx.dcVoltage}V و جریان بانک باتری` },
+    { label: "کابل‌ها - AC", value: `AC Cable برای ${inverterCount} خروجی`, note: "متناسب با خروجی اینورترها و مصرف‌کننده AC" },
+  ];
+}
+
+function SubsystemProtectionTable({ ctx }) {
+  const inverterCount = Math.max(1, Number(ctx.inverterCount) || 1);
+  const mpptEach = Math.max(1, Number(ctx.mpptEach) || 1);
+  const panelCount = Number(ctx.panelCount) || 0;
+  const perInverterPanels = inverterCount ? Math.ceil(panelCount / inverterCount) : panelCount;
+  const perMpptPanels = Math.max(1, Math.ceil((perInverterPanels || 1) / mpptEach));
+  const rows = Array.from({ length: inverterCount }).flatMap((_, inverterIndex) =>
+    Array.from({ length: mpptEach }).map((__, mpptIndex) => ({ inverterIndex, mpptIndex }))
+  );
+  return (
+    <div className="shil-final-equipment-table">
+      <div className="head"><span>زیرسیستم</span><span>پنل / استرینگ</span><span>حفاظت و کابل مستقل</span></div>
+      {rows.map(({ inverterIndex, mpptIndex }) => (
+        <div key={`inv-${inverterIndex}-mppt-${mpptIndex}`}>
+          <span>{`Inverter-${inverterIndex + 1} / MPPT-${mpptIndex + 1}`}</span>
+          <strong>{`${perMpptPanels} پنل / آرایش سری`}</strong>
+          <small>{`SHIL DC MCB + PV Cable مستقل برای این شاخه`}</small>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function panelLayoutNote(ctx) {
+  const panelCount = Number(ctx.panelCount) || 0;
+  const inverterCount = Math.max(1, Number(ctx.inverterCount) || 1);
+  const mpptEach = Math.max(1, Number(ctx.mpptEach) || 1);
+  const branchCount = inverterCount * mpptEach;
+  const panelsPerBranch = branchCount ? Math.ceil(panelCount / branchCount) : panelCount;
+  return `آرایش پایه پنل‌ها به صورت سری در هر MPPT در نظر گرفته شده است. ${panelCount} پنل بین ${inverterCount} اینورتر و ${branchCount} شاخه MPPT تقسیم می‌شود؛ حدود ${panelsPerBranch} پنل برای هر شاخه. موازی فقط در صورت نیاز به افزایش توان پس از رسیدن به بازه ولتاژ MPPT استفاده می‌شود.`;
+}
+
 export default function RunCalculation() {
   const { domain = "solar" } = useParams();
   const emergency = domain === "emergency";
-  const [ran, setRan] = React.useState(false);
-  const [exporting, setExporting] = React.useState("");
-  const exportSheetRef = React.useRef(null);
-  const coreRun = React.useMemo(() => runCore(domain), [domain]);
+  const [ran, setRan] = useState(false);
+  const [exporting, setExporting] = useState("");
+  const exportSheetRef = useRef(null);
+  const coreRun = useMemo(() => runCore(domain), [domain]);
   const result = coreRun.result;
   const project = readDraft("shil:projectInfoDraft", {});
   const summary = readDraft("shil:summaryDraft", {});
@@ -184,7 +329,7 @@ export default function RunCalculation() {
   const methodKey = getActiveMethodKey({ domain });
   const aiPreview = readDraft("shil:aiInstallationPreview", null);
   const projectTitle = project.projectName || project.name || (emergency ? "پروژه برق اضطراری" : "پروژه خورشیدی");
-  const delivery = React.useMemo(
+  const delivery = useMemo(
     () => buildFinalEngineeringDelivery({ domain, project, summary, result, solarDesign, aiPreview }),
     [domain, project, summary, result, solarDesign, aiPreview]
   );
@@ -204,6 +349,56 @@ export default function RunCalculation() {
   const diagnostics = solarDesign?.diagnostics || result?.diagnostics || null;
   const importantNotes = safeList(result?.explanations || solarDesign?.explanations || delivery.notes || ["محاسبات بر اساس داده‌های ثبت‌شده پروژه انجام شد."]).slice(0, 3);
   const warnings = safeList(result?.warnings || delivery.warnings || []).slice(0, 4);
+
+  const runContext = buildExecutionContext({
+    domain,
+    project,
+    summary,
+    result,
+    solarDesign,
+    systemSettings,
+    methodSummary,
+    methodKey,
+    calculationInput,
+    emergency,
+  });
+
+  const projectInfoRows = [
+    { label: "مسیر انتخاب شده", value: runContext.projectPathTitle },
+    { label: "نام پروژه", value: project.projectName || project.name || projectTitle },
+    { label: "نام کارفرما", value: project.clientName || project.customerName || project.employerName || "SHIL CO" },
+    { label: "تاریخ ثبت", value: project.registrationDate || project.date || project.createdAt || "-" },
+    { label: "شهر مبنا", value: runContext.city },
+    { label: "PSH", value: runContext.psh },
+    { label: "جهت پیشنهادی", value: runContext.direction },
+    { label: "زاویه پیشنهادی پنل", value: runContext.tilt },
+    { label: "راندمان نهایی محیطی", value: runContext.envEfficiency },
+    { label: "روش محاسبات", value: runContext.methodTitle },
+    { label: "هسته طراحی", value: runContext.coreTitle },
+    { label: "ضریب اطمینان استاندارد", value: runContext.safetyFactor },
+    { label: "توان کل پس از ضریب", value: `${runContext.powerAfterFactorW} W` },
+    { label: "انرژی روزانه پس از ضریب", value: `${runContext.dailyEnergyWh} Wh` },
+    { label: "نوع طراحی", value: runContext.designType },
+  ];
+
+  const projectEquipmentRows = [
+    { label: "اینورتر خورشیدی", value: runContext.inverter?.title || runContext.inverter?.name || "ثبت نشده" },
+    { label: "تعداد اینورتر خورشیدی", value: `${runContext.inverterCount} عدد` },
+    { label: "تعداد MPPT هر یک از اینورترها", value: `${runContext.mpptEach} عدد` },
+    { label: "ولتاژ DC اینورتر", value: `${runContext.dcVoltage} V` },
+    { label: "پنل انتخابی", value: runContext.panel?.title || runContext.panel?.name || `${runContext.panelPowerW} W` },
+    { label: "ولتاژ و جریان پنل", value: `${runContext.panelVoltage} V / ${runContext.panelCurrent} A` },
+    { label: "تعداد پنل", value: `${runContext.panelCount} عدد` },
+    { label: "توان آرایه پنل", value: `${runContext.arrayPowerW} W` },
+    { label: "باتری انتخابی", value: runContext.batteryBank?.title || runContext.batteryBank?.name || "ثبت نشده" },
+    { label: "ولتاژ / جریان / انرژی هر باتری", value: `${runContext.batteryVoltage} V / ${runContext.batteryCurrent} Ah / ${runContext.batteryEnergyKWh} kWh` },
+    { label: "روز خودکفایی", value: `${runContext.autonomyDays} روز` },
+    { label: "تعداد باتری", value: `${runContext.batteryCount} عدد` },
+    { label: "مجموع انرژی بانک باتری", value: `${runContext.batteryTotalKWh} kWh` },
+    { label: "ظرفیت ذخیره‌سازی مورد نیاز برای روزهای خودکفایی", value: `${runContext.requiredStorageKWh} kWh` },
+  ];
+
+  const protectionRows = buildProtectionRows(runContext);
 
   function saveFinalProject() {
     approveProjectStep("run");
@@ -251,28 +446,26 @@ export default function RunCalculation() {
     <EngineeringPageShell title="اجرای محاسبات و خروجی نهایی">
       <section className="shil-card-stack shil-final-delivery-page shil-final-delivery-compact">
         <div className="shil-final-one-page-sheet" ref={exportSheetRef}>
-          <div className="shil-final-sheet-hero">
-            <div>
-              <span>SHIL FINAL SUMMARY</span>
-              <h2>خلاصه نهایی پروژه</h2>
-              <p>خروجی فشرده شامل معرفی پروژه، مسیر تصمیم‌گیری، تجهیزات و نتایج مهم</p>
+          <div className="shil-final-sheet-hero shil-final-sheet-hero-centered" style={{ textAlign: "center", justifyContent: "center" }}>
+            <div style={{ width: "100%" }}>
+              <span style={{ display: "block", fontWeight: 800, textAlign: "center" }}>SHIL FINAL SUMMARY</span>
+              <h2 style={{ textAlign: "center", marginTop: 6 }}>اطلاعات نهایی اجرای پروژه</h2>
             </div>
-            <strong>{delivery.meta.status}</strong>
           </div>
 
-          <div className="shil-final-sheet-grid">
-            <Row label="نام پروژه" value={projectTitle} />
-            <Row label="مشتری / کارفرما" value={delivery.meta.customer} />
-            <Row label="محل اجرا" value={delivery.meta.location} />
-            <Row label="نوع پروژه" value={delivery.meta.domain} />
-            <Row label="مسیر طراحی" value={methodSummary.title} />
-            <Row label="وضعیت سلامت" value={diagnostics?.score ? `${diagnostics.score} / 100` : delivery.meta.status} />
-          </div>
+          <ReadOnlyBlock title="اطلاعات پروژه" badge="Project Data" rows={projectInfoRows} />
+          <ReadOnlyBlock title="تجهیزات اجرای پروژه" badge="Execution Equipment" rows={projectEquipmentRows} />
 
-          <DecisionPath methodSummary={methodSummary} result={result} calculationInput={calculationInput} solarDesign={solarDesign} emergency={emergency} />
-          <CompactEquipmentTable title="خلاصه محصولات و تجهیزات" rows={delivery.equipment.length ? delivery.equipment : methodSummary.rows} />
-          <FinalResultFields result={result} solarDesign={solarDesign} />
-          <DistributedInverterTable systems={solarDesign?.distributedInverterSystems || result?.values?.distributedInverterSystems || result?.summary?.distributedInverterSystems || []} />
+          <ReadOnlyBlock title="سیستم حفاظتی" badge="Protection System" rows={protectionRows}>
+            <div className="shil-final-sheet-block shil-final-protection-detail" style={{ marginTop: 12 }}>
+              <h3>تقسیم زیرسیستم‌ها برای هر اینورتر</h3>
+              <SubsystemProtectionTable ctx={runContext} />
+              <div className="shil-engineering-list" style={{ marginTop: 12 }}>
+                <p>{panelLayoutNote(runContext)}</p>
+                <p>فضای نصب پنل‌ها باید بر اساس دیتاشیت پنل انتخابی، تعداد پنل، تعداد استرینگ و فاصله اجرایی بین استرینگ‌ها محاسبه و در نقشه اجرایی تفکیک شود.</p>
+              </div>
+            </div>
+          </ReadOnlyBlock>
 
           <div className="shil-final-sheet-block shil-final-result-block">
             <h3>نتایج و نکات مهم</h3>
