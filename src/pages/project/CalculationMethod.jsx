@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { approveProjectStep } from "../../workflow/projectWorkflow.js";
 import EngineeringPageShell from "../../components/EngineeringPageShell.jsx";
@@ -12,15 +12,25 @@ const fallbackMethodCards = [
   { key: "current", title: "جریان کل", badge: "A" },
 ];
 
-const labels = { offgrid: "آفگرید", hybrid: "هیبرید", ongrid: "آنگرید", emergency: "برق اضطراری", solar: "خورشیدی" };
+const labels = {
+  offgrid: "آفگرید",
+  hybrid: "هیبرید",
+  ongrid: "آنگرید",
+  emergency: "برق اضطراری",
+  solar: "خورشیدی",
+};
 
 function readDraft(key) {
-  try { return JSON.parse(localStorage.getItem(key) || "null"); }
-  catch { return null; }
+  try {
+    return JSON.parse(localStorage.getItem(key) || "null");
+  } catch {
+    return null;
+  }
 }
 
 function normalizeCards(cards) {
   if (!Array.isArray(cards) || cards.length === 0) return fallbackMethodCards;
+
   return cards
     .filter((item) => item && item.key && item.title)
     .slice(0, 6)
@@ -35,21 +45,39 @@ export default function CalculationMethod() {
   const params = useParams();
   const location = useLocation();
   const query = new URLSearchParams(location.search);
-  const storedDomain = localStorage.getItem("shil:calculationDomain") || localStorage.getItem("shil:scenarioDomain");
+
+  const storedDomain =
+    localStorage.getItem("shil:calculationDomain") ||
+    localStorage.getItem("shil:scenarioDomain");
+
   const domainFromQuery = query.get("domain");
-  const isEmergency = domainFromQuery === "emergency" || location.pathname.includes("/emergency") || params.domain === "emergency" || storedDomain === "emergency";
+
+  const isEmergency =
+    domainFromQuery === "emergency" ||
+    location.pathname.includes("/emergency") ||
+    params.domain === "emergency" ||
+    storedDomain === "emergency";
+
   const domain = isEmergency ? "emergency" : "solar";
   const subtype = params.connection || (isEmergency ? "emergency" : "solar");
-  const title = isEmergency ? "روش محاسبات برق اضطراری" : `روش محاسبات ${labels[subtype] || labels[domain]}`;
+
+  const title = isEmergency
+    ? "روش محاسبات برق اضطراری"
+    : `روش محاسبات ${labels[subtype] || labels[domain]}`;
+
   const [methodCards, setMethodCards] = React.useState(fallbackMethodCards);
 
-  const context = React.useMemo(() => ({
-    scenario: readDraft("shil:selectedScenario"),
-    environment: readDraft("shil:environmentDraft"),
-  }), []);
+  const context = React.useMemo(
+    () => ({
+      scenario: readDraft("shil:selectedScenario"),
+      environment: readDraft("shil:environmentDraft"),
+    }),
+    []
+  );
 
   React.useEffect(() => {
     let alive = true;
+
     fetch("/calculation-method-cards.json", { cache: "no-store" })
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
@@ -59,7 +87,10 @@ export default function CalculationMethod() {
       .catch(() => {
         if (alive) setMethodCards(fallbackMethodCards);
       });
-    return () => { alive = false; };
+
+    return () => {
+      alive = false;
+    };
   }, []);
 
   const handleSelect = (methodKey) => {
@@ -88,7 +119,7 @@ export default function CalculationMethod() {
                 key={method.key}
                 className="shil-large-choice shil-method-card-engine shil-method-card-minimal"
                 onClick={() => handleSelect(method.key)}
-                to={`/new-project/input/${domain}/${method.key}`}
+                to="/new-project/inputs"
                 state={{ subtype, from: "calculation-method" }}
               >
                 <span className="shil-method-badge">{method.badge}</span>

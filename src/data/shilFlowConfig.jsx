@@ -15,9 +15,9 @@ export const dashboardItems = [
 ];
 
 export const projectSteps = [
+  { key: "path", title: "انتخاب مسیر پروژه", to: "/new-project/path", image: SHIL_ASSETS.icons.project.path, icon: <Route size={40} /> },
   { key: "info", title: "اطلاعات پروژه", to: "/new-project/info", image: SHIL_ASSETS.icons.project.info, icon: <FolderOpen size={40} /> },
   { key: "environment", title: "شرایط محیطی", to: "/new-project/environment", image: SHIL_ASSETS.icons.project.environment, icon: <MapPin size={40} /> },
-  { key: "path", title: "انتخاب مسیر پروژه", to: "/new-project/path", image: SHIL_ASSETS.icons.project.path, icon: <Route size={40} /> },
   { key: "method", title: "روش محاسبات", to: "/new-project/method", image: SHIL_ASSETS.icons.project.method, icon: <Calculator size={40} /> },
   { key: "inputs", title: "ورودی محاسبات", to: "/new-project/inputs", image: SHIL_ASSETS.icons.project.inputs, icon: <ClipboardList size={40} /> },
   { key: "system", title: "تنظیمات سیستم", to: "/new-project/system", image: SHIL_ASSETS.icons.project.system, icon: <Settings size={40} /> },

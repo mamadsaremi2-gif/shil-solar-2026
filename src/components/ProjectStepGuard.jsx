@@ -1,13 +1,13 @@
-import * as React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { canEditStep, getPreviousStep, getStepKeyFromPath, readWorkflowState } from "../workflow/projectWorkflow.js";
 
 export default function ProjectStepGuard({ children }) {
   const location = useLocation();
-  const stepKey = React.useMemo(() => getStepKeyFromPath(location.pathname), [location.pathname]);
-  const [workflow, setWorkflow] = React.useState(() => readWorkflowState());
+  const stepKey = useMemo(() => getStepKeyFromPath(location.pathname), [location.pathname]);
+  const [workflow, setWorkflow] = useState(() => readWorkflowState());
 
-  React.useEffect(() => {
+  useEffect(() => {
     const update = () => setWorkflow(readWorkflowState());
     window.addEventListener("storage", update);
     window.addEventListener("shil-workflow-updated", update);

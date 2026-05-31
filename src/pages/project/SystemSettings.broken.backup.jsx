@@ -1,4 +1,4 @@
-﻿import * as React from "react";
+﻿import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import EngineeringPageShell from "../../components/EngineeringPageShell.jsx";
 import { approveProjectStep } from "../../workflow/projectWorkflow.js";
@@ -50,7 +50,7 @@ function batteryNoteText(bank = {}) {
 }
 
 function DetailsToggle({ title, children, defaultOpen = false, attached = false }) {
-  const [open, setOpen] = React.useState(defaultOpen);
+  const [open, setOpen] = useState(defaultOpen);
   return (
     <div className={attached ? "shil-details-box shil-details-attached" : "shil-details-box"}>
       <button type="button" className="shil-details-toggle" onClick={() => setOpen(!open)} aria-expanded={open}>
@@ -391,43 +391,43 @@ export default function SystemSettings() {
   const domain = routeDomain || storedDomain || "solar";
   const emergency = domain === "emergency";
   const utilityGateway = domain === "utility";
-  const load = React.useMemo(() => readDraft("shil:loadEngineResult", {}), []);
-  const environment = React.useMemo(() => readDraft("shil:environmentDraft", {}), []);
-  const solarPanelPowerDraft = React.useMemo(() => readDraft("shil:solarPanelPowerInput", {}), []);
+  const load = useMemo(() => readDraft("shil:loadEngineResult", {}), []);
+  const environment = useMemo(() => readDraft("shil:environmentDraft", {}), []);
+  const solarPanelPowerDraft = useMemo(() => readDraft("shil:solarPanelPowerInput", {}), []);
   const calculationMethod = localStorage.getItem("shil:calculationMethod") || "";
   const isSolarPanelPowerRoute = calculationMethod === "solar_panel_power";
   const solarPanelPowerInput = isSolarPanelPowerRoute ? solarPanelPowerDraft : {};
 
-  const [systemType, setSystemType] = React.useState("offgrid");
-  const [autonomyDays, setAutonomyDays] = React.useState(isSolarPanelPowerRoute ? 0 : 1);
-  const [reserveFactor, setReserveFactor] = React.useState(1.2);
-  const [batteryRequired, setBatteryRequired] = React.useState(!isSolarPanelPowerRoute);
-  const [batteryScope, setBatteryScope] = React.useState("none");
-  const [equipmentManualMode, setEquipmentManualMode] = React.useState(false);
-  const [parameterManualMode, setParameterManualMode] = React.useState(false);
-  const [panelId, setPanelId] = React.useState(SHIL_SOLAR_PANELS.find((p) => p.powerW === 620)?.id || SHIL_SOLAR_PANELS[0]?.id || "");
-  const [inverterId, setInverterId] = React.useState(SHIL_SOLAR_INVERTERS.find((i) => i.ratedPowerW >= 5000)?.id || SHIL_SOLAR_INVERTERS[0]?.id || "");
-  const [batteryId, setBatteryId] = React.useState(SHIL_LITHIUM_BATTERIES.find((b) => b.nominalVoltage === 48 && b.capacityAh === 200)?.id || SHIL_LITHIUM_BATTERIES[0]?.id || "");
-  const [panelExtraFactor, setPanelExtraFactor] = React.useState(1);
-  const [liveSaved, setLiveSaved] = React.useState(false);
-  const [inverterExtraFactor, setInverterExtraFactor] = React.useState(1);
-  const [batteryExtraFactor, setBatteryExtraFactor] = React.useState(1);
-  const [projectScale, setProjectScale] = React.useState(() => domain === "utility" ? (localStorage.getItem("shil:projectScale") || "utility") : "auto");
-  const [targetPlantPowerMW, setTargetPlantPowerMW] = React.useState("");
-  const [powerBlockSizeKW, setPowerBlockSizeKW] = React.useState("");
-  const [mvVoltageKV, setMvVoltageKV] = React.useState("");
-  const [blockStationMW, setBlockStationMW] = React.useState("");
-  const [exportLimitMW, setExportLimitMW] = React.useState("");
-  const [groundCoverageRatio, setGroundCoverageRatio] = React.useState("");
-  const [trackerMode, setTrackerMode] = React.useState("auto");
-  const [terrainSlopeDeg, setTerrainSlopeDeg] = React.useState("");
-  const [usableLandPercent, setUsableLandPercent] = React.useState("");
-  const [gridShortCircuitMVA, setGridShortCircuitMVA] = React.useState("");
-  const [estimatedMvFaultKA, setEstimatedMvFaultKA] = React.useState("");
-  const [plantAvailabilityPercent, setPlantAvailabilityPercent] = React.useState("");
-  const [annualDegradationPercent, setAnnualDegradationPercent] = React.useState("");
-  const [mpptCountPerInverter, setMpptCountPerInverter] = React.useState("1");
-  const [warning, setWarning] = React.useState("");
+  const [systemType, setSystemType] = useState("offgrid");
+  const [autonomyDays, setAutonomyDays] = useState(isSolarPanelPowerRoute ? 0 : 1);
+  const [reserveFactor, setReserveFactor] = useState(1.2);
+  const [batteryRequired, setBatteryRequired] = useState(!isSolarPanelPowerRoute);
+  const [batteryScope, setBatteryScope] = useState("none");
+  const [equipmentManualMode, setEquipmentManualMode] = useState(false);
+  const [parameterManualMode, setParameterManualMode] = useState(false);
+  const [panelId, setPanelId] = useState(SHIL_SOLAR_PANELS.find((p) => p.powerW === 620)?.id || SHIL_SOLAR_PANELS[0]?.id || "");
+  const [inverterId, setInverterId] = useState(SHIL_SOLAR_INVERTERS.find((i) => i.ratedPowerW >= 5000)?.id || SHIL_SOLAR_INVERTERS[0]?.id || "");
+  const [batteryId, setBatteryId] = useState(SHIL_LITHIUM_BATTERIES.find((b) => b.nominalVoltage === 48 && b.capacityAh === 200)?.id || SHIL_LITHIUM_BATTERIES[0]?.id || "");
+  const [panelExtraFactor, setPanelExtraFactor] = useState(1);
+  const [liveSaved, setLiveSaved] = useState(false);
+  const [inverterExtraFactor, setInverterExtraFactor] = useState(1);
+  const [batteryExtraFactor, setBatteryExtraFactor] = useState(1);
+  const [projectScale, setProjectScale] = useState(() => domain === "utility" ? (localStorage.getItem("shil:projectScale") || "utility") : "auto");
+  const [targetPlantPowerMW, setTargetPlantPowerMW] = useState("");
+  const [powerBlockSizeKW, setPowerBlockSizeKW] = useState("");
+  const [mvVoltageKV, setMvVoltageKV] = useState("");
+  const [blockStationMW, setBlockStationMW] = useState("");
+  const [exportLimitMW, setExportLimitMW] = useState("");
+  const [groundCoverageRatio, setGroundCoverageRatio] = useState("");
+  const [trackerMode, setTrackerMode] = useState("auto");
+  const [terrainSlopeDeg, setTerrainSlopeDeg] = useState("");
+  const [usableLandPercent, setUsableLandPercent] = useState("");
+  const [gridShortCircuitMVA, setGridShortCircuitMVA] = useState("");
+  const [estimatedMvFaultKA, setEstimatedMvFaultKA] = useState("");
+  const [plantAvailabilityPercent, setPlantAvailabilityPercent] = useState("");
+  const [annualDegradationPercent, setAnnualDegradationPercent] = useState("");
+  const [mpptCountPerInverter, setMpptCountPerInverter] = useState("1");
+  const [warning, setWarning] = useState("");
 
   const saveSystemDraftOnly = () => {
     try {
@@ -452,7 +452,7 @@ export default function SystemSettings() {
 
   const activeCalculationMethod = localStorage.getItem("shil:calculationMethod") || (isSolarPanelPowerRoute ? "solar_panel_power" : "equipment");
 
-  const settings = React.useMemo(() => ({
+  const settings = useMemo(() => ({
     systemType,
     method: activeCalculationMethod,
     calculationMethod: activeCalculationMethod,
@@ -491,13 +491,13 @@ export default function SystemSettings() {
     parameterManualMode
   }), [systemType, activeCalculationMethod, autonomyDays, reserveFactor, equipmentManualMode, parameterManualMode, panelId, inverterId, batteryId, panelExtraFactor, inverterExtraFactor, batteryExtraFactor, projectScale, targetPlantPowerMW, powerBlockSizeKW, mvVoltageKV, blockStationMW, exportLimitMW, groundCoverageRatio, trackerMode, terrainSlopeDeg, usableLandPercent, gridShortCircuitMVA, estimatedMvFaultKA, plantAvailabilityPercent, annualDegradationPercent, solarPanelPowerInput, load, mpptCountPerInverter, batteryRequired, batteryScope, isSolarPanelPowerRoute]);
 
-  const legacySolarDesign = React.useMemo(() => ({ valid: true, previewOnly: true, panel: { title: "Ù¾Ù†Ù„ Ù¾ÛŒØ´Ù†Ù‡Ø§Ø¯ÛŒ", powerW: settings?.panelPowerW || 620 }, inverter: { title: "Ø§ÛŒÙ†ÙˆØ±ØªØ± Ù¾ÛŒØ´Ù†Ù‡Ø§Ø¯ÛŒ", count: 1, ratedPowerW: load?.totalPowerW || 3000 }, battery: { totalCount: settings?.autonomyDays > 0 ? 1 : 0 }, pvArray: { panelCount: settings?.panelCount || 0, arrayPowerW: (settings?.panelCount || 0) * (settings?.panelPowerW || 620) }, explanations: ["Ø§ÛŒÙ† ØµÙØ­Ù‡ ÙÙ‚Ø· Ù¾ÛŒØ´â€ŒÙ†Ù…Ø§ÛŒØ´ Ø±ÙˆÚ©Ø´ÛŒ Ø§Ø³ØªØ› Ù…Ø­Ø§Ø³Ø¨Ù‡ Ù‚Ø·Ø¹ÛŒ Ø¯Ø± Ù…Ø±Ø­Ù„Ù‡ Ù†Ù‡Ø§ÛŒÛŒ Ø§Ù†Ø¬Ø§Ù… Ù…ÛŒâ€ŒØ´ÙˆØ¯."] }), [load, settings]);
+  const legacySolarDesign = useMemo(() => ({ valid: true, previewOnly: true, panel: { title: "Ù¾Ù†Ù„ Ù¾ÛŒØ´Ù†Ù‡Ø§Ø¯ÛŒ", powerW: settings?.panelPowerW || 620 }, inverter: { title: "Ø§ÛŒÙ†ÙˆØ±ØªØ± Ù¾ÛŒØ´Ù†Ù‡Ø§Ø¯ÛŒ", count: 1, ratedPowerW: load?.totalPowerW || 3000 }, battery: { totalCount: settings?.autonomyDays > 0 ? 1 : 0 }, pvArray: { panelCount: settings?.panelCount || 0, arrayPowerW: (settings?.panelCount || 0) * (settings?.panelPowerW || 620) }, explanations: ["Ø§ÛŒÙ† ØµÙØ­Ù‡ ÙÙ‚Ø· Ù¾ÛŒØ´â€ŒÙ†Ù…Ø§ÛŒØ´ Ø±ÙˆÚ©Ø´ÛŒ Ø§Ø³ØªØ› Ù…Ø­Ø§Ø³Ø¨Ù‡ Ù‚Ø·Ø¹ÛŒ Ø¯Ø± Ù…Ø±Ø­Ù„Ù‡ Ù†Ù‡Ø§ÛŒÛŒ Ø§Ù†Ø¬Ø§Ù… Ù…ÛŒâ€ŒØ´ÙˆØ¯."] }), [load, settings]);
   const useUnifiedPvEngine = !emergency && !utilityGateway;
-  const unifiedPvResult = React.useMemo(() => {
+  const unifiedPvResult = useMemo(() => {
     if (!useUnifiedPvEngine) return null;
     return runUnifiedPvForUi({ load, environment, settings, solarPanelPowerInput });
   }, [useUnifiedPvEngine, load, environment, settings, solarPanelPowerInput]);
-  const solarDesign = React.useMemo(() => {
+  const solarDesign = useMemo(() => {
     if (!useUnifiedPvEngine || !unifiedPvResult) return legacySolarDesign;
     return unifiedPvToLegacyDesign(unifiedPvResult, legacySolarDesign);
   }, [useUnifiedPvEngine, unifiedPvResult, legacySolarDesign]);
@@ -520,20 +520,20 @@ export default function SystemSettings() {
     ? (utilityScaleActive ? "ÙØ¹Ø§Ù„Ø› Ù…Ø³ÛŒØ± Ù…Ø³ØªÙ‚Ù„ Ù†ÛŒØ±ÙˆÚ¯Ø§Ù‡ÛŒ" : "Ø¢Ù…Ø§Ø¯Ù‡Ø› ØªÙˆØ§Ù† Ù‡Ø¯Ù Ù†ÛŒØ±ÙˆÚ¯Ø§Ù‡ÛŒ Ø±Ø§ ÙˆØ§Ø±Ø¯ Ú©Ù†ÛŒØ¯")
     : "ØºÛŒØ±ÙØ¹Ø§Ù„Ø› ÙÙ‚Ø· Ø¯Ø± Ø¯Ø±Ú¯Ø§Ù‡ Ù…Ø³ØªÙ‚Ù„ Ù†ÛŒØ±ÙˆÚ¯Ø§Ù‡ÛŒ Ù†Ù…Ø§ÛŒØ´ Ø¯Ø§Ø¯Ù‡ Ù…ÛŒâ€ŒØ´ÙˆØ¯";
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (equipmentManualMode) return;
     setPanelId((isSolarPanelPowerRoute ? solarPanelPowerInput?.selectedPanelId : null) || SHIL_SOLAR_PANELS.find((p) => p.powerW === 620)?.id || solarDesign?.panel?.id || SHIL_SOLAR_PANELS?.[0]?.id || "");
     setInverterId(solarDesign?.inverter?.id || "");
     setBatteryId(solarDesign?.battery?.battery?.id || "");
   }, [equipmentManualMode, isSolarPanelPowerRoute, solarPanelPowerInput?.selectedPanelId, solarDesign?.panel?.id || SHIL_SOLAR_PANELS?.[0]?.id || "", solarDesign?.inverter?.id || "", solarDesign?.battery?.battery?.id || ""]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!warning) return undefined;
     const timer = setTimeout(() => setWarning(""), 5200);
     return () => clearTimeout(timer);
   }, [warning]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     try {
       localStorage.setItem("shil:solarSystemDesign:live", JSON.stringify(solarDesign));
       if (unifiedPvResult) localStorage.setItem("shil:unifiedPvEngineResult:live", JSON.stringify(unifiedPvResult));

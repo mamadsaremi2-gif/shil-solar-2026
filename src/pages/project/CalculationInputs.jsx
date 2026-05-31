@@ -28,6 +28,16 @@ function toNumber(value, fallback = 0) {
   return Number.isFinite(n) ? n : fallback;
 }
 
+function enNumber(value, digits = 0) {
+  const n = Number(value || 0);
+  if (!Number.isFinite(n)) return "0";
+  return n.toLocaleString("en-US", { maximumFractionDigits: digits });
+}
+
+function enValue(value, unit = "", digits = 0) {
+  return `${enNumber(value, digits)}${unit ? ` ${unit}` : ""}`;
+}
+
 function clampNumber(value, fallback, min, max) {
   const n = toNumber(value, fallback);
   if (!Number.isFinite(n)) return fallback;
@@ -297,6 +307,31 @@ export default function CalculationInputs() {
   const manualPhaseLabel = manualVoltageNumber >= 380 ? "۳۸۰ ولت سه‌فاز" : "۲۲۰ ولت تک‌فاز";
   const currentDerivedPowerW = Math.round(toNumber(manualCurrentA, 0) * manualVoltageNumber * (manualVoltageNumber >= 380 ? Math.sqrt(3) : 1));
   const selectedEquipmentTitles = selectedItems.map((item) => item.title).filter(Boolean).join("، ");
+  const equipmentStats = React.useMemo(() => {
+    const voltage = toNumber(manualVoltage || 220, 220) || 220;
+    return selectedItems.reduce((acc, item) => {
+      const override = itemOverrides[item.id] || {};
+      const qty = Math.max(1, toNumber(override.quantity ?? item.quantity ?? 1, 1));
+      const powerW = Math.max(0, toNumber(item.ratedPowerW || item.powerW || 0, 0));
+      const hours = Math.max(0, toNumber(override.usageHoursPerDay ?? item.usageHoursPerDay ?? 0, 0));
+      const pf = Math.max(0.1, toNumber(override.powerFactor ?? item.powerFactor ?? 0.9, 0.9));
+      const isMotor = Boolean(override.isMotor ?? item.isMotor) || item.type === "inductive" || Number(item.surgeFactor || item.startupFactor || 1) > 1.7 || /موتور|پمپ|کمپرسور|فن|کولر|آسانسور/i.test(String(`${item.title || ""} ${item.category || ""}`));
+      const hasSoftStarter = Boolean(override.hasSoftStarter ?? item.hasSoftStarter ?? false);
+      const startFactor = isMotor ? (hasSoftStarter ? 1.2 : Math.max(2.5, toNumber(item.startupFactor || item.surgeFactor || 2.5, 2.5))) : 1;
+      const nominalCurrentA = voltage > 0 ? (powerW / Math.max(1, voltage * pf)) : 0;
+      const runningCurrentA = nominalCurrentA * qty;
+      const startCurrentA = nominalCurrentA * startFactor * qty;
+      acc.selectedCount += qty;
+      acc.totalPowerW += powerW * qty;
+      acc.totalEnergyKWh += (powerW * qty * hours) / 1000;
+      acc.acCurrentA += runningCurrentA;
+      acc.startCurrentA += startCurrentA;
+      acc.surgePowerW += powerW * qty * startFactor;
+      if (isMotor) acc.motorCount += qty;
+      if (hasSoftStarter) acc.softStarterCount += qty;
+      return acc;
+    }, { selectedCount: 0, totalPowerW: 0, totalEnergyKWh: 0, acCurrentA: 0, startCurrentA: 0, surgePowerW: 0, motorCount: 0, softStarterCount: 0 });
+  }, [selectedItems, itemOverrides, manualVoltage]);
   const methodResultTitle = method === "equipment" ? "نتایج لیست تجهیزات" : method === "energy" ? "نتایج انرژی روزانه" : method === "power" ? "نتایج توان کل" : method === "profile" ? "نتایج پروفایل مصرف" : method === "solar_panel_power" ? "نتایج توان پنل خورشیدی" : method === "current" ? "نتایج جریان کل" : "نتایج محاسبات";
   const safeLoadBuckets = enginePreview?.loadProfile?.buckets || profileBucketsWh;
 
@@ -440,7 +475,24 @@ export default function CalculationInputs() {
       }));
     }
 
-    localStorage.setItem("shil:loadEngineResult", JSON.stringify(result));
+    const finalResult = method === "equipment" ? {
+      ...result,
+      selectedItems,
+      selectedCount: equipmentStats.selectedCount || result.selectedCount || selectedItems.length,
+      totalPowerW: equipmentStats.totalPowerW || result.totalPowerW,
+      totalEnergyKWh: equipmentStats.totalEnergyKWh || result.totalEnergyKWh,
+      acCurrentA: equipmentStats.acCurrentA || result.acCurrentA,
+      startCurrentA: equipmentStats.startCurrentA || result.startCurrentA,
+      surgePowerW: equipmentStats.surgePowerW || result.surgePowerW,
+      motorCount: equipmentStats.motorCount,
+      softStarterCount: equipmentStats.softStarterCount,
+      equipmentStats,
+    } : result;
+    localStorage.setItem("shil:loadEngineResult", JSON.stringify(finalResult));
+    if (method === "equipment") {
+      localStorage.setItem("shil:selectedEquipmentItems", JSON.stringify(selectedItems));
+      localStorage.setItem("shil:equipmentCalculationStats", JSON.stringify(equipmentStats));
+    }
     buildScenarioCalculationInput();
     if (isReadyScenarioEquipmentFlow) {
       localStorage.setItem("shil:scenarioEquipmentConfirmed", "true");
@@ -578,7 +630,7 @@ export default function CalculationInputs() {
           </section>
         ) : null}
 
-        {method !== "solar_panel_power" ? (
+        {method !== "solar_panel_power" && method !== "equipment" ? (
         <section className="shil-env-card">
           <h3 className="shil-section-title">
             {methodResultTitle}
@@ -672,6 +724,28 @@ export default function CalculationInputs() {
             })}
           </section>
         ) : null}
+
+        {method === "equipment" ? (
+          <section className="shil-env-card shil-equipment-results-card">
+            <h3 className="shil-section-title">نتایج لیست تجهیزات</h3>
+            <div className="shil-summary-grid">
+              <div><span>تعداد تجهیزات انتخاب‌شده</span><strong>{enValue(equipmentStats.selectedCount || enginePreview.selectedCount, "تجهیز")}</strong></div>
+              <div><span>تجهیزات موتوری</span><strong>{enValue(equipmentStats.motorCount, "تجهیز")}</strong></div>
+              <div><span>تجهیزات دارای سافت‌استارتر</span><strong>{enValue(equipmentStats.softStarterCount, "تجهیز")}</strong></div>
+              <div><span>توان کل</span><strong>{enValue(equipmentStats.totalPowerW || enginePreview.totalPowerW, "W")}</strong></div>
+              <div><span>انرژی روزانه</span><strong>{enValue(equipmentStats.totalEnergyKWh || enginePreview.totalEnergyKWh, "kWh", 2)}</strong></div>
+              <div><span>جریان AC</span><strong>{enValue(equipmentStats.acCurrentA || enginePreview.acCurrentA, "A", 2)}</strong></div>
+              <div><span>جریان راه‌اندازی</span><strong>{enValue(equipmentStats.startCurrentA || enginePreview.startCurrentA, "A", 2)}</strong></div>
+              <div><span>پیک توان / پیک استارت</span><strong>{enValue(equipmentStats.surgePowerW || enginePreview.surgePowerW, "W")}</strong></div>
+            </div>
+            {selectedItems.length ? (
+              <p className="shil-muted-note">اعداد این بلوک از تجهیزات انتخاب‌شده، تعداد، ساعت مصرف، ضریب همزمانی، نوع بار موتوری و وضعیت سافت‌استارتر محاسبه شده‌اند.</p>
+            ) : (
+              <div className="shil-empty-selection">برای محاسبه نتایج، ابتدا حداقل یک تجهیز انتخاب کنید.</div>
+            )}
+          </section>
+        ) : null}
+
 
         {scaleWarning ? <div className="shil-inline-warning">{scaleWarning}<button type="button" className="shil-secondary-wide" onClick={goToUtilityGateway}>ورود به درگاه نیروگاهی</button></div> : null}
         <button type="button" className="shil-primary-wide" onClick={confirmLoad}>

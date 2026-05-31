@@ -1,15 +1,15 @@
-import * as React from "react";
+import React, { useEffect, useState } from "react";
 import ShilPageShell from "../components/ShilPageShell.jsx";
 import { appendUserRecord, readUserRecords } from "../auth/session.js";
 
 const categories = ["UI/UX", "محاسبات", "خطاها", "امکانات جدید", "سناریوها", "عملکرد اپ"];
 
 export default function Feedback() {
-  const [category, setCategory] = React.useState(categories[0]);
-  const [text, setText] = React.useState("");
-  const [threads, setThreads] = React.useState([]);
+  const [category, setCategory] = useState(categories[0]);
+  const [text, setText] = useState("");
+  const [threads, setThreads] = useState([]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setThreads(readUserRecords("shil-feedback", []));
   }, []);
 

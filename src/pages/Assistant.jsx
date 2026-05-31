@@ -1,14 +1,14 @@
-import * as React from "react";
+import React, { useEffect, useState } from "react";
 import ShilPageShell from "../components/ShilPageShell.jsx";
 import { appendUserRecord, readUserRecords } from "../auth/session.js";
 
 const allowed = ["خورشیدی", "پنل", "باتری", "اینورتر", "برق", "اضطراری", "کابل", "شارژر", "مصرف", "انرژی", "سانورتر", "ژنراتور"];
 
 export default function Assistant() {
-  const [question, setQuestion] = React.useState("");
-  const [items, setItems] = React.useState([]);
+  const [question, setQuestion] = useState("");
+  const [items, setItems] = useState([]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setItems(readUserRecords("shil-assistant-questions", []));
   }, []);
 

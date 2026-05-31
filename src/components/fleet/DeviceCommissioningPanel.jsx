@@ -1,11 +1,11 @@
-import * as React from "react";
+import React, { useState } from "react";
 
 import QRCode from "react-qr-code";
 
 export default function DeviceCommissioningPanel() {
 
   const [serial, setSerial] =
-    React.useState("INV-2026-0001");
+    useState("INV-2026-0001");
 
   return (
 

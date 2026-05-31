@@ -1,11 +1,11 @@
-import * as React from "react";
+import { useEffect, useState } from "react";
 
 export function useDarkMode() {
 
   const [dark, setDark] =
-    React.useState(true);
+    useState(true);
 
-  React.useEffect(() => {
+  useEffect(() => {
 
     document.body.dataset.theme =
       dark ? "dark" : "light";

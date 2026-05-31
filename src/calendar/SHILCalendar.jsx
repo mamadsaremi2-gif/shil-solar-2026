@@ -1,4 +1,7 @@
-import * as React from "react";
+import React,
+{
+  useState
+} from "react";
 
 import Calendar
 from "react-calendar";
@@ -8,7 +11,7 @@ import "react-calendar/dist/Calendar.css";
 export default function SHILCalendar() {
 
   const [value, setValue] =
-    React.useState(new Date());
+    useState(new Date());
 
   return (
 

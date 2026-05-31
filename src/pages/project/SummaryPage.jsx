@@ -1,308 +1,267 @@
-import * as React from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import React, { useMemo } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import EngineeringPageShell from "../../components/EngineeringPageShell.jsx";
 import { approveProjectStep } from "../../workflow/projectWorkflow.js";
-import { buildMethodSummary, getActiveMethodKey } from "../../core/summary/methodSummaryEngine.js";
-import { createAIInstallationPreview } from "../../ai/installation/aiInstallationPreviewEngine.js";
-import { generateAIInstallationImage } from "../../ai/installation/aiInstallationImageService.js";
+import { getActiveMethodKey } from "../../core/summary/methodSummaryEngine.js";
 
 function readDraft(key, fallback = {}) {
-  try { return JSON.parse(localStorage.getItem(key) || "null") || fallback; } catch { return fallback; }
+  try {
+    return JSON.parse(localStorage.getItem(key) || "null") || fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function toEnglishDigits(value) {
+  return String(value ?? "")
+    .replace(/[۰-۹]/g, (d) => "۰۱۲۳۴۵۶۷۸۹".indexOf(d))
+    .replace(/[٠-٩]/g, (d) => "٠١٢٣٤٥٦٧٨٩".indexOf(d));
 }
 
 function fmt(value, fallback = "ثبت نشده") {
   if (value === null || value === undefined || value === "") return fallback;
-  return value;
+  if (typeof value === "number") return toEnglishDigits(Number.isFinite(value) ? Math.round(value * 100) / 100 : fallback);
+  return toEnglishDigits(value);
 }
 
-
-function batterySpecText(bank = {}) {
-  const b = bank.battery || {};
-  const count = bank.totalCount || bank.count || "-";
-  const voltage = bank.unitVoltageV || bank.voltageV || b.nominalVoltage || b.voltageV || "-";
-  const ah = bank.unitCapacityAh || bank.capacityAh || b.capacityAh || "-";
-  const unitKWh = bank.unitEnergyKWh || (voltage !== "-" && ah !== "-" ? Math.round((Number(voltage) * Number(ah)) / 10) / 100 : "-");
-  const totalKWh = bank.grossEnergyKWh || (bank.grossEnergyWh ? Math.round(bank.grossEnergyWh / 10) / 100 : "-");
-  return `${count} عدد / ${voltage}V / ${ah}Ah / ${unitKWh}kWh هر باتری / ${totalKWh}kWh کل`;
+function pick(...values) {
+  return values.find((value) => value !== undefined && value !== null && value !== "" && value !== "ثبت نشده") ?? null;
 }
 
-function batteryNoteText(bank = {}) {
-  const series = bank.seriesCount || "-";
-  const parallel = bank.parallelCount || "-";
-  const bankVoltage = bank.bankVoltageV || "-";
-  const bankAh = bank.bankCurrentAh || bank.installedAh || "-";
-  const branchCurrent = bank.branchCurrentA ? ` / جریان شاخه ${bank.branchCurrentA}A` : "";
-  return `${series} سری × ${parallel} موازی / ولتاژ بانک ${bankVoltage}V / ظرفیت جریان ${bankAh}Ah${branchCurrent}`;
+function methodTitle(key, fallback = "لیست تجهیزات") {
+  const map = {
+    equipment: "لیست تجهیزات",
+    profile: "پروفایل مصرف",
+    energy: "انرژی روزانه",
+    solar_panel_power: "توان پنل خورشیدی",
+    power: "توان کل مصرفی",
+    current: "جریان کل مصرفی",
+    emergency: "برق اضطراری",
+  };
+  return map[key] || fallback;
+}
+
+function pathTitle(path = {}, emergency = false) {
+  return path.title || path.name || path.label || (emergency ? "اجرای پروژه با برق اضطراری" : "اجرای پروژه با پنل خورشیدی");
+}
+
+function designTitle(value) {
+  const map = {
+    offgrid: "آفگرید",
+    ongrid: "آنگرید",
+    hybrid: "هیبرید",
+    battery: "آفگرید",
+    grid: "آنگرید",
+  };
+  return map[value] || value || "ثبت نشده";
 }
 
 function SummaryBlock({ title, badge, children }) {
   return (
     <div className="shil-section-card shil-summary-block-card">
-      <div className="shil-section-head"><h2>{title}</h2><span>{badge}</span></div>
+      <div className="shil-section-head">
+        <h2>{title}</h2>
+        {badge ? <span>{badge}</span> : null}
+      </div>
       <div className="shil-summary-grid">{children}</div>
     </div>
   );
 }
 
 function SummaryItem({ label, value, note }) {
-  return <div><span>{label}</span><strong>{fmt(value)}</strong>{note ? <small>{note}</small> : null}</div>;
-}
-
-function getFirstSiteImage(environment = {}) {
-  const attachments = Array.isArray(environment.siteAttachments) ? environment.siteAttachments : [];
-  const first = attachments[0] || environment.siteAttachment || environment.sitePhoto || environment.installationImage || null;
-  if (!first) return null;
-  if (typeof first === "string") return { src: first, title: "تصویر محل نصب" };
-  return { src: first.dataUrl || first.previewUrl || first.url || first.src || first.base64 || "", title: first.name || first.fileName || "تصویر محل نصب" };
-}
-
-function AiReasonTable({ title, rows }) {
   return (
-    <div className="shil-ai-install-table-card">
-      <h3>{title}</h3>
-      <div className="shil-ai-install-table">
-        <div className="head"><span>پارامتر</span><span>مقدار</span><span>علت انتخاب</span></div>
-        {rows.map((row) => <div key={`${title}-${row.label}`}><span>{row.label}</span><strong>{row.value}</strong><small>{row.reason}</small></div>)}
-      </div>
+    <div>
+      <span>{label}</span>
+      <strong>{fmt(value)}</strong>
+      {note ? <small>{fmt(note)}</small> : null}
     </div>
   );
 }
 
+function getEnvironmentImage(environment = {}) {
+  const attachments = Array.isArray(environment.siteAttachments) ? environment.siteAttachments : [];
+  const first = attachments[0] || environment.siteAttachment || environment.sitePhoto || environment.installationImage || null;
+  if (!first) return null;
+  if (typeof first === "string") return first;
+  return first.dataUrl || first.previewUrl || first.url || first.src || first.base64 || null;
+}
+
+function getRegisteredParams(methodKey, loadResult, systemSettings, selectedEquipment, solarPanelPowerInput) {
+  const registered = readDraft("shil:registeredCalculationParams", null) || readDraft("shil:calculationRegisteredParams", null) || readDraft("shil:methodRegisteredParams", null);
+  if (registered && typeof registered === "object") return registered;
+
+  const equipmentStats = loadResult?.equipmentStats || loadResult?.stats || systemSettings?.equipmentStats || {};
+  const selectedCount = Array.isArray(selectedEquipment) ? selectedEquipment.length : Number(loadResult?.selectedEquipmentCount || 0);
+  const motorCount = pick(equipmentStats.motorCount, loadResult?.motorCount, systemSettings?.motorCount, 0);
+  const softStarterCount = pick(equipmentStats.softStarterCount, loadResult?.softStarterCount, systemSettings?.softStarterCount, 0);
+  const surgeCurrentA = pick(loadResult?.startingCurrentA, loadResult?.surgeCurrentA, systemSettings?.startingCurrentA, systemSettings?.surgeCurrentA, null);
+
+  return {
+    methodKey,
+    methodTitle: methodTitle(methodKey),
+    selectedEquipmentCount: selectedCount,
+    motorCount,
+    softStarterCount,
+    totalPowerW: pick(loadResult?.totalPowerW, loadResult?.designPowerW, systemSettings?.basePowerW, systemSettings?.totalPowerW),
+    finalPowerW: pick(systemSettings?.finalPowerW, systemSettings?.designPowerW, loadResult?.designPowerW, loadResult?.totalPowerW),
+    dailyEnergyKWh: pick(loadResult?.dailyEnergyKWh, systemSettings?.dailyEnergyKWh),
+    acCurrentA: pick(loadResult?.acCurrentA, systemSettings?.acCurrentA),
+    startingCurrentA: surgeCurrentA,
+    peakStartW: pick(loadResult?.peakStartW, loadResult?.surgePowerW, systemSettings?.peakStartW),
+    voltageV: pick(systemSettings?.voltageV, loadResult?.voltageV, solarPanelPowerInput?.voltageV),
+    panelPowerW: pick(solarPanelPowerInput?.panelPowerW, systemSettings?.panelPowerW),
+    panelCount: pick(solarPanelPowerInput?.panelCount, systemSettings?.panelCount),
+  };
+}
+
+function buildRegisteredRows(params = {}, methodKey) {
+  const common = [
+    ["روش محاسبات", params.methodTitle || methodTitle(methodKey)],
+    ["توان نهایی ثبت شده", params.finalPowerW ? `W ${params.finalPowerW}` : params.totalPowerW ? `W ${params.totalPowerW}` : null],
+    ["انرژی روزانه ثبت شده", params.dailyEnergyKWh ? `kWh ${params.dailyEnergyKWh}` : null],
+    ["ولتاژ مبنا", params.voltageV ? `V ${params.voltageV}` : null],
+  ];
+
+  if (methodKey === "equipment") {
+    return [
+      ["روش محاسبات", "لیست تجهیزات"],
+      ["تعداد تجهیزات انتخابی", params.selectedEquipmentCount ? `${params.selectedEquipmentCount} تجهیز` : "0 تجهیز"],
+      ["تعداد تجهیزات موتوری", params.motorCount ? `${params.motorCount} تجهیز` : "0 تجهیز"],
+      ["تعداد سافت‌استارتر", params.softStarterCount ? `${params.softStarterCount} تجهیز` : "0 تجهیز"],
+      ["توان کل محاسبه شده", params.totalPowerW ? `W ${params.totalPowerW}` : null],
+      ["انرژی روزانه", params.dailyEnergyKWh ? `kWh ${params.dailyEnergyKWh}` : null],
+      ["جریان AC", params.acCurrentA ? `A ${params.acCurrentA}` : null],
+      ["جریان راه‌اندازی", params.startingCurrentA ? `A ${params.startingCurrentA}` : null],
+      ["پیک استارت", params.peakStartW ? `W ${params.peakStartW}` : null],
+    ];
+  }
+
+  if (methodKey === "solar_panel_power") {
+    return [
+      ["روش محاسبات", "توان پنل خورشیدی"],
+      ["توان پنل وارد شده", params.panelPowerW ? `W ${params.panelPowerW}` : null],
+      ["تعداد پنل وارد شده", params.panelCount ? `${params.panelCount} عدد` : null],
+      ...common.slice(1),
+    ];
+  }
+
+  return common;
+}
+
+function buildSystemRows(systemSettings = {}, solarDesign = {}, unified = {}) {
+  const design = solarDesign || {};
+  const inverter = design.inverter || systemSettings.inverter || unified.inverter || {};
+  const battery = design.battery || systemSettings.battery || unified.battery || {};
+  const panel = design.panel || systemSettings.panel || unified.panel || {};
+  const pvArray = design.pvArray || systemSettings.pvArray || unified.pvArray || {};
+
+  return [
+    ["نوع طراحی", designTitle(pick(systemSettings.designMode, systemSettings.designType, design.designMode, design.designType))],
+    ["توان کل پس از ضریب", pick(systemSettings.finalPowerW, systemSettings.designPowerW, design.finalPowerW, design.load?.designPeakW) ? `W ${pick(systemSettings.finalPowerW, systemSettings.designPowerW, design.finalPowerW, design.load?.designPeakW)}` : null],
+    ["انرژی روزانه پس از ضریب", pick(systemSettings.finalDailyEnergyKWh, systemSettings.dailyEnergyKWh, design.finalDailyEnergyKWh, design.load?.dailyEnergyKWh) ? `kWh ${pick(systemSettings.finalDailyEnergyKWh, systemSettings.dailyEnergyKWh, design.finalDailyEnergyKWh, design.load?.dailyEnergyKWh)}` : null],
+    ["پنل انتخابی", pick(panel.title, panel.name, systemSettings.panelTitle)],
+    ["ولتاژ و جریان پنل", pick(panel.vmp && panel.imp ? `Vmp ${panel.vmp}V / Imp ${panel.imp}A` : null, panel.voltageV && panel.currentA ? `${panel.voltageV}V / ${panel.currentA}A` : null)],
+    ["تعداد پنل", pick(pvArray.panelCount, systemSettings.panelCount) ? `${pick(pvArray.panelCount, systemSettings.panelCount)} عدد` : null],
+    ["توان آرایه پنل", pick(pvArray.arrayPowerW, pvArray.totalPowerW, systemSettings.arrayPowerW) ? `W ${pick(pvArray.arrayPowerW, pvArray.totalPowerW, systemSettings.arrayPowerW)}` : null],
+    ["اینورتر خورشیدی", pick(inverter.title, inverter.name, systemSettings.inverterTitle)],
+    ["تعداد اینورتر خورشیدی", pick(inverter.count, systemSettings.inverterCount) ? `${pick(inverter.count, systemSettings.inverterCount)} عدد` : null],
+    ["تعداد MPPT هر اینورتر", pick(inverter.mpptCount, inverter.mppt, systemSettings.mpptCount) ? `${pick(inverter.mpptCount, inverter.mppt, systemSettings.mpptCount)} عدد` : null],
+    ["ولتاژ DC اینورتر", pick(inverter.dcVoltageV, inverter.batteryVoltageV, systemSettings.inverterDcVoltageV) ? `V ${pick(inverter.dcVoltageV, inverter.batteryVoltageV, systemSettings.inverterDcVoltageV)}` : null],
+    ["باتری انتخابی", pick(battery.battery?.title, battery.title, battery.name, systemSettings.batteryTitle)],
+    ["ولتاژ / جریان / انرژی هر باتری", pick(battery.unitVoltageV && battery.unitCapacityAh ? `${battery.unitVoltageV}V / ${battery.unitCapacityAh}Ah / ${battery.unitEnergyKWh || "-"}kWh` : null, battery.voltageV && battery.capacityAh ? `${battery.voltageV}V / ${battery.capacityAh}Ah` : null)],
+    ["تعداد باتری", pick(battery.totalCount, battery.count, systemSettings.batteryCount) ? `${pick(battery.totalCount, battery.count, systemSettings.batteryCount)} عدد` : null],
+    ["مجموع انرژی بانک باتری", pick(battery.grossEnergyKWh, battery.totalEnergyKWh, systemSettings.batteryTotalKWh) ? `kWh ${pick(battery.grossEnergyKWh, battery.totalEnergyKWh, systemSettings.batteryTotalKWh)}` : null],
+    ["ظرفیت ذخیره‌سازی مورد نیاز", pick(systemSettings.requiredStorageKWh, battery.requiredStorageKWh, design.requiredStorageKWh) ? `kWh ${pick(systemSettings.requiredStorageKWh, battery.requiredStorageKWh, design.requiredStorageKWh)}` : null],
+  ];
+}
+
+function renderRows(rows) {
+  return rows.map(([label, value, note]) => <SummaryItem key={label} label={label} value={value} note={note} />);
+}
+
 export default function SummaryPage() {
   const { domain = "solar" } = useParams();
-  const location = useLocation();
   const navigate = useNavigate();
   const emergency = domain === "emergency";
   const methodKey = getActiveMethodKey({ domain });
-  const method = location.state?.method || readDraft("shil:selectedCalculationMethod", { title: emergency ? "برق اضطراری" : "لیست تجهیزات" })?.title || (emergency ? "برق اضطراری" : "لیست تجهیزات");
-  const solarPanelPowerInput = readDraft("shil:solarPanelPowerInput", {});
-  const isSolarPanelPowerRoute = !emergency && methodKey === "solar_panel_power";
 
-  const project = React.useMemo(() => readDraft("shil:projectInfoDraft", {}), []);
-  const environment = React.useMemo(() => readDraft("shil:environmentDraft", {}), []);
-  const loadResult = React.useMemo(() => readDraft("shil:loadEngineResult", {}), []);
-  const systemSettings = React.useMemo(() => readDraft("shil:systemSettingsDraft", {}), []);
-  const solarDesign = React.useMemo(() => readDraft("shil:solarSystemDesign", systemSettings?.design || {}), [systemSettings]);
-  const unifiedPvResult = React.useMemo(() => readDraft("shil:unifiedPvEngineResult", solarDesign?.unifiedPvEngineResult || systemSettings?.unifiedPvEngineResult || null), [solarDesign, systemSettings]);
-  const selectedEquipment = React.useMemo(() => readDraft("shil:selectedEquipments", []), []);
-  const environmentImage = React.useMemo(() => getFirstSiteImage(environment), [environment]);
-  const emergencyDesign = React.useMemo(() => emergency ? { ...loadResult, previewOnly: true, explanations: ["این صفحه فقط چکیده است؛ محاسبه قطعی در صفحه اجرای محاسبات انجام می‌شود."] } : null, [emergency, loadResult]);
-
-  const [aiOpen, setAiOpen] = React.useState(false);
-  const [imageTransferred, setImageTransferred] = React.useState(false);
-  const [aiApplied, setAiApplied] = React.useState(Boolean(readDraft("shil:aiInstallationPreview", null)));
-  const [aiResult, setAiResult] = React.useState(() => readDraft("shil:aiInstallationPreview", null));
-  const [aiMessage, setAiMessage] = React.useState("");
-  const [aiGenerating, setAiGenerating] = React.useState(false);
-  const [installMode, setInstallMode] = React.useState("roof");
-
-  const sitePhotoCount = Number(environment.siteAttachments?.length || (environment.siteAttachment ? 1 : 0) || (environmentImage ? 1 : 0));
-  const hasSitePhoto = sitePhotoCount > 0 && Boolean(environmentImage?.src || environmentImage?.title);
-  const activeDesign = emergency ? emergencyDesign : solarDesign;
-  const methodSummary = buildMethodSummary({
-    domain,
-    methodKey,
-    result: activeDesign,
-    loadResult,
-    systemSettings,
-    solarDesign,
-    solarPanelPowerInput,
-    selectedEquipment
-  });
-  const panelCount = solarDesign?.pvArray?.panelCount || systemSettings?.panelCount || "-";
-  const panelPower = solarDesign?.panel?.powerW || systemSettings?.panelPowerW || 620;
-  const panelSeries = solarDesign?.pvArray?.seriesCount || systemSettings?.panelSeriesCount || "-";
-  const panelParallel = solarDesign?.pvArray?.parallelCount || systemSettings?.panelParallelCount || "-";
-  const inverterCount = activeDesign?.inverter?.count || systemSettings?.inverterCount || "-";
-  const inverterPower = activeDesign?.inverter?.powerW || activeDesign?.inverter?.ratedPowerW || systemSettings?.inverterPowerW || "-";
-  const batteryCount = activeDesign?.battery?.totalCount || systemSettings?.batteryCount || "-";
-  const batteryVoltage = activeDesign?.battery?.unitVoltageV || activeDesign?.battery?.battery?.voltageV || activeDesign?.battery?.battery?.nominalVoltage || activeDesign?.battery?.bankVoltageV || systemSettings?.batteryVoltageV || "-";
-  const batteryCapacity = activeDesign?.battery?.unitCapacityAh || activeDesign?.battery?.battery?.capacityAh || activeDesign?.battery?.capacityAh || systemSettings?.batteryCapacityAh || "-";
-  const batterySeries = activeDesign?.battery?.seriesCount || systemSettings?.batterySeriesCount || "-";
-  const batteryParallel = activeDesign?.battery?.parallelCount || systemSettings?.batteryParallelCount || "-";
-  const batteryUnitKWh = activeDesign?.battery?.unitEnergyKWh || "-";
-  const batteryTotalKWh = activeDesign?.battery?.grossEnergyKWh || (activeDesign?.battery?.grossEnergyWh ? Math.round(activeDesign.battery.grossEnergyWh / 10) / 100 : "-");
-  const batteryBankAh = activeDesign?.battery?.bankCurrentAh || activeDesign?.battery?.installedAh || "-";
-  const requiredPower = activeDesign?.load?.designPeakW || activeDesign?.load?.totalPowerW || activeDesign?.requiredPowerW || loadResult?.designPowerW || loadResult?.peakPowerW || "در انتظار محاسبه";
-
-  const transferSiteImage = () => {
-    if (!hasSitePhoto) {
-      setImageTransferred(false); setAiApplied(false);
-      setAiMessage("برای استفاده از این بلوک اختیاری، ابتدا در صفحه شرایط محیطی تصویر محل نصب و اجرا را ثبت کنید.");
-      return;
-    }
-    localStorage.setItem("shil:aiInstallationSourceImage", JSON.stringify({ transferredAt: new Date().toISOString(), source: "environment.siteAttachments", image: environmentImage, installMode }));
-    setImageTransferred(true);
-    setAiMessage("تصویر محل نصب از شرایط محیطی به بلوک هوش مصنوعی منتقل شد. اکنون می‌توانید شبیه‌سازی تصویری را اعمال کنید.");
-  };
-
-  const applyAiPreview = async () => {
-    if (!hasSitePhoto || !imageTransferred) {
-      setAiApplied(false);
-      setAiMessage("ابتدا دکمه «افزودن تصویر محل نصب و اجرا» را بزنید تا تصویر این پروژه وارد بلوک هوش مصنوعی شود.");
-      return;
-    }
-
-    const basePayload = createAIInstallationPreview({
-      installMode,
-      image: environmentImage,
-      panel: { count: panelCount, powerW: panelPower, series: panelSeries, parallel: panelParallel },
-      inverter: { count: inverterCount, powerW: inverterPower, title: solarDesign?.inverter?.title || systemSettings?.inverterId },
-      battery: { count: batteryCount, voltageV: batteryVoltage, capacityAh: batteryCapacity, unitKWh: batteryUnitKWh, totalKWh: batteryTotalKWh, bankAh: batteryBankAh, series: batterySeries, parallel: batteryParallel },
-      project,
-      environment
-    });
-
-    setAiGenerating(true);
-    setAiMessage("در حال اتصال به سرویس واقعی تولید تصویر و ساخت شبیه‌سازی محل نصب...");
-
-    const imageGeneration = await generateAIInstallationImage(basePayload);
-    const previewPayload = {
-      ...basePayload,
-      status: imageGeneration.ok ? "generated" : "ready-without-image-service",
-      imageGeneration,
-      generatedImage: imageGeneration.ok ? (imageGeneration.imageDataUrl || imageGeneration.imageUrl) : null,
-      serviceConnected: Boolean(imageGeneration.ok),
-    };
-
-    localStorage.setItem("shil:aiInstallationPreview", JSON.stringify(previewPayload));
-    setAiResult(previewPayload);
-    setAiApplied(true);
-    setAiGenerating(false);
-    setAiMessage(imageGeneration.ok
-      ? "تصویر واقعی شبیه‌سازی نصب با سرویس هوش مصنوعی تولید شد و جدول مهندسی تجهیزات آماده تایید است."
-      : `جدول مهندسی و پرامپت آماده شد، اما تولید تصویر واقعی کامل نشد: ${imageGeneration.error}`
-    );
-  };
-
-  const confirmAiPreview = () => {
-    if (!aiApplied) { setAiMessage("برای تایید این بلوک اختیاری، ابتدا تصویر محل نصب را اضافه و دکمه اعمال را بزنید."); return; }
-    localStorage.setItem("shil:aiInstallationPreviewConfirmed", JSON.stringify({ confirmedAt: new Date().toISOString(), installMode }));
-    setAiMessage("بلوک هوش مصنوعی نصب پروژه تایید شد و همراه چکیده اطلاعات ذخیره می‌شود.");
-  };
+  const project = useMemo(() => readDraft("shil:projectInfoDraft", {}), []);
+  const selectedPath = useMemo(() => readDraft("shil:selectedProjectPath", {}), []);
+  const environment = useMemo(() => readDraft("shil:environmentDraft", {}), []);
+  const environmentAssessment = useMemo(() => readDraft("shil:environmentAssessment", {}), []);
+  const loadResult = useMemo(() => readDraft("shil:loadEngineResult", {}), []);
+  const systemSettings = useMemo(() => readDraft("shil:systemSettingsDraft", {}), []);
+  const solarDesign = useMemo(() => readDraft("shil:solarSystemDesign", systemSettings?.design || {}), [systemSettings]);
+  const unifiedPvResult = useMemo(() => readDraft("shil:unifiedPvEngineResult", solarDesign?.unifiedPvEngineResult || systemSettings?.unifiedPvEngineResult || {}), [solarDesign, systemSettings]);
+  const selectedEquipment = useMemo(() => readDraft("shil:selectedEquipments", []), []);
+  const solarPanelPowerInput = useMemo(() => readDraft("shil:solarPanelPowerInput", {}), []);
+  const registeredParams = useMemo(() => getRegisteredParams(methodKey, loadResult, systemSettings, selectedEquipment, solarPanelPowerInput), [methodKey, loadResult, systemSettings, selectedEquipment, solarPanelPowerInput]);
+  const environmentImage = getEnvironmentImage(environment);
 
   const confirmSummary = () => {
+    const summaryPayload = {
+      domain,
+      selectedPath,
+      project,
+      environment,
+      environmentAssessment,
+      methodKey,
+      registeredParams,
+      loadResult,
+      systemSettings,
+      solarDesign,
+      unifiedPvResult,
+      confirmedAt: new Date().toISOString(),
+    };
     approveProjectStep("summary");
-    localStorage.setItem("shil:summaryDraft", JSON.stringify({ domain, method, project, environment, loadResult, systemSettings, solarDesign, solarSizing: solarDesign?.solarSizing, emergencyDesign, aiPreviewRequested: !emergency && aiApplied, confirmedAt: new Date().toISOString() }));
-    navigate(`/new-project/run/${domain}`, { state: { method, aiPreviewRequested: !emergency && aiApplied } });
+    localStorage.setItem("shil:summaryDraft", JSON.stringify(summaryPayload));
+    navigate("/new-project/run");
   };
-
-  const generatedVisualSrc = aiResult?.generatedImage || aiResult?.imageGeneration?.imageDataUrl || aiResult?.imageGeneration?.imageUrl || "";
-  const visualSrc = generatedVisualSrc || (imageTransferred && environmentImage?.src ? environmentImage.src : "");
-  const hasGeneratedVisual = Boolean(generatedVisualSrc);
-
-  const installationModes = [
-    { key: "roof", title: "نصب روی سقف" }, { key: "ground", title: "نصب زمینی" },
-    { key: "hybrid", title: "نصب ترکیبی" }, { key: "equipmentRoom", title: "اتاق باتری و اینورتر" }
-  ];
-  const panelRows = aiResult?.tables?.panel || [
-    { label: "تعداد پنل", value: `${panelCount} عدد`, reason: "بر اساس انرژی روزانه و توان طراحی موتور محاسبات تعیین شده است." },
-    { label: "توان هر پنل", value: `${panelPower} وات`, reason: "پنل پیش‌فرض مهندسی SHIL برای طراحی فعلی است، مگر اینکه کاربر مقدار دستی وارد کند." },
-    { label: "آرایش سری", value: `${panelSeries} سری`, reason: "برای رساندن ولتاژ رشته پنل به محدوده مجاز MPPT انتخاب شده است." },
-    { label: "آرایش موازی", value: `${panelParallel} موازی`, reason: "برای افزایش جریان و رسیدن به ظرفیت کل آرایه استفاده شده است." }
-  ];
-  const inverterRows = aiResult?.tables?.inverter || [
-    { label: "تعداد اینورتر", value: `${inverterCount} عدد`, reason: "بر اساس توان پیک، ضریب اطمینان و سناریوی اجرای پروژه انتخاب شده است." },
-    { label: "توان اینورتر", value: inverterPower === "-" ? "ثبت نشده" : `${inverterPower} وات`, reason: "باید توان همزمان و جریان راه‌اندازی بارهای اصلی را پوشش دهد." },
-    { label: "نوع انتخاب", value: solarDesign?.inverter?.title || systemSettings?.inverterId || "انتخاب هوشمند", reason: "از بانک اینورتر خورشیدی مطابق نوع آفگرید، آنگرید یا هیبرید انتخاب می‌شود." }
-  ];
-  const batteryRows = aiResult?.tables?.battery || [
-    { label: "تعداد باتری", value: `${batteryCount} عدد`, reason: `مشخصات کامل بانک: ${batterySpecText(activeDesign?.battery)}` },
-    { label: "ولتاژ / جریان / انرژی", value: `${batteryVoltage}V / ${batteryCapacity}Ah / ${batteryUnitKWh}kWh`, reason: `ظرفیت کل بانک ${batteryTotalKWh}kWh و ظرفیت جریان بانک ${batteryBankAh}Ah است.` },
-    { label: "ولتاژ / ظرفیت", value: `${batteryVoltage}V / ${batteryCapacity}Ah`, reason: "برای سازگاری با ولتاژ باس DC و ظرفیت ذخیره مورد نیاز انتخاب شده است." },
-    { label: "آرایش سری", value: `${batterySeries} سری`, reason: "برای رسیدن به ولتاژ کاری بانک باتری محاسبه شده است." },
-    { label: "آرایش موازی", value: `${batteryParallel} موازی`, reason: "برای افزایش ظرفیت Ah و پایداری ذخیره انرژی استفاده شده است." }
-  ];
 
   return (
     <EngineeringPageShell title="چکیده اطلاعات">
       <section className="shil-card-stack shil-final-summary-page">
-        <SummaryBlock title="اطلاعات پروژه" badge="Project">
-          <SummaryItem label="نام پروژه" value={project.projectName || project.name} />
-          <SummaryItem label="نوع مسیر" value={emergency ? "برق اضطراری" : "خورشیدی"} />
-          <SummaryItem label="روش محاسبات" value={isSolarPanelPowerRoute ? "توان پنل خورشیدی" : method} />
-          {!isSolarPanelPowerRoute ? <SummaryItem label="تعداد تجهیزات انتخابی" value={Array.isArray(selectedEquipment) ? `${selectedEquipment.length} مورد` : "ثبت نشده"} /> : null}
+        <SummaryBlock title="انتخاب مسیر پروژه" badge="Project Path">
+          <SummaryItem label="مسیر انتخاب شده" value={pathTitle(selectedPath, emergency)} />
+          <SummaryItem label="نوع پروژه" value={emergency ? "برق اضطراری" : "خورشیدی"} />
+          <SummaryItem label="نوع اتصال / سناریو" value={designTitle(pick(selectedPath.calculationDomain, selectedPath.key, localStorage.getItem("shil:calculationDomain")))} />
+          <SummaryItem label="وضعیت مسیر" value="تأیید شده" />
         </SummaryBlock>
 
-        <SummaryBlock title={emergency ? "شرایط اجرای برق اضطراری" : "شرایط محیطی"} badge="Environment">
-          <SummaryItem label="شهر / استان" value={`${fmt(environment.city)} / ${fmt(environment.province)}`} />
-          <SummaryItem label="نوع محل اجرا" value={environment.installTypeLabel} />
-          {!emergency ? <SummaryItem label="ساعت آفتابی" value={environment.peakSunHours ? `${environment.peakSunHours} ساعت` : null} /> : null}
-          {!emergency ? <SummaryItem label="جهت و زاویه پیشنهادی" value={`${environment.recommendedAzimuthDeg || 180}° / ${environment.recommendedTiltDeg || 32}°`} /> : null}
-          {!emergency ? <SummaryItem label="تصاویر محل نصب" value={`${sitePhotoCount} عکس`} /> : null}
-          <SummaryItem label="جهت‌نما" value={environment.compassAttachment ? "ثبت شده" : "ثبت نشده"} />
+        <SummaryBlock title="اطلاعات پروژه" badge="Project Info">
+          <SummaryItem label="نام پروژه" value={pick(project.projectName, project.name)} />
+          <SummaryItem label="نام کارفرما" value={pick(project.clientName, project.employerName, project.customerName, "SHIL CO")} />
+          <SummaryItem label="مسیر پروژه" value={pick(project.projectPathTitle, pathTitle(selectedPath, emergency))} />
+          <SummaryItem label="تاریخ ثبت" value={pick(project.date, project.registerDate, project.createdAt)} />
+          <SummaryItem label="توضیحات پروژه" value={pick(project.description, project.notes)} />
         </SummaryBlock>
 
-        <SummaryBlock title="مصرف و ورودی محاسبات" badge="Load">
-          <SummaryItem label="توان طراحی" value={typeof requiredPower === "number" ? `${Math.round(requiredPower)} W` : requiredPower} />
-          {emergency ? <SummaryItem label="زمان برق اضطراری مورد نیاز" value={`${emergencyDesign?.settings?.requiredEmergencyHours || 2} ساعت`} /> : <SummaryItem label="انرژی روزانه" value={isSolarPanelPowerRoute ? (unifiedPvResult?.summary?.important_results?.real_daily_production_Wh ? `${Math.round(unifiedPvResult.summary.important_results.real_daily_production_Wh / 1000)} kWh` : null) : loadResult?.dailyEnergyWh ? `${Math.round(loadResult.dailyEnergyWh / 1000)} kWh` : loadResult?.dailyEnergyKWh ? `${loadResult.dailyEnergyKWh} kWh` : null} />}
-          {!isSolarPanelPowerRoute ? <SummaryItem label="بار موتوری" value={loadResult?.motorLoadsCount ? `${loadResult.motorLoadsCount} مورد` : "مطابق لیست تجهیزات"} /> : null}
-          {!isSolarPanelPowerRoute ? <SummaryItem label="کنترل راه‌اندازی" value="در موتور محاسبات لحاظ می‌شود" /> : null}
+        <SummaryBlock title="شرایط محیطی" badge="Environment">
+          <SummaryItem label="شهر مبنا" value={pick(environment.city, environment.cityName, environmentAssessment.city)} />
+          <SummaryItem label="استان" value={pick(environment.province, environment.state, environmentAssessment.province)} />
+          <SummaryItem label="PSH" value={pick(environment.psh, environment.peakSunHours, environmentAssessment.peakSunHours)} />
+          <SummaryItem label="دمای طراحی" value={pick(environment.temperatureC, environment.maxTemperatureC, environmentAssessment.temperatureC) ? `${pick(environment.temperatureC, environment.maxTemperatureC, environmentAssessment.temperatureC)} °C` : null} />
+          <SummaryItem label="شرایط نصب" value={pick(environment.installationType, environment.mountingType, environment.installMode)} />
+          <SummaryItem label="تصویر محل نصب" value={environmentImage ? "ثبت شده" : "ثبت نشده"} />
         </SummaryBlock>
 
-        {emergency ? (
-          <>
-            <SummaryBlock title="پیکربندی برق اضطراری" badge={emergencyDesign?.valid ? "تأیید شده" : "کنترل‌شده"}>
-              <SummaryItem label="اینورتر برق اضطراری" value={emergencyDesign?.inverter?.title} note={`${emergencyDesign?.inverter?.count || 1} عدد / ${emergencyDesign?.inverter?.ratedPowerW || "-"} وات`} />
-              <SummaryItem label="باتری منتخب" value={emergencyDesign?.battery?.battery?.title} note={batterySpecText(emergencyDesign?.battery)} />
-              <SummaryItem label="ولتاژ / جریان / انرژی باتری" value={`${batteryVoltage}V / ${batteryCapacity}Ah / ${batteryUnitKWh}kWh هر باتری`} note={`ظرفیت کل ${batteryTotalKWh}kWh / بانک ${batteryBankAh}Ah`} />
-              <SummaryItem label="آرایش بانک باتری" value={batteryNoteText(emergencyDesign?.battery)} />
-              <SummaryItem label="انرژی مورد نیاز" value={emergencyDesign?.requiredEnergyWh ? `${Math.round(emergencyDesign.requiredEnergyWh / 1000)} kWh` : null} />
-              <SummaryItem label="حفاظت باتری" value={`کلید DC ${emergencyDesign?.protection?.dcBreakerA || "-"}A`} />
-              <SummaryItem label="حفاظت خروجی" value={`کلید AC ${emergencyDesign?.protection?.acBreakerA || "-"}A`} />
-            </SummaryBlock>
-            <div className="shil-section-card shil-summary-block-card">
-              <div className="shil-section-head"><h2>دلایل انتخاب و استاندارد اجرا</h2><span>Emergency Power</span></div>
-              <ul className="shil-engineering-list">{emergencyDesign?.explanations?.map((item) => <li key={item}>{item}</li>)}</ul>
-            </div>
-          </>
-        ) : isSolarPanelPowerRoute ? (
-          <SummaryBlock title="چکیده مسیر توان پنل خورشیدی" badge="Unified PV">
-            <SummaryItem label="روش محاسبات" value="توان پنل خورشیدی" />
-            <SummaryItem label="توان کل" value={unifiedPvResult?.summary?.important_results?.panel_array_power_W ? `${Math.round(unifiedPvResult.summary.important_results.panel_array_power_W)} W` : `${solarDesign?.pvArray?.arrayPowerW || solarPanelPowerInput?.totalPanelPowerW || "-"} W`} />
-            <SummaryItem label="توان نهایی طراحی" value={unifiedPvResult?.summary?.important_results?.final_design_power_W ? `${Math.round(unifiedPvResult.summary.important_results.final_design_power_W)} W` : `${solarDesign?.design?.designPowerW || "-"} W`} />
-            <SummaryItem label="تولید خام روزانه" value={unifiedPvResult?.summary?.important_results?.raw_daily_production_Wh ? `${Math.round(unifiedPvResult.summary.important_results.raw_daily_production_Wh / 1000)} kWh` : `${solarPanelPowerInput?.rawDailyEnergyKWh || "-"} kWh`} />
-            <SummaryItem label="تولید واقعی با تلفات" value={unifiedPvResult?.summary?.important_results?.real_daily_production_Wh ? `${Math.round(unifiedPvResult.summary.important_results.real_daily_production_Wh / 1000)} kWh` : `${solarPanelPowerInput?.generatedDailyKWh || "-"} kWh`} />
-            <SummaryItem label="اینورتر" value={`${inverterCount} عدد / ${inverterPower === "-" ? "ثبت نشده" : `${inverterPower} W`}`} />
-            <SummaryItem label="تعداد پنل" value={`${panelCount} عدد`} />
-            <SummaryItem label="تعداد باتری" value={`${batteryCount} عدد`} />
-          </SummaryBlock>
-        ) : (
-          <SummaryBlock title={methodSummary.blockTitle} badge={methodSummary.badge}>
-            {methodSummary.rows.map((row) => (
-              <SummaryItem key={row.label} label={row.label} value={row.value} note={row.note || row.reason} />
-            ))}
-          </SummaryBlock>
-        )}
+        <SummaryBlock title="روش محاسبات" badge="Calculation Method">
+          <SummaryItem label="روش انتخاب شده" value={methodTitle(methodKey, registeredParams.methodTitle)} />
+          <SummaryItem label="دامنه محاسبات" value={emergency ? "برق اضطراری" : "خورشیدی"} />
+          <SummaryItem label="وضعیت ثبت روش" value="تأیید شده" />
+        </SummaryBlock>
 
-        {!emergency ? (
-          <div className={aiOpen ? "shil-section-card shil-ai-preview-card shil-ai-preview-card-open" : "shil-section-card shil-ai-preview-card"}>
-            <button type="button" className="shil-ai-preview-toggle" onClick={() => setAiOpen((value) => !value)}>
-              <span><strong>اجرای هوش مصنوعی نصب پروژه</strong><small>اختیاری؛ شبیه‌سازی تصویری محل نصب و نمایش جدول مهندسی تجهیزات نهایی</small></span>
-              <b>{aiOpen ? "بستن" : "نمایش"}</b>
-            </button>
-            {aiOpen ? (
-              <div className="shil-ai-preview-body">
-                <p className="shil-muted-line">این بلوک فقط برای شبیه‌سازی تصویری اختیاری است و روی محاسبات اصلی اثر اجباری ندارد.</p>
-                <div className="shil-ai-transfer-row">
-                  <div className={hasSitePhoto ? "shil-ai-source-status ready" : "shil-ai-source-status"}><span>{hasSitePhoto ? "تصویر محل اجرای پروژه شناسایی شد" : "تصویر محل نصب هنوز ثبت نشده است"}</span><strong>{hasSitePhoto ? environmentImage?.title || "تصویر محیط" : "ابتدا در شرایط محیطی عکس اضافه کنید"}</strong></div>
-                  <button type="button" className="shil-soft-button" onClick={transferSiteImage}>افزودن تصویر محل نصب و اجرا</button>
-                </div>
-                <div className="shil-ai-mode-row">{installationModes.map((item) => <button key={item.key} type="button" className={installMode === item.key ? "active" : ""} onClick={() => setInstallMode(item.key)}>{item.title}</button>)}</div>
-                {aiResult ? <div className="shil-ai-layer-status-grid"><div><span>نسخه AI Layer</span><strong>{aiResult.version}</strong></div><div><span>Confidence</span><strong>{aiResult.confidence}%</strong></div><div><span>سناریو</span><strong>{aiResult.installModeTitle}</strong></div><div><span>وضعیت</span><strong>{aiResult.serviceConnected ? "تصویر تولید شد" : "آماده خروجی"}</strong></div></div> : null}
-                <div className="shil-ai-preview-layout shil-ai-install-preview-layout">
-                  <div className={(aiApplied ? "shil-ai-preview-visual ready shil-ai-install-visual" : "shil-ai-preview-visual shil-ai-install-visual") + (hasGeneratedVisual ? " generated" : "")}>{visualSrc ? <img src={visualSrc} alt="تصویر شبیه‌سازی محل نصب پروژه" /> : null}{!hasGeneratedVisual ? <><div className="shil-ai-sky" /><div className="shil-ai-roof">{Array.from({ length: Math.min(Number(panelCount) || 6, 12) }).map((_, index) => <span key={index} />)}</div></> : null}<strong>{hasGeneratedVisual ? "تصویر تولید شده توسط هوش مصنوعی" : aiApplied ? "خروجی آماده شد" : imageTransferred ? "تصویر منتقل شد؛ آماده اعمال" : "در انتظار افزودن تصویر محل نصب"}</strong></div>
-                  <div className="shil-ai-preview-facts shil-ai-install-facts"><div><span>سناریوی شبیه‌سازی</span><strong>{installationModes.find((item) => item.key === installMode)?.title}</strong></div><div><span>پنل خورشیدی</span><strong>{panelCount} عدد / {panelPower} وات</strong></div><div><span>آرایش پنل</span><strong>{panelSeries} سری × {panelParallel} موازی</strong></div><div><span>اینورتر</span><strong>{inverterCount} عدد / {inverterPower === "-" ? "ثبت نشده" : `${inverterPower} وات`}</strong></div><div><span>باتری</span><strong>{batteryCount} عدد / {batteryVoltage}V / {batteryCapacity}Ah</strong></div><div><span>انرژی باتری</span><strong>{batteryUnitKWh}kWh هر باتری / {batteryTotalKWh}kWh کل</strong></div><div><span>آرایش باتری</span><strong>{batterySeries} سری × {batteryParallel} موازی / {batteryBankAh}Ah</strong></div></div>
-                </div>
-                <div className="shil-action-row shil-ai-apply-row"><button type="button" className="shil-primary-small" onClick={applyAiPreview} disabled={aiGenerating}>{aiGenerating ? "در حال تولید تصویر..." : "اعمال شبیه‌سازی هوش مصنوعی"}</button><span className="shil-muted-line">این مرحله اختیاری است و مانع ادامه پروژه نمی‌شود.</span></div>
-                {aiMessage ? <div className={aiApplied ? "shil-inline-success" : "shil-inline-warning"}>{aiMessage}</div> : null}
-                {aiApplied ? <div className="shil-ai-engineering-output"><AiReasonTable title="جدول مهندسی پنل خورشیدی" rows={panelRows} /><AiReasonTable title="جدول مهندسی اینورتر" rows={inverterRows} /><AiReasonTable title="جدول مهندسی باتری" rows={batteryRows} />{aiResult?.qualityChecks?.length ? <div className="shil-ai-quality-grid">{aiResult.qualityChecks.map((item) => <div key={item.title}><span>{item.title}</span><strong>{item.status}</strong><small>{item.note}</small></div>)}</div> : null}<details className="shil-ai-prompt-box"><summary>جزئیات سرویس و پرامپت تولید تصویر</summary><pre>{aiResult?.prompt}</pre>{aiResult?.imageGeneration ? <small>{aiResult.imageGeneration.ok ? `سرویس متصل: ${aiResult.imageGeneration.provider || "OpenAI"} / ${aiResult.imageGeneration.model || "gpt-image-1"}` : `خطای سرویس: ${aiResult.imageGeneration.error}`}</small> : null}</details><div className="shil-ai-final-note"><strong>نتیجه شبیه‌سازی</strong><p>{aiResult?.engineeringNote || "تصویر مجازی بر اساس تصویر محل نصب، نوع چیدمان انتخابی و دیتای واقعی موتور محاسبات آماده شده است."}</p><button type="button" className="shil-soft-button" onClick={confirmAiPreview}>تایید خروجی هوش مصنوعی</button></div></div> : null}
-              </div>
-            ) : null}
-          </div>
-        ) : null}
+        <SummaryBlock title="ورودی محاسبات" badge="Calculation Inputs">
+          {renderRows(buildRegisteredRows(registeredParams, methodKey))}
+        </SummaryBlock>
 
-        <button type="button" className="shil-primary-wide" onClick={confirmSummary}>تأیید چکیده و اجرای محاسبات</button>
+        <SummaryBlock title="تنظیمات سیستم" badge="System Settings">
+          {renderRows(buildSystemRows(systemSettings, solarDesign, unifiedPvResult))}
+        </SummaryBlock>
+
+        <button type="button" className="shil-primary-wide" onClick={confirmSummary}>
+          تأیید چکیده اطلاعات و رفتن به اجرای محاسبات
+        </button>
       </section>
     </EngineeringPageShell>
   );

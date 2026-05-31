@@ -1,12 +1,12 @@
-import * as React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { captureCurrentProjectSnapshot } from "../workflow/uxFlowController.js";
 
 export default function UXFlowController() {
   const location = useLocation();
-  const [toast, setToast] = React.useState(null);
-  const lastSavedPath = React.useRef("");
-  const debounceRef = React.useRef(null);
+  const [toast, setToast] = useState(null);
+  const lastSavedPath = useRef("");
+  const debounceRef = useRef(null);
 
   function softSave(pathname = window.location.pathname, showToast = false) {
     const record = captureCurrentProjectSnapshot(pathname);
@@ -18,11 +18,11 @@ export default function UXFlowController() {
     return record;
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     softSave(location.pathname, true);
   }, [location.pathname]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const saveNow = () => softSave(window.location.pathname, false);
     const debouncedSave = () => {
       window.clearTimeout(debounceRef.current);

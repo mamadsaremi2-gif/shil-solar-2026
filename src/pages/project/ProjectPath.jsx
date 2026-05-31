@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { approveProjectStep } from "../../workflow/projectWorkflow.js";
 import { clearScenarioFlow, startUtilityGateway, setWorkflowMode, FLOW_MODES } from "../../workflow/flowIsolation.js";
@@ -56,11 +56,11 @@ function normalizeCards(cards) {
 
 export default function ProjectPath() {
   const navigate = useNavigate();
-  const [selected, setSelected] = React.useState("");
-  const [warning, setWarning] = React.useState("");
-  const [options, setOptions] = React.useState(() => normalizeCards(readAdminProjectPathCards()));
+  const [selected, setSelected] = useState("");
+  const [warning, setWarning] = useState("");
+  const [options, setOptions] = useState(() => normalizeCards(readAdminProjectPathCards()));
 
-  React.useEffect(() => {
+  useEffect(() => {
     let alive = true;
     const adminCards = normalizeCards(readAdminProjectPathCards());
     if (adminCards.length) {
@@ -80,17 +80,17 @@ export default function ProjectPath() {
     return () => { alive = false; };
   }, []);
 
-  const mainOptions = React.useMemo(
+  const mainOptions = useMemo(
     () => options.filter((item) => !(item.calculationDomain === "utility" || item.key === "utility")),
     [options]
   );
 
-  const utilityOption = React.useMemo(
+  const utilityOption = useMemo(
     () => options.find((item) => item.calculationDomain === "utility" || item.key === "utility"),
     [options]
   );
 
-  const selectedOption = React.useMemo(
+  const selectedOption = useMemo(
     () => options.find((item) => item.key === selected),
     [options, selected]
   );
@@ -127,7 +127,7 @@ export default function ProjectPath() {
       localStorage.setItem("shil:selectedCalculationMethod", JSON.stringify({ key: "utility_scale", title: "نیروگاهی" }));
       localStorage.setItem("shil:calculationMethod", "utility_scale");
       startUtilityGateway("project-path");
-      navigate("/new-project/system/utility?from=project-path&gateway=utility");
+      navigate("/new-project/info");
       return;
     }
 
@@ -136,11 +136,11 @@ export default function ProjectPath() {
       localStorage.setItem("shil:calculationMethod", "equipment");
       const adminDefaults = readAdminDefaults();
       localStorage.setItem("shil:emergencyPowerSettings", JSON.stringify({ requiredEmergencyHours: adminDefaults.emergencyRequiredHours || 2, safetyFactor: adminDefaults.emergencySafetyFactor || 1.25, autoMode: true }));
-      navigate("/new-project/emergency?domain=emergency&from=project-path", { state: { method: "برق اضطراری" } });
+      navigate("/new-project/info");
       return;
     }
 
-    navigate(`/new-project/method?domain=${encodeURIComponent(domain)}&from=project-path`);
+    navigate("/new-project/info");
   };
 
   return (

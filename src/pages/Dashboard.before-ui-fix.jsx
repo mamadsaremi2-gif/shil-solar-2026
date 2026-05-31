@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import IosIconGrid from "../components/IosIconGrid.jsx";
 import ShilPageShell from "../components/ShilPageShell.jsx";
@@ -7,9 +7,9 @@ import { clearSession } from "../auth/session.js";
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const [online, setOnline] = React.useState(navigator.onLine);
+  const [online, setOnline] = useState(navigator.onLine);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const goOnline = () => setOnline(true);
     const goOffline = () => setOnline(false);
     window.addEventListener("online", goOnline);
@@ -20,7 +20,7 @@ export default function Dashboard() {
     };
   }, []);
 
-  const items = React.useMemo(
+  const items = useMemo(
     () => dashboardItems.map((item) => item.title === "خروج"
       ? {
           ...item,

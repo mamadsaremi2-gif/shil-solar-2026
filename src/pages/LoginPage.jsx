@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabase/client.js";
 import { createSession } from "../auth/session.js";
@@ -16,10 +16,10 @@ function withTimeout(promise, message = "زمان پاسخ‌گویی سرور �
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  const [login, setLogin] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [error, setError] = React.useState("");
-  const [loading, setLoading] = React.useState(false);
+  const [login, setLogin] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   async function handleGuest() {
     createSession({

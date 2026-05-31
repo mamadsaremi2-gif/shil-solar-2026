@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { approveProjectStep, canEditStep, getStepKeyFromPath } from "../workflow/projectWorkflow.js";
 
@@ -10,7 +10,7 @@ function getLabel(element) {
 export default function StepConfirmLink({ to, state, children = "تأیید مرحله", requiredMessage }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const [alert, setAlert] = React.useState("");
+  const [alert, setAlert] = useState("");
 
   const showAlert = (message) => {
     setAlert(message);
