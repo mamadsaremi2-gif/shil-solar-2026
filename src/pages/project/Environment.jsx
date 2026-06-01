@@ -14,7 +14,8 @@ const directionOptions = [
   { key: "west", label: "غرب", deg: 270 },
 ];
 const defaultDirectionSlots = { north: "north", east: "east", south: "south", west: "west" };
-function toNumberInput(value, fallback = 0) { const n = Number(normalizePersianNumber(value)); return Number.isFinite(n) ? n : fallback; }
+function toNumberInput(value, fallback = 0) {
+const n = Number(normalizePersianNumber(value)); return Number.isFinite(n) ? n : fallback; }
 function normalizeDeg(value) { const n = toNumberInput(value, 180); return ((n % 360) + 360) % 360; }
 
 const installTypes = [
@@ -87,7 +88,7 @@ function fileToAttachment(file, type, latitude, longitude) {
 }
 
 export default function Environment() {
-  const navigate = useNavigate();
+const navigate = useNavigate();
   const { domain = localStorage.getItem("shil:scenarioDomain") || "solar" } = useParams();
 
   const [city, setCity] = useState(isfahan?.name || "اصفهان");
@@ -111,6 +112,49 @@ export default function Environment() {
   const [installTiltDeg, setInstallTiltDeg] = useState(String(estimateRecommendedTilt(defaultClimate.latitude)));
   const [installAzimuthDeg, setInstallAzimuthDeg] = useState("180");
   const [directionSlots, setDirectionSlots] = useState(defaultDirectionSlots);
+
+  const shilMapPinPosition = useMemo(() => {
+    const toSafeNumber = (value) => {
+      if (value === undefined || value === null || value === "") return null;
+      const normalized = typeof value === "string" ? normalizePersianNumber(value) : value;
+      const num = Number(normalized);
+      return Number.isFinite(num) ? num : null;
+    };
+
+    const lat =
+      toSafeNumber(latitude) ??
+      toSafeNumber(selectedCity?.latitude) ??
+      toSafeNumber(manualClimate?.latitude) ??
+      toSafeNumber(defaultClimate?.latitude);
+
+    const lng =
+      toSafeNumber(longitude) ??
+      toSafeNumber(selectedCity?.longitude) ??
+      toSafeNumber(selectedCity?.lng) ??
+      toSafeNumber(selectedCity?.lon) ??
+      toSafeNumber(manualClimate?.longitude) ??
+      toSafeNumber(defaultClimate?.longitude);
+
+    if (lat === null || lng === null) {
+      return { x: 50, y: 42 };
+    }
+
+    const minLat = 25.0;
+    const maxLat = 40.2;
+    const minLng = 44.0;
+    const maxLng = 63.5;
+
+    const x = ((lng - minLng) / (maxLng - minLng)) * 100;
+    const y = 100 - ((lat - minLat) / (maxLat - minLat)) * 100;
+
+    return {
+      x: Math.max(6, Math.min(94, x)),
+      y: Math.max(8, Math.min(92, y)),
+    };
+  }, [latitude, longitude, selectedCity, manualClimate]);
+
+  const shilMapPinLabel = selectedCity?.name || city || "موقعیت انتخابی";
+
 
   const activeInstallType = installTypes.find((item) => item.key === installType) || installTypes[0];
 
@@ -403,7 +447,29 @@ export default function Environment() {
               </small>
             </div>
           </div>
-          <div className="shil-map-container shil-env-location-map"><img src="/assets/shil/map/iran-heatmap.webp" alt="Iran heating system map" /></div>
+          <div className="shil-map-container shil-env-location-map shil-map-container"><img src="/assets/shil/map/iran-heatmap.webp" alt="Iran heating system map" />
+            <div
+              className="shil-map-pin"
+              style={{
+                left: `${shilMapPinPosition.x}%`,
+                top: `${shilMapPinPosition.y}%`,
+              }}
+              aria-label={shilMapPinLabel}
+            >
+              <span className="shil-map-pin-core" />
+              <span className="shil-map-pin-radar" />
+            </div>
+            <div
+              className="shil-map-label"
+              style={{
+                left: `${shilMapPinPosition.x}%`,
+                top: `${shilMapPinPosition.y}%`,
+              }}
+            >
+              {shilMapPinLabel}
+            </div>
+
+</div>
         </section>
 
         <section className="shil-env-card">

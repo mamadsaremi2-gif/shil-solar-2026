@@ -29,7 +29,7 @@ export default function LoginPage() {
       login: "guest"
     });
 
-    navigate("/dashboard", { replace: true });
+    navigate('/welcome', { replace: true });
   }
 
   async function handleSubmit(event) {
@@ -101,6 +101,50 @@ export default function LoginPage() {
 
   return (
     <div className="shil-auth-page" dir="rtl">
+      <style>{`
+        .shil-auth-page {
+          min-height: 100svh;
+          min-height: 100dvh;
+          display: flex;
+          align-items: flex-start;
+          justify-content: center;
+          padding: clamp(20px, 7vh, 72px) 16px 24px;
+          box-sizing: border-box;
+          overflow-y: auto;
+        }
+
+        .shil-auth-card {
+          margin-top: 0 !important;
+          transform: translateY(-18px);
+          max-height: calc(100dvh - 32px);
+          overflow-y: auto;
+          box-sizing: border-box;
+        }
+
+        @media (max-width: 768px) {
+          .shil-auth-page {
+            justify-content: flex-start;
+            padding-top: max(14px, env(safe-area-inset-top));
+            padding-bottom: max(16px, env(safe-area-inset-bottom));
+          }
+
+          .shil-auth-card {
+            transform: translateY(-28px);
+            width: min(92vw, 420px);
+            max-height: calc(100dvh - 24px);
+          }
+        }
+
+        @media (max-height: 720px) {
+          .shil-auth-page {
+            padding-top: 8px;
+          }
+
+          .shil-auth-card {
+            transform: translateY(-38px);
+          }
+        }
+      `}</style>
       <section className="shil-auth-card">
         <div className="shil-auth-brand">
           <strong>SHIL</strong>
