@@ -34,13 +34,13 @@ export default function Dashboard() {
   );
 
   return (
-    <ShilPageShell title="داشبورد" className="shil-new-project-no-scroll shil-home-shell">
-      <section className="shil-home-icons" dir="rtl">
+    <ShilPageShell title="داشبورد" className="shil-dashboard-shell">
+      <section className="shil-dashboard-home" dir="rtl">
         <div className="shil-online-chip" data-online={online ? "true" : "false"}>
           <span />
           {online ? "کاربر آنلاین است" : "کاربر آفلاین است"}
         </div>
-        <IosIconGrid items={items} gridClass="new-project-grid-3x3" />
+        <IosIconGrid items={items} gridClass="dashboard-icons" />
       </section>
     </ShilPageShell>
   );

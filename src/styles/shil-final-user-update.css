@@ -398,3 +398,15 @@ label, .field-label, .shil-field-label { color: var(--shil-readable-dark) !impor
   .shil-route-icon,
   .shil-icon-card { width: 64px !important; height: 64px !important; }
 }
+
+@media (max-width:768px){
+
+  .shil-login-page .shil-auth-card,
+  .shil-auth-page .shil-auth-card,
+  .auth-card{
+      margin-top:-120px !important;
+      transform:translateY(-120px) !important;
+  }
+
+}
+

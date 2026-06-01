@@ -22,6 +22,7 @@ import './styles/shil-contrast-borders-nav-buttons.css';
 import './styles/shil-unified-color-system.css';
 import './styles/shil-background-image-final.css';
 import './styles/shil-dashboard-newproject-icons-direct.css';
+import './styles/shil-matte-glass-no-lines.css';
 
 window.React = React;
 
@@ -30,3 +31,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <App />
   </React.StrictMode>
 );
+
+import './styles/shil-dashboard-project-fix.css';
+import './styles/shil-dashboard-icons-match-project-final.css';

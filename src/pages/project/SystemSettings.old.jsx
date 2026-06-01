@@ -267,7 +267,7 @@ function getIntegratedMotorRows({ load = {}, design = {}, method = "equipment" }
 function RegisteredParametersBlock({ load, design, method }) {
   return (
     <div className="shil-section-card shil-config-block shil-registered-params-block">
-      <div className="shil-section-head"><h2>{`چکیده ${methodTitle(method)}`}</h2><span>اطلاعات تأییدشده مسیر قبلی، بدون تغییر</span></div>
+      <div className="shil-section-head"><h2>{`پارامترهای ثبت شده ${methodTitle(method)}`}</h2><span>ورودی قطعی مرحله قبل</span></div>
       <ResultTableFrame rows={getRegisteredParameterRows({ load, design, method })} ariaLabel="پارامترهای ثبت شده" />
     </div>
   );
@@ -662,7 +662,6 @@ export default function SystemSettings() {
   const [systemType, setSystemType] = useState("offgrid");
   const [autonomyDays, setAutonomyDays] = useState(0);
   const [reserveFactor, setReserveFactor] = useState(1.2);
-  const [standardFactorDirection, setStandardFactorDirection] = useState("increase");
   const [batteryRequired, setBatteryRequired] = useState(!isSolarPanelPowerRoute);
   const [batteryScope, setBatteryScope] = useState("none");
   const [equipmentManualMode, setEquipmentManualMode] = useState(false);
@@ -699,8 +698,6 @@ export default function SystemSettings() {
     calculationMethod: activeCalculationMethod,
     autonomyDays: toNumber(autonomyDays, isSolarPanelPowerRoute ? 0 : 1),
     reserveFactor: toNumber(reserveFactor, 1.2),
-    standardFactorDirection,
-    standardFactorMultiplier: standardFactorDirection === "decrease" ? (1 / Math.max(0.01, toNumber(reserveFactor, 1.2))) : toNumber(reserveFactor, 1.2),
     panelId: equipmentManualMode ? panelId : (isSolarPanelPowerRoute ? (solarPanelPowerInput?.selectedPanelId || undefined) : undefined),
     inverterId: equipmentManualMode ? inverterId : undefined,
     batteryId: equipmentManualMode ? batteryId : (isSolarPanelPowerRoute ? (solarPanelPowerInput?.batteryId || undefined) : undefined),
@@ -732,7 +729,7 @@ export default function SystemSettings() {
     manualMode: equipmentManualMode || parameterManualMode,
     equipmentManualMode,
     parameterManualMode
-  }), [systemType, activeCalculationMethod, autonomyDays, reserveFactor, standardFactorDirection, equipmentManualMode, parameterManualMode, panelId, inverterId, batteryId, panelExtraFactor, inverterExtraFactor, batteryExtraFactor, projectScale, targetPlantPowerMW, powerBlockSizeKW, mvVoltageKV, blockStationMW, exportLimitMW, groundCoverageRatio, trackerMode, terrainSlopeDeg, usableLandPercent, gridShortCircuitMVA, estimatedMvFaultKA, plantAvailabilityPercent, annualDegradationPercent, solarPanelPowerInput, load, mpptCountPerInverter, batteryRequired, batteryScope, isSolarPanelPowerRoute]);
+  }), [systemType, activeCalculationMethod, autonomyDays, reserveFactor, equipmentManualMode, parameterManualMode, panelId, inverterId, batteryId, panelExtraFactor, inverterExtraFactor, batteryExtraFactor, projectScale, targetPlantPowerMW, powerBlockSizeKW, mvVoltageKV, blockStationMW, exportLimitMW, groundCoverageRatio, trackerMode, terrainSlopeDeg, usableLandPercent, gridShortCircuitMVA, estimatedMvFaultKA, plantAvailabilityPercent, annualDegradationPercent, solarPanelPowerInput, load, mpptCountPerInverter, batteryRequired, batteryScope, isSolarPanelPowerRoute]);
 
   const legacySolarDesign = useMemo(() => normalizeSolarDesign(buildSmartSolarDesign({
     load,
@@ -746,13 +743,6 @@ export default function SystemSettings() {
     environment,
     equipmentManualMode
   })), [load, settings, panelId, inverterId, batteryId, systemType, batteryRequired, solarPanelPowerInput, environment, equipmentManualMode]);
-  const standardFactorValue = Math.max(0.01, toNumber(reserveFactor, 1.2));
-  const standardFactorMultiplier = standardFactorDirection === "decrease" ? (1 / standardFactorValue) : standardFactorValue;
-  const basePowerForStandardW = Number(load?.totalPowerW || solarDesign.load?.totalPowerW || solarPanelPowerInput?.totalPanelPowerW || solarDesign.pvArray?.arrayPowerW || 0);
-  const baseEnergyForStandardKWh = Number(load?.totalEnergyKWh || solarDesign.load?.totalEnergyKWh || solarDesign.design?.finalEnergyKWh || 0);
-  const standardAppliedPowerW = basePowerForStandardW * standardFactorMultiplier;
-  const standardAppliedEnergyKWh = baseEnergyForStandardKWh * standardFactorMultiplier;
-
   // Temporary diagnostic mode: keep SystemSettings independent from all calculation rules/engines.
   const useUnifiedPvEngine = false;
   const unifiedPvResult = null;
@@ -848,7 +838,7 @@ export default function SystemSettings() {
         <Toast message={warning} />
 
         <div className="shil-section-card shil-config-block">
-          <div className="shil-section-head"><h2>کنترل طراحی - انتخاب نوع اینورتر برای اجرا</h2><span>نوع اجرای اینورتر خورشیدی</span></div>
+          <div className="shil-section-head"><h2>کنترل طراحی</h2><span>نوع اجرای اینورتر خورشیدی</span></div>
           <DesignModeCards value={systemType} onChange={(nextType) => { setSystemType(nextType); setEquipmentManualMode(false); setWarning(`مدل طراحی ${nextType === "offgrid" ? "آفگرید" : nextType === "ongrid" ? "آنگرید" : "هیبرید"} در موتور محاسبات اعمال شد.`); }} />
         </div>
 
@@ -918,10 +908,9 @@ export default function SystemSettings() {
 
         {isSolarPanelPowerRoute ? (
         <div className="shil-section-card shil-config-block">
-          <div className="shil-section-head"><h2>اعمال ضریب استاندارد</h2><span>{parameterManualMode ? "حالت دستی فعال" : "اعمال هوشمند فعال"}</span></div>
+          <div className="shil-section-head"><h2>اعمال ضرایب استاندارد</h2><span>{parameterManualMode ? "حالت دستی فعال" : "اعمال هوشمند فعال"}</span></div>
           <div className="shil-form-grid shil-param-grid">
             <label><span>ضریب اطمینان استاندارد</span><input type="text" inputMode="decimal" value={reserveFactor} onChange={(e) => { setParameterManualMode(true); setReserveFactor(e.target.value); }} /></label>
-            <label><span>ضریب استاندارد</span><select value={standardFactorDirection} onChange={(e) => { setParameterManualMode(true); setStandardFactorDirection(e.target.value); }}><option value="increase">ضریب افزایش به توان کل</option><option value="decrease">ضریب کاهش از توان کل</option></select></label>
             <label><span>روزهای خودکفایی</span><input type="text" inputMode="decimal" min="0" max="7" value={autonomyDays} onChange={(e) => { setParameterManualMode(true); const value = e.target.value; setAutonomyDays(value); if (toNumber(value, 0) <= 0) setBatteryScope("none"); else if (batteryScope === "none") setBatteryScope("all"); }} /></label>
             {isSolarPanelPowerRoute && toNumber(autonomyDays, 0) > 0 ? (
               <label><span>اعمال باتری برای</span><select value={batteryScope} onChange={(e) => { setParameterManualMode(true); setBatteryScope(e.target.value); }}>
@@ -931,11 +920,9 @@ export default function SystemSettings() {
             ) : null}
           </div>
           <div className="shil-summary-grid shil-solar-sizing-preview">
+            <div><span>توان پایه</span><strong>{faNumber(solarPanelPowerInput?.totalPanelPowerW || solarDesign.pvArray?.arrayPowerW || 0)} W</strong></div>
             <div><span>ضریب اطمینان استاندارد</span><strong>{reserveFactor}</strong></div>
-            <div><span>روزهای خودکفایی</span><strong>{faNumber(toNumber(autonomyDays, 0))} روز</strong></div>
-            <div><span>ضریب استاندارد</span><strong>{standardFactorDirection === "increase" ? "ضریب افزایش به توان کل" : "ضریب کاهش از توان کل"}</strong></div>
-            <div><span>توان کل با اعمال ضریب</span><strong>{faNumber(Math.round(standardAppliedPowerW))} W</strong></div>
-            <div><span>انرژی روزانه با اعمال ضریب</span><strong>{enNumber(standardAppliedEnergyKWh, 2)} kWh</strong></div>
+            <div><span>توان نهایی طراحی</span><strong>{faNumber(solarDesign.design?.designPowerW || 0)} W</strong></div>
             <div><span>وضعیت باتری</span><strong>{toNumber(autonomyDays, 0) > 0 ? (batteryScope === "all" ? "باتری برای همه اینورترها" : `باتری برای اینورتر ${batteryScope}`) : "باتری انتخاب نشده"}</strong></div>
           </div>
           <div className="shil-action-row shil-smart-mode-row">
@@ -946,18 +933,10 @@ export default function SystemSettings() {
         </div>
         ) : (
           <div className="shil-section-card shil-config-block">
-            <div className="shil-section-head"><h2>اعمال ضریب استاندارد</h2><span>{parameterManualMode ? "حالت دستی فعال" : "اعمال هوشمند فعال"}</span></div>
+            <div className="shil-section-head"><h2>اعمال ضرایب استاندارد</h2><span>{parameterManualMode ? "حالت دستی فعال" : "اعمال هوشمند فعال"}</span></div>
             <div className="shil-form-grid shil-param-grid">
-              <label><span>ضریب اطمینان استاندارد</span><input type="text" inputMode="decimal" value={reserveFactor} onChange={(e) => { setParameterManualMode(true); setReserveFactor(e.target.value); }} /></label>
-              <label><span>ضریب استاندارد</span><select value={standardFactorDirection} onChange={(e) => { setParameterManualMode(true); setStandardFactorDirection(e.target.value); }}><option value="increase">ضریب افزایش به توان کل</option><option value="decrease">ضریب کاهش از توان کل</option></select></label>
               <label><span>روزهای خودکفایی</span><input type="text" inputMode="decimal" min="0" max="7" value={autonomyDays} onChange={(e) => { setParameterManualMode(true); const value = e.target.value; setAutonomyDays(value); setBatteryRequired(toNumber(value, 0) > 0); }} /></label>
-            </div>
-            <div className="shil-summary-grid shil-solar-sizing-preview">
-              <div><span>ضریب اطمینان استاندارد</span><strong>{reserveFactor}</strong></div>
-              <div><span>روزهای خودکفایی</span><strong>{faNumber(toNumber(autonomyDays, 0))} روز</strong></div>
-              <div><span>ضریب استاندارد</span><strong>{standardFactorDirection === "increase" ? "ضریب افزایش به توان کل" : "ضریب کاهش از توان کل"}</strong></div>
-              <div><span>توان کل با اعمال ضریب</span><strong>{faNumber(Math.round(standardAppliedPowerW))} W</strong></div>
-              <div><span>انرژی روزانه با اعمال ضریب</span><strong>{enNumber(standardAppliedEnergyKWh, 2)} kWh</strong></div>
+              <label><span>ضریب اطمینان استاندارد</span><input type="text" inputMode="decimal" value={reserveFactor} onChange={(e) => { setParameterManualMode(true); setReserveFactor(e.target.value); }} /></label>
             </div>
             <div className="shil-action-row shil-smart-mode-row">
               <button type="button" className={!equipmentManualMode && !parameterManualMode ? "shil-soft-button active" : "shil-soft-button"} onClick={applySmart}>اعمال هوشمند SHIL</button>
@@ -967,6 +946,8 @@ export default function SystemSettings() {
             <p className="shil-muted-line">{liveSaved ? "ذخیره و اتصال زنده به موتور انجام شد." : `پنل پیش‌فرض موتور: ${solarDesign.panel.powerW} وات`}</p>
           </div>
         )}
+
+        <FinalConclusionBlock load={load} design={solarDesign} method={activeCalculationMethod} />
 
         {isSolarPanelPowerRoute ? (
           <>
@@ -978,12 +959,12 @@ export default function SystemSettings() {
             />
 
             <div className="shil-section-card shil-config-block">
-              <div className="shil-section-head"><h2>بانک اینورتر خورشیدی، بانک باطری، بانک پنل خورشیدی</h2><span>متصل به ورودی قبلی</span></div>
+              <div className="shil-section-head"><h2>بانک‌های هوشمند مسیر توان پنل</h2><span>متصل به ورودی قبلی</span></div>
             </div>
           </>
         ) : (
           <div className="shil-section-card shil-config-block">
-            <div className="shil-section-head"><h2>بانک اینورتر خورشیدی، بانک باطری، بانک پنل خورشیدی</h2><span>متناسب با روش محاسبات انتخاب‌شده</span></div>
+            <div className="shil-section-head"><h2>بانک‌های عمومی تجهیزات</h2><span>متناسب با روش محاسبات انتخاب‌شده</span></div>
             <p className="shil-muted-line">در این مسیر بانک‌ها بر اساس لیست تجهیزات و بار محاسبه می‌شوند؛ تنظیمات اختصاصی MPPT و تقسیم پنل فقط در مسیر توان پنل خورشیدی فعال است.</p>
           </div>
         )}
@@ -1025,7 +1006,7 @@ export default function SystemSettings() {
         </div>
 
         <div className="shil-section-card shil-auto-result-card shil-result-card-final">
-          <div className="shil-section-head"><h2>چکیده تنظیمات سیستم</h2><span>{solarDesign.valid ? "قابل تأیید" : "نیازمند اصلاح"}</span></div>
+          <div className="shil-section-head"><h2>نتایج پیکربندی موتور یکپارچه</h2><span>{solarDesign.valid ? "قابل تأیید" : "نیازمند اصلاح"}</span></div>
           <GeneralLoadResultTable load={load} design={solarDesign} />
           {solarDesign.warnings.map((item) => <div key={item} className="shil-inline-warning">{item}</div>)}
         </div>

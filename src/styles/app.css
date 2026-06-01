@@ -695,3 +695,16 @@ html, body, #root{
 .shil-save-images-btn,.shil-climate-restore-bottom{width:100%;margin-top:10px;justify-content:center;}
 .shil-install-upload-grid small{line-height:1.6;}
 @media (max-width:380px){.shil-site-preview-contain-grid{grid-template-columns:1fr}.shil-site-preview-card img{height:132px}}
+
+/* Dashboard: remove white content panel behind icons */
+.shil-home-shell .shil-page-content,
+.shil-home-shell .shil-home-icons {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: var(--shil-main-background-image) !important;
+  background-size: cover !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+}
