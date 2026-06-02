@@ -1,17 +1,34 @@
-import React from "react";
-import { FolderOpen, MapPin, Route, Calculator, ClipboardList, Settings, FileCheck, Gauge, Cuboid, Plus, Phone, Bot, MessageSquare, Layers, GraduationCap, LogOut } from "lucide-react";
+﻿import React from "react";
+import {
+  FolderOpen,
+  MapPin,
+  Route,
+  Calculator,
+  ClipboardList,
+  Settings,
+  FileCheck,
+  Gauge,
+  Cuboid,
+  Plus,
+  Phone,
+  Bot,
+  MessageSquare,
+  Layers,
+  GraduationCap,
+  LogOut
+} from "lucide-react";
 import { SHIL_ASSETS } from "../config/shilAssetPaths.js";
 
 export const dashboardItems = [
-  { title: "پروژه جدید", to: "/new-project", image: SHIL_ASSETS.icons.dashboard.newProject, icon: <Plus size={42} /> },
-  { title: "مدیریت پروژه ها", to: "/projects", image: SHIL_ASSETS.icons.dashboard.projects, icon: <FolderOpen size={42} /> },
+  { title: "پروژه جدید", to: "/new-project/path", image: SHIL_ASSETS.icons.dashboard.newProject, icon: <Plus size={42} /> },
+  { title: "پروژه‌ها", to: "/projects", image: SHIL_ASSETS.icons.dashboard.projects, icon: <FolderOpen size={42} /> },
   { title: "ارتباط با ما", to: "/contact", image: SHIL_ASSETS.icons.dashboard.contact, icon: <Phone size={42} /> },
   { title: "دستیار هوشمند SHIL", to: "/assistant", image: SHIL_ASSETS.icons.dashboard.assistant, icon: <Bot size={42} /> },
-  { title: "نظرات کاربران", to: "/feedback", image: SHIL_ASSETS.icons.dashboard.feedback, icon: <MessageSquare size={42} /> },
+  { title: "انتقادات کاربران", to: "/feedback", image: SHIL_ASSETS.icons.dashboard.feedback, icon: <MessageSquare size={42} /> },
   { title: "سناریوهای آماده", to: "/scenarios", image: SHIL_ASSETS.icons.dashboard.scenarios, icon: <Layers size={42} /> },
   { title: "آموزش", to: "/education", image: SHIL_ASSETS.icons.dashboard.education, icon: <GraduationCap size={42} /> },
   { title: "خروج", to: "/login", image: SHIL_ASSETS.icons.dashboard.logout, icon: <LogOut size={42} /> },
-  { title: "توسعه صفحه پروژه جدید", to: "/new-project/future", image: SHIL_ASSETS.icons.project.future, icon: <Cuboid size={42} /> },
+  { title: "توسعه نسخه جدید", to: "/new-project/future", image: SHIL_ASSETS.icons.project.future, icon: <Cuboid size={42} /> },
 ];
 
 export const projectSteps = [
@@ -27,27 +44,22 @@ export const projectSteps = [
 ];
 
 export const inputMethods = [
-  { key: "equipment", title: "لیست تجهیزات", description: "ورود مصرف‌کننده‌ها به صورت موردی" },
-  { key: "power", title: "توان کل", description: "شروع طراحی از توان کل پروژه" },
-  { key: "current", title: "جریان کل", description: "شروع طراحی از جریان کل" },
-  { key: "solar_panel_power", title: "توان پنل خورشیدی", description: "شروع طراحی از توان و تعداد پنل خورشیدی" },
-  { key: "profile", title: "پروفایل مصرف", description: "ورود الگوی مصرف مرحله‌ای" },
-  { key: "energy", title: "انرژی مورد نیاز", description: "شروع طراحی از انرژی مورد نیاز" },
+  { key: "equipment", title: "لیست تجهیزات", description: "انتخاب مصرف‌کننده‌ها از بانک تجهیزات" },
+  { key: "power", title: "توان کل", description: "ورود توان کل مصرفی" },
+  { key: "current", title: "جریان کل", description: "ورود جریان کل مصرفی" },
+  { key: "solar_panel_power", title: "توان پنل خورشیدی", description: "ورود توان پنل برای مسیر خورشیدی" },
+  { key: "profile", title: "پروفایل مصرف", description: "تعریف الگوی مصرف روزانه" },
+  { key: "energy", title: "انرژی روزانه", description: "ورود انرژی روزانه مصرفی" },
 ];
 
-export const allowedUiTerms = ["برق اضطراری", "اینورتر", "باتری", "زمان برق اضطراری مورد نیاز"];
-
-export const assetPlacementGuide = [
-  ["بک‌گراند داشبورد", SHIL_ASSETS.backgrounds.dashboard],
-  ["بک‌گراند عمومی اپ", SHIL_ASSETS.backgrounds.app],
-  ["بک‌گراند Welcome", SHIL_ASSETS.backgrounds.welcome],
-  ["لوگوی اصلی", SHIL_ASSETS.logos.main],
-  ["نقشه گرمایشی ایران", SHIL_ASSETS.maps.iranHeatmap],
-  ["بنر محصولات SHIL", SHIL_ASSETS.contact.products],
-  ["QR سایت", SHIL_ASSETS.contact.qrWebsite],
-  ["QR پشتیبانی", SHIL_ASSETS.contact.qrSupport],
-  ["QR واتساپ", SHIL_ASSETS.contact.qrWhatsApp],
-  ["QR کاتالوگ", SHIL_ASSETS.contact.qrCatalog],
-  ["آیکون‌های داشبورد", "/assets/shil/icon/dashboard/"],
-  ["آیکون‌های پروژه جدید", "/assets/shil/icon/project/"],
+export const allowedUiTerms = [
+  "خورشیدی",
+  "برق اضطراری",
+  "پنل",
+  "اینورتر",
+  "باتری",
+  "محاسبات",
+  "پروژه"
 ];
+
+export const assetPlacementGuide = [];

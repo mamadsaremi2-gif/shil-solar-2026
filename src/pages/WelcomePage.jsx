@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { Link } from "react-router-dom";
 
 export default function WelcomePage() {
@@ -6,7 +6,7 @@ export default function WelcomePage() {
     <main className="shil-welcome-page shil-welcome-fullscreen" dir="rtl">
       <img
         className="shil-welcome-fullscreen-image"
-        src="/assets/shil/welcome/welcome-fullscreen.png"
+        src="/assets/shil/background/login/shil-login-bg.webp"
         alt="SHIL Solar Smart Energy"
       />
 

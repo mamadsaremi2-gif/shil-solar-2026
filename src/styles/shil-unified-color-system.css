@@ -416,3 +416,275 @@ body:not(.login-page):not(.welcome-page) [style*="#061013"] {
 [class*="Welcome"] {
   /* Auth visual identity remains separate */
 }
+
+/* =========================================================
+   SHIL FINAL BACKGROUND RULE
+   Main artwork only under icon rail / navigation visual band.
+   Engineering pages content must stay clean and light.
+   ========================================================= */
+
+body:not(.login-page):not(.welcome-page) .shil-main {
+  background-image: none !important;
+  background: #eef4f8 !important;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-page-content,
+body:not(.login-page):not(.welcome-page) .shil-engineering-content,
+body:not(.login-page):not(.welcome-page) .shil-card-stack,
+body:not(.login-page):not(.welcome-page) .shil-section-card {
+  background-image: none !important;
+}
+
+.shil-project-mini-rail {
+  background-image:
+    linear-gradient(180deg, rgba(240, 252, 255, 0.88), rgba(240, 252, 255, 0.82)),
+    url('/assets/shil/background/main/shil-main-bg.webp') !important;
+  background-size: cover !important;
+  background-position: center !important;
+}
+
+
+/* =========================================================
+   SHIL MOBILE-FIRST ENGINEERING UI
+   Clean solar/energy engineering theme after icon rail
+   ========================================================= */
+
+:root {
+  --shil-eng-bg: #eef6fb;
+  --shil-eng-panel: rgba(255, 255, 255, 0.92);
+  --shil-eng-panel-2: rgba(245, 252, 255, 0.96);
+  --shil-eng-line: rgba(22, 188, 235, 0.65);
+  --shil-eng-line-soft: rgba(22, 188, 235, 0.22);
+  --shil-eng-ink: #0b2a3d;
+  --shil-eng-muted: #547083;
+  --shil-eng-blue: #12a9ee;
+  --shil-eng-shadow: 0 14px 34px rgba(11, 42, 61, 0.10);
+}
+
+body:not(.login-page):not(.welcome-page) .shil-main {
+  background:
+    radial-gradient(circle at 12% 18%, rgba(31, 183, 255, 0.12), transparent 30%),
+    linear-gradient(180deg, #f7fcff 0%, var(--shil-eng-bg) 100%) !important;
+  background-image: none !important;
+}
+
+.shil-page-content,
+.shil-engineering-content {
+  position: relative;
+  padding: 10px 10px 92px !important;
+  background: transparent !important;
+}
+
+.shil-page-content::before,
+.shil-engineering-content::before {
+  content: "";
+  position: fixed;
+  inset: 96px 0 70px 0;
+  pointer-events: none;
+  opacity: 0.18;
+  background:
+    linear-gradient(135deg, transparent 0 48%, rgba(22,188,235,.28) 49%, transparent 50%),
+    radial-gradient(circle at 0% 70%, rgba(15,133,207,.18), transparent 34%);
+  background-size: 88px 88px, 100% 100%;
+  z-index: 0;
+}
+
+.shil-project-mini-rail {
+  position: relative;
+  margin: 8px 10px 10px !important;
+  border: 1px solid rgba(22,188,235,.22) !important;
+  border-radius: 18px !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  background:
+    linear-gradient(90deg, rgba(240,252,255,.94), rgba(245,251,255,.72)),
+    url('/assets/shil/background/main/shil-main-bg.webp') center/cover no-repeat !important;
+  box-shadow: 0 10px 28px rgba(11,42,61,.08) !important;
+}
+
+.shil-card-stack,
+.shil-section-card,
+.shil-method-context-strip,
+.shil-project-path-summary {
+  position: relative;
+  z-index: 1;
+}
+
+.shil-card-stack {
+  display: grid !important;
+  gap: 10px !important;
+  padding: 0 !important;
+}
+
+.shil-section-card,
+.shil-method-context-strip,
+.shil-project-path-summary,
+.shil-execution-card,
+.shil-result-card,
+.shil-summary-card {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.96), rgba(247,252,255,.94)) !important;
+  border: 1px solid var(--shil-eng-line-soft) !important;
+  border-right: 3px solid var(--shil-eng-line) !important;
+  border-radius: 18px !important;
+  box-shadow: var(--shil-eng-shadow) !important;
+  padding: 14px !important;
+  overflow: hidden !important;
+}
+
+.shil-section-card::before,
+.shil-execution-card::before,
+.shil-result-card::before,
+.shil-summary-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, transparent, rgba(22,188,235,.08), transparent),
+    radial-gradient(circle at 12% 0%, rgba(255,190,70,.10), transparent 28%);
+}
+
+.shil-section-head,
+.shil-card-head {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+  margin-bottom: 10px !important;
+  padding-bottom: 8px !important;
+  border-bottom: 1px dashed rgba(22,188,235,.34) !important;
+}
+
+.shil-section-head h2,
+.shil-card-head h2,
+.shil-section-card h2 {
+  color: var(--shil-eng-ink) !important;
+  font-size: 15px !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.02em !important;
+}
+
+.shil-section-head span,
+.shil-card-head span,
+.shil-section-card small {
+  color: var(--shil-eng-muted) !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+}
+
+.shil-form-grid {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 10px !important;
+}
+
+.shil-form-grid label,
+.shil-input-card,
+.shil-field-card {
+  background: rgba(255,255,255,.74) !important;
+  border: 1px solid rgba(22,188,235,.18) !important;
+  border-radius: 14px !important;
+  padding: 10px !important;
+}
+
+.shil-form-grid input,
+.shil-form-grid select,
+.shil-form-grid textarea,
+.shil-textarea {
+  width: 100% !important;
+  border: 1px solid rgba(22,188,235,.22) !important;
+  border-radius: 12px !important;
+  background: rgba(248,252,255,.92) !important;
+  color: var(--shil-eng-ink) !important;
+  padding: 10px 11px !important;
+  font-weight: 800 !important;
+}
+
+.shil-execution-grid,
+.shil-project-path-three-cards {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 12px !important;
+}
+
+.shil-project-path-card,
+.shil-execution-card {
+  min-height: unset !important;
+}
+
+.shil-project-path-card img,
+.shil-execution-image {
+  width: 96px !important;
+  height: 96px !important;
+  object-fit: cover !important;
+  border-radius: 14px !important;
+  box-shadow: 0 10px 24px rgba(11,42,61,.16) !important;
+}
+
+.shil-primary-wide,
+.shil-primary-entry,
+.shil-button-primary {
+  border-radius: 16px !important;
+  border: 1px dashed rgba(18,169,238,.55) !important;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.96), rgba(233,249,255,.96)) !important;
+  color: var(--shil-eng-ink) !important;
+  font-weight: 900 !important;
+  box-shadow: 0 10px 22px rgba(18,169,238,.10) !important;
+}
+
+.shil-primary-wide::before {
+  content: "+";
+  color: var(--shil-eng-blue);
+  font-size: 20px;
+  margin-inline-end: 8px;
+}
+
+.shil-fixed-footer {
+  background: linear-gradient(180deg, rgba(83,105,124,.96), rgba(58,78,96,.98)) !important;
+  box-shadow: 0 -12px 24px rgba(11,42,61,.18) !important;
+}
+
+@media (min-width: 760px) {
+  .shil-page-content,
+  .shil-engineering-content {
+    padding: 14px 18px 96px !important;
+  }
+
+  .shil-execution-grid,
+  .shil-project-path-three-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .shil-form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 520px) {
+  .shil-project-mini-rail {
+    margin: 6px 8px 8px !important;
+    border-radius: 16px !important;
+  }
+
+  .shil-section-card,
+  .shil-execution-card,
+  .shil-result-card,
+  .shil-summary-card {
+    padding: 12px !important;
+    border-radius: 16px !important;
+  }
+
+  .shil-section-head h2,
+  .shil-card-head h2,
+  .shil-section-card h2 {
+    font-size: 14px !important;
+  }
+
+  .shil-project-path-card img,
+  .shil-execution-image {
+    width: 84px !important;
+    height: 84px !important;
+  }
+}

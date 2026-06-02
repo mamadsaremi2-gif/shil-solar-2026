@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from "react";
+﻿import React, { Suspense, lazy } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import UXFlowController from "../components/UXFlowController.jsx";
@@ -25,8 +25,9 @@ const ProjectPath = lazy(() => import("../modules/new-project/pages/ProjectPath.
 const SolarSystemType = lazy(() => import("../modules/new-project/pages/SolarSystemType.jsx"));
 const CalculationMethod = lazy(() => import("../modules/new-project/pages/CalculationMethod.jsx"));
 const CalculationInputs = lazy(() => import("../modules/new-project/pages/CalculationInputs.jsx"));
-const ExecutionMethod = lazy(() => import("../modules/new-project/pages/ExecutionMethod.jsx"));
 const SystemSettings = lazy(() => import("../modules/new-project/pages/SystemSettings.jsx"));
+const EmergencySystemSettings = lazy(() => import("../pages/EmergencySystemSettings.jsx"));
+const UtilitySystemSettings = lazy(() => import("../pages/UtilitySystemSettings.jsx"));
 const SummaryPage = lazy(() => import("../modules/new-project/pages/SummaryPage.jsx"));
 const RunCalculation = lazy(() => import("../modules/new-project/pages/RunCalculation.jsx"));
 const UnderDevelopment = lazy(() => import("../modules/new-project/pages/UnderDevelopment.jsx"));
@@ -49,7 +50,7 @@ export default function App() {
           <Route path="/welcome" element={<WelcomePage />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/new-project" element={<NewProject />} />
+          <Route path="/new-project" element={<ProjectPath />} />
 
           <Route path="/new-project/info" element={<ProjectInfo />} />
           <Route path="/new-project/environment/:domain" element={<Environment />} />
@@ -62,9 +63,11 @@ export default function App() {
           <Route path="/new-project/input/:domain/:method" element={<CalculationInputs />} />
           <Route path="/new-project/inputs/:domain" element={<CalculationInputs />} />
           <Route path="/new-project/inputs" element={<CalculationInputs />} />
-          <Route path="/new-project/execution/:domain" element={<ExecutionMethod />} />
-          <Route path="/new-project/execution" element={<ExecutionMethod />} />
-          <Route path="/new-project/system/:domain" element={<SystemSettings />} />
+          <Route path="/new-project/execution/:domain" element={<ProjectPath />} />
+          <Route path="/new-project/execution" element={<ProjectPath />} />
+          <Route path="/new-project/system/emergency" element={<EmergencySystemSettings />} />
+          <Route path="/new-project/system/utility" element={<UtilitySystemSettings />} />
+          <Route path="/new-project/system/solar" element={<SystemSettings />} />
           <Route path="/new-project/system" element={<SystemSettings />} />
           <Route path="/new-project/summary/:domain" element={<SummaryPage />} />
           <Route path="/new-project/summary" element={<SummaryPage />} />
@@ -90,3 +93,6 @@ export default function App() {
     </BrowserRouter>
   );
 }
+
+
+import "../styles/shil-engineering-theme-v2.css";

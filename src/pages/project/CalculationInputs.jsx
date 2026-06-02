@@ -5,7 +5,7 @@ import ProjectMiniRail from "../../components/ProjectMiniRail.jsx";
 import { consumerEquipmentLibrary, searchConsumerEquipment } from "../../data/catalogs/consumerEquipmentLibrary.js";
 import { buildScenarioCalculationInput } from "../../core/scenario/scenarioToEngineeringForm.js";
 import { METHOD_LABELS, persistSurfaceLoadPreview as persistLoadEngineResult, runSurfaceLoadPreview as runLoadEngine, runSurfacePvPreview as runUnifiedPvForUi } from "../../calculationGateway/surfacePreviewData.js";
-import { SHIL_SOLAR_PANELS, SHIL_LITHIUM_BATTERIES } from "../../data/shilSolarBanks.js";
+import { SHIL_SOLAR_PANELS } from "../../data/shilSolarBanks.js";
 import { isScenarioFlowFor, startUtilityGateway } from "../../workflow/flowIsolation.js";
 
 function readDraft(key) {
@@ -56,6 +56,43 @@ function getEnvironmentSolarDefaults(environment = {}, assessment = {}) {
   const totalLoss = clampNumber(environment.totalLossPercent ?? assessment.totalLossPercent ?? (thermal + soiling + wiring + orientation + safety), 15, 4, 60);
   const effectiveEfficiency = clampNumber(environment.effectiveEfficiency ?? assessment.effectiveEfficiency ?? (1 - totalLoss / 100), 0.8, 0.35, 1);
   return { psh, totalLoss, thermal, soiling, wiring, orientation, tilt, azimuth, safety, effectiveEfficiency };
+}
+
+function getProjectPathKey(projectPathDraft, fallbackDomain) {
+  if (typeof projectPathDraft === "string") return projectPathDraft;
+  return projectPathDraft?.key || projectPathDraft?.type || projectPathDraft?.domain || fallbackDomain;
+}
+
+function resolveEffectiveDomain({ domain, method, effectivePanelPowerW, projectPathDraft }) {
+  const projectPathKey = getProjectPathKey(projectPathDraft, domain);
+  const utilityByPath = /utility|power-plant|plant|نیروگاهی/i.test(String(projectPathKey));
+  const utilityByScale = method === "solar_panel_power" && Number(effectivePanelPowerW || 0) > 30000;
+  return domain === "utility" || utilityByPath || utilityByScale ? "utility" : domain;
+}
+
+function buildAutonomySnapshot({ domain, method, manualHours, autonomyHours, autonomyDays, forceAutonomyBattery }) {
+  const hours = Math.max(0, toNumber(autonomyHours, 0));
+  const days = Math.max(0, toNumber(autonomyDays, 0));
+  const manualBackupHours = domain === "emergency" ? Math.max(0, toNumber(manualHours, 0)) : 0;
+  const totalHours = Number(Math.max(hours, days * 24, manualBackupHours).toFixed(2));
+  const isRequired = Boolean(forceAutonomyBattery) || totalHours > 0 || domain === "emergency";
+  const reason = domain === "emergency"
+    ? "emergency_backup_required"
+    : totalHours > 0
+      ? "autonomy_required"
+      : forceAutonomyBattery
+        ? "user_requested_storage"
+        : "not_required_at_input_step";
+  return {
+    required: isRequired,
+    reason,
+    hours: totalHours,
+    days: Number((totalHours / 24).toFixed(2)),
+    inputHours: hours,
+    inputDays: days,
+    backupHours: manualBackupHours,
+    source: method === "solar_panel_power" ? "pv_generation_route" : "load_route",
+  };
 }
 
 function mergeItemWithOverride(item, override = {}) {
@@ -126,7 +163,26 @@ export default function CalculationInputs() {
   const navigate = useNavigate();
   const params = useParams();
   const domain = params.domain || localStorage.getItem("shil:calculationDomain") || localStorage.getItem("shil:scenarioDomain") || "solar";
-  const method = params.method || localStorage.getItem("shil:calculationMethod") || "equipment";
+  const requestedMethod = params.method || localStorage.getItem("shil:calculationMethod") || "equipment";
+  const allowedMethodsByDomain = React.useMemo(() => ({
+    emergency: ["current", "power", "equipment"],
+    utility: ["utility_scale", "solar_panel_power"],
+    solar: ["power", "current", "solar_panel_power", "equipment", "profile", "energy"],
+  }), []);
+  const method = (allowedMethodsByDomain[domain] || allowedMethodsByDomain.solar).includes(requestedMethod)
+    ? requestedMethod
+    : domain === "emergency"
+      ? "equipment"
+      : domain === "utility"
+        ? "utility_scale"
+        : "equipment";
+
+  React.useEffect(() => {
+    if (requestedMethod !== method) {
+      localStorage.setItem("shil:calculationMethod", method);
+      localStorage.setItem("shil:calculationDomain", domain);
+    }
+  }, [requestedMethod, method, domain]);
 
   const [query, setQuery] = React.useState("");
   const [isEquipmentPickerOpen, setIsEquipmentPickerOpen] = React.useState(false);
@@ -156,19 +212,15 @@ export default function CalculationInputs() {
   const envSolarDefaults = React.useMemo(() => getEnvironmentSolarDefaults(environment, environmentAssessment), [environment, environmentAssessment]);
 
   const defaultPanel = SHIL_SOLAR_PANELS.find((p) => p.powerW === 620) || SHIL_SOLAR_PANELS[0];
-  const defaultBattery = SHIL_LITHIUM_BATTERIES.find((b) => b.nominalVoltage === 48 && b.capacityAh === 200) || SHIL_LITHIUM_BATTERIES[0];
   const [selectedPanelId, setSelectedPanelId] = React.useState(defaultPanel?.id || "");
   const [panelCount, setPanelCount] = React.useState("10");
   const [psh, setPsh] = React.useState(String(envSolarDefaults.psh));
   const [lossPercent, setLossPercent] = React.useState(String(envSolarDefaults.totalLoss));
-  const [dailyLoadKWh, setDailyLoadKWh] = React.useState("");
   const [acVoltageRoute, setAcVoltageRoute] = React.useState("220");
   const [inverterSplitCount, setInverterSplitCount] = React.useState("1");
-  const [needsBattery, setNeedsBattery] = React.useState(false);
-  const [daysAutonomy, setDaysAutonomy] = React.useState("1");
-  const [batteryId, setBatteryId] = React.useState(defaultBattery?.id || "");
-  const [batteryDod, setBatteryDod] = React.useState(String(defaultBattery?.usableDod || 0.85));
-  const [systemEta, setSystemEta] = React.useState(String(defaultBattery?.efficiency || 0.94));
+  const [forceAutonomyBattery, setForceAutonomyBattery] = React.useState(domain === "emergency");
+  const [autonomyHours, setAutonomyHours] = React.useState(domain === "emergency" ? "6" : "");
+  const [autonomyDays, setAutonomyDays] = React.useState("");
 
   const items = React.useMemo(() => {
     const results = searchConsumerEquipment(query);
@@ -182,9 +234,7 @@ export default function CalculationInputs() {
   }, [selectedIds, itemOverrides]);
 
   const selectedPanel = React.useMemo(() => SHIL_SOLAR_PANELS.find((item) => item.id === selectedPanelId) || defaultPanel || {}, [selectedPanelId, defaultPanel]);
-  const selectedBattery = React.useMemo(() => SHIL_LITHIUM_BATTERIES.find((item) => item.id === batteryId) || defaultBattery || {}, [batteryId, defaultBattery]);
   const panelPowerW = toNumber(selectedPanel.powerW, 0);
-  const batteryUnitKWh = toNumber(selectedBattery.energyWh || (toNumber(selectedBattery.nominalVoltage, 0) * toNumber(selectedBattery.capacityAh, 0)), 0) / 1000;
   const totalPanelPowerW = toNumber(panelPowerW, 0) * toNumber(panelCount, 0);
   const inverterCountNormalized = Math.max(1, Math.round(toNumber(inverterSplitCount, 1)));
   const panelCountNormalized = Math.max(0, Math.round(toNumber(panelCount, 0)));
@@ -195,8 +245,6 @@ export default function CalculationInputs() {
   // معیار ورود به مسیر نیروگاهی فقط توان موثر پس از تلفات/راندمان محیطی است؛
   // ضریب راه‌اندازی و توان خام پنل نباید مسیر را نیروگاهی کنند.
   const isUtilityPanelScale = effectivePanelPowerW > 30000;
-  const isUtilityGateway = domain === "utility";
-
   const defaultPanelDistribution = React.useMemo(() => {
     const invCount = Math.max(1, Math.round(toNumber(inverterSplitCount, 1)));
     const total = Math.max(0, Math.round(toNumber(panelCount, 0)));
@@ -335,6 +383,224 @@ export default function CalculationInputs() {
   const methodResultTitle = method === "equipment" ? "نتایج لیست تجهیزات" : method === "energy" ? "نتایج انرژی روزانه" : method === "power" ? "نتایج توان کل" : method === "profile" ? "نتایج پروفایل مصرف" : method === "solar_panel_power" ? "نتایج توان پنل خورشیدی" : method === "current" ? "نتایج جریان کل" : "نتایج محاسبات";
   const safeLoadBuckets = enginePreview?.loadProfile?.buckets || profileBucketsWh;
 
+
+  const projectPathDraft = React.useMemo(() => readDraft("shil:selectedProjectPath") || readDraft("shil:projectPath") || {}, []);
+  const effectiveDomain = React.useMemo(() => resolveEffectiveDomain({ domain, method, effectivePanelPowerW, projectPathDraft }), [domain, method, effectivePanelPowerW, projectPathDraft]);
+  const isUtilityRoute = effectiveDomain === "utility";
+  const autonomySnapshot = React.useMemo(() => buildAutonomySnapshot({ domain: effectiveDomain, method, manualHours, autonomyHours, autonomyDays, forceAutonomyBattery }), [effectiveDomain, method, manualHours, autonomyHours, autonomyDays, forceAutonomyBattery]);
+
+  const buildSystemSetupHandoff = (finalResult) => {
+    const voltage = toNumber(method === "solar_panel_power" ? acVoltageRoute : method === "profile" ? profileVoltage : manualVoltage || 220, 220);
+    const phase = voltage >= 380 ? "three" : "single";
+    const totalPowerW = Math.round(toNumber(
+      method === "equipment" ? equipmentStats.totalPowerW :
+      method === "current" ? currentDerivedPowerW :
+      method === "profile" ? profilePeakPowerW :
+      method === "solar_panel_power" ? totalPanelPowerW :
+      finalResult?.totalPowerW || manualPowerW,
+      0
+    ));
+    const dailyEnergyKWh = Number(toNumber(
+      method === "equipment" ? equipmentStats.totalEnergyKWh :
+      method === "energy" ? manualEnergyKWh :
+      method === "profile" ? profileTotalEnergyWh / 1000 :
+      method === "solar_panel_power" ? calculatedPvDailyKWh :
+      finalResult?.totalEnergyKWh || (toNumber(finalResult?.totalEnergyWh, 0) / 1000),
+      0
+    ).toFixed(2));
+    const currentA = voltage > 0 ? Number((totalPowerW / Math.max(1, voltage * (phase === "three" ? Math.sqrt(3) : 1))).toFixed(2)) : 0;
+    const surgePowerW = Math.round(toNumber(
+      method === "equipment" ? equipmentStats.surgePowerW :
+      method === "profile" ? profileSurgePowerW :
+      finalResult?.surgePowerW || totalPowerW,
+      totalPowerW
+    ));
+
+    const routePayloadByMethod = {
+      equipment: {
+        type: "equipment",
+        equipmentItems: selectedItems,
+        equipmentStats,
+      },
+      power: {
+        type: "power",
+        manualPowerW: toNumber(manualPowerW, 0),
+        manualHours: toNumber(manualHours, 0),
+      },
+      current: {
+        type: "current",
+        manualCurrentA: toNumber(manualCurrentA, 0),
+        voltageAC: voltage,
+        derivedPowerW: currentDerivedPowerW,
+      },
+      energy: {
+        type: "energy",
+        manualEnergyKWh: toNumber(manualEnergyKWh, 0),
+        manualHours: toNumber(manualHours, 0),
+      },
+      profile: {
+        type: "profile",
+        voltageAC: toNumber(profileVoltage, 220),
+        basePowerW: toNumber(profilePowerW, 0),
+        startFactor: toNumber(profileStartFactor, 1.6),
+        bucketsWh: profileBucketsWh,
+        loadProfile: profileLoadProfile,
+      },
+      solar_panel_power: {
+        type: "solar_panel_power",
+        selectedPanelId,
+        panelTitle: selectedPanel.title,
+        panelPowerW: Number(panelPowerW || 0),
+        panelCount: Number(panelCount || 0),
+        totalPanelPowerW,
+        effectivePanelPowerW,
+        generatedDailyKWh: calculatedPvDailyKWh,
+        psh: Number(psh || 0),
+        lossPercent: Number(lossPercent || 0),
+        inverterSplitCount: inverterCountNormalized,
+        inverterPanelDistribution: activePanelDistribution.map((value) => toNumber(value, 0)),
+        inverterPanelLayouts,
+        isUtilityPanelScale,
+      },
+      utility_scale: {
+        type: "utility_scale",
+        source: "project_path_utility",
+      },
+    };
+
+    const sourceDomain = domain;
+    const targetDomain = resolveEffectiveDomain({ domain, method, effectivePanelPowerW, projectPathDraft });
+    const nextSystemRoute = `/new-project/system/${targetDomain}`;
+    const sizingBasis = targetDomain === "utility" ? "utility_pv_generation" : method === "solar_panel_power" ? "pv_generation" : targetDomain === "emergency" ? "backup_load" : "load_consumption";
+    const projectPathKey = getProjectPathKey(projectPathDraft, domain);
+    const methodSummaryByMethod = {
+      equipment: {
+        title: targetDomain === "emergency" ? "چکیده مسیر لیست تجهیزات برق اضطراری" : "چکیده مسیر لیست تجهیزات",
+        basis: targetDomain === "emergency" ? "backup_load" : "load_consumption",
+        keyMetrics: {
+          selectedCount: equipmentStats.selectedCount,
+          motorCount: equipmentStats.motorCount,
+          totalPowerW,
+          dailyEnergyKWh,
+          surgePowerW,
+          currentA,
+        },
+        nextStepHints: targetDomain === "emergency"
+          ? ["انتخاب اینورتر باتری‌محور", "محاسبه ظرفیت باتری بر اساس زمان پشتیبانی", "حفاظت DC باتری و خروجی AC"]
+          : ["انتخاب پنل و اینورتر متناسب با مصرف", "بررسی باتری فقط در صورت خودکفایی یا سناریوی آفگرید/هیبرید"],
+      },
+      power: {
+        title: targetDomain === "emergency" ? "چکیده مسیر توان کل برق اضطراری" : "چکیده مسیر توان کل",
+        basis: targetDomain === "emergency" ? "backup_power" : "total_power",
+        keyMetrics: { totalPowerW, dailyEnergyKWh, voltageAC: voltage, currentA, surgePowerW },
+        nextStepHints: targetDomain === "emergency"
+          ? ["سایزبندی اینورتر بر اساس توان کل و ضریب اطمینان", "ظرفیت باتری بر اساس ساعت پشتیبانی"]
+          : ["تکمیل انرژی روزانه یا ساعت مصرف برای دقت بیشتر", "انتخاب تجهیزات اصلی سیستم خورشیدی"],
+      },
+      current: {
+        title: targetDomain === "emergency" ? "چکیده مسیر جریان کل برق اضطراری" : "چکیده مسیر جریان کل",
+        basis: targetDomain === "emergency" ? "backup_current" : "total_current",
+        keyMetrics: { currentA, voltageAC: voltage, derivedPowerW: totalPowerW, phaseAC: phase },
+        nextStepHints: targetDomain === "emergency"
+          ? ["تبدیل جریان به توان بار اضطراری", "انتخاب اینورتر و باتری از بانک موجود"]
+          : ["تبدیل جریان به توان و ادامه طراحی بر اساس بار"],
+      },
+      energy: {
+        title: "چکیده مسیر انرژی روزانه",
+        basis: "daily_energy",
+        keyMetrics: { dailyEnergyKWh, voltageAC: voltage, totalPowerW },
+        nextStepHints: ["سایزبندی پنل بر اساس kWh/day", "بررسی نیاز به ذخیره‌ساز در صورت خودکفایی"],
+      },
+      profile: {
+        title: "چکیده مسیر پروفایل مصرف",
+        basis: "consumption_profile",
+        keyMetrics: {
+          dailyEnergyKWh,
+          peakPowerW: totalPowerW,
+          surgePowerW,
+          bucketsWh: profileBucketsWh,
+          peakBucket: profileLoadProfile.peakBucket,
+        },
+        nextStepHints: ["طراحی بر اساس زمان مصرف", "بررسی نیاز ذخیره‌ساز برای مصرف شبانه یا پیک زمانی"],
+      },
+      solar_panel_power: {
+        title: targetDomain === "utility" ? "چکیده مسیر توان پنل نیروگاهی" : "چکیده مسیر توان پنل خورشیدی",
+        basis: targetDomain === "utility" ? "utility_pv_generation" : "pv_generation",
+        keyMetrics: {
+          panelPowerW: Number(panelPowerW || 0),
+          panelCount: Number(panelCount || 0),
+          totalPanelPowerW,
+          effectivePanelPowerW,
+          generatedDailyKWh: calculatedPvDailyKWh,
+          psh: Number(psh || 0),
+          lossPercent: Number(lossPercent || 0),
+        },
+        nextStepHints: targetDomain === "utility"
+          ? ["ورود به تنظیمات اختصاصی نیروگاهی", "عدم نمایش مسیر مصرف‌محور خورشیدی"]
+          : ["انتخاب اینورتر و آرایش MPPT/String", "باتری فقط در صورت خودکفایی یا سناریوی ذخیره‌ساز"],
+      },
+      utility_scale: {
+        title: "چکیده مسیر نیروگاهی",
+        basis: "utility_scale",
+        keyMetrics: { totalPowerW, dailyEnergyKWh },
+        nextStepHints: ["ادامه در صفحه تنظیمات نیروگاهی موقت"],
+      },
+    };
+
+    return {
+      schemaVersion: 2,
+      source: {
+        domain: targetDomain,
+        originalDomain: sourceDomain,
+        method,
+        methodTitle: METHOD_LABELS[method] || method,
+        projectPath: projectPathKey,
+        projectPathTitle: typeof projectPathDraft === "object" ? projectPathDraft?.title : undefined,
+        from: "calculation-inputs",
+        createdAt: new Date().toISOString(),
+      },
+      normalizedLoad: {
+        totalPowerW,
+        dailyEnergyKWh,
+        dailyEnergyWh: Math.round(dailyEnergyKWh * 1000),
+        voltageAC: voltage,
+        phaseAC: phase,
+        currentA,
+        surgePowerW,
+      },
+      environmentSnapshot: {
+        ...environment,
+        assessment: environmentAssessment,
+        solarDefaults: envSolarDefaults,
+      },
+      methodSummary: methodSummaryByMethod[method] || {
+        title: `چکیده مسیر ${METHOD_LABELS[method] || method}`,
+        basis: sizingBasis,
+        keyMetrics: { totalPowerW, dailyEnergyKWh, voltageAC: voltage, currentA, surgePowerW },
+        nextStepHints: [],
+      },
+      routePayload: targetDomain === "utility" && method === "solar_panel_power" ? {
+        ...routePayloadByMethod.solar_panel_power,
+        type: "utility_solar_panel_power",
+        utilityScaleBasis: "effective_after_losses",
+        dedicatedSystemRoute: "/new-project/system/utility",
+      } : routePayloadByMethod[method] || { type: method },
+      autonomy: autonomySnapshot,
+      systemHints: {
+        domain: targetDomain,
+        originalDomain: sourceDomain,
+        needsPv: targetDomain !== "emergency",
+        needsBattery: autonomySnapshot.required ? true : targetDomain === "solar" ? "depends_on_scenario" : false,
+        batteryReason: autonomySnapshot.reason,
+        needsInverter: true,
+        preferredSystemType: targetDomain === "emergency" ? "battery_inverter_backup" : targetDomain === "utility" ? "utility_scale_pv" : localStorage.getItem("shil:solarSystemType") || "offgrid",
+        sizingBasis,
+        nextSystemRoute,
+      },
+      engineResult: finalResult,
+    };
+  };
+
   const toggleItem = (item) => {
     setSelectedIds((prev) => {
       const next = new Set(prev);
@@ -390,9 +656,8 @@ export default function CalculationInputs() {
       setScaleWarning(`جمع پنل‌های تقسیم‌شده باید برابر ${panelCountNormalized} باشد. مقدار فعلی ${distributionTotal} است.`);
       return;
     }
-    if (method === "solar_panel_power" && isUtilityPanelScale && !isUtilityGateway) {
-      setScaleWarning("توان پنل‌های واردشده از ۳۰kW عبور کرده است. برای جلوگیری از شلوغی و خطای مسیر، ادامه طراحی باید از درگاه مستقل نیروگاهی انجام شود.");
-      return;
+    if (method === "solar_panel_power" && isUtilityPanelScale && !isUtilityRoute) {
+      setScaleWarning("توان موثر پنل‌ها از ۳۰kW عبور کرده است؛ خروجی این مرحله به صورت خودکار به تنظیمات سیستم نیروگاهی منتقل می‌شود.");
     }
 
     if (method !== "solar_panel_power") {
@@ -429,22 +694,7 @@ export default function CalculationInputs() {
         utilityScaleBasis: "effective_after_losses",
       }));
       localStorage.setItem("shil:solarPanelPowerPreview", JSON.stringify(solarPanelPreview));
-      const unifiedPreview = runUnifiedPvForUi({
-        load: { method, totalPowerW: totalPanelPowerW, totalEnergyKWh: calculatedPvDailyKWh, voltageAC: toNumber(acVoltageRoute, 220) },
-        environment,
-        settings: { method: "solar_panel_power", calculationMethod: "solar_panel_power", panelId: selectedPanelId, panelCount: Number(panelCount || 0), outputAcVoltage: toNumber(acVoltageRoute, 220) },
-        solarPanelPowerInput: {
-          selectedPanelId,
-          panelPowerW: Number(panelPowerW || 0),
-          panelCount: Number(panelCount || 0),
-          totalPanelPowerW,
-          psh: Number(psh || 0),
-          lossPercent: Number(lossPercent || 0),
-          generatedDailyKWh: calculatedPvDailyKWh,
-          acVoltageRoute: toNumber(acVoltageRoute, 220),
-        },
-      });
-      localStorage.setItem("shil:unifiedPvEngineResult:input", JSON.stringify(unifiedPreview));
+      localStorage.setItem("shil:unifiedPvEngineResult:input", JSON.stringify(solarPanelPreview));
     }
 
     const result = persistLoadEngineResult({
@@ -489,6 +739,9 @@ export default function CalculationInputs() {
       equipmentStats,
     } : result;
     localStorage.setItem("shil:loadEngineResult", JSON.stringify(finalResult));
+    const systemSetupHandoff = buildSystemSetupHandoff(finalResult);
+    localStorage.setItem("shil:systemSetupHandoff", JSON.stringify(systemSetupHandoff));
+    localStorage.setItem(`shil:systemSetupHandoff:${domain}:${method}`, JSON.stringify(systemSetupHandoff));
     if (method === "equipment") {
       localStorage.setItem("shil:selectedEquipmentItems", JSON.stringify(selectedItems));
       localStorage.setItem("shil:equipmentCalculationStats", JSON.stringify(equipmentStats));
@@ -499,7 +752,8 @@ export default function CalculationInputs() {
       localStorage.setItem("shil:scenarioNextStep", "system-settings");
       localStorage.setItem("shil:scenarioEquipmentBranch", domain);
     }
-    navigate(`/new-project/system/${domain}?from=calculation-inputs${isReadyScenarioEquipmentFlow ? "&scenarioFlow=1" : ""}`);
+    const nextDomain = systemSetupHandoff?.systemHints?.domain || effectiveDomain;
+    navigate(`/new-project/system/${nextDomain}?from=calculation-inputs${isReadyScenarioEquipmentFlow ? "&scenarioFlow=1" : ""}`);
   };
 
   return (
@@ -513,7 +767,7 @@ export default function CalculationInputs() {
           ) : null}
           <div className="shil-summary-grid">
             <div><span>روش</span><strong>{contextMethodLabel}</strong></div>
-            <div><span>هسته</span><strong>{domain === "emergency" ? "برق اضطراری" : "خورشیدی"}</strong></div>
+            <div><span>هسته</span><strong>{effectiveDomain === "utility" ? "نیروگاهی" : effectiveDomain === "emergency" ? "برق اضطراری" : "خورشیدی"}</strong></div>
             <div><span>سناریو</span><strong>{contextScenarioLabel}</strong></div>
             <div><span>شهر</span><strong>{contextCityLabel}</strong></div>
           </div>
@@ -612,7 +866,7 @@ export default function CalculationInputs() {
                   <div><span>راندمان مؤثر</span><strong>{(100 - toNumber(lossPercent, 0)).toFixed(1)}٪</strong></div>
                   <div><span>جهت و زاویه مطابق شرایط محیطی</span><strong>{envSolarDefaults.orientation.toFixed(1)}٪</strong></div>
                 </div>
-                {isUtilityPanelScale && !isUtilityGateway ? (<div className="shil-inline-warning"><strong>توان موثر بالای ۳۰kW است.</strong><button type="button" className="shil-secondary-wide" onClick={goToUtilityGateway}>ورود به درگاه نیروگاهی</button></div>) : null}
+                {isUtilityPanelScale && !isUtilityRoute ? (<div className="shil-inline-warning"><strong>توان موثر بالای ۳۰kW است؛ ادامه این ورودی در صفحه تنظیمات نیروگاهی انجام می‌شود.</strong></div>) : null}
               </>
             ) : (
               <div className="shil-form-grid">
@@ -747,7 +1001,28 @@ export default function CalculationInputs() {
         ) : null}
 
 
-        {scaleWarning ? <div className="shil-inline-warning">{scaleWarning}<button type="button" className="shil-secondary-wide" onClick={goToUtilityGateway}>ورود به درگاه نیروگاهی</button></div> : null}
+        {effectiveDomain !== "utility" ? (
+          <section className="shil-env-card">
+            <h3 className="shil-section-title">خودکفایی و الزام باتری</h3>
+            <div className="shil-form-grid">
+              <label>ساعت خودکفایی / بکاپ<input className="shil-input" value={autonomyHours} onChange={(e) => setAutonomyHours(e.target.value)} placeholder={effectiveDomain === "emergency" ? "مثلاً 6" : "اختیاری"} inputMode="decimal" /></label>
+              <label>روز خودکفایی<input className="shil-input" value={autonomyDays} onChange={(e) => setAutonomyDays(e.target.value)} placeholder="مثلاً 1" inputMode="decimal" /></label>
+              <label className="shil-check-row">
+                <input type="checkbox" checked={forceAutonomyBattery} onChange={(e) => setForceAutonomyBattery(e.target.checked)} />
+                باتری در طراحی سیستم الزام شود
+              </label>
+            </div>
+            <p className="shil-muted-note">
+              {autonomySnapshot.required ? `باتری الزامی است؛ دلیل: ${autonomySnapshot.reason === "emergency_backup_required" ? "مسیر برق اضطراری" : autonomySnapshot.reason === "autonomy_required" ? "ثبت زمان خودکفایی" : "درخواست کاربر"}. زمان مبنا: ${autonomySnapshot.hours} ساعت.` : "اگر ساعت یا روز خودکفایی وارد شود، صفحه تنظیمات سیستم باتری را اجباری در نظر می‌گیرد."}
+            </p>
+          </section>
+        ) : (
+          <section className="shil-env-card">
+            <h3 className="shil-section-title">مسیر اختصاصی نیروگاهی</h3>
+            <p className="shil-muted-note">این ورودی با دامنه نیروگاهی به صفحه تنظیمات سیستم منتقل می‌شود و درگیر ظاهر یا منطق مسیر خورشیدی مصرف‌محور نمی‌شود.</p>
+          </section>
+        )}
+        {scaleWarning ? <div className="shil-inline-warning">{scaleWarning}</div> : null}
         <button type="button" className="shil-primary-wide" onClick={confirmLoad}>
           {isReadyScenarioEquipmentFlow ? "تأیید لیست تجهیزات و ادامه مسیر پروژه" : "تأیید اطلاعات و ورود به پیکربندی تنظیمات"}
         </button>

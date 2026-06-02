@@ -1,66 +1,38 @@
+export const PROJECT_PATHS = Object.freeze({
+  SOLAR: "solar",
+  EMERGENCY: "emergency",
+  UTILITY: "utility",
+});
+
 export const SHIL_WORKFLOW_STEPS = [
-  {
-    id: "project-info",
-    title: "Project Information",
-    section: "project",
-    required: true,
-    next: ["environment"]
-  },
-  {
-    id: "environment",
-    title: "Environment",
-    section: "environment",
-    required: true,
-    next: ["project-path"]
-  },
-  {
-    id: "project-path",
-    title: "Project Path",
-    section: "project",
-    required: true,
-    next: ["pv-array", "battery", "inverter"]
-  },
-  {
-    id: "pv-array",
-    title: "PV Array",
-    section: "pv",
-    required: true,
-    next: ["battery", "inverter"]
-  },
-  {
-    id: "battery",
-    title: "Battery",
-    section: "battery",
-    requiredFor: ["offgrid", "hybrid"],
-    next: ["inverter"]
-  },
-  {
-    id: "inverter",
-    title: "Inverter",
-    section: "inverter",
-    required: true,
-    next: ["cable"]
-  },
-  {
-    id: "cable",
-    title: "Cable",
-    section: "cable",
-    required: true,
-    next: ["run-calculation"]
-  },
-  {
-    id: "run-calculation",
-    title: "Run Calculation",
-    section: "result",
-    required: true,
-    next: []
-  }
+  { id: "project-path", key: "path", title: "انتخاب مسیر پروژه", section: "project", required: true, next: ["project-info"] },
+  { id: "project-info", key: "info", title: "اطلاعات پروژه", section: "project", required: true, next: ["environment", "calculation-method"] },
+  { id: "environment", key: "environment", title: "شرایط محیطی", section: "environment", required: true, optionalFor: [PROJECT_PATHS.EMERGENCY], next: ["calculation-method"] },
+  { id: "calculation-method", key: "method", title: "روش ورود دیتا", section: "calculation", required: true, next: ["calculation-inputs"] },
+  { id: "calculation-inputs", key: "inputs", title: "ورودی محاسبات", section: "calculation", required: true, next: ["system-settings"] },
+  { id: "system-settings", key: "system", title: "تنظیمات سیستم", section: "system", required: true, next: ["summary"] },
+  { id: "summary", key: "summary", title: "چکیده اطلاعات", section: "summary", required: true, next: ["run-calculation"] },
+  { id: "run-calculation", key: "run", title: "اجرای محاسبات", section: "result", required: true, next: [] },
 ];
 
+export const METHOD_BY_PROJECT_PATH = Object.freeze({
+  [PROJECT_PATHS.SOLAR]: ["power", "current", "solar_panel_power", "equipment", "profile", "energy"],
+  [PROJECT_PATHS.EMERGENCY]: ["current", "power", "equipment"],
+  [PROJECT_PATHS.UTILITY]: ["utility_scale"],
+});
+
 export function getWorkflowStep(id) {
-  return SHIL_WORKFLOW_STEPS.find((step) => step.id === id) || null;
+  return SHIL_WORKFLOW_STEPS.find((step) => step.id === id || step.key === id) || null;
 }
 
 export function getWorkflowStepIds() {
   return SHIL_WORKFLOW_STEPS.map((step) => step.id);
+}
+
+export function getWorkflowStepsForPath(projectPath = PROJECT_PATHS.SOLAR) {
+  return SHIL_WORKFLOW_STEPS.filter((step) => !step.optionalFor?.includes(projectPath));
+}
+
+export function getAllowedMethodsForPath(projectPath = PROJECT_PATHS.SOLAR) {
+  return METHOD_BY_PROJECT_PATH[projectPath] || METHOD_BY_PROJECT_PATH[PROJECT_PATHS.SOLAR];
 }

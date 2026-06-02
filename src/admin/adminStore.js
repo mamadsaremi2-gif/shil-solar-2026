@@ -15,7 +15,7 @@ export const DEFAULT_PROJECT_PATH_CARDS = [
     key: "solar",
     title: "اجرای پروژه با پنل خورشیدی",
     description: "طراحی سیستم خورشیدی با پنل، باتری، اینورتر و حفاظت",
-    image: "/assets/shil/execution/solar-execution.png",
+    image: "/assets/shil/execution/solar-execution.webp",
     calculationDomain: "solar",
     active: true,
     order: 1,
@@ -24,7 +24,7 @@ export const DEFAULT_PROJECT_PATH_CARDS = [
     key: "emergency",
     title: "اجرای پروژه با برق اضطراری",
     description: "طراحی سیستم پشتیبان با اینورتر و باتری",
-    image: "/assets/shil/execution/emergency-inverter-battery.png",
+    image: "/assets/shil/execution/emergency-inverter-battery.webp",
     calculationDomain: "emergency",
     active: true,
     order: 2,
@@ -288,3 +288,4 @@ export async function fileToDataUrl(file, maxKb = readAdminDefaults().maxPngKb) 
     reader.readAsDataURL(file);
   });
 }
+

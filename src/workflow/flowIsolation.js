@@ -1,4 +1,4 @@
-const SCENARIO_KEYS = [
+﻿const SCENARIO_KEYS = [
   "shil:scenarioFlowActive",
   "shil:selectedScenario",
   "shil:scenarioNextStep",
@@ -14,68 +14,105 @@ const UTILITY_KEYS = [
   "shil:utilityRedirectReason",
 ];
 
-export const FLOW_MODES = Object.freeze({
-  MANUAL: "manual",
-  SCENARIO: "scenario",
+const PATH_DRAFT_KEYS = [
+  "shil:systemSetupHandoff",
+  "shil:systemSettingsDraft",
+  "shil:finalEngineeringOutput",
+  "shil:solarSystemDesign",
+  "shil:unifiedPvEngineResult",
+  "shil:solarPanelPowerInput",
+  "shil:solarPanelPowerPreview",
+  "shil:loadEngineResult",
+];
+
+export const PROJECT_PATHS = Object.freeze({
+  SOLAR: "solar",
+  EMERGENCY: "emergency",
   UTILITY: "utility",
 });
 
-function safeRemove(key) {
-  try { localStorage.removeItem(key); } catch { /* noop */ }
+export const FLOW_MODES = Object.freeze({
+  MANUAL: "manual",
+  SCENARIO: "scenario",
+});
+
+function safeRemove(key) { try { localStorage.removeItem(key); } catch { /* noop */ } }
+function safeSet(key, value) { try { localStorage.setItem(key, value); } catch { /* noop */ } }
+function safeGet(key) { try { return localStorage.getItem(key); } catch { return null; } }
+function safeJson(key, fallback = null) { try { return JSON.parse(safeGet(key) || "null") ?? fallback; } catch { return fallback; } }
+function safeSetJson(key, value) { safeSet(key, JSON.stringify(value)); }
+
+export function clearScenarioFlow() { SCENARIO_KEYS.forEach(safeRemove); }
+export function clearUtilityFlow() { UTILITY_KEYS.forEach(safeRemove); }
+export function clearPathDrafts() { PATH_DRAFT_KEYS.forEach(safeRemove); }
+export function setWorkflowMode(mode) { safeSet("shil:projectCreationMode", mode); }
+export function getWorkflowMode() { return safeGet("shil:projectCreationMode") || FLOW_MODES.MANUAL; }
+
+export function getProjectPathDomain() {
+  const path = safeJson("shil:projectPath", null) || safeJson("shil:selectedProjectPath", null);
+  if (typeof path === "string") return path;
+  return path?.domain || path?.type || safeGet("shil:calculationDomain") || PROJECT_PATHS.SOLAR;
 }
 
-function safeSet(key, value) {
-  try { localStorage.setItem(key, value); } catch { /* noop */ }
-}
+export function startManualProjectFlow(domain = null) {
+  const existing =
+    safeJson("shil:selectedProjectPath", null) ||
+    safeJson("shil:projectPath", null);
 
-function safeGet(key) {
-  try { return localStorage.getItem(key); } catch { return null; }
-}
+  const inferred =
+    domain ||
+    (typeof existing === "string" ? existing : existing?.domain || existing?.type || existing?.key) ||
+    PROJECT_PATHS.SOLAR;
 
-export function clearScenarioFlow() {
-  SCENARIO_KEYS.forEach(safeRemove);
-}
+  const normalized = [PROJECT_PATHS.SOLAR, PROJECT_PATHS.EMERGENCY, PROJECT_PATHS.UTILITY].includes(inferred)
+    ? inferred
+    : PROJECT_PATHS.SOLAR;
 
-export function clearUtilityFlow() {
-  UTILITY_KEYS.forEach(safeRemove);
-}
-
-export function setWorkflowMode(mode) {
-  safeSet("shil:projectCreationMode", mode);
-}
-
-export function getWorkflowMode() {
-  return safeGet("shil:projectCreationMode") || FLOW_MODES.MANUAL;
-}
-
-export function startManualProjectFlow() {
   clearScenarioFlow();
   clearUtilityFlow();
+  clearPathDrafts();
   setWorkflowMode(FLOW_MODES.MANUAL);
-  safeSet("shil:calculationDomain", "");
-  safeSet("shil:projectScale", "standard");
+
+  safeSet("shil:calculationDomain", normalized);
+  safeSet("shil:scenarioDomain", normalized);
+  safeSet("shil:projectEngine", normalized);
+  safeSet("shil:projectScale", normalized === PROJECT_PATHS.UTILITY ? "utility" : "standard");
+
+  const payload = {
+    domain: normalized,
+    type: normalized,
+    key: normalized,
+    mode: FLOW_MODES.MANUAL,
+  };
+
+  safeSetJson("shil:projectPath", payload);
+  safeSetJson("shil:selectedProjectPath", payload);
+}
+
+export function startSolarProject() { startManualProjectFlow(PROJECT_PATHS.SOLAR); }
+export function startEmergencyProject() { startManualProjectFlow(PROJECT_PATHS.EMERGENCY); }
+export function startUtilityProject(reason = "project-path") {
+  startManualProjectFlow(PROJECT_PATHS.UTILITY);
+  safeSet("shil:utilityGatewayActive", "true");
+  safeSet("shil:utilityRedirectReason", reason);
 }
 
 export function startScenarioFlow(scenario) {
   clearUtilityFlow();
+  clearPathDrafts();
   setWorkflowMode(FLOW_MODES.SCENARIO);
+  const domain = scenario?.domain || PROJECT_PATHS.SOLAR;
   safeSet("shil:scenarioFlowActive", "true");
-  safeSet("shil:selectedScenario", JSON.stringify(scenario || {}));
-  safeSet("shil:scenarioDomain", scenario?.domain || "solar");
+  safeSetJson("shil:selectedScenario", scenario || {});
+  safeSet("shil:scenarioDomain", domain);
   safeSet("shil:scenarioLevel", scenario?.levelKey || scenario?.level || "");
-  safeSet("shil:calculationDomain", scenario?.domain || "solar");
-  safeSet("shil:projectScale", "standard");
+  safeSet("shil:calculationDomain", domain);
+  safeSet("shil:projectEngine", domain);
+  safeSet("shil:projectScale", domain === PROJECT_PATHS.UTILITY ? "utility" : "standard");
+  safeSetJson("shil:projectPath", { domain, type: domain, mode: FLOW_MODES.SCENARIO });
 }
 
-export function startUtilityGateway(reason = "project-path") {
-  clearScenarioFlow();
-  setWorkflowMode(FLOW_MODES.UTILITY);
-  safeSet("shil:utilityGatewayActive", "true");
-  safeSet("shil:utilityRedirectReason", reason);
-  safeSet("shil:projectScale", "utility");
-  safeSet("shil:calculationDomain", "utility");
-  safeSet("shil:scenarioDomain", "utility");
-}
+export function startUtilityGateway(reason = "project-path") { startUtilityProject(reason); }
 
 export function isScenarioFlowFor(domain) {
   if (getWorkflowMode() !== FLOW_MODES.SCENARIO) return false;
@@ -83,14 +120,10 @@ export function isScenarioFlowFor(domain) {
   try {
     const scenario = JSON.parse(safeGet("shil:selectedScenario") || "null");
     return Boolean(scenario?.id && (!domain || scenario.domain === domain));
-  } catch {
-    return false;
-  }
+  } catch { return false; }
 }
 
-export function isUtilityGatewayActive() {
-  return getWorkflowMode() === FLOW_MODES.UTILITY && safeGet("shil:utilityGatewayActive") === "true";
-}
+export function isUtilityGatewayActive() { return getProjectPathDomain() === PROJECT_PATHS.UTILITY && safeGet("shil:utilityGatewayActive") === "true"; }
 
 function hasScenarioEquipmentIntent(search = "") {
   const params = new URLSearchParams(String(search || "").replace(/^\?/, ""));
@@ -99,22 +132,17 @@ function hasScenarioEquipmentIntent(search = "") {
 
 export function getFlowSafeRedirect(pathname = "", search = "") {
   const mode = getWorkflowMode();
+  const domain = getProjectPathDomain();
   const isEquipmentInputRoute = pathname.includes("/new-project/input/") && pathname.endsWith("/equipment");
   const isScenarioEquipmentRoute = isEquipmentInputRoute && hasScenarioEquipmentIntent(search);
   const isUtilityRoute = pathname.includes("/new-project/system/utility") || pathname.includes("/new-project/utility");
+  const isEmergencyRoute = pathname.includes("/new-project/system/emergency") || pathname.includes("/new-project/emergency");
+  const isSolarSystemRoute = pathname.includes("/new-project/system/solar");
 
-  // مسیر «لیست تجهیزات» دو کاربرد دارد:
-  // 1) روش محاسبات دستی برای پروژه جدید معمولی
-  // 2) لیست تجهیزات سناریوی آماده بعد از شرایط محیطی
-  // قبلاً هر مسیر equipment به عنوان سناریو تشخیص داده می‌شد و پروژه دستی را
-  // اشتباه به صفحه انتخاب مسیر برمی‌گرداند. فقط وقتی query واقعاً سناریویی است Guard فعال می‌شود.
-  if (isScenarioEquipmentRoute && mode !== FLOW_MODES.SCENARIO) {
-    return "/new-project/path?guard=scenario-equipment-blocked";
-  }
-
-  if (isUtilityRoute && !isUtilityGatewayActive()) {
-    return "/new-project/path?guard=utility-blocked";
-  }
-
+  if (isScenarioEquipmentRoute && mode !== FLOW_MODES.SCENARIO) return "/new-project/path?guard=scenario-equipment-blocked";
+  if (isUtilityRoute && domain !== PROJECT_PATHS.UTILITY) return "/new-project/path?guard=utility-blocked";
+  if (isEmergencyRoute && domain !== PROJECT_PATHS.EMERGENCY) return "/new-project/path?guard=emergency-blocked";
+  if (isSolarSystemRoute && domain !== PROJECT_PATHS.SOLAR) return "/new-project/path?guard=solar-blocked";
   return null;
 }
+

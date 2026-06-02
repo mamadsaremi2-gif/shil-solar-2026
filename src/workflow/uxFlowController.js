@@ -1,7 +1,7 @@
 import { saveProjectCheckpoint, completeCurrentProject } from "./projectManagement100.js";
 
 export function getUxResumeUrl(pathname = window.location.pathname) {
-  return saveProjectCheckpoint(pathname)?.resumeUrl || pathname || "/new-project/info";
+  return saveProjectCheckpoint(pathname)?.resumeUrl || pathname || "/new-project/path";
 }
 
 export function captureCurrentProjectSnapshot(pathname = window.location.pathname, status = "running") {
