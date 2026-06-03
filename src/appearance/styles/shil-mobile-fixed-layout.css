@@ -1,92 +1,57 @@
-﻿/* SHIL GLOBAL MOBILE FIXED HEADER + FOOTER + ENVIRONMENT-LIKE BLOCKS */
+﻿/* SHIL REAL FRAME FIX - applies to ShilFrame.jsx */
 
-:root {
-  --shil-mobile-header-h: 72px;
-  --shil-mobile-footer-h: 78px;
-  --shil-stepbar-h: 82px;
-  --shil-card-radius: 18px;
-  --shil-field-radius: 14px;
-}
-
-/* prevent page-level body scrolling on mobile */
 @media (max-width: 768px) {
   html,
   body,
   #root {
     width: 100%;
     height: 100%;
-    min-height: 100%;
     margin: 0;
     overflow: hidden !important;
   }
 
-  .shil-page-shell,
-  .shil-mobile-shell,
-  .shil-shell,
-  .shil-frame,
-  .shil-layout,
-  .shil-page,
-  .shil-screen {
+  .shil-frame {
+    position: relative !important;
+    width: 100vw !important;
     height: 100dvh !important;
     min-height: 100dvh !important;
     max-height: 100dvh !important;
     overflow: hidden !important;
-    position: relative !important;
-    box-sizing: border-box !important;
   }
 
-  /* fixed top header */
-  .shil-fixed-header,
-  .shil-header,
-  .shil-mobile-header,
-  .shil-page-header,
-  .shil-topbar,
-  header {
+  .shil-header {
     position: fixed !important;
     top: 0 !important;
     left: 0 !important;
     right: 0 !important;
-    height: var(--shil-mobile-header-h) !important;
-    min-height: var(--shil-mobile-header-h) !important;
-    z-index: 5000 !important;
+    height: 72px !important;
+    min-height: 72px !important;
+    z-index: 9999 !important;
     transform: none !important;
   }
 
-  /* fixed bottom footer */
-  .shil-fixed-footer,
-  .shil-footer,
-  .shil-mobile-footer,
-  .shil-page-footer,
-  .shil-bottombar,
-  footer {
+  .shil-footer {
     position: fixed !important;
     bottom: 0 !important;
     left: 0 !important;
     right: 0 !important;
-    min-height: var(--shil-mobile-footer-h) !important;
-    z-index: 5000 !important;
+    min-height: 76px !important;
+    z-index: 9999 !important;
     transform: none !important;
   }
 
-  /* only the content area scrolls */
-  .shil-page-content,
-  .shil-mobile-page-content,
-  .shil-content,
-  .shil-main-content,
-  .shil-body,
-  .page-content,
-  main {
+  .shil-frame-main {
+    position: relative !important;
     height: 100dvh !important;
     max-height: 100dvh !important;
     overflow-y: auto !important;
     overflow-x: hidden !important;
-    padding-top: calc(var(--shil-mobile-header-h) + var(--shil-stepbar-h) + 8px) !important;
-    padding-bottom: calc(var(--shil-mobile-footer-h) + 16px) !important;
+    padding-top: 86px !important;
+    padding-bottom: 92px !important;
     box-sizing: border-box !important;
     -webkit-overflow-scrolling: touch !important;
   }
 
-  /* horizontal steps must stay visible below header */
   .shil-step-scroll,
   .shil-stepper-scroll,
   .shil-design-path-scroll,
@@ -99,19 +64,14 @@
   .shil-project-stagebar,
   .shil-stagebar {
     position: sticky !important;
-    top: calc(var(--shil-mobile-header-h) + 4px) !important;
-    z-index: 4500 !important;
-    min-height: var(--shil-stepbar-h) !important;
+    top: 0 !important;
+    z-index: 9000 !important;
+    min-height: 82px !important;
     background: rgba(240, 252, 255, 0.96) !important;
-    backdrop-filter: blur(8px) !important;
     overflow-x: auto !important;
     overflow-y: hidden !important;
-    padding-top: 8px !important;
-    padding-bottom: 8px !important;
-    box-sizing: border-box !important;
   }
 
-  /* environment-page-like global blocks */
   .shil-card,
   .shil-panel,
   .shil-summary-card,
@@ -129,7 +89,7 @@
   .shil-input-card {
     width: 100% !important;
     max-width: 100% !important;
-    border-radius: var(--shil-card-radius) !important;
+    border-radius: 18px !important;
     box-sizing: border-box !important;
     overflow: hidden !important;
   }
@@ -142,14 +102,7 @@
   .shil-field {
     width: 100% !important;
     min-height: 44px !important;
-    border-radius: var(--shil-field-radius) !important;
+    border-radius: 14px !important;
     box-sizing: border-box !important;
-  }
-
-  /* dashboard exception: no forced header/footer spacing */
-  .shil-home-icons,
-  .shil-home-shell {
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
   }
 }
