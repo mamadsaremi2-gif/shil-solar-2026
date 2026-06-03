@@ -1,4 +1,4 @@
-﻿import React, { Suspense, lazy } from "react";
+import React, { Suspense, lazy } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import UXFlowController from "../components/UXFlowController.jsx";
@@ -93,6 +93,3 @@ export default function App() {
     </BrowserRouter>
   );
 }
-
-
-import "../appearance/styles/shil-engineering-theme-v2.css";

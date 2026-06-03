@@ -1,7 +1,5 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import "./ShilFrame.css";
-
 const titles = {
   "/dashboard": "??????? SHIL",
   "/new-project": "????? ????",

@@ -1,5 +1,3 @@
-import "../../appearance/mobile-ui/styles/globals.css";
-
 export function MobileShell({ header, footer, children }) {
   return (
     <div className="shil-app">
