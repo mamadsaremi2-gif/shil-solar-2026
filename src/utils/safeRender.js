@@ -29,5 +29,5 @@ export function safeKey(value, index = 0) {
 }
 
 export function toFaDigits(value) {
-  return safeText(value, "").replace(/\d/g, (d) => "۰۱۲۳۴۵۶۷۸۹"[Number(d)]);
+  return safeText(value, "");
 }

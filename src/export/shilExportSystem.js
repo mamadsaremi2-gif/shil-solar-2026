@@ -48,12 +48,12 @@ export function buildFinalEngineeringDelivery({ domain, project = {}, summary = 
   const projectTitle = project.projectName || project.name || (emergency ? "پروژه برق اضطراری" : "پروژه خورشیدی");
   const customer = project.clientName || project.customerName || project.employerName || project.ownerName || "ثبت نشده";
   const location = [project.city, project.province].filter(Boolean).join(" / ") || project.address || "ثبت نشده";
-  const generatedAt = new Date().toLocaleString("fa-IR");
+  const generatedAt = new Date().toLocaleString("en-US");
 
   const distributedRows = Array.isArray(solarDesign?.distributedInverterSystems)
     ? solarDesign.distributedInverterSystems.slice(0, 12).map((system) => ({
       item: system.title || "زیرسیستم اینورتر",
-      qty: "۱ زیرسیستم",
+      qty: "1 زیرسیستم",
       spec: `${safeText(system?.inverterModel, "اینورتر")} / ${safeText(system?.pv?.panelCount, "-")} پنل / ${safeText(system?.battery?.count, 0)} باتری`,
       reason: `سهم بار ${safeText(system?.designPowerShareW, "-")}W؛ DC ${safeText(system?.protection?.dcBreakerA, "-")}A / AC ${safeText(system?.protection?.acBreakerA, "-")}A / کابل ${safeText(system?.protection?.dcCable, "-")} و ${safeText(system?.protection?.acCable, "-")}`
     }))
@@ -63,7 +63,7 @@ export function buildFinalEngineeringDelivery({ domain, project = {}, summary = 
     { item: "پنل خورشیدی", qty: safeText(solarDesign?.pvArray?.panelCount, "-") + " عدد", spec: `${safeText(solarDesign?.panel?.powerW, 620)} وات`, reason: `${safeText(solarDesign?.pvArray?.seriesCount, "-")} سری × ${safeText(solarDesign?.pvArray?.parallelCount, "-")} موازی برای تطابق توان و محدوده کاری` },
     { item: "اینورتر خورشیدی", qty: safeText(solarDesign?.inverter?.count, 1) + " عدد", spec: `${safeText(solarDesign?.inverter?.ratedPowerW, "-")} وات`, reason: "انتخاب‌شده بر اساس توان بار، سناریوی طراحی و قانون مشترک تقسیم چنداینورتری" },
     { item: "باتری", qty: safeText(solarDesign?.battery?.totalCount, "-") + " عدد", spec: batterySpecText(solarDesign?.battery), reason: `${batteryNoteText(solarDesign?.battery)} برای تأمین ظرفیت ذخیره` },
-    { item: "حفاظت DC/AC", qty: "۱ مجموعه", spec: `DC ${safeText(solarDesign?.protection?.dcBreakerA, "-")}A / AC ${safeText(solarDesign?.protection?.acBreakerA, "-")}A`, reason: "حفاظت مدار، جداسازی، ارتینگ و محدودسازی خطا" },
+    { item: "حفاظت DC/AC", qty: "1 مجموعه", spec: `DC ${safeText(solarDesign?.protection?.dcBreakerA, "-")}A / AC ${safeText(solarDesign?.protection?.acBreakerA, "-")}A`, reason: "حفاظت مدار، جداسازی، ارتینگ و محدودسازی خطا" },
     { item: "استراکچر و متعلقات نصب", qty: "بر اساس جانمایی", spec: "سقف / زمین / ترکیبی", reason: "مطابق محل نصب، جهت پنل و شرایط اجرای پروژه" },
     ...distributedRows
   ];
@@ -72,7 +72,7 @@ export function buildFinalEngineeringDelivery({ domain, project = {}, summary = 
     { item: "اینورتر برق اضطراری", qty: safeText(result?.inverter?.count, 1) + " عدد", spec: `${safeText(result?.inverter?.ratedPowerW, "-")} وات`, reason: "پوشش توان دائم و توان لحظه‌ای بارهای ضروری" },
     { item: "باتری منتخب", qty: safeText(result?.battery?.totalCount, "-") + " عدد", spec: batterySpecText(result?.battery), reason: `${batteryNoteText(result?.battery)} برای رسیدن به ولتاژ و ظرفیت مورد نیاز` },
     { item: "زمان برق اضطراری مورد نیاز", qty: `${safeText(result?.settings?.requiredEmergencyHours, 2)} ساعت`, spec: "بر اساس بار ضروری", reason: "در ظرفیت باتری، ضریب اطمینان و عمق دشارژ لحاظ شده است" },
-    { item: "تابلو و حفاظت برق اضطراری", qty: "۱ مجموعه", spec: `DC ${safeText(result?.protection?.dcBreakerA, "-")}A / AC ${safeText(result?.protection?.acBreakerA, "-")}A`, reason: "حفاظت باتری، خروجی AC، ارتینگ، کلید جداساز و حفاظت اضافه‌جریان" },
+    { item: "تابلو و حفاظت برق اضطراری", qty: "1 مجموعه", spec: `DC ${safeText(result?.protection?.dcBreakerA, "-")}A / AC ${safeText(result?.protection?.acBreakerA, "-")}A`, reason: "حفاظت باتری، خروجی AC، ارتینگ، کلید جداساز و حفاظت اضافه‌جریان" },
     { item: "کابل و متعلقات اجرا", qty: "طبق مسیر اجرا", spec: safeText(result?.cable?.recommendedSize, "محاسبه‌شده"), reason: "انتخاب بر اساس جریان، افت ولتاژ و طول مسیر" }
   ];
 

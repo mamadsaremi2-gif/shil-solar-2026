@@ -1,4 +1,4 @@
-const faNumber = (value) => Number(value || 0).toLocaleString("fa-IR");
+const faNumber = (value) => Number(value || 0).toLocaleString("en-US");
 
 function readLiveSolarDesign() {
   try {

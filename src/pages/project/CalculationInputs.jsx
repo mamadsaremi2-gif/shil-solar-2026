@@ -15,8 +15,8 @@ function readDraft(key) {
 
 function normalizePersianInput(value) {
   return String(value ?? "")
-    .replace(/[۰-۹]/g, (d) => "۰۱۲۳۴۵۶۷۸۹".indexOf(d))
-    .replace(/[٠-٩]/g, (d) => "٠١٢٣٤٥٦٧٨٩".indexOf(d))
+    .replace(/[\u06F0-\u06F9]/g, (d) => String(d.charCodeAt(0) - 0x06F0))
+    .replace(/[\u0660-\u0669]/g, (d) => String(d.charCodeAt(0) - 0x0660))
     .replace(/٫/g, ".")
     .replace(/٬/g, "")
     .replace(/,/g, "")
@@ -71,14 +71,15 @@ function resolveEffectiveDomain({ domain, method, effectivePanelPowerW, projectP
 }
 
 function buildAutonomySnapshot({ domain, method, manualHours, autonomyHours, autonomyDays, forceAutonomyBattery }) {
-  const hours = Math.max(0, toNumber(autonomyHours, 0));
-  const days = Math.max(0, toNumber(autonomyDays, 0));
+  const inputHours = Math.max(0, toNumber(autonomyHours, 0));
+  const inputDays = Math.max(0, toNumber(autonomyDays, 0));
   const manualBackupHours = domain === "emergency" ? Math.max(0, toNumber(manualHours, 0)) : 0;
-  const totalHours = Number(Math.max(hours, days * 24, manualBackupHours).toFixed(2));
-  const isRequired = Boolean(forceAutonomyBattery) || totalHours > 0 || domain === "emergency";
+  const effectiveHours = domain === "emergency" ? Math.max(inputHours, manualBackupHours) : inputHours;
+  const totalHours = Number((effectiveHours + inputDays * 24).toFixed(2));
+  const isRequired = Boolean(forceAutonomyBattery) || effectiveHours > 0 || inputDays > 0 || domain === "emergency";
   const reason = domain === "emergency"
     ? "emergency_backup_required"
-    : totalHours > 0
+    : effectiveHours > 0 || inputDays > 0
       ? "autonomy_required"
       : forceAutonomyBattery
         ? "user_requested_storage"
@@ -86,10 +87,11 @@ function buildAutonomySnapshot({ domain, method, manualHours, autonomyHours, aut
   return {
     required: isRequired,
     reason,
-    hours: totalHours,
-    days: Number((totalHours / 24).toFixed(2)),
-    inputHours: hours,
-    inputDays: days,
+    hours: Number(effectiveHours.toFixed(2)),
+    days: Number(inputDays.toFixed(2)),
+    totalHours,
+    inputHours,
+    inputDays,
     backupHours: manualBackupHours,
     source: method === "solar_panel_power" ? "pv_generation_route" : "load_route",
   };
@@ -352,7 +354,7 @@ export default function CalculationInputs() {
   const contextScenarioLabel = scenario?.title || "دستی";
   const contextCityLabel = environment?.city || "اصفهان";
   const manualVoltageNumber = toNumber(manualVoltage || 220, 220);
-  const manualPhaseLabel = manualVoltageNumber >= 380 ? "۳۸۰ ولت سه‌فاز" : "۲۲۰ ولت تک‌فاز";
+  const manualPhaseLabel = manualVoltageNumber >= 380 ? "380 ولت سه‌فاز" : "220 ولت تک‌فاز";
   const currentDerivedPowerW = Math.round(toNumber(manualCurrentA, 0) * manualVoltageNumber * (manualVoltageNumber >= 380 ? Math.sqrt(3) : 1));
   const selectedEquipmentTitles = selectedItems.map((item) => item.title).filter(Boolean).join("، ");
   const equipmentStats = React.useMemo(() => {
@@ -657,7 +659,7 @@ export default function CalculationInputs() {
       return;
     }
     if (method === "solar_panel_power" && isUtilityPanelScale && !isUtilityRoute) {
-      setScaleWarning("توان موثر پنل‌ها از ۳۰kW عبور کرده است؛ خروجی این مرحله به صورت خودکار به تنظیمات سیستم نیروگاهی منتقل می‌شود.");
+      setScaleWarning("توان موثر پنل‌ها از 30kW عبور کرده است؛ خروجی این مرحله به صورت خودکار به تنظیمات سیستم نیروگاهی منتقل می‌شود.");
     }
 
     if (method !== "solar_panel_power") {
@@ -777,7 +779,7 @@ export default function CalculationInputs() {
           <section className="shil-env-card shil-equipment-picker-card">
             <h3 className="shil-section-title">لیست تجهیزات شما را مشخص کنید</h3>
             <button type="button" className="shil-equipment-field" onClick={() => setIsEquipmentPickerOpen((v) => !v)}>
-              <span>{isReadyScenarioEquipmentFlow ? "اصلاح تجهیزات سناریوی انتخابی" : "انتخاب از بانک ۲۵۰ تجهیز"}</span>
+              <span>{isReadyScenarioEquipmentFlow ? "اصلاح تجهیزات سناریوی انتخابی" : "انتخاب از بانک 250 تجهیز"}</span>
               <strong>{selectedItems.length ? `${selectedItems.length} تجهیز انتخاب شده` : "باز کردن لیست"}</strong>
             </button>
 
@@ -832,7 +834,7 @@ export default function CalculationInputs() {
               <>
                 <div className="shil-form-grid">
                   <label>توان همزمان/پیک مصرف W<input className="shil-input" value={profilePowerW} onChange={(e) => setProfilePowerW(e.target.value)} placeholder="مثلاً 3500" inputMode="numeric" /></label>
-                  <label>ولتاژ AC<select className="shil-input" value={profileVoltage} onChange={(e) => setProfileVoltage(e.target.value)}><option value="220">۲۲۰ ولت تک‌فاز</option><option value="380">۳۸۰ ولت سه‌فاز</option></select></label>
+                  <label>ولتاژ AC<select className="shil-input" value={profileVoltage} onChange={(e) => setProfileVoltage(e.target.value)}><option value="220">220 ولت تک‌فاز</option><option value="380">380 ولت سه‌فاز</option></select></label>
                   <label>ضریب راه‌اندازی/پیک<input className="shil-input" value={profileStartFactor} onChange={(e) => setProfileStartFactor(e.target.value)} placeholder="مثلاً 1.6" inputMode="decimal" /></label>
                   <label>مصرف صبح kWh<input className="shil-input" value={profileMorningKWh} onChange={(e) => setProfileMorningKWh(e.target.value)} inputMode="decimal" /></label>
                   <label>مصرف ظهر kWh<input className="shil-input" value={profileNoonKWh} onChange={(e) => setProfileNoonKWh(e.target.value)} inputMode="decimal" /></label>
@@ -856,7 +858,7 @@ export default function CalculationInputs() {
                   <label>ساعات آفتاب مؤثر PSH<input className="shil-input" value={psh} onChange={(e) => setPsh(e.target.value)} placeholder={`از شرایط محیطی: ${envSolarDefaults.psh}`} inputMode="decimal" /></label>
                   <label>تلفات کل سیستم ٪<input className="shil-input" value={lossPercent} onChange={(e) => setLossPercent(e.target.value)} placeholder={`از شرایط محیطی: ${envSolarDefaults.totalLoss}%`} inputMode="decimal" /></label>
                   <label>راندمان مؤثر سیستم ٪<input className="shil-input" value={(100 - toNumber(lossPercent, 0)).toFixed(1)} onChange={(e) => { const efficiency = Math.max(5, Math.min(100, toNumber(e.target.value, 0))); setLossPercent(String((100 - efficiency).toFixed(1))); }} placeholder="محاسبه از شرایط محیطی" inputMode="decimal" /></label>
-                  <label>مسیر خروجی AC<select className="shil-input" value={acVoltageRoute} onChange={(e) => setAcVoltageRoute(e.target.value)}><option value="220">۲۲۰ ولت تک‌فاز</option><option value="380">۳۸۰ ولت سه‌فاز</option></select></label>
+                  <label>مسیر خروجی AC<select className="shil-input" value={acVoltageRoute} onChange={(e) => setAcVoltageRoute(e.target.value)}><option value="220">220 ولت تک‌فاز</option><option value="380">380 ولت سه‌فاز</option></select></label>
                 </div>
                 <h3 className="shil-section-title">نتایج توان پنل خورشیدی</h3>
                 <div className="shil-summary-grid">
@@ -866,7 +868,7 @@ export default function CalculationInputs() {
                   <div><span>راندمان مؤثر</span><strong>{(100 - toNumber(lossPercent, 0)).toFixed(1)}٪</strong></div>
                   <div><span>جهت و زاویه مطابق شرایط محیطی</span><strong>{envSolarDefaults.orientation.toFixed(1)}٪</strong></div>
                 </div>
-                {isUtilityPanelScale && !isUtilityRoute ? (<div className="shil-inline-warning"><strong>توان موثر بالای ۳۰kW است؛ ادامه این ورودی در صفحه تنظیمات نیروگاهی انجام می‌شود.</strong></div>) : null}
+                {isUtilityPanelScale && !isUtilityRoute ? (<div className="shil-inline-warning"><strong>توان موثر بالای 30kW است؛ ادامه این ورودی در صفحه تنظیمات نیروگاهی انجام می‌شود.</strong></div>) : null}
               </>
             ) : (
               <div className="shil-form-grid">
@@ -874,7 +876,7 @@ export default function CalculationInputs() {
                 {method === "power" ? <label>توان مدنظر پروژه W<input className="shil-input" value={manualPowerW} onChange={(e) => setManualPowerW(e.target.value)} placeholder="مثلاً 3500" inputMode="numeric" /></label> : null}
                 {method === "current" ? <label>جریان کل A<input className="shil-input" value={manualCurrentA} onChange={(e) => setManualCurrentA(e.target.value)} placeholder="مثلاً 16" inputMode="decimal" /></label> : null}
                 {(method === "power" || method === "current") ? (
-                  <label>ولتاژ شبکه<select className="shil-input" value={manualVoltage} onChange={(e) => setManualVoltage(e.target.value)}><option value="220">۲۲۰ ولت تک‌فاز</option><option value="380">۳۸۰ ولت سه‌فاز</option></select></label>
+                  <label>ولتاژ شبکه<select className="shil-input" value={manualVoltage} onChange={(e) => setManualVoltage(e.target.value)}><option value="220">220 ولت تک‌فاز</option><option value="380">380 ولت سه‌فاز</option></select></label>
                 ) : (
                   <label>ولتاژ AC<input className="shil-input" value={manualVoltage} onChange={(e) => setManualVoltage(e.target.value)} inputMode="numeric" /></label>
                 )}
@@ -958,7 +960,7 @@ export default function CalculationInputs() {
                     {isMotor ? (
                       <label className="shil-check-row">
                         <input type="checkbox" checked={Boolean(override.hasSoftStarter)} onChange={(e) => patchOverride(item.id, { hasSoftStarter: e.target.checked })} />
-                        سافت‌استارتر دارد؛ جریان راه‌اندازی از ۲.۵× به ۱.۲× جریان نامی کاهش یابد
+                        سافت‌استارتر دارد؛ جریان راه‌اندازی از 2.5× به 1.2× جریان نامی کاهش یابد
                       </label>
                     ) : showExpert ? (
                       <div className="shil-load-kind-note">نوع بار: مقاومتی/الکترونیکی</div>

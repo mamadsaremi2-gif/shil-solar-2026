@@ -1,0 +1,92 @@
+
+/* SHIL Environment Map Pin - clean final */
+.shil-map-container,
+.shil-env-location-map {
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.shil-env-location-map img,
+.shil-map-container img {
+  width: 100% !important;
+  display: block !important;
+}
+
+.shil-map-pin {
+  position: absolute !important;
+  width: 38px !important;
+  height: 38px !important;
+  transform: translate(-50%, -100%) !important;
+  z-index: 80 !important;
+  pointer-events: none !important;
+  filter: drop-shadow(0 0 12px rgba(199,125,255,.98)) !important;
+}
+
+.shil-map-pin::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  border-radius: 50% 50% 50% 0 !important;
+  transform: rotate(-45deg) !important;
+  background:
+    radial-gradient(circle at 52% 48%, rgba(255,255,255,.98) 0 16%, transparent 17%),
+    linear-gradient(145deg, #f4d2ff, #c77dff 52%, #7a20d8) !important;
+  border: 2px solid rgba(255,255,255,.92) !important;
+  box-shadow:
+    0 0 8px #dca2ff,
+    0 0 20px rgba(199,125,255,.95),
+    0 0 42px rgba(199,125,255,.68),
+    inset 0 1px 4px rgba(255,255,255,.75) !important;
+}
+
+.shil-map-pin-core {
+  position: absolute !important;
+  left: 50% !important;
+  top: 38% !important;
+  width: 11px !important;
+  height: 11px !important;
+  border-radius: 999px !important;
+  transform: translate(-50%, -50%) !important;
+  background: rgba(255,255,255,.98) !important;
+  box-shadow: 0 0 10px rgba(255,255,255,.9) !important;
+  z-index: 2 !important;
+}
+
+.shil-map-pin-radar,
+.shil-map-pin::after {
+  content: "" !important;
+  position: absolute !important;
+  left: 50% !important;
+  top: 100% !important;
+  width: 64px !important;
+  height: 64px !important;
+  border-radius: 999px !important;
+  transform: translate(-50%, -42%) !important;
+  border: 2px solid rgba(213,143,255,.72) !important;
+  box-shadow:
+    0 0 14px rgba(199,125,255,.78),
+    inset 0 0 18px rgba(199,125,255,.30) !important;
+  background: radial-gradient(circle, rgba(199,125,255,.20), transparent 62%) !important;
+  z-index: -1 !important;
+}
+
+.shil-map-label {
+  position: absolute !important;
+  transform: translate(16px, -82px) !important;
+  z-index: 82 !important;
+  min-width: 78px !important;
+  max-width: 145px !important;
+  padding: 7px 10px !important;
+  border-radius: 12px !important;
+  background: rgba(18, 30, 16, .72) !important;
+  border: 1px solid rgba(255,255,255,.30) !important;
+  backdrop-filter: blur(12px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(160%) !important;
+  color: #fff !important;
+  font-weight: 900 !important;
+  font-size: 12px !important;
+  line-height: 1.55 !important;
+  text-align: center !important;
+  box-shadow: 0 8px 22px rgba(0,0,0,.35) !important;
+  pointer-events: none !important;
+}

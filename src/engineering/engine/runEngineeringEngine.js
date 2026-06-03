@@ -1,3 +1,7 @@
+import { runEngineeringPipeline } from "../index.js";
+
 export function runEngineeringEngine(input = {}, options = {}) {
-  return { status: "disabled", valid: true, canContinue: true, input, options, warnings: [], explanations: ["Engineering engine disabled for clean rebuild."] };
+  return runEngineeringPipeline(input, options);
 }
+
+export default runEngineeringEngine;

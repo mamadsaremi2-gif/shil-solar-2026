@@ -5,7 +5,7 @@ import ProjectMiniRail from "../components/ProjectMiniRail.jsx";
 import { consumerEquipmentLibrary, searchConsumerEquipment } from "../data/catalogs/consumerEquipmentLibrary.js";
 import { buildScenarioCalculationInput } from "../core/scenario/scenarioToEngineeringForm.js";
 import { METHOD_LABELS, persistSurfaceLoadPreview as persistLoadEngineResult, runSurfaceLoadPreview as runLoadEngine, runSurfacePvPreview as runUnifiedPvForUi } from "../calculationGateway/surfacePreviewData.js";
-import { SHIL_SOLAR_PANELS } from "../data/shilSolarBanks.js";
+import { SHIL_SOLAR_PANELS } from "../engineering/bank/index.js";
 import { isScenarioFlowFor, startUtilityGateway } from "../workflow/flowIsolation.js";
 
 function readDraft(key) {
@@ -850,13 +850,19 @@ export default function CalculationInputs() {
             ) : method === "solar_panel_power" ? (
               <>
                 <div className="shil-form-grid">
-                  <label>بانک کامل پنل خورشیدی<select className="shil-input" value={selectedPanelId} onChange={(e) => setSelectedPanelId(e.target.value)}>{SHIL_SOLAR_PANELS.map((panel) => <option key={panel.id} value={panel.id}>{panel.title} / {panel.powerW}W / {panel.type}</option>)}</select></label>
-                  <label>توان هر پنل W<input className="shil-input" value={panelPowerW} readOnly /></label>
+                  <label>بانک کامل پنل خورشیدی<select className="shil-input" value={selectedPanelId} onChange={(e) => setSelectedPanelId(e.target.value)}>{SHIL_SOLAR_PANELS.map((panel) => <option key={panel.id} value={panel.id}>{panel.title} / {panel.powerW}W / {panel.cellType || panel.engineeringClass}</option>)}</select></label>
+                  <label>توان دقیق هر پنل W<input className="shil-input" value={panelPowerW} readOnly /></label>
                   <label>تعداد پنل<input className="shil-input" value={panelCount} onChange={(e) => setPanelCount(e.target.value)} placeholder="مثلاً 24" inputMode="numeric" /></label>
                   <label>ساعات آفتاب مؤثر PSH<input className="shil-input" value={psh} onChange={(e) => setPsh(e.target.value)} placeholder={`از شرایط محیطی: ${envSolarDefaults.psh}`} inputMode="decimal" /></label>
                   <label>تلفات کل سیستم ٪<input className="shil-input" value={lossPercent} onChange={(e) => setLossPercent(e.target.value)} placeholder={`از شرایط محیطی: ${envSolarDefaults.totalLoss}%`} inputMode="decimal" /></label>
                   <label>راندمان مؤثر سیستم ٪<input className="shil-input" value={(100 - toNumber(lossPercent, 0)).toFixed(1)} onChange={(e) => { const efficiency = Math.max(5, Math.min(100, toNumber(e.target.value, 0))); setLossPercent(String((100 - efficiency).toFixed(1))); }} placeholder="محاسبه از شرایط محیطی" inputMode="decimal" /></label>
                   <label>مسیر خروجی AC<select className="shil-input" value={acVoltageRoute} onChange={(e) => setAcVoltageRoute(e.target.value)}><option value="220">۲۲۰ ولت تک‌فاز</option><option value="380">۳۸۰ ولت سه‌فاز</option></select></label>
+                </div>
+                <div className="shil-summary-grid shil-bank-datasheet-grid">
+                  <div><span>Voc / Vmp</span><strong>{enValue(selectedPanel.voc, "V", 2)} / {enValue(selectedPanel.vmp, "V", 2)}</strong></div>
+                  <div><span>Isc / Imp</span><strong>{enValue(selectedPanel.isc, "A", 2)} / {enValue(selectedPanel.imp, "A", 2)}</strong></div>
+                  <div><span>نوع سلول</span><strong>{selectedPanel.cellType || "-"}</strong></div>
+                  <div><span>کاربرد</span><strong>{selectedPanel.useCase || "-"}</strong></div>
                 </div>
                 <h3 className="shil-section-title">نتایج توان پنل خورشیدی</h3>
                 <div className="shil-summary-grid">

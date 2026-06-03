@@ -3,8 +3,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import EngineeringPageShell from "../../components/EngineeringPageShell.jsx";
 import { approveProjectStep } from "../../workflow/projectWorkflow.js";
 import { getProjectPath, getSystemSettingsDraft, getSystemSetupHandoff, normalizeProjectDomain } from "../../engines/projectFlowData.js";
+import { getProjectDesignState } from "../../engineering/core/projectDesignState.js";
 
-const faNumber = (value, digits = 0) => Number(value || 0).toLocaleString("fa-IR", { maximumFractionDigits: digits });
+const faNumber = (value, digits = 0) => Number(value || 0).toLocaleString("en-US", { maximumFractionDigits: digits });
 const titleOf = (item) => item?.label || item?.title || item?.name || item?.model || "-";
 
 const DOMAIN_TITLE = {
@@ -75,8 +76,9 @@ export default function SummaryPage() {
   const params = useParams();
   const projectPath = useMemo(() => getProjectPath(), []);
   const handoff = useMemo(() => getSystemSetupHandoff(), []);
+  const centralState = useMemo(() => getProjectDesignState(), []);
   const draft = useMemo(() => getSystemSettingsDraft(), []);
-  const domain = normalizeProjectDomain({ ...handoff, domain: params.domain || draft?.domain || projectPath.domain });
+  const domain = normalizeProjectDomain({ ...handoff, domain: params.domain || centralState?.domain || draft?.domain || projectPath.domain });
 
   const run = () => {
     approveProjectStep("summary");
@@ -85,7 +87,7 @@ export default function SummaryPage() {
 
   return <EngineeringPageShell title={DOMAIN_TITLE[domain] || DOMAIN_TITLE.solar} activeStep="summary" backTo={`/new-project/system/${domain}`}>
     <div className="shil-page-scroll shil-summary-page">
-      {domain === "solar" ? <SolarSummary handoff={handoff} draft={draft} /> : null}
+      {domain === "solar" ? <SolarSummary handoff={handoff} draft={centralState?.design ? { designResult: centralState.design } : draft} /> : null}
       {domain === "emergency" ? <EmergencySummary draft={draft || {}} /> : null}
       {domain === "utility" ? <UtilitySummary draft={draft || {}} /> : null}
       <section className="shil-section-card">

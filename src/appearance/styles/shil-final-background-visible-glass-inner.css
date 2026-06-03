@@ -1,0 +1,344 @@
+
+/* =========================================================
+   SHIL FINAL BACKGROUND VISIBLE + INNER MATTE GLASS
+   1) Dashboard / New Project: no glass panels at all, only icons on main background.
+   2) Other pages: no solid white page background; main background must be visible.
+   3) Only inner cards/blocks get semi-matte glass.
+   4) Remove remaining separator/border/neon lines.
+   ========================================================= */
+
+:root {
+  --shil-main-bg-url: url('/assets/shil/background/main/shil-main-bg.webp');
+  --shil-bg-fallback: #dfe7ee;
+
+  --shil-inner-glass: rgba(255,255,255,.34);
+  --shil-inner-glass-strong: rgba(255,255,255,.44);
+  --shil-field-glass: rgba(255,255,255,.26);
+  --shil-field-glass-strong: rgba(255,255,255,.36);
+
+  --shil-soft-shadow: 0 16px 38px rgba(12,28,46,.11), inset 0 1px 0 rgba(255,255,255,.46);
+  --shil-field-shadow: 0 8px 20px rgba(12,28,46,.065), inset 0 1px 0 rgba(255,255,255,.38);
+
+  --shil-text: #0d2535;
+  --shil-muted: #526a78;
+}
+
+/* Main background visible globally */
+html,
+body,
+#root {
+  min-height: 100% !important;
+  background-color: var(--shil-bg-fallback) !important;
+}
+
+body:not(.login-page):not(.welcome-page),
+body:not(.login-page):not(.welcome-page) #root,
+body:not(.login-page):not(.welcome-page) .app,
+body:not(.login-page):not(.welcome-page) .shil-app,
+body:not(.login-page):not(.welcome-page) .mobile-app,
+body:not(.login-page):not(.welcome-page) .app-shell,
+body:not(.login-page):not(.welcome-page) .shil-shell,
+body:not(.login-page):not(.welcome-page) .mobile-shell,
+body:not(.login-page):not(.welcome-page) .page,
+body:not(.login-page):not(.welcome-page) .screen,
+body:not(.login-page):not(.welcome-page) .mobile-page,
+body:not(.login-page):not(.welcome-page) .shil-page,
+body:not(.login-page):not(.welcome-page) .shil-main,
+body:not(.login-page):not(.welcome-page) main {
+  background-color: var(--shil-bg-fallback) !important;
+  background-image: var(--shil-main-bg-url) !important;
+  background-size: cover !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  background-attachment: fixed !important;
+  color: var(--shil-text) !important;
+}
+
+/* Remove any white page canvas overlays so bg remains visible */
+body:not(.login-page):not(.welcome-page) .page::before,
+body:not(.login-page):not(.welcome-page) .page::after,
+body:not(.login-page):not(.welcome-page) .screen::before,
+body:not(.login-page):not(.welcome-page) .screen::after,
+body:not(.login-page):not(.welcome-page) .mobile-page::before,
+body:not(.login-page):not(.welcome-page) .mobile-page::after,
+body:not(.login-page):not(.welcome-page) .shil-page::before,
+body:not(.login-page):not(.welcome-page) .shil-page::after,
+body:not(.login-page):not(.welcome-page) main::before,
+body:not(.login-page):not(.welcome-page) main::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* Remove all separator lines, borders, outlines, neon divider systems */
+body:not(.login-page):not(.welcome-page) * {
+  outline: none !important;
+  text-shadow: none !important;
+}
+
+body:not(.login-page):not(.welcome-page) *::before,
+body:not(.login-page):not(.welcome-page) *::after {
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+body:not(.login-page):not(.welcome-page) h1,
+body:not(.login-page):not(.welcome-page) h2,
+body:not(.login-page):not(.welcome-page) h3,
+body:not(.login-page):not(.welcome-page) h4,
+body:not(.login-page):not(.welcome-page) h5,
+body:not(.login-page):not(.welcome-page) h6,
+body:not(.login-page):not(.welcome-page) .shil-section-title,
+body:not(.login-page):not(.welcome-page) .shil-title,
+body:not(.login-page):not(.welcome-page) .title {
+  border: 0 !important;
+  outline: 0 !important;
+  background-image: none !important;
+}
+
+/* Dashboard / New Project: no glass, no panels, no blocks, only icons directly on bg */
+body:not(.login-page):not(.welcome-page) .dashboard-page,
+body:not(.login-page):not(.welcome-page) .dashboard-screen,
+body:not(.login-page):not(.welcome-page) .shil-dashboard,
+body:not(.login-page):not(.welcome-page) .new-project-page,
+body:not(.login-page):not(.welcome-page) .new-project-screen,
+body:not(.login-page):not(.welcome-page) [class*="Dashboard"],
+body:not(.login-page):not(.welcome-page) [class*="dashboard"],
+body:not(.login-page):not(.welcome-page) [class*="NewProject"],
+body:not(.login-page):not(.welcome-page) [class*="new-project"] {
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+}
+
+/* Remove every container behind icons on dashboard/new-project */
+body:not(.login-page):not(.welcome-page) .dashboard-page .shil-card,
+body:not(.login-page):not(.welcome-page) .dashboard-page .shil-panel,
+body:not(.login-page):not(.welcome-page) .dashboard-page .shil-block,
+body:not(.login-page):not(.welcome-page) .dashboard-page section,
+body:not(.login-page):not(.welcome-page) .dashboard-page article,
+body:not(.login-page):not(.welcome-page) .dashboard-screen .shil-card,
+body:not(.login-page):not(.welcome-page) .dashboard-screen .shil-panel,
+body:not(.login-page):not(.welcome-page) .dashboard-screen .shil-block,
+body:not(.login-page):not(.welcome-page) .dashboard-screen section,
+body:not(.login-page):not(.welcome-page) .dashboard-screen article,
+body:not(.login-page):not(.welcome-page) .shil-dashboard .shil-card,
+body:not(.login-page):not(.welcome-page) .shil-dashboard .shil-panel,
+body:not(.login-page):not(.welcome-page) .shil-dashboard .shil-block,
+body:not(.login-page):not(.welcome-page) .shil-dashboard section,
+body:not(.login-page):not(.welcome-page) .shil-dashboard article,
+body:not(.login-page):not(.welcome-page) .new-project-page .shil-card,
+body:not(.login-page):not(.welcome-page) .new-project-page .shil-panel,
+body:not(.login-page):not(.welcome-page) .new-project-page .shil-block,
+body:not(.login-page):not(.welcome-page) .new-project-page section,
+body:not(.login-page):not(.welcome-page) .new-project-page article,
+body:not(.login-page):not(.welcome-page) .new-project-screen .shil-card,
+body:not(.login-page):not(.welcome-page) .new-project-screen .shil-panel,
+body:not(.login-page):not(.welcome-page) .new-project-screen .shil-block,
+body:not(.login-page):not(.welcome-page) .new-project-screen section,
+body:not(.login-page):not(.welcome-page) .new-project-screen article,
+body:not(.login-page):not(.welcome-page) [class*="Dashboard"] .shil-card,
+body:not(.login-page):not(.welcome-page) [class*="Dashboard"] .shil-panel,
+body:not(.login-page):not(.welcome-page) [class*="Dashboard"] section,
+body:not(.login-page):not(.welcome-page) [class*="dashboard"] .shil-card,
+body:not(.login-page):not(.welcome-page) [class*="dashboard"] .shil-panel,
+body:not(.login-page):not(.welcome-page) [class*="dashboard"] section,
+body:not(.login-page):not(.welcome-page) [class*="NewProject"] .shil-card,
+body:not(.login-page):not(.welcome-page) [class*="NewProject"] .shil-panel,
+body:not(.login-page):not(.welcome-page) [class*="NewProject"] section,
+body:not(.login-page):not(.welcome-page) [class*="new-project"] .shil-card,
+body:not(.login-page):not(.welcome-page) [class*="new-project"] .shil-panel,
+body:not(.login-page):not(.welcome-page) [class*="new-project"] section {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Remove pseudo lines in dashboard/new-project */
+body:not(.login-page):not(.welcome-page) .dashboard-page *::before,
+body:not(.login-page):not(.welcome-page) .dashboard-page *::after,
+body:not(.login-page):not(.welcome-page) .dashboard-screen *::before,
+body:not(.login-page):not(.welcome-page) .dashboard-screen *::after,
+body:not(.login-page):not(.welcome-page) .shil-dashboard *::before,
+body:not(.login-page):not(.welcome-page) .shil-dashboard *::after,
+body:not(.login-page):not(.welcome-page) .new-project-page *::before,
+body:not(.login-page):not(.welcome-page) .new-project-page *::after,
+body:not(.login-page):not(.welcome-page) .new-project-screen *::before,
+body:not(.login-page):not(.welcome-page) .new-project-screen *::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* Icon grids are transparent */
+body:not(.login-page):not(.welcome-page) .shil-ios-grid,
+body:not(.login-page):not(.welcome-page) .dashboard-icons,
+body:not(.login-page):not(.welcome-page) .dashboard-grid,
+body:not(.login-page):not(.welcome-page) .new-project-grid,
+body:not(.login-page):not(.welcome-page) .new-project-grid-3x3,
+body:not(.login-page):not(.welcome-page) .project-path-icons {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Icons keep their own button style only */
+body:not(.login-page):not(.welcome-page) .shil-ios-icon-link {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-ios-icon-img {
+  background: rgba(241,247,251,.84) !important;
+  background-image: none !important;
+  border: 1px solid rgba(188,139,255,.45) !important;
+  box-shadow: 0 0 8px rgba(199,125,255,.24), 0 10px 22px rgba(14,35,55,.13), inset 0 1px 0 rgba(255,255,255,.82) !important;
+  backdrop-filter: blur(10px) saturate(130%) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(130%) !important;
+}
+
+/* Other pages: only inner content blocks are semi matte glass */
+body:not(.login-page):not(.welcome-page) .shil-env-card,
+body:not(.login-page):not(.welcome-page) .shil-summary-card,
+body:not(.login-page):not(.welcome-page) .shil-final-card,
+body:not(.login-page):not(.welcome-page) .shil-report-card,
+body:not(.login-page):not(.welcome-page) .shil-output-card,
+body:not(.login-page):not(.welcome-page) .shil-form-card,
+body:not(.login-page):not(.welcome-page) .method-card,
+body:not(.login-page):not(.welcome-page) .equipment-card,
+body:not(.login-page):not(.welcome-page) .summary-section,
+body:not(.login-page):not(.welcome-page) .report-section,
+body:not(.login-page):not(.welcome-page) .project-card:not(.dashboard-card):not(.new-project-card),
+body:not(.login-page):not(.welcome-page) .route-card,
+body:not(.login-page):not(.welcome-page) .project-type-card,
+body:not(.login-page):not(.welcome-page) section:not(.dashboard-card):not(.new-project-card),
+body:not(.login-page):not(.welcome-page) article,
+body:not(.login-page):not(.welcome-page) div[class*="form-card"],
+body:not(.login-page):not(.welcome-page) div[class*="FormCard"],
+body:not(.login-page):not(.welcome-page) div[class*="summary"],
+body:not(.login-page):not(.welcome-page) div[class*="Summary"],
+body:not(.login-page):not(.welcome-page) div[class*="report"],
+body:not(.login-page):not(.welcome-page) div[class*="Report"],
+body:not(.login-page):not(.welcome-page) div[class*="calculation"],
+body:not(.login-page):not(.welcome-page) div[class*="Calculation"],
+body:not(.login-page):not(.welcome-page) div[class*="equipment"],
+body:not(.login-page):not(.welcome-page) div[class*="Equipment"] {
+  background: var(--shil-inner-glass) !important;
+  background-image: none !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: var(--shil-soft-shadow) !important;
+  backdrop-filter: blur(20px) saturate(135%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(135%) !important;
+}
+
+/* Generic shil cards on non-dashboard/non-new-project pages */
+body:not(.login-page):not(.welcome-page) .shil-page:not(.dashboard-page):not(.new-project-page) .shil-card,
+body:not(.login-page):not(.welcome-page) .shil-page:not(.dashboard-page):not(.new-project-page) .shil-panel,
+body:not(.login-page):not(.welcome-page) .shil-page:not(.dashboard-page):not(.new-project-page) .shil-block,
+body:not(.login-page):not(.welcome-page) .mobile-page:not(.dashboard-page):not(.new-project-page) .shil-card,
+body:not(.login-page):not(.welcome-page) .mobile-page:not(.dashboard-page):not(.new-project-page) .shil-panel,
+body:not(.login-page):not(.welcome-page) .mobile-page:not(.dashboard-page):not(.new-project-page) .shil-block {
+  background: var(--shil-inner-glass) !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: var(--shil-soft-shadow) !important;
+  backdrop-filter: blur(20px) saturate(135%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(135%) !important;
+}
+
+/* Fields/cells in other pages: inner matte glass, no lines */
+body:not(.login-page):not(.welcome-page) input,
+body:not(.login-page):not(.welcome-page) textarea,
+body:not(.login-page):not(.welcome-page) select,
+body:not(.login-page):not(.welcome-page) .shil-input,
+body:not(.login-page):not(.welcome-page) .shil-field,
+body:not(.login-page):not(.welcome-page) .shil-data-cell,
+body:not(.login-page):not(.welcome-page) .shil-metric,
+body:not(.login-page):not(.welcome-page) .shil-stat,
+body:not(.login-page):not(.welcome-page) .summary-item,
+body:not(.login-page):not(.welcome-page) .data-item,
+body:not(.login-page):not(.welcome-page) .metric-card,
+body:not(.login-page):not(.welcome-page) .result-card,
+body:not(.login-page):not(.welcome-page) .bank-card,
+body:not(.login-page):not(.welcome-page) .equipment-item,
+body:not(.login-page):not(.welcome-page) .calc-cell,
+body:not(.login-page):not(.welcome-page) .table-cell,
+body:not(.login-page):not(.welcome-page) td,
+body:not(.login-page):not(.welcome-page) th {
+  background: var(--shil-field-glass) !important;
+  background-image: none !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: var(--shil-field-shadow) !important;
+  backdrop-filter: blur(14px) saturate(125%) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(125%) !important;
+  color: var(--shil-text) !important;
+}
+
+/* Tables without separators */
+body:not(.login-page):not(.welcome-page) table,
+body:not(.login-page):not(.welcome-page) .table,
+body:not(.login-page):not(.welcome-page) [class*="table"],
+body:not(.login-page):not(.welcome-page) [class*="Table"] {
+  background: var(--shil-inner-glass) !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: var(--shil-soft-shadow) !important;
+  border-collapse: separate !important;
+  border-spacing: 0 8px !important;
+}
+
+/* Header/footer stays functional */
+body:not(.login-page):not(.welcome-page) .shil-header,
+body:not(.login-page):not(.welcome-page) .shil-footer {
+  border: 0 !important;
+}
+
+/* Text */
+body:not(.login-page):not(.welcome-page) p,
+body:not(.login-page):not(.welcome-page) span,
+body:not(.login-page):not(.welcome-page) label,
+body:not(.login-page):not(.welcome-page) small,
+body:not(.login-page):not(.welcome-page) div,
+body:not(.login-page):not(.welcome-page) a,
+body:not(.login-page):not(.welcome-page) li,
+body:not(.login-page):not(.welcome-page) td,
+body:not(.login-page):not(.welcome-page) th,
+body:not(.login-page):not(.welcome-page) strong,
+body:not(.login-page):not(.welcome-page) b {
+  color: var(--shil-text) !important;
+}
+
+body:not(.login-page):not(.welcome-page) small,
+body:not(.login-page):not(.welcome-page) .muted,
+body:not(.login-page):not(.welcome-page) .shil-muted,
+body:not(.login-page):not(.welcome-page) .hint {
+  color: var(--shil-muted) !important;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  body:not(.login-page):not(.welcome-page),
+  body:not(.login-page):not(.welcome-page) #root,
+  body:not(.login-page):not(.welcome-page) .app,
+  body:not(.login-page):not(.welcome-page) .shil-app,
+  body:not(.login-page):not(.welcome-page) .mobile-app,
+  body:not(.login-page):not(.welcome-page) .app-shell,
+  body:not(.login-page):not(.welcome-page) .shil-shell,
+  body:not(.login-page):not(.welcome-page) .mobile-shell,
+  body:not(.login-page):not(.welcome-page) .page,
+  body:not(.login-page):not(.welcome-page) .screen,
+  body:not(.login-page):not(.welcome-page) .mobile-page,
+  body:not(.login-page):not(.welcome-page) .shil-page,
+  body:not(.login-page):not(.welcome-page) .shil-main,
+  body:not(.login-page):not(.welcome-page) main {
+    background-attachment: scroll !important;
+  }
+}

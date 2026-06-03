@@ -25,7 +25,7 @@ const fallbackOptions = [
   {
     key: "utility",
     title: "نیروگاهی",
-    description: "درگاه مستقل طراحی نیروگاه خورشیدی بالای ۳۰kW تا ظرفیت‌های MW، شامل بلوک‌بندی، MV، ترانس و Grid Study مقدماتی",
+    description: "درگاه مستقل طراحی نیروگاه خورشیدی بالای 30kW تا ظرفیت‌های MW، شامل بلوک‌بندی، MV، ترانس و Grid Study مقدماتی",
     image: "/assets/shil/execution/utility-execution.png",
     calculationDomain: "utility",
     order: 3,

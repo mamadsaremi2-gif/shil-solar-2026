@@ -1,4 +1,4 @@
-import "../../mobile-ui/styles/globals.css";
+import "../../appearance/mobile-ui/styles/globals.css";
 
 export function MobileShell({ header, footer, children }) {
   return (

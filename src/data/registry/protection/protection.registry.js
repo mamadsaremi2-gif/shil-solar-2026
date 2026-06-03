@@ -1,4 +1,4 @@
-import { SHIL_SOLAR_PROTECTION_BANK } from '../../shilSolarBanks.js';
+import { SHIL_SOLAR_PROTECTION_BANK } from '../../../engineering/bank/index.js';
 import { normalizeEquipmentBank } from '../utils/normalizeEquipment.js';
 
 const flattenProtectionBank = (bank = {}) => Object.entries(bank).flatMap(([group, items]) =>
@@ -11,5 +11,5 @@ const flattenProtectionBank = (bank = {}) => Object.entries(bank).flatMap(([grou
 
 export const protectionRegistry = normalizeEquipmentBank(flattenProtectionBank(SHIL_SOLAR_PROTECTION_BANK), {
   category: 'protection',
-  source: 'src/data/shilSolarBanks.js',
+  source: 'src/engineering/bank',
 });

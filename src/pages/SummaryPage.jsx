@@ -4,7 +4,7 @@ import EngineeringPageShell from "../components/EngineeringPageShell.jsx";
 import { approveProjectStep } from "../workflow/projectWorkflow.js";
 import { getProjectPath, getSystemSettingsDraft, getSystemSetupHandoff, normalizeProjectDomain } from "../engines/projectFlowData.js";
 
-const faNumber = (value, digits = 0) => Number(value || 0).toLocaleString("fa-IR", { maximumFractionDigits: digits });
+const faNumber = (value, digits = 0) => Number(value || 0).toLocaleString("en-US", { maximumFractionDigits: digits });
 const titleOf = (item) => item?.label || item?.title || item?.name || item?.model || "-";
 
 const DOMAIN_TITLE = {

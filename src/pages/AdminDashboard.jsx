@@ -209,7 +209,7 @@ function RecordCard({ item, type, onPatch, onDelete, onReply }) {
       <div className="shil-admin-record-head">
         <div>
           <h3>{title}</h3>
-          <p>{item.userLogin || item.userId || "کاربر ناشناس"} · {item.createdAt ? new Date(item.createdAt).toLocaleString("fa-IR") : "بدون تاریخ"}</p>
+          <p>{item.userLogin || item.userId || "کاربر ناشناس"} · {item.createdAt ? new Date(item.createdAt).toLocaleString("en-US") : "بدون تاریخ"}</p>
         </div>
         <span>{type}</span>
       </div>
@@ -541,7 +541,7 @@ export default function AdminDashboard() {
               <article className="shil-thread-card" key={user.userId}>
                 <h3>{user.login || user.userId}</h3>
                 <p><strong>شناسه:</strong> {user.userId}</p>
-                <p><strong>نقش:</strong> {user.role} · <strong>آخرین فعالیت:</strong> {user.lastAt ? new Date(user.lastAt).toLocaleString("fa-IR") : "نامشخص"}</p>
+                <p><strong>نقش:</strong> {user.role} · <strong>آخرین فعالیت:</strong> {user.lastAt ? new Date(user.lastAt).toLocaleString("en-US") : "نامشخص"}</p>
                 <p>پروژه‌ها: {user.projects} · نظرات: {user.feedback} · پرسش‌ها: {user.assistant}</p>
                 <div className="shil-admin-actions-row compact">
                   <button type="button" onClick={() => downloadJson(`shil-user-${user.userId}.json`, exportUserBundle(user.userId))}>خروجی کاربر</button>
@@ -715,7 +715,7 @@ export default function AdminDashboard() {
               {snapshots.map((snapshot) => (
                 <article key={snapshot.id} className="shil-admin-snapshot">
                   <strong>{snapshot.label}</strong>
-                  <span>{new Date(snapshot.at).toLocaleString("fa-IR")}</span>
+                  <span>{new Date(snapshot.at).toLocaleString("en-US")}</span>
                   <button type="button" onClick={() => restoreSnapshot(snapshot.id)}>بازگردانی</button>
                 </article>
               ))}
@@ -725,7 +725,7 @@ export default function AdminDashboard() {
 
           <section className="shil-thread-list">
             <article className="shil-thread-card"><h3>آخرین نظرات</h3>{data.feedback.slice(0, 8).map((item) => <p key={item.id}><strong>{item.userLogin || item.userId}:</strong> {item.category} — {item.text}</p>)}{!data.feedback.length ? <p>هنوز نظری ثبت نشده است.</p> : null}</article>
-            <article className="shil-thread-card"><h3>لاگ تغییرات ادمین</h3>{audit.slice(0, 14).map((item) => <p key={item.id}><strong>{item.type}</strong> — {new Date(item.at).toLocaleString("fa-IR")}</p>)}{!audit.length ? <p>هنوز تغییری ثبت نشده است.</p> : null}</article>
+            <article className="shil-thread-card"><h3>لاگ تغییرات ادمین</h3>{audit.slice(0, 14).map((item) => <p key={item.id}><strong>{item.type}</strong> — {new Date(item.at).toLocaleString("en-US")}</p>)}{!audit.length ? <p>هنوز تغییری ثبت نشده است.</p> : null}</article>
           </section>
         </>
       ) : null}

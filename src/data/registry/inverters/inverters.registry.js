@@ -1,7 +1,7 @@
-import { SHIL_SOLAR_INVERTERS } from '../../shilSolarBanks.js';
+import { SHIL_SOLAR_INVERTERS } from '../../../engineering/bank/index.js';
 import { normalizeEquipmentBank } from '../utils/normalizeEquipment.js';
 
 export const inverterRegistry = normalizeEquipmentBank(SHIL_SOLAR_INVERTERS, {
   category: 'inverter',
-  source: 'src/data/shilSolarBanks.js',
+  source: 'src/engineering/bank',
 });

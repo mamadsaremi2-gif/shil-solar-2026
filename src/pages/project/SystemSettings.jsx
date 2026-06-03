@@ -6,9 +6,22 @@ import { getEnabledEquipment } from "../../data/registry/index.js";
 import { buildSolarSystemDesign } from "../../engines/solarDesignEngine.js";
 import { optionLabel } from "../../engines/solarBankRules.js";
 import { getProjectPath, getSystemSetupHandoff, normalizeProjectDomain, writeJson } from "../../engines/projectFlowData.js";
+import { buildProjectDesignState, saveProjectDesignState } from "../../engineering/core/projectDesignState.js";
 
-const faNumber = (value, digits = 0) => Number(value || 0).toLocaleString("fa-IR", { maximumFractionDigits: digits });
-const kw = (w) => `${faNumber(Math.round(Number(w || 0) / 10) / 100, 2)} کیلووات`;
+const toEnglishDigits = (value) => String(value ?? "")
+  .replace(/[۰-۹]/g, (d) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)))
+  .replace(/[٠-٩]/g, (d) => String("٠١٢٣٤٥٦٧٨٩".indexOf(d)));
+const enNumber = (value, digits = 0) => toEnglishDigits(Number(value || 0).toLocaleString("en-US", { maximumFractionDigits: digits }));
+const faNumber = enNumber;
+const kw = (w) => `${enNumber(Math.round(Number(w || 0) / 10) / 100, 2)} kW`;
+const whToKwh = (wh) => Math.round(Number(wh || 0) / 10) / 100;
+const compactEquipmentLabel = (item, kind) => {
+  if (!item) return "-";
+  if (kind === "panel") return `${enNumber(item.powerW || item.ratedPowerW)}W`;
+  if (kind === "inverter") return `${kw(item.ratedPowerW || item.powerW)} ${item.type ? `/${item.type}` : ""}`.trim();
+  if (kind === "battery") return `${enNumber(item.nominalVoltage || item.voltageV, 1)}V ${enNumber(item.capacityAh)}Ah`;
+  return optionLabel(item);
+};
 
 const METHOD_TITLES = {
   equipment: "لیست تجهیزات",
@@ -82,13 +95,23 @@ function MethodSummaryCard({ handoff }) {
   </section>;
 }
 
-function BankSelectCard({ title, subtitle, items, value, onChange, smartTitle, smartValue, disabled = false }) {
-  return <section className={`shil-section-card shil-config-block ${disabled ? "is-locked" : ""}`}>
+function BankSelectCard({ title, subtitle, items, value, onChange, smartTitle, smartValue, selectedItem, detailRows = [], disabled = false, kind = "equipment" }) {
+  const [open, setOpen] = useState(false);
+  const activeItem = selectedItem || items.find((item) => item.id === value) || null;
+  return <section className={`shil-section-card shil-config-block shil-bank-smart-card ${disabled ? "is-locked" : ""}`}>
     <div className="shil-section-head"><h2>{title}</h2><span>{subtitle}</span></div>
-    <select value={value || ""} onChange={(event) => onChange(event.target.value)} disabled={disabled}>
-      {items.map((item) => <option key={item.id} value={item.id}>{optionLabel(item)}</option>)}
+    <div className="shil-bank-selected-head">
+      <strong>{compactEquipmentLabel(activeItem, kind)}</strong>
+      <small>{smartValue}</small>
+    </div>
+    <select value={value || activeItem?.id || ""} onChange={(event) => onChange(event.target.value)} disabled={disabled}>
+      {items.map((item) => <option key={item.id} value={item.id}>{compactEquipmentLabel(item, kind)}</option>)}
     </select>
     <div className="shil-bank-smart-note"><span>پیشنهاد هوشمند</span><strong>{smartTitle}</strong><small>{smartValue}</small></div>
+    <button type="button" className="shil-soft-button shil-bank-detail-toggle" onClick={() => setOpen((v) => !v)}>{open ? "بستن دیتاشیت" : "نمایش جزییات دیتاشیت"}</button>
+    {open ? <div className="shil-summary-grid shil-bank-datasheet-grid">
+      {detailRows.filter(Boolean).map(([label, val]) => <div key={label}><span>{label}</span><strong>{val || "-"}</strong></div>)}
+    </div> : null}
   </section>;
 }
 
@@ -104,18 +127,58 @@ export default function SystemSettings() {
   const inverters = useMemo(() => getEnabledEquipment("inverters"), []);
   const batteries = useMemo(() => getEnabledEquipment("batteries"), []);
 
-  const initialNeedsBattery = Boolean(handoff?.systemHints?.needsBattery || handoff?.autonomy?.hours || handoff?.autonomy?.days);
-  const [systemType, setSystemType] = useState(() => handoff?.source?.scenario || (initialNeedsBattery ? "offgrid" : "ongrid"));
-  const [reserveFactor, setReserveFactor] = useState("1.2");
-  const [autonomyDays, setAutonomyDays] = useState(() => String(handoff?.autonomy?.days || (handoff?.autonomy?.hours ? Number(handoff.autonomy.hours) / 24 : 0)));
-  const [autonomyHours, setAutonomyHours] = useState(() => String(handoff?.autonomy?.hours || ""));
-  const [panelId, setPanelId] = useState(() => handoff?.routePayload?.panelId || handoff?.routePayload?.selectedPanelId || panels[0]?.id || "");
-  const [inverterId, setInverterId] = useState(() => inverters[0]?.id || "");
-  const [batteryId, setBatteryId] = useState(() => batteries[0]?.id || "");
+  const initialNeedsBattery = Boolean(handoff?.systemHints?.needsBattery || Number(handoff?.autonomy?.hours || 0) > 0 || Number(handoff?.autonomy?.days || 0) > 0);
+  const [systemType, setSystemType] = useState(() => {
+    const scenario = String(handoff?.source?.scenario || "").toLowerCase();
+    if (["offgrid", "hybrid", "ongrid"].includes(scenario)) return scenario;
+    return initialNeedsBattery ? "offgrid" : "ongrid";
+  });
+  const [designAdjustmentMode, setDesignAdjustmentMode] = useState("decrease");
+  const [designAdjustmentPercent, setDesignAdjustmentPercent] = useState("20");
+  const lockedAutonomyDays = String(handoff?.autonomy?.inputDays ?? handoff?.autonomy?.days ?? 0);
+  const lockedAutonomyHours = String(handoff?.autonomy?.inputHours ?? handoff?.autonomy?.hours ?? 0);
+  const [autonomyDays] = useState(() => lockedAutonomyDays);
+  const [autonomyHours] = useState(() => lockedAutonomyHours);
+  const [panelId, setPanelId] = useState(() => handoff?.routePayload?.panelId || handoff?.routePayload?.selectedPanelId || "");
+  const [inverterId, setInverterId] = useState("");
+  const [batteryId, setBatteryId] = useState("");
 
-  const settings = useMemo(() => ({ systemType, reserveFactor, autonomyDays, autonomyHours, panelId, inverterId, batteryId }), [systemType, reserveFactor, autonomyDays, autonomyHours, panelId, inverterId, batteryId]);
+  const settings = useMemo(() => ({ systemType, designAdjustmentPercent, designAdjustmentMode, reservePercent: designAdjustmentPercent, reserveMode: designAdjustmentMode, autonomyDays, autonomyHours, panelId, inverterId, batteryId }), [systemType, designAdjustmentPercent, designAdjustmentMode, autonomyDays, autonomyHours, panelId, inverterId, batteryId]);
   const design = useMemo(() => buildSolarSystemDesign({ handoff, settings, banks: { panels, inverters, batteries } }), [handoff, settings, panels, inverters, batteries]);
   const showBatteryBank = design.system.needsBattery;
+  const panelDetailRows = [
+    ["توان دقیق پنل", `${faNumber(design.panel?.powerW)} W`],
+    ["Vmp / Voc", `${faNumber(design.panel?.vmp, 2)}V / ${faNumber(design.panel?.voc, 2)}V`],
+    ["Imp / Isc", `${faNumber(design.panel?.imp, 2)}A / ${faNumber(design.panel?.isc, 2)}A`],
+    ["نوع سلول", design.panel?.cellType],
+    ["راندمان", design.panel?.efficiency ? `${faNumber(design.panel.efficiency * 100, 2)}%` : null],
+    ["ضریب دمایی Voc", design.panel?.tempCoeffVocPctC ? `${design.panel.tempCoeffVocPctC}%/C` : null],
+    ["ابعاد", design.panel?.dimensionsMm ? `${design.panel.dimensionsMm.length}×${design.panel.dimensionsMm.width}×${design.panel.dimensionsMm.height} mm` : null],
+    ["کاربرد", design.panel?.useCase],
+  ];
+
+  const inverterDetailRows = [
+    ["توان نامی", `${faNumber(design.inverter?.ratedPowerW)} W`],
+    ["تعداد اینورتر", `${faNumber(design.inverter?.count || 1)} عدد`],
+    ["باس باتری DC", design.inverter?.batteryVoltage || design.inverter?.dcVoltage ? `${faNumber(design.inverter?.batteryVoltage || design.inverter?.dcVoltage)} V` : "بدون باتری"],
+    ["MPPT", `${faNumber(design.inverter?.mpptCount || 1)} ورودی`],
+    ["بازه MPPT", `${faNumber(design.inverter?.mpptMinV)}-${faNumber(design.inverter?.mpptMaxV)} V`],
+    ["حداکثر Voc PV", `${faNumber(design.inverter?.maxPvVocV || design.inverter?.maxPvVoc)} V`],
+    ["حداکثر توان PV", `${faNumber(design.inverter?.maxPvPowerW)} W`],
+    ["جریان ورودی PV", `${faNumber(design.inverter?.maxPvInputCurrentA, 2)} A`],
+    ["قابلیت پارالل", design.inverter?.parallelCapable ? "دارد" : "ندارد"],
+  ];
+
+  const batteryDetailRows = [
+    ["ولتاژ نامی", `${faNumber(design.battery?.item?.nominalVoltage, 1)} V`],
+    ["ظرفیت", `${faNumber(design.battery?.item?.capacityAh)} Ah`],
+    ["انرژی هر باتری", `${faNumber(design.battery?.unitEnergyKWh, 2)} kWh`],
+    ["آرایش سری/موازی", `${faNumber(design.battery?.seriesCount || 0)} سری × ${faNumber(design.battery?.parallelCount || 0)} موازی`],
+    ["ولتاژ پک", `${faNumber(design.battery?.packVoltage, 1)} V`],
+    ["تعداد کل", `${faNumber(design.battery?.count)} عدد`],
+    ["انرژی کل", `${faNumber(design.battery?.grossEnergyKWh, 2)} kWh`],
+    ["DoD / راندمان", `${faNumber((design.battery?.item?.usableDod || 0.9) * 100)}% / ${faNumber((design.battery?.item?.efficiency || 0.94) * 100)}%`],
+  ];
 
   useEffect(() => {
     if (domain === "emergency") navigate("/new-project/system/emergency", { replace: true });
@@ -123,9 +186,9 @@ export default function SystemSettings() {
   }, [domain, navigate]);
 
   useEffect(() => {
-    if (!panelId && design.selectedBanks.panelId) setPanelId(design.selectedBanks.panelId);
-    if (!inverterId && design.selectedBanks.inverterId) setInverterId(design.selectedBanks.inverterId);
-    if (!batteryId && design.selectedBanks.batteryId) setBatteryId(design.selectedBanks.batteryId);
+    if (design.selectedBanks.panelId && panelId !== design.selectedBanks.panelId) setPanelId(design.selectedBanks.panelId);
+    if (design.selectedBanks.inverterId && inverterId !== design.selectedBanks.inverterId) setInverterId(design.selectedBanks.inverterId);
+    if (design.selectedBanks.batteryId && batteryId !== design.selectedBanks.batteryId) setBatteryId(design.selectedBanks.batteryId);
   }, [panelId, inverterId, batteryId, design.selectedBanks]);
 
   const confirm = () => {
@@ -144,8 +207,10 @@ export default function SystemSettings() {
       validation: { valid: design.valid, warnings: design.warnings },
       confirmedAt: new Date().toISOString(),
     };
+    const centralState = buildProjectDesignState({ domain: "solar", handoff, settings, design, source: "system-settings-confirm" });
     writeJson("shil:systemSettingsDraft", draft);
     writeJson("shil:solarSystemDesign", design);
+    saveProjectDesignState(centralState);
     approveProjectStep("system");
     navigate("/new-project/summary/solar");
   };
@@ -169,27 +234,32 @@ export default function SystemSettings() {
       <section className="shil-section-card shil-config-block">
         <div className="shil-section-head"><h2>ضرایب طراحی</h2><span>استاندارد و خودکفایی</span></div>
         <div className="shil-form-grid compact">
-          <label><span>ضریب اطمینان</span><input value={reserveFactor} onChange={(e) => setReserveFactor(e.target.value)} inputMode="decimal" /></label>
-          <label><span>روزهای خودکفایی</span><input value={autonomyDays} onChange={(e) => setAutonomyDays(e.target.value)} inputMode="decimal" /></label>
-          <label><span>ساعت‌های خودکفایی</span><input value={autonomyHours} onChange={(e) => setAutonomyHours(e.target.value)} inputMode="decimal" placeholder="اختیاری" /></label>
+          <label><span>درصد اصلاح انتخاب اینورتر</span><select value={designAdjustmentPercent} onChange={(e) => setDesignAdjustmentPercent(e.target.value)}><option value="10">10%</option><option value="15">15%</option><option value="20">20%</option><option value="25">25%</option><option value="30">30%</option></select></label>
+          <label><span>نوع اصلاح اینورتر</span><select value={designAdjustmentMode} onChange={(e) => setDesignAdjustmentMode(e.target.value)}><option value="decrease">کاهش</option><option value="increase">افزایش</option></select></label>
+          <label><span>روزهای خودکفایی</span><input value={autonomyDays} readOnly disabled inputMode="decimal" /></label>
+          <label><span>ساعت‌های خودکفایی</span><input value={autonomyHours} readOnly disabled inputMode="decimal" placeholder="از مرحله قبل" /></label>
         </div>
       </section>
 
       <div className="shil-bank-grid">
-        <BankSelectCard title="بانک پنل خورشیدی" subtitle="از Registry تجهیزات" items={panels} value={panelId} onChange={setPanelId} smartTitle={optionLabel(design.panel)} smartValue={`${design.panel?.powerW || "-"}W / ${faNumber(design.pvArray.panelCount)} عدد`} />
-        <BankSelectCard title="بانک اینورتر خورشیدی" subtitle="سازگار با توان طراحی" items={inverters} value={inverterId} onChange={setInverterId} smartTitle={optionLabel(design.inverter)} smartValue={`${kw(design.inverter?.ratedPowerW)} × ${faNumber(design.inverter?.count || 1)} عدد`} />
-        {showBatteryBank ? <BankSelectCard title="بانک ذخیره‌ساز انرژی" subtitle="فعال به دلیل خودکفایی/آفگرید/هیبرید" items={batteries} value={batteryId} onChange={setBatteryId} smartTitle={optionLabel(design.battery?.item)} smartValue={`${faNumber(design.battery?.grossEnergyKWh, 2)} kWh / ${faNumber(design.battery?.count)} عدد`} /> : null}
+        <BankSelectCard kind="panel" title="بانک پنل خورشیدی" subtitle="انتخاب خلاصه؛ دیتاشیت در جزئیات" items={panels} value={design.selectedBanks.panelId || panelId} onChange={setPanelId} selectedItem={design.panel} smartTitle={compactEquipmentLabel(design.panel, "panel")} smartValue={`${faNumber(design.pvArray.panelCount)} عدد / ${kw(design.pvArray.arrayPowerW)}`} detailRows={panelDetailRows} />
+        <BankSelectCard kind="inverter" title="بانک اینورتر خورشیدی" subtitle="انتخاب خلاصه؛ دیتاشیت در جزئیات" items={inverters} value={design.selectedBanks.inverterId || inverterId} onChange={setInverterId} selectedItem={design.inverter} smartTitle={compactEquipmentLabel(design.inverter, "inverter")} smartValue={`${faNumber(design.inverter?.count || 1)} عدد / ${kw((design.inverter?.ratedPowerW || 0) * (design.inverter?.count || 1))}`} detailRows={inverterDetailRows} />
+        {showBatteryBank ? <BankSelectCard kind="battery" title="بانک ذخیره‌ساز انرژی" subtitle="انتخاب خلاصه؛ دیتاشیت در جزئیات" items={batteries} value={design.selectedBanks.batteryId || batteryId} onChange={setBatteryId} selectedItem={design.battery?.item} smartTitle={compactEquipmentLabel(design.battery?.item, "battery")} smartValue={`${faNumber(design.battery?.count)} عدد / ${faNumber(design.battery?.grossEnergyKWh, 2)} kWh`} detailRows={batteryDetailRows} /> : null}
       </div>
 
       <section className="shil-section-card shil-config-block">
         <div className="shil-section-head"><h2>چکیده تنظیمات سیستم</h2><span>{design.valid ? "قابل تأیید" : "نیازمند اصلاح"}</span></div>
         <SummaryGrid rows={[
-          ["توان طراحی", kw(design.load.finalPowerW)],
-          ["انرژی طراحی", `${faNumber(design.load.finalEnergyKWh, 2)} kWh/day`],
-          ["آرایه پنل", `${faNumber(design.pvArray.arrayPowerKW, 2)} kW / ${faNumber(design.pvArray.panelCount)} پنل`],
-          ["استرینگ پیشنهادی", `${faNumber(design.pvArray.seriesCount)} سری × ${faNumber(design.pvArray.parallelCount)} موازی`],
-          ["تولید روزانه تخمینی", `${faNumber(design.pvArray.estimatedDailyKWh, 2)} kWh`],
-          ["باتری", showBatteryBank ? `${faNumber(design.battery?.grossEnergyKWh, 2)} kWh` : "غیرفعال در این سناریو"],
+          ["توان مصرفی مبنا", kw(design.load.basePowerW)],
+          ["انرژی روزانه مبنا", `${enNumber(design.load.finalEnergyKWh, 2)} kWh/day`],
+          ["توان مبنای آرایه پنل", kw(design.pvArray.baseRequiredPowerW)],
+          ["توان مبنای انتخاب اینورتر", `${enNumber(design.pvArray.inverterSizingPowerKW, 2)} kW (${design.load.designAdjustmentMode === "increase" ? "افزایش" : "کاهش"} ${enNumber(design.load.designAdjustmentPercent)}%)`],
+          ["پنل معرفی‌شده", `${compactEquipmentLabel(design.panel, "panel")} / ${enNumber(design.pvArray.panelCount)} عدد`],
+          ["توان کل پنل‌ها", `${enNumber(design.pvArray.arrayPowerKW, 2)} kW`],
+          ["اینورتر معرفی‌شده", `${compactEquipmentLabel(design.inverter, "inverter")} / ${enNumber(design.inverter?.count || 1)} عدد`],
+          ["استرینگ پیشنهادی", `${enNumber(design.pvArray.seriesCount)} سری × ${enNumber(design.pvArray.parallelCount)} موازی / MPPT: ${enNumber(design.inverter?.mpptCount || 1)}`],
+          ["تولید روزانه تخمینی", `${enNumber(design.pvArray.estimatedDailyKWh, 2)} kWh/day`],
+          ["باتری معرفی‌شده", showBatteryBank ? `${compactEquipmentLabel(design.battery?.item, "battery")} / ${faNumber(design.battery?.count)} عدد / ${faNumber(design.battery?.grossEnergyKWh, 2)} kWh` : "غیرفعال در این سناریو"],
         ]} />
         {design.warnings.map((item) => <div key={item} className="shil-inline-warning">{item}</div>)}
       </section>

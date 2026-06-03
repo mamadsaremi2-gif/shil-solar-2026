@@ -95,4 +95,4 @@ export default function App() {
 }
 
 
-import "../styles/shil-engineering-theme-v2.css";
+import "../appearance/styles/shil-engineering-theme-v2.css";

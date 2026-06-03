@@ -10,13 +10,13 @@ function readDraft(key, fallback = null) {
 }
 
 const normalizePersianInput = (value) => String(value ?? "")
-  .replace(/[۰-۹]/g, (d) => "۰۱۲۳۴۵۶۷۸۹".indexOf(d))
-  .replace(/[٠-٩]/g, (d) => "٠١٢٣٤٥٦٧٨٩".indexOf(d))
+  .replace(/[\u06F0-\u06F9]/g, (d) => String(d.charCodeAt(0) - 0x06F0))
+  .replace(/[\u0660-\u0669]/g, (d) => String(d.charCodeAt(0) - 0x0660))
   .replace(/٫/g, ".")
   .replace(/٬|,/g, "")
   .trim();
 const toNumber = (value, fallback = 0) => { const n = Number(normalizePersianInput(value)); return Number.isFinite(n) ? n : fallback; };
-const faNumber = (value, digits = 0) => Number(value || 0).toLocaleString("fa-IR", { maximumFractionDigits: digits });
+const faNumber = (value, digits = 0) => Number(value || 0).toLocaleString("en-US", { maximumFractionDigits: digits });
 const enNumber = (value, digits = 0) => Number(value || 0).toLocaleString("en-US", { maximumFractionDigits: digits });
 
 function closestPanel(id) {
@@ -57,7 +57,7 @@ function buildUtilityDesign({ plantMW, dcAcRatio, panelId, blockKW, mvVoltageKV,
     land: { landHa, landHaPerMW: toNumber(landHaPerMW, 1.35) },
     yield: { psh, performanceRatio, availabilityPercent: toNumber(availabilityPercent, 98), annualKWh },
     valid,
-    warnings: valid ? [] : ["توان هدف نیروگاهی باید حداقل ۳۰ کیلووات باشد."],
+    warnings: valid ? [] : ["توان هدف نیروگاهی باید حداقل 30 کیلووات باشد."],
     confirmedAt: null,
   };
 }
@@ -103,7 +103,7 @@ export default function UtilitySystemSettings() {
       <section className="shil-card-stack shil-system-final-page">
         <div className="shil-section-card shil-config-block">
           <div className="shil-section-head"><h2>موتور اختصاصی نیروگاهی</h2><span>Utility Scale PV</span></div>
-          <p className="shil-muted-line">این صفحه برای پروژه‌های بالای ۳۰kW جدا شده و منطق آن مصرف خانگی یا UPS نیست؛ مبنا ظرفیت نیروگاه، بلوک‌های اینورتر، اتصال MV، ترانس، زمین و تولید سالانه است.</p>
+          <p className="shil-muted-line">این صفحه برای پروژه‌های بالای 30kW جدا شده و منطق آن مصرف خانگی یا UPS نیست؛ مبنا ظرفیت نیروگاه، بلوک‌های اینورتر، اتصال MV، ترانس، زمین و تولید سالانه است.</p>
           <div className="shil-summary-grid shil-solar-sizing-preview">
             <div><span>توان AC هدف</span><strong>{enNumber(design.plant.targetMW, 2)} MW</strong></div>
             <div><span>توان DC آرایه</span><strong>{enNumber(design.plant.dcKW / 1000, 2)} MWp</strong></div>
@@ -118,7 +118,7 @@ export default function UtilitySystemSettings() {
             <label><span>توان هدف نیروگاه MW</span><input value={plantMW} inputMode="decimal" onChange={(e) => setPlantMW(e.target.value)} /></label>
             <label><span>نسبت DC/AC</span><input value={dcAcRatio} inputMode="decimal" onChange={(e) => setDcAcRatio(e.target.value)} /></label>
             <label><span>توان هر بلوک اینورتر kW</span><input value={blockKW} inputMode="decimal" onChange={(e) => setBlockKW(e.target.value)} /></label>
-            <label><span>ولتاژ MV kV</span><select value={mvVoltageKV} onChange={(e) => setMvVoltageKV(e.target.value)}><option value="20">۲۰ کیلوولت</option><option value="33">۳۳ کیلوولت</option><option value="63">۶۳ کیلوولت</option></select></label>
+            <label><span>ولتاژ MV kV</span><select value={mvVoltageKV} onChange={(e) => setMvVoltageKV(e.target.value)}><option value="20">20 کیلوولت</option><option value="33">33 کیلوولت</option><option value="63">63 کیلوولت</option></select></label>
             <label><span>زمین تقریبی ha/MW</span><input value={landHaPerMW} inputMode="decimal" onChange={(e) => setLandHaPerMW(e.target.value)} /></label>
             <label><span>محدودیت تزریق MW</span><input value={exportLimitMW} inputMode="decimal" onChange={(e) => setExportLimitMW(e.target.value)} /></label>
             <label><span>نوع سازه</span><select value={trackerMode} onChange={(e) => setTrackerMode(e.target.value)}><option value="fixed">ثابت</option><option value="single_axis">ترکر تک‌محوره</option></select></label>

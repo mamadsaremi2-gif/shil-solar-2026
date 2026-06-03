@@ -1,0 +1,197 @@
+/* SHIL v16 rebuild on stable v15 base
+   Goals: compact engineering density, readable glass UI, safer result hierarchy. */
+:root {
+  --shil-v16-glass: rgba(246, 250, 255, 0.88);
+  --shil-v16-glass-strong: rgba(255, 255, 255, 0.94);
+  --shil-v16-text: #071425;
+  --shil-v16-muted: #41516a;
+  --shil-v16-border: rgba(55, 114, 255, 0.22);
+  --shil-v16-blue: #35a8ff;
+  --shil-v16-violet: #8d5cff;
+}
+
+html, body, #root {
+  min-height: 100%;
+  background: radial-gradient(circle at top, #f4f9ff 0%, #dcecff 35%, #13233f 100%);
+}
+
+body, input, textarea, select, button {
+  font-feature-settings: "ss01" 1;
+  text-rendering: geometricPrecision;
+}
+
+input, textarea, select {
+  unicode-bidi: plaintext;
+  direction: auto;
+}
+
+.shil-page,
+.shil-engineering-page,
+.shil-page-shell,
+.shil-mobile-page,
+.shil-project-page {
+  color: var(--shil-v16-text);
+}
+
+.shil-glass-card,
+.shil-card,
+.shil-summary-card,
+.shil-final-sheet-block,
+.shil-scenario-detail-card,
+.shil-scenario-search-card,
+.shil-result-card,
+.shil-project-card,
+.shil-method-card,
+.shil-input-card,
+.shil-system-card,
+.shil-section,
+.shil-big-route-card {
+  background: linear-gradient(145deg, var(--shil-v16-glass-strong), rgba(226, 240, 255, 0.82)) !important;
+  border: 1px solid var(--shil-v16-border) !important;
+  box-shadow: 0 14px 38px rgba(9, 29, 65, 0.16), inset 0 1px 0 rgba(255,255,255,.72) !important;
+  color: var(--shil-v16-text) !important;
+  backdrop-filter: blur(14px);
+}
+
+.shil-glass-card *,
+.shil-card *,
+.shil-summary-card *,
+.shil-final-sheet-block *,
+.shil-scenario-detail-card *,
+.shil-scenario-search-card *,
+.shil-result-card *,
+.shil-method-card *,
+.shil-input-card *,
+.shil-system-card * {
+  color: inherit;
+}
+
+.shil-final-sheet-block h3,
+.shil-final-sheet-block h4,
+.shil-summary-card h3,
+.shil-scenario-detail-card h3,
+.shil-card h3,
+.shil-section h3 {
+  color: #061225 !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.01em;
+}
+
+.shil-final-equipment-table,
+.shil-result-field-grid,
+.shil-result-partitions,
+.shil-scenario-detail-grid {
+  gap: 8px !important;
+}
+
+.shil-final-equipment-table > div,
+.shil-result-field-grid > div,
+.shil-result-partitions > section,
+.shil-scenario-detail-grid > span,
+.shil-scenario-detail-grid > strong {
+  background: rgba(255,255,255,.66) !important;
+  border: 1px solid rgba(44,112,255,.14) !important;
+  border-radius: 14px !important;
+  color: var(--shil-v16-text) !important;
+}
+
+.shil-final-equipment-table .head,
+.shil-final-equipment-table .head * {
+  background: linear-gradient(90deg, rgba(53,168,255,.18), rgba(141,92,255,.16)) !important;
+  color: #05111f !important;
+  font-weight: 900 !important;
+}
+
+.shil-muted,
+.shil-muted-line,
+small,
+.shil-card small,
+.shil-final-sheet-block small {
+  color: var(--shil-v16-muted) !important;
+  font-weight: 700;
+}
+
+.shil-primary-action,
+.shil-primary-wide,
+.shil-primary-small,
+.shil-soft-button,
+button.shil-big-route-card {
+  box-shadow: 0 0 0 1px rgba(255,255,255,.38), 0 12px 28px rgba(50,120,255,.20) !important;
+}
+
+.shil-step-rail,
+.shil-project-step-rail,
+.shil-horizontal-step-rail {
+  background: rgba(255,255,255,.62) !important;
+  border: 1px solid rgba(55,114,255,.18) !important;
+  backdrop-filter: blur(16px);
+}
+
+.shil-step-rail .active,
+.shil-project-step-rail .active,
+.shil-horizontal-step-rail .active {
+  box-shadow: 0 0 0 1px rgba(53,168,255,.58), 0 0 24px rgba(141,92,255,.35) !important;
+  transform: translateY(-1px) scale(1.02);
+}
+
+.shil-app-footer,
+.shil-bottom-nav,
+.shil-project-action-bar,
+.shil-action-bar {
+  background: rgba(247,251,255,.92) !important;
+  border-top: 1px solid rgba(55,114,255,.18) !important;
+  color: #071425 !important;
+  box-shadow: 0 -10px 26px rgba(14, 34, 67, .12) !important;
+}
+
+.shil-app-footer *,
+.shil-bottom-nav *,
+.shil-project-action-bar *,
+.shil-action-bar * {
+  color: #071425 !important;
+  font-weight: 800;
+}
+
+.shil-dashboard-icon,
+.shil-modern-icon,
+.shil-ios-icon,
+.shil-icon-tile {
+  background: linear-gradient(145deg, rgba(255,255,255,.88), rgba(223,237,255,.62)) !important;
+  border: 1px solid rgba(64,152,255,.35) !important;
+  box-shadow: 0 0 16px rgba(64,152,255,.34), 0 0 24px rgba(142,92,255,.20), inset 0 1px 0 rgba(255,255,255,.72) !important;
+}
+
+.shil-login-form,
+.login-form,
+.auth-card {
+  margin-top: min(18vh, 148px) !important;
+  background: rgba(255,255,255,.88) !important;
+  color: #071425 !important;
+}
+
+@media (max-width: 760px) {
+  .shil-page,
+  .shil-engineering-page,
+  .shil-page-shell {
+    padding-inline: 10px !important;
+  }
+
+  .shil-card,
+  .shil-glass-card,
+  .shil-final-sheet-block,
+  .shil-scenario-detail-card,
+  .shil-summary-card {
+    border-radius: 18px !important;
+    padding: 12px !important;
+  }
+
+  .shil-result-field-grid,
+  .shil-scenario-detail-grid,
+  .shil-result-partitions {
+    grid-template-columns: 1fr !important;
+  }
+
+  h1 { font-size: clamp(1.25rem, 6vw, 1.65rem) !important; }
+  h2 { font-size: clamp(1.08rem, 5vw, 1.35rem) !important; }
+  h3 { font-size: clamp(.98rem, 4.4vw, 1.18rem) !important; }
+}

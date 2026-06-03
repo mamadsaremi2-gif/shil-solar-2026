@@ -6,7 +6,8 @@ import { markCurrentProjectFinal, showUxToast } from "../../workflow/uxFlowContr
 import { runEngineeringDesign } from "../../runEngineeringDesign.js";
 import { buildScenarioCalculationInput } from "../../core/scenario/scenarioToEngineeringForm.js";
 import { buildMethodSummary, getActiveMethodKey } from "../../core/summary/methodSummaryEngine.js";
-import { safeText, safeList, safeKey, toFaDigits } from "../../utils/safeRender.js";
+import { safeText, safeList, safeKey } from "../../utils/safeRender.js";
+import { getProjectDesignState } from "../../engineering/core/projectDesignState.js";
 import {
   buildFinalEngineeringDelivery,
   exportElementAsPdf,
@@ -50,6 +51,30 @@ function runCore(domain) {
     return { result: runEngineeringDesign(form, { domain: "emergency", mode: "final-core", stopOnValidationError: false }) };
   }
   try {
+    const centralState = readDraft("shil:projectDesignState", null);
+    const solarDesign = centralState?.design || readDraft("shil:solarSystemDesign", null);
+    if (solarDesign?.version) {
+      return {
+        input: readCalculationInput(),
+        result: {
+          status: solarDesign.valid ? "success" : "needs-review",
+          valid: solarDesign.valid !== false,
+          mode: "UNIFIED_SOLAR_DESIGN_FROM_SYSTEM_SETTINGS",
+          solarDesign,
+          values: { solarDesign },
+          summary: {
+            resultFields: {
+              inverterCount: solarDesign.inverter?.count || 1,
+              panelCount: solarDesign.pvArray?.panelCount || 0,
+              batteryCount: solarDesign.battery?.count || 0,
+              mpptCount: solarDesign.inverter?.mpptCount || 1,
+            },
+          },
+          warnings: solarDesign.warnings || [],
+          explanations: ["خروجی نهایی از طراحی تاییدشده صفحه تنظیمات سیستم خوانده شد."],
+        },
+      };
+    }
     const calculationInput = readCalculationInput();
     const form = calculationInput?.form || makeFallbackForm(domain);
     const activeDomain = calculationInput?.scenario?.domain || form.designDomain || domain;
@@ -63,8 +88,8 @@ function runCore(domain) {
 }
 
 
-function MixedValue({ children, fa = false }) {
-  return <strong dir="auto">{fa ? toFaDigits(children) : safeText(children)}</strong>;
+function MixedValue({ children }) {
+  return <strong dir="auto">{toEnglishDigits(safeText(children))}</strong>;
 }
 
 function FinalResultFields({ result = {}, solarDesign = {} }) {
@@ -218,32 +243,32 @@ function buildExecutionContext({ domain, project, summary, result, solarDesign, 
   const battery = design?.battery || solarDesign?.battery || systemSettings?.battery || values?.battery || {};
   const protection = values?.protection || resultSummary?.protection || systemSettings?.protection || {};
   const cables = values?.cables || fields?.cables || systemSettings?.cables || {};
-  const batteryBank = battery?.battery || battery;
+  const batteryBank = battery?.item || battery?.battery || battery;
 
-  const safetyFactor = pick(systemSettings?.safetyFactor, systemSettings?.standardSafetyFactor, finalParams?.safetyFactor, 1.2);
-  const autonomyDays = pick(systemSettings?.autonomyDays, finalParams?.autonomyDays, battery?.autonomyDays, 0);
-  const basePowerW = pick(finalParams?.basePowerW, finalParams?.totalPowerW, systemSettings?.basePowerW, systemSettings?.loadPowerW, solarDesign?.load?.peakLoadW, values?.loadPowerW, 0);
-  const powerAfterFactorW = pick(finalParams?.powerAfterFactorW, finalParams?.finalPowerW, systemSettings?.powerAfterFactorW, systemSettings?.finalPowerW, Number(basePowerW || 0) * Number(safetyFactor || 1), values?.finalPowerW);
-  const dailyEnergyWh = pick(finalParams?.dailyEnergyAfterFactorWh, finalParams?.dailyEnergyWh, systemSettings?.dailyEnergyAfterFactorWh, systemSettings?.dailyEnergyWh, solarDesign?.load?.dailyEnergyWh, values?.dailyEnergyWh, 0);
+  const safetyFactor = pick(solarDesign?.load?.reserveFactor, systemSettings?.systemConfig?.reserveFactor, systemSettings?.safetyFactor, systemSettings?.standardSafetyFactor, finalParams?.safetyFactor, 1.2);
+  const autonomyDays = pick(solarDesign?.system?.autonomy?.days, systemSettings?.systemConfig?.autonomyDays, systemSettings?.autonomyDays, finalParams?.autonomyDays, battery?.autonomyDays, 0);
+  const basePowerW = pick(solarDesign?.load?.basePowerW, finalParams?.basePowerW, finalParams?.totalPowerW, systemSettings?.basePowerW, systemSettings?.loadPowerW, values?.loadPowerW, 0);
+  const powerAfterFactorW = pick(solarDesign?.load?.finalPowerW, finalParams?.powerAfterFactorW, finalParams?.finalPowerW, systemSettings?.powerAfterFactorW, systemSettings?.finalPowerW, Number(basePowerW || 0) * Number(safetyFactor || 1), values?.finalPowerW);
+  const dailyEnergyWh = pick(solarDesign?.load?.finalEnergyKWh ? solarDesign.load.finalEnergyKWh * 1000 : null, finalParams?.dailyEnergyAfterFactorWh, finalParams?.dailyEnergyWh, systemSettings?.dailyEnergyAfterFactorWh, systemSettings?.dailyEnergyWh, values?.dailyEnergyWh, 0);
   const panelPowerW = pick(panel?.powerW, panel?.ratedPowerW, systemSettings?.panelPowerW, pvArray?.panelPowerW, 620);
   const panelVoltage = pick(panel?.vmp, panel?.vmpV, panel?.voltageV, systemSettings?.panelVoltageV, pvArray?.panelVoltageV, "-");
   const panelCurrent = pick(panel?.imp, panel?.impA, panel?.currentA, systemSettings?.panelCurrentA, pvArray?.panelCurrentA, "-");
   const panelCount = pick(pvArray?.panelCount, systemSettings?.panelCount, values?.panelCount, fields?.panelCount, 0);
-  const arrayPowerW = pick(pvArray?.installedPowerW, Number(panelCount || 0) * Number(panelPowerW || 0), values?.installedPvPowerW, 0);
+  const arrayPowerW = pick(pvArray?.arrayPowerW, pvArray?.installedPowerW, Number(panelCount || 0) * Number(panelPowerW || 0), values?.installedPvPowerW, 0);
   const inverterCount = pick(inverter?.count, systemSettings?.inverterCount, values?.inverterCount, fields?.inverterCount, 1);
   const mpptEach = pick(inverter?.mpptCount, inverter?.mpptChannels, systemSettings?.mpptCount, values?.mpptCount, values?.inverterMpptCount, fields?.mpptCount, 1);
-  const dcVoltage = pick(inverter?.dcVoltageV, inverter?.batteryVoltageV, inverter?.nominalDcVoltageV, systemSettings?.inverterDcVoltageV, 48);
+  const dcVoltage = pick(inverter?.dcVoltage, inverter?.batteryVoltage, inverter?.dcVoltageV, inverter?.batteryVoltageV, inverter?.nominalDcVoltageV, systemSettings?.inverterDcVoltageV, 48);
   const batteryVoltage = pick(batteryBank?.voltageV, battery?.voltageV, battery?.nominalVoltage, systemSettings?.batteryVoltageV, "-");
   const batteryCurrent = pick(batteryBank?.capacityAh, battery?.capacityAh, battery?.bankCurrentAh, systemSettings?.batteryCurrentAh, "-");
   const batteryEnergyKWh = pick(batteryBank?.energyKWh, battery?.unitEnergyKWh, battery?.batteryEnergyKWh, "-");
   const batteryCount = pick(battery?.count, battery?.batteryCount, systemSettings?.batteryCount, values?.batteryCount, fields?.batteryCount, 0);
-  const batteryTotalKWh = pick(battery?.totalEnergyKWh, systemSettings?.batteryTotalKWh, values?.batteryTotalKWh, Number(batteryCount || 0) * Number(batteryEnergyKWh || 0), 0);
-  const requiredStorageKWh = pick(battery?.requiredStorageKWh, systemSettings?.requiredStorageKWh, finalParams?.requiredStorageKWh, Number(dailyEnergyWh || 0) / 1000 * Number(autonomyDays || 0), 0);
+  const batteryTotalKWh = pick(battery?.grossEnergyKWh, battery?.totalEnergyKWh, systemSettings?.batteryTotalKWh, values?.batteryTotalKWh, Number(batteryCount || 0) * Number(batteryEnergyKWh || 0), 0);
+  const requiredStorageKWh = pick(battery?.requiredEnergyKWh, battery?.requiredStorageKWh, systemSettings?.requiredStorageKWh, finalParams?.requiredStorageKWh, Number(dailyEnergyWh || 0) / 1000 * Number(autonomyDays || 0), 0);
   const city = pick(environment?.city, environmentAssessment?.city, project?.city, "-");
-  const psh = pick(environment?.peakSunHours, environment?.psh, environmentAssessment?.peakSunHours, environmentAssessment?.psh, solarDesign?.environment?.peakSunHours, "-");
+  const psh = pick(solarDesign?.system?.psh, environment?.peakSunHours, environment?.psh, environmentAssessment?.peakSunHours, environmentAssessment?.psh, "-");
   const direction = pick(environment?.direction, environment?.azimuthLabel, environmentAssessment?.direction, environmentAssessment?.recommendedDirection, "جنوب");
   const tilt = pick(environment?.tilt, environment?.tiltDeg, environmentAssessment?.tilt, environmentAssessment?.recommendedTiltDeg, "-");
-  const envEfficiency = pick(environment?.finalEfficiency, environment?.efficiency, environmentAssessment?.finalEfficiency, systemSettings?.environmentEfficiency, "-");
+  const envEfficiency = pick(solarDesign?.system?.efficiency ? `${Math.round(solarDesign.system.efficiency * 100)}%` : null, environment?.finalEfficiency, environment?.efficiency, environmentAssessment?.finalEfficiency, systemSettings?.environmentEfficiency, "-");
   const designType = pick(systemSettings?.designModeTitle, systemSettings?.designType, systemSettings?.modeTitle, systemSettings?.mode, emergency ? "برق اضطراری" : "خورشیدی");
   const coreTitle = domain === "emergency" ? "برق اضطراری" : "خورشیدی";
   const methodTitle = selectedMethod?.title || methodSummary?.title || methodKey || "لیست تجهیزات";
@@ -320,7 +345,8 @@ export default function RunCalculation() {
   const result = coreRun.result;
   const project = readDraft("shil:projectInfoDraft", {});
   const summary = readDraft("shil:summaryDraft", {});
-  const solarDesign = readDraft("shil:solarSystemDesign", summary?.solarDesign || {});
+  const centralState = getProjectDesignState();
+  const solarDesign = centralState?.design || readDraft("shil:solarSystemDesign", summary?.solarDesign || {});
   const solarPanelPowerInput = readDraft("shil:solarPanelPowerInput", {});
   const loadResult = readDraft("shil:loadEngineResult", {});
   const systemSettings = readDraft("shil:systemSettingsDraft", {});

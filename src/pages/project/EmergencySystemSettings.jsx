@@ -10,6 +10,7 @@ import {
   pickEmergencyInverter,
   selectEmergencyProtection,
 } from "../../engines/emergencyBankRules.js";
+import { batterySeriesCountForInverter } from "../../engines/solarBankRules.js";
 
 function readDraft(key, fallback = null) {
   try { return JSON.parse(localStorage.getItem(key) || "null") || fallback; }
@@ -17,8 +18,8 @@ function readDraft(key, fallback = null) {
 }
 
 const normalizePersianInput = (value) => String(value ?? "")
-  .replace(/[۰-۹]/g, (d) => "۰۱۲۳۴۵۶۷۸۹".indexOf(d))
-  .replace(/[٠-٩]/g, (d) => "٠١٢٣٤٥٦٧٨٩".indexOf(d))
+  .replace(/[\u06F0-\u06F9]/g, (d) => String(d.charCodeAt(0) - 0x06F0))
+  .replace(/[\u0660-\u0669]/g, (d) => String(d.charCodeAt(0) - 0x0660))
   .replace(/٫/g, ".")
   .replace(/٬|,/g, "")
   .trim();
@@ -28,7 +29,7 @@ const toNumber = (value, fallback = 0) => {
   return Number.isFinite(n) ? n : fallback;
 };
 
-const faNumber = (value, digits = 0) => Number(value || 0).toLocaleString("fa-IR", { maximumFractionDigits: digits });
+const faNumber = (value, digits = 0) => Number(value || 0).toLocaleString("en-US", { maximumFractionDigits: digits });
 const enNumber = (value, digits = 0) => Number(value || 0).toLocaleString("en-US", { maximumFractionDigits: digits });
 
 function optionTitle(item) {
@@ -58,7 +59,10 @@ function buildEmergencyDesign({ handoff, backupHours, reserveFactor, dodPercent,
   const selectedBattery = manualMode ? (emergencyBatteries.find((item) => item.id === batteryId) || smartBattery) : smartBattery;
 
   const unitBatteryKWh = Math.max(0.1, getBatteryEnergyWh(selectedBattery) / 1000);
-  const batteryCount = Math.max(1, Math.ceil(rawBatteryKWh / unitBatteryKWh));
+  const batterySeriesCount = selectedBattery ? batterySeriesCountForInverter(selectedBattery, selectedInverter || {}) : 0;
+  const seriesStringEnergyKWh = unitBatteryKWh * Math.max(1, batterySeriesCount);
+  const batteryParallelCount = seriesStringEnergyKWh > 0 ? Math.max(1, Math.ceil(rawBatteryKWh / seriesStringEnergyKWh)) : 0;
+  const batteryCount = selectedBattery ? Math.max(1, batterySeriesCount) * Math.max(1, batteryParallelCount) : 0;
   const actualEnergyKWh = batteryCount * unitBatteryKWh * usableFactor;
   const runtimeHours = totalPowerW > 0 ? (actualEnergyKWh * 1000) / totalPowerW : 0;
   const protection = selectEmergencyProtection(banks.protections, banks.cables);
@@ -71,7 +75,7 @@ function buildEmergencyDesign({ handoff, backupHours, reserveFactor, dodPercent,
     load: { totalPowerW, surgePowerW, voltageAC, phaseAC: voltageAC >= 380 ? "three" : "single" },
     settings: { backupHours: toNumber(backupHours, 2), reserveFactor: toNumber(reserveFactor, 1.25), dodPercent: toNumber(dodPercent, 80), manualMode },
     inverter: { ...selectedInverter, designPowerW: Math.round(designPowerW), count: 1 },
-    battery: { ...selectedBattery, unitEnergyKWh: unitBatteryKWh, count: batteryCount, requiredRawKWh: rawBatteryKWh, usableEnergyKWh: actualEnergyKWh, runtimeHours },
+    battery: { ...selectedBattery, unitEnergyKWh: unitBatteryKWh, count: batteryCount, seriesCount: batterySeriesCount, parallelCount: batteryParallelCount, packVoltage: Math.round(toNumber(selectedBattery?.nominalVoltage, 0) * Math.max(1, batterySeriesCount) * 10) / 10, requiredRawKWh: rawBatteryKWh, usableEnergyKWh: actualEnergyKWh, runtimeHours },
     emergencyBanks: { inverterCount: emergencyInverters.length, batteryCount: emergencyBatteries.length, protectionCount: protection.protections.length, cableCount: protection.cables.length },
     protection,
     valid,
@@ -80,14 +84,21 @@ function buildEmergencyDesign({ handoff, backupHours, reserveFactor, dodPercent,
   };
 }
 
-function BankSelect({ title, value, onChange, items, renderMeta }) {
+function BankSelect({ title, value, onChange, items, selectedItem, smartMeta, detailRows = [], renderMeta }) {
+  const [open, setOpen] = useState(false);
+  const activeItem = selectedItem || items.find((item) => item.id === value) || null;
   return (
-    <label className="shil-bank-select">
+    <label className="shil-bank-select shil-bank-smart-card">
       <span>{title}</span>
-      <select value={value || ""} onChange={(e) => onChange(e.target.value)}>
+      <strong>{optionTitle(activeItem)}</strong>
+      <select value={value || activeItem?.id || ""} onChange={(e) => onChange(e.target.value)}>
         {items.map((item) => <option key={item.id} value={item.id}>{optionTitle(item)}</option>)}
       </select>
-      <small>{renderMeta?.(items.find((item) => item.id === value))}</small>
+      <small>{smartMeta || renderMeta?.(activeItem)}</small>
+      <button type="button" className="shil-soft-button shil-bank-detail-toggle" onClick={(event) => { event.preventDefault(); setOpen((v) => !v); }}>{open ? "بستن دیتاشیت" : "نمایش جزییات دیتاشیت"}</button>
+      {open ? <div className="shil-summary-grid shil-bank-datasheet-grid">
+        {detailRows.filter(Boolean).map(([label, val]) => <div key={label}><span>{label}</span><strong>{val || "-"}</strong></div>)}
+      </div> : null}
     </label>
   );
 }
@@ -115,6 +126,24 @@ export default function EmergencySystemSettings() {
   const design = useMemo(() => buildEmergencyDesign({ handoff, backupHours, reserveFactor, dodPercent, inverterId, batteryId, manualMode, banks }), [handoff, backupHours, reserveFactor, dodPercent, inverterId, batteryId, manualMode, banks]);
   const inverterOptions = useMemo(() => filterEmergencyInverters(banks.inverters, design.inverter.designPowerW || design.load.surgePowerW), [banks.inverters, design.inverter.designPowerW, design.load.surgePowerW]);
   const batteryOptions = useMemo(() => filterEmergencyBatteries(banks.batteries, design.inverter, design.battery.requiredRawKWh), [banks.batteries, design.inverter, design.battery.requiredRawKWh]);
+  const emergencyInverterDetailRows = [
+    ["توان طراحی", `${faNumber(design.inverter.designPowerW)} W`],
+    ["توان نامی", `${faNumber(design.inverter.ratedPowerW)} W`],
+    ["باس باتری DC", `${faNumber(design.inverter.dcVoltage || design.inverter.batteryVoltage)} V`],
+    ["MPPT", `${faNumber(design.inverter.mpptCount || 1)} ورودی`],
+    ["حداکثر توان PV", design.inverter.maxPvPowerW ? `${faNumber(design.inverter.maxPvPowerW)} W` : "وابسته به مسیر PV"],
+    ["قابلیت پارالل", design.inverter.parallelCapable ? "دارد" : "ندارد"],
+  ];
+
+  const emergencyBatteryDetailRows = [
+    ["ولتاژ باتری", `${faNumber(design.battery.nominalVoltage, 1)} V`],
+    ["ظرفیت", `${faNumber(design.battery.capacityAh)} Ah`],
+    ["انرژی هر باتری", `${enNumber(design.battery.unitEnergyKWh, 2)} kWh`],
+    ["آرایش سری/موازی", `${faNumber(design.battery.seriesCount || 0)} سری × ${faNumber(design.battery.parallelCount || 0)} موازی`],
+    ["ولتاژ پک", `${faNumber(design.battery.packVoltage, 1)} V`],
+    ["تعداد کل", `${faNumber(design.battery.count)} عدد`],
+    ["زمان پشتیبانی", `${enNumber(design.battery.runtimeHours, 2)} ساعت`],
+  ];
 
   useEffect(() => {
     if (manualMode) return;
@@ -152,7 +181,7 @@ export default function EmergencySystemSettings() {
             <div><span>روش ورودی</span><strong>{handoff?.source?.methodTitle || design.sourceMethod}</strong></div>
             <div><span>توان بار اضطراری</span><strong>{faNumber(design.load.totalPowerW)} W</strong></div>
             <div><span>پیک/استارت</span><strong>{faNumber(design.load.surgePowerW)} W</strong></div>
-            <div><span>ولتاژ خروجی</span><strong>{design.load.phaseAC === "three" ? "۳۸۰ ولت سه‌فاز" : "۲۲۰ ولت تک‌فاز"}</strong></div>
+            <div><span>ولتاژ خروجی</span><strong>{design.load.phaseAC === "three" ? "380 ولت سه‌فاز" : "220 ولت تک‌فاز"}</strong></div>
           </div>
         </div>
 
@@ -174,8 +203,8 @@ export default function EmergencySystemSettings() {
         </div>
 
         <div className="shil-system-banks-grid shil-system-banks-grid-final">
-          <BankSelect title="اینورتر برق اضطراری" value={inverterId} onChange={(v) => { setManualMode(true); setInverterId(v); }} items={inverterOptions} renderMeta={(item) => item ? `${item.ratedPowerW}W / DC ${item.dcVoltage || item.batteryVoltage || "-"}V` : ""} />
-          <BankSelect title="بانک باتری" value={batteryId} onChange={(v) => { setManualMode(true); setBatteryId(v); }} items={batteryOptions} renderMeta={(item) => item ? `${item.nominalVoltage}V / ${item.capacityAh}Ah / ${Math.round(getBatteryEnergyWh(item) / 100) / 10}kWh` : ""} />
+          <BankSelect title="بانک اینورتر خورشیدی / برق اضطراری" value={inverterId} onChange={(v) => { setManualMode(true); setInverterId(v); }} items={inverterOptions} selectedItem={design.inverter} smartMeta={`${faNumber(design.inverter.ratedPowerW)}W × ${faNumber(design.inverter.count || 1)} عدد / DC ${faNumber(design.inverter.dcVoltage || design.inverter.batteryVoltage)}V`} detailRows={emergencyInverterDetailRows} renderMeta={(item) => item ? `${item.ratedPowerW}W / DC ${item.dcVoltage || item.batteryVoltage || "-"}V` : ""} />
+          <BankSelect title="بانک ذخیره‌ساز انرژی" value={batteryId} onChange={(v) => { setManualMode(true); setBatteryId(v); }} items={batteryOptions} selectedItem={design.battery} smartMeta={`${faNumber(design.battery.count)} عدد / ${faNumber(design.battery.seriesCount || 0)} سری × ${faNumber(design.battery.parallelCount || 0)} موازی`} detailRows={emergencyBatteryDetailRows} renderMeta={(item) => item ? `${item.nominalVoltage}V / ${item.capacityAh}Ah / ${Math.round(getBatteryEnergyWh(item) / 100) / 10}kWh` : ""} />
         </div>
 
         <div className="shil-section-card shil-config-block">

@@ -43,7 +43,7 @@ export default function ProjectInfo() {
         <div className="shil-section-card">
           <div className="shil-section-head">
             <h2>مشخصات اولیه پروژه</h2>
-            <span>مرحله ۱</span>
+            <span>مرحله 1</span>
           </div>
 
           <div className="shil-form-grid">
@@ -59,7 +59,7 @@ export default function ProjectInfo() {
 
             <label>
               <span>تاریخ ثبت</span>
-              <input value={new Date().toLocaleDateString("fa-IR")} readOnly />
+              <input value={new Date().toLocaleDateString("en-US")} readOnly />
             </label>
           </div>
         </div>

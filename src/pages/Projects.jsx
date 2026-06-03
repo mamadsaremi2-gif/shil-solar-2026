@@ -24,7 +24,7 @@ const STEP_TITLES = {
 function formatDate(value) {
   if (!value) return "بدون تاریخ";
   try {
-    return new Intl.DateTimeFormat("fa-IR", { dateStyle: "short", timeStyle: "short" }).format(new Date(value));
+    return new Intl.DateTimeFormat("en-US", { dateStyle: "short", timeStyle: "short" }).format(new Date(value));
   } catch {
     return value;
   }
