@@ -593,7 +593,3 @@ This file is intentionally kept so older imports do not break.
     max-width: 100% !important;
   }
 }
-
-/* SHIL final data-dense patch is centralized in:
-   src/appearance/styles/shil-mobile-design-system.css
-   This component file remains a compatibility mirror only. */
