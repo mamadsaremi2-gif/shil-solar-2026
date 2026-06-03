@@ -29755,3 +29755,1708 @@ body.shil-route-new-project .shil-frame-main {
   .shil-header-title span { font-size: 8px !important; }
   .shil-footer-btn, .shil-header-btn { font-size: 10px !important; }
 }
+
+/* ============================================================
+   SHIL MOBILE FINAL PATCH 2026-06-04
+   Rules applied from mobile screenshots and user review:
+   - Dashboard is full-screen mobile-first and has no header/footer.
+   - Dashboard icons/images are NOT glassed; they sit directly on background.
+   - Header and footer are minimal transparent glass on inner pages only.
+   - Step rail is compact, transparent glass, tangent to header.
+   - Page content scrolls under rail, but final data stops above footer.
+   - Unified field/card colors and strict side gutters.
+============================================================ */
+
+@media (max-width: 768px) {
+  :root {
+    --shil-mobile-w: 100vw;
+    --shil-side-gap: 10px;
+    --shil-header-h: 52px;
+    --shil-rail-h: 68px;
+    --shil-footer-h: 72px;
+    --shil-top-stack: calc(var(--shil-header-h) + var(--shil-rail-h));
+    --shil-bottom-safe: calc(var(--shil-footer-h) + env(safe-area-inset-bottom, 0px) + 14px);
+    --shil-glass: rgba(232, 244, 255, .30);
+    --shil-glass-strong: rgba(232, 244, 255, .42);
+    --shil-glass-border: rgba(255, 255, 255, .28);
+    --shil-card-bg: rgba(246, 252, 255, .94);
+    --shil-field-bg: rgba(255, 255, 255, .92);
+    --shil-field-border: rgba(72, 218, 215, .48);
+    --shil-text: #071728;
+  }
+
+  html,
+  body,
+  #root {
+    width: 100vw !important;
+    min-width: 100vw !important;
+    max-width: 100vw !important;
+    height: 100dvh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    background: #04101a !important;
+  }
+
+  #root,
+  .app,
+  .shil-frame,
+  .shil-page-shell,
+  .shil-dashboard-shell,
+  .dashboard-shell-v15,
+  [class*="shell"],
+  [class*="page"] {
+    max-width: 100vw !important;
+    width: 100vw !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  body:not(.login-page):not(.welcome-page) .shil-frame,
+  body:not(.login-page):not(.welcome-page) .shil-page-shell {
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    overflow: hidden !important;
+    background: linear-gradient(180deg, #04101a 0%, #09233c 50%, #04101a 100%) !important;
+  }
+
+  /* Dashboard: no chrome, no empty desktop margins, no icon glass. */
+  body.shil-route-dashboard .shil-header,
+  body.shil-route-dashboard .shil-footer,
+  body.shil-route-dashboard .shil-fixed-header,
+  body.shil-route-dashboard .shil-fixed-footer,
+  body.shil-route-dashboard [class*="header"],
+  body.shil-route-dashboard [class*="footer"] {
+    display: none !important;
+  }
+
+  body.shil-route-dashboard .shil-page-content,
+  body.shil-route-dashboard .shil-home-shell,
+  body.shil-route-dashboard .shil-home-icons,
+  body.shil-route-dashboard .shil-dashboard-shell,
+  body.shil-route-dashboard .dashboard-shell-v15 {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    min-height: 100dvh !important;
+    height: 100dvh !important;
+    margin: 0 !important;
+    padding: 10px var(--shil-side-gap) calc(14px + env(safe-area-inset-bottom, 0px)) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    background: linear-gradient(180deg, #07111a 0%, #31404a 52%, #07111a 100%) !important;
+  }
+
+  body.shil-route-dashboard .shil-master-bg,
+  body.shil-route-dashboard .shil-home-icons::before,
+  body.shil-route-dashboard .shil-home-icons::after,
+  body.shil-route-dashboard .new-project-grid-3x3::before,
+  body.shil-route-dashboard .new-project-grid-3x3::after {
+    display: none !important;
+    content: none !important;
+  }
+
+  body.shil-route-dashboard .shil-ios-grid,
+  body.shil-route-dashboard .new-project-grid-3x3,
+  body.shil-route-dashboard .dashboard-icons,
+  body.shil-route-dashboard [class*="icon-grid"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    column-gap: 8px !important;
+    row-gap: 18px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: 0 !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  body.shil-route-dashboard .shil-ios-icon,
+  body.shil-route-dashboard .shil-ios-icon-link,
+  body.shil-route-dashboard .dashboard-icon,
+  body.shil-route-dashboard .dash-card-v15,
+  body.shil-route-dashboard [class*="icon-card"] {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    overflow: visible !important;
+    padding: 0 !important;
+  }
+
+  body.shil-route-dashboard .shil-ios-icon-img,
+  body.shil-route-dashboard .dashboard-icon img,
+  body.shil-route-dashboard .dash-card-v15 img,
+  body.shil-route-dashboard [class*="icon"] img {
+    width: clamp(62px, 19vw, 82px) !important;
+    height: clamp(62px, 19vw, 82px) !important;
+    object-fit: contain !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    filter: drop-shadow(0 7px 13px rgba(0, 0, 0, .34)) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  body.shil-route-dashboard .shil-ios-icon-title,
+  body.shil-route-dashboard .dashboard-icon-title,
+  body.shil-route-dashboard .dash-card-v15 h3,
+  body.shil-route-dashboard [class*="icon"] span,
+  body.shil-route-dashboard [class*="icon"] b {
+    margin-top: 5px !important;
+    color: #fff !important;
+    font-size: clamp(12px, 3.4vw, 15px) !important;
+    font-weight: 900 !important;
+    line-height: 1.35 !important;
+    text-align: center !important;
+    text-shadow: 0 2px 7px rgba(0, 0, 0, .55) !important;
+  }
+
+  /* Inner pages: minimal glass bars. */
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-header,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-fixed-header {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100vw !important;
+    height: var(--shil-header-h) !important;
+    min-height: var(--shil-header-h) !important;
+    padding: 6px var(--shil-side-gap) !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    border: 0 !important;
+    border-bottom: 1px solid var(--shil-glass-border) !important;
+    background: var(--shil-glass) !important;
+    backdrop-filter: blur(18px) saturate(150%) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(150%) !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, .14) !important;
+    z-index: 10020 !important;
+  }
+
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-footer,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-fixed-footer {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    min-height: var(--shil-footer-h) !important;
+    height: var(--shil-footer-h) !important;
+    padding: 9px var(--shil-side-gap) calc(9px + env(safe-area-inset-bottom, 0px)) !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    border: 0 !important;
+    border-top: 1px solid var(--shil-glass-border) !important;
+    background: var(--shil-glass-strong) !important;
+    backdrop-filter: blur(18px) saturate(150%) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(150%) !important;
+    box-shadow: 0 -4px 14px rgba(0, 0, 0, .16) !important;
+    z-index: 10020 !important;
+  }
+
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-header button,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-header a,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-footer button,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-footer a,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-fixed-header button,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-fixed-header a,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-fixed-footer button,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-fixed-footer a {
+    min-height: 34px !important;
+    padding: 6px 12px !important;
+    border-radius: 999px !important;
+    border: 1px solid rgba(255, 255, 255, .38) !important;
+    background: rgba(255, 255, 255, .62) !important;
+    color: var(--shil-text) !important;
+    font-size: 12px !important;
+    font-weight: 800 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .10) !important;
+  }
+
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-header-title,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-fixed-header .shil-header-title {
+    min-height: 34px !important;
+    max-width: 52vw !important;
+    padding: 6px 13px !important;
+    border-radius: 999px !important;
+    background: rgba(98, 118, 136, .34) !important;
+    border: 1px solid rgba(255, 255, 255, .22) !important;
+    color: var(--shil-text) !important;
+    font-size: 12px !important;
+    font-weight: 900 !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  /* Compact rail exactly tangent to header. */
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-step-rail,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .project-step-rail,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .project-mini-rail,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-project-mini-rail,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .project-mini-rail-grid,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-step-scroll,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-stepper-scroll,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-design-path-scroll,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-project-steps,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-horizontal-steps,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-route-steps,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-path-steps,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .design-path-scroll,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .project-path-scroll,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-project-stagebar,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-stagebar,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [class*="step-rail"],
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [class*="stagebar"] {
+    position: fixed !important;
+    top: var(--shil-header-h) !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100vw !important;
+    height: var(--shil-rail-h) !important;
+    min-height: var(--shil-rail-h) !important;
+    max-height: var(--shil-rail-h) !important;
+    margin: 0 !important;
+    padding: 5px var(--shil-side-gap) 6px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    border-radius: 0 !important;
+    border: 0 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, .22) !important;
+    background: rgba(235, 247, 255, .33) !important;
+    backdrop-filter: blur(18px) saturate(150%) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(150%) !important;
+    box-shadow: 0 5px 16px rgba(0, 0, 0, .13) !important;
+    z-index: 10010 !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+  }
+
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [class*="step-rail"]::-webkit-scrollbar,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [class*="stagebar"]::-webkit-scrollbar,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .project-mini-rail-grid::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .project-mini-rail-grid .shil-ios-icon-link,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-project-mini-rail .shil-ios-icon-link,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [class*="step"] .shil-ios-icon-link,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [class*="stage"] .shil-ios-icon-link {
+    flex: 0 0 72px !important;
+    width: 72px !important;
+    min-width: 72px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    text-align: center !important;
+  }
+
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .project-mini-rail-grid .shil-ios-icon-img,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-project-mini-rail .shil-ios-icon-img,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [class*="step"] .shil-ios-icon-img,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [class*="stage"] .shil-ios-icon-img {
+    width: 32px !important;
+    height: 32px !important;
+    object-fit: contain !important;
+    background: transparent !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    filter: drop-shadow(0 4px 7px rgba(0, 0, 0, .22)) !important;
+  }
+
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .project-mini-rail-grid .shil-ios-icon-label,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-project-mini-rail .shil-ios-icon-label,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [class*="step"] .shil-ios-icon-label,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [class*="stage"] .shil-ios-icon-label {
+    font-size: 9.5px !important;
+    line-height: 1.25 !important;
+    font-weight: 700 !important;
+    color: rgba(7, 23, 40, .78) !important;
+    margin-top: 1px !important;
+  }
+
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .is-active-step,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .active-step,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .active,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [aria-current="page"] {
+    font-weight: 950 !important;
+    color: #04111f !important;
+  }
+
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .is-active-step .shil-ios-icon-img,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .active-step .shil-ios-icon-img,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [aria-current="page"] .shil-ios-icon-img {
+    transform: scale(1.08) !important;
+    filter: drop-shadow(0 0 8px rgba(0, 231, 255, .8)) drop-shadow(0 3px 7px rgba(0, 0, 0, .24)) !important;
+  }
+
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .is-active-step .shil-ios-icon-label,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .active-step .shil-ios-icon-label,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [aria-current="page"] .shil-ios-icon-label {
+    font-weight: 950 !important;
+    color: #000 !important;
+  }
+
+  /* Content layer: scrolls behind rail, never overlaps footer. */
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-frame-main,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-page-content,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) main,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [class*="page-content"] {
+    position: relative !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    margin: 0 !important;
+    padding: calc(var(--shil-top-stack) + 4px) var(--shil-side-gap) var(--shil-bottom-safe) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box !important;
+    -webkit-overflow-scrolling: touch !important;
+    scroll-padding-top: calc(var(--shil-top-stack) + 4px) !important;
+    scroll-padding-bottom: var(--shil-bottom-safe) !important;
+  }
+
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-frame-main > :last-child,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-page-content > :last-child,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) main > :last-child,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) form > :last-child,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) section > :last-child {
+    margin-bottom: 14px !important;
+  }
+
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-confirm-button,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .confirm-button,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) button[type="submit"],
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-primary-btn,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .primary-button {
+    margin-bottom: 12px !important;
+  }
+
+  /* Strict side gutters and unified component colors. */
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-card,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-panel,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-summary-card,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-bank-card,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-form-card,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-result-card,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-config-card,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-section-card,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-info-card,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-data-card,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-engineering-card,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-block,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-result-row,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-field-row,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-input-card,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [class*="card"],
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [class*="panel"],
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [class*="block"] {
+    width: 100% !important;
+    max-width: calc(100vw - (var(--shil-side-gap) * 2)) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+    border-radius: 18px !important;
+    background-color: var(--shil-card-bg) !important;
+    border-color: rgba(90, 218, 218, .38) !important;
+    color: var(--shil-text) !important;
+  }
+
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) input,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) select,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) textarea,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-input,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-select,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-field,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [class*="field"],
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [class*="input"] {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    background: var(--shil-field-bg) !important;
+    border: 1px solid var(--shil-field-border) !important;
+    color: var(--shil-text) !important;
+    border-radius: 16px !important;
+  }
+
+  /* Keep engineering background consistent and prevent dashboard image leakage. */
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-master-bg,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard)::before {
+    background: linear-gradient(180deg, #04101a 0%, #09233c 50%, #04101a 100%) !important;
+    background-image: linear-gradient(180deg, #04101a 0%, #09233c 50%, #04101a 100%) !important;
+  }
+
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) img {
+    max-width: 100% !important;
+  }
+}
+
+/* =====================================================================
+   SHIL MOBILE FINAL PASS - 2026-06-04
+   Purpose: final mobile-first visual correction after Vercel screenshots.
+   Rules:
+   - Dashboard has no header/footer and icons sit directly on quality bg.
+   - Engineering pages use transparent glass header + mini rail + glass footer.
+   - Content scrolls under the rail and stops above footer.
+   - Unified field/card colors across all engineering pages.
+   ===================================================================== */
+
+@media (max-width: 768px) {
+  :root {
+    --shil-vp-w: 100vw;
+    --shil-header-h: 52px;
+    --shil-rail-h: 58px;
+    --shil-footer-h: calc(66px + env(safe-area-inset-bottom, 0px));
+    --shil-side-gap: 7px;
+    --shil-top-stack: calc(var(--shil-header-h) + var(--shil-rail-h));
+    --shil-bottom-safe: calc(var(--shil-footer-h) + 10px);
+    --shil-radius-card: 18px;
+    --shil-radius-field: 15px;
+    --shil-glass-bg: rgba(214, 232, 244, .36);
+    --shil-glass-bg-strong: rgba(214, 232, 244, .48);
+    --shil-glass-border: rgba(255, 255, 255, .32);
+    --shil-card-bg: rgba(245, 252, 255, .92);
+    --shil-field-bg: rgba(255, 255, 255, .96);
+    --shil-field-border: rgba(80, 220, 196, .42);
+    --shil-text: #061525;
+    --shil-muted: rgba(6, 21, 37, .66);
+    --shil-soft-shadow: 0 8px 18px rgba(0, 0, 0, .13);
+    --shil-mini-shadow: 0 4px 12px rgba(0, 0, 0, .12);
+  }
+
+  html,
+  body,
+  #root {
+    width: 100vw !important;
+    min-width: 100vw !important;
+    max-width: 100vw !important;
+    min-height: 100dvh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow-x: hidden !important;
+    background: #03101a !important;
+  }
+
+  * { box-sizing: border-box !important; }
+
+  /* Real mobile-first canvas: no desktop-like side frame. */
+  .shil-frame,
+  .shil-page-shell,
+  .app-shell,
+  .app-root,
+  [class*="shell"],
+  [class*="layout"] {
+    max-width: 100vw !important;
+  }
+
+  body:not(.login-page):not(.welcome-page) .shil-frame,
+  body:not(.login-page):not(.welcome-page) .shil-page-shell {
+    width: 100vw !important;
+    min-height: 100dvh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow-x: hidden !important;
+    background: linear-gradient(180deg, #03101a 0%, #09233c 52%, #03101a 100%) !important;
+  }
+
+  /* DASHBOARD: no header, no footer, no glass behind icons. */
+  body.shil-route-dashboard .shil-fixed-header,
+  body.shil-route-dashboard .shil-fixed-footer,
+  body.shil-route-dashboard .shil-header,
+  body.shil-route-dashboard .shil-footer,
+  body.shil-route-dashboard header,
+  body.shil-route-dashboard footer {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  body.shil-route-dashboard .shil-page-shell,
+  body.shil-route-dashboard .dashboard-shell-v15,
+  body.shil-route-dashboard .shil-home-shell {
+    width: 100vw !important;
+    min-height: 100dvh !important;
+    max-width: 100vw !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow-x: hidden !important;
+    background: #07121f !important;
+  }
+
+  body.shil-route-dashboard .shil-page-content,
+  body.shil-route-dashboard main {
+    width: 100vw !important;
+    min-height: 100dvh !important;
+    height: auto !important;
+    padding: 18px 10px 22px !important;
+    margin: 0 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    background: transparent !important;
+  }
+
+  body.shil-route-dashboard .shil-master-bg {
+    inset: 0 !important;
+    background: linear-gradient(180deg, rgba(3, 16, 26, .18), rgba(3, 16, 26, .28)) !important;
+    pointer-events: none !important;
+  }
+
+  body.shil-route-dashboard .shil-home-icons,
+  body.shil-route-dashboard .shil-ios-grid,
+  body.shil-route-dashboard .new-project-grid-3x3,
+  body.shil-route-dashboard .dash-panel-v15,
+  body.shil-route-dashboard .dash-grid-v15 {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    overflow: visible !important;
+  }
+
+  body.shil-route-dashboard .shil-ios-grid,
+  body.shil-route-dashboard .new-project-grid-3x3 {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 18px 10px !important;
+    align-items: start !important;
+    justify-items: center !important;
+  }
+
+  body.shil-route-dashboard .shil-ios-icon-link,
+  body.shil-route-dashboard .dash-card-v15,
+  body.shil-route-dashboard .dash-card-wrap,
+  body.shil-route-dashboard [class*="icon-link"] {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 112px !important;
+    min-height: auto !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    text-align: center !important;
+    color: #fff !important;
+  }
+
+  body.shil-route-dashboard .shil-ios-icon-img,
+  body.shil-route-dashboard .dash-icon-v15 {
+    width: 72px !important;
+    height: 72px !important;
+    padding: 0 !important;
+    margin: 0 auto 7px !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  body.shil-route-dashboard .shil-ios-icon-img img,
+  body.shil-route-dashboard .dash-icon-v15 img {
+    width: 72px !important;
+    height: 72px !important;
+    object-fit: contain !important;
+    filter: drop-shadow(0 5px 8px rgba(0, 0, 0, .35)) !important;
+    background: transparent !important;
+  }
+
+  body.shil-route-dashboard .shil-ios-icon-title,
+  body.shil-route-dashboard .shil-ios-icon-label,
+  body.shil-route-dashboard .dash-card-v15 h3 {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    color: #fff !important;
+    font-size: 15px !important;
+    line-height: 1.28 !important;
+    font-weight: 900 !important;
+    text-shadow: 0 2px 7px rgba(0, 0, 0, .70) !important;
+    text-align: center !important;
+  }
+
+  body.shil-route-dashboard .dash-card-v15 p,
+  body.shil-route-dashboard .dash-card-menu,
+  body.shil-route-dashboard .dash-card-dot,
+  body.shil-route-dashboard .dash-section-head {
+    display: none !important;
+  }
+
+  body.shil-route-dashboard .shil-online-chip {
+    margin: 8px 8px 28px auto !important;
+    background: rgba(255, 255, 255, .18) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(255, 255, 255, .22) !important;
+    box-shadow: none !important;
+    color: #fff !important;
+  }
+
+  /* ENGINEERING: header and footer are thin transparent glass. */
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-header,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-fixed-header {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100vw !important;
+    height: var(--shil-header-h) !important;
+    min-height: var(--shil-header-h) !important;
+    max-height: var(--shil-header-h) !important;
+    margin: 0 !important;
+    padding: 7px var(--shil-side-gap) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 6px !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    border-bottom: 1px solid var(--shil-glass-border) !important;
+    background: var(--shil-glass-bg) !important;
+    backdrop-filter: blur(19px) saturate(150%) !important;
+    -webkit-backdrop-filter: blur(19px) saturate(150%) !important;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, .10) !important;
+    z-index: 30000 !important;
+  }
+
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-header-title {
+    height: 32px !important;
+    min-height: 32px !important;
+    max-width: 54vw !important;
+    padding: 5px 12px !important;
+    border-radius: 999px !important;
+    background: rgba(80, 96, 114, .28) !important;
+    border: 1px solid rgba(255,255,255,.22) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.18) !important;
+    color: var(--shil-text) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    overflow: hidden !important;
+    white-space: nowrap !important;
+    text-overflow: ellipsis !important;
+  }
+
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-header-title strong,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-header-title span {
+    font-size: 12px !important;
+    line-height: 1 !important;
+    font-weight: 900 !important;
+    color: var(--shil-text) !important;
+  }
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-header-title span { display: none !important; }
+
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-header-btn,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-header-action,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-fixed-header a,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-fixed-header button {
+    min-width: 62px !important;
+    min-height: 32px !important;
+    height: 32px !important;
+    padding: 5px 10px !important;
+    border-radius: 999px !important;
+    background: rgba(255,255,255,.72) !important;
+    border: 1px solid rgba(255,255,255,.36) !important;
+    box-shadow: 0 2px 7px rgba(0,0,0,.09) !important;
+    color: var(--shil-text) !important;
+    font-size: 11.5px !important;
+    font-weight: 850 !important;
+  }
+
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-header-status {
+    min-width: 62px !important;
+    justify-content: center !important;
+    font-size: 10px !important;
+  }
+
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-footer,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-fixed-footer {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: var(--shil-footer-h) !important;
+    min-height: var(--shil-footer-h) !important;
+    margin: 0 !important;
+    padding: 8px var(--shil-side-gap) calc(8px + env(safe-area-inset-bottom, 0px)) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 7px !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    border-top: 1px solid var(--shil-glass-border) !important;
+    background: var(--shil-glass-bg-strong) !important;
+    backdrop-filter: blur(19px) saturate(150%) !important;
+    -webkit-backdrop-filter: blur(19px) saturate(150%) !important;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, .14) !important;
+    z-index: 30000 !important;
+  }
+
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-footer a,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-footer button,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-fixed-footer a,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-fixed-footer button {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    min-height: 34px !important;
+    height: 34px !important;
+    padding: 5px 8px !important;
+    border-radius: 999px !important;
+    background: rgba(255,255,255,.78) !important;
+    border: 1px solid rgba(255,255,255,.36) !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,.10) !important;
+    color: var(--shil-text) !important;
+    font-size: 11.5px !important;
+    font-weight: 850 !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-footer-primary,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .primary-button,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-primary-btn {
+    background: linear-gradient(135deg, rgba(69, 214, 238, .88), rgba(113, 94, 232, .90)) !important;
+    color: #fff !important;
+  }
+
+  /* MINI RAIL: tangent under header, smaller, glass, icons direct. */
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .project-mini-rail,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-project-mini-rail,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .project-mini-rail-grid,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-step-rail,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .project-step-rail,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-step-scroll,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-stepper-scroll,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-design-path-scroll,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-project-steps,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-horizontal-steps,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-route-steps,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-path-steps,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .design-path-scroll,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .project-path-scroll,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-project-stagebar,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-stagebar,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [class*="step-rail"],
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [class*="stagebar"] {
+    position: fixed !important;
+    top: var(--shil-header-h) !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100vw !important;
+    height: var(--shil-rail-h) !important;
+    min-height: var(--shil-rail-h) !important;
+    max-height: var(--shil-rail-h) !important;
+    margin: 0 !important;
+    padding: 3px var(--shil-side-gap) 4px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 7px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    border-bottom: 1px solid rgba(255,255,255,.25) !important;
+    background: rgba(235, 247, 255, .32) !important;
+    backdrop-filter: blur(18px) saturate(150%) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(150%) !important;
+    box-shadow: 0 4px 10px rgba(0,0,0,.10) !important;
+    z-index: 29990 !important;
+    scrollbar-width: none !important;
+  }
+
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [class*="step-rail"]::-webkit-scrollbar,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [class*="stagebar"]::-webkit-scrollbar,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .project-mini-rail-grid::-webkit-scrollbar { display: none !important; }
+
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .project-mini-rail-grid .shil-ios-icon-link,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-project-mini-rail .shil-ios-icon-link,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [class*="step"] .shil-ios-icon-link,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [class*="stage"] .shil-ios-icon-link {
+    flex: 0 0 58px !important;
+    width: 58px !important;
+    min-width: 58px !important;
+    max-width: 58px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    text-align: center !important;
+  }
+
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .project-mini-rail-grid .shil-ios-icon-img,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-project-mini-rail .shil-ios-icon-img,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [class*="step"] .shil-ios-icon-img,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [class*="stage"] .shil-ios-icon-img {
+    width: 25px !important;
+    height: 25px !important;
+    min-width: 25px !important;
+    min-height: 25px !important;
+    padding: 0 !important;
+    margin: 0 auto 1px !important;
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    filter: drop-shadow(0 3px 5px rgba(0,0,0,.25)) !important;
+  }
+
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .project-mini-rail-grid .shil-ios-icon-img img,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-project-mini-rail .shil-ios-icon-img img,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [class*="step"] .shil-ios-icon-img img,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [class*="stage"] .shil-ios-icon-img img {
+    width: 25px !important;
+    height: 25px !important;
+    object-fit: contain !important;
+    background: transparent !important;
+  }
+
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .project-mini-rail-grid .shil-ios-icon-title,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .project-mini-rail-grid .shil-ios-icon-label,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-project-mini-rail .shil-ios-icon-title,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-project-mini-rail .shil-ios-icon-label,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [class*="step"] .shil-ios-icon-title,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [class*="step"] .shil-ios-icon-label,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [class*="stage"] .shil-ios-icon-title,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [class*="stage"] .shil-ios-icon-label {
+    font-size: 8.2px !important;
+    line-height: 1.15 !important;
+    font-weight: 750 !important;
+    color: rgba(6,21,37,.72) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    max-width: 58px !important;
+  }
+
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .is-active-step,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .active-step,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [aria-current="page"] {
+    transform: translateY(-1px) !important;
+    opacity: 1 !important;
+  }
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .is-active-step .shil-ios-icon-img,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .active-step .shil-ios-icon-img,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [aria-current="page"] .shil-ios-icon-img {
+    transform: scale(1.12) !important;
+    filter: drop-shadow(0 0 7px rgba(0, 231, 255, .85)) drop-shadow(0 3px 5px rgba(0,0,0,.25)) !important;
+  }
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .is-active-step .shil-ios-icon-title,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .is-active-step .shil-ios-icon-label,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .active-step .shil-ios-icon-title,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .active-step .shil-ios-icon-label,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [aria-current="page"] .shil-ios-icon-title,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [aria-current="page"] .shil-ios-icon-label {
+    font-weight: 950 !important;
+    color: #000 !important;
+  }
+
+  /* CONTENT: start behind fixed stack and always end above footer. */
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-frame-main,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-page-content,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) main,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [class*="page-content"] {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    min-height: 100dvh !important;
+    height: 100dvh !important;
+    margin: 0 !important;
+    padding: calc(var(--shil-top-stack) + 4px) var(--shil-side-gap) var(--shil-bottom-safe) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    scroll-padding-top: calc(var(--shil-top-stack) + 4px) !important;
+    scroll-padding-bottom: var(--shil-bottom-safe) !important;
+    background: transparent !important;
+  }
+
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) form,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) section,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-content-stack,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [class*="content"] {
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-frame-main > :last-child,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-page-content > :last-child,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) main > :last-child,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) form > :last-child,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) section > :last-child {
+    margin-bottom: 10px !important;
+  }
+
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-confirm-button,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .confirm-button,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) button[type="submit"],
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-primary-btn,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .primary-button,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [class*="confirm"],
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [class*="submit"] {
+    margin-bottom: 12px !important;
+    position: relative !important;
+    z-index: 1 !important;
+  }
+
+  /* Unified card/field geometry and color. */
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-card,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-panel,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-summary-card,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-bank-card,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-form-card,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-result-card,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-config-card,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-section-card,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-info-card,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-data-card,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-engineering-card,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-block,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-result-row,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-field-row,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-input-card,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [class*="card"],
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [class*="panel"],
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [class*="block"] {
+    width: 100% !important;
+    max-width: calc(100vw - (var(--shil-side-gap) * 2)) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    border-radius: var(--shil-radius-card) !important;
+    background: var(--shil-card-bg) !important;
+    border: 1px solid rgba(80, 220, 196, .34) !important;
+    box-shadow: var(--shil-soft-shadow) !important;
+    color: var(--shil-text) !important;
+    overflow-x: hidden !important;
+  }
+
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) input,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) select,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) textarea,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-input,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-select,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) .shil-field,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [class*="field"],
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) [class*="input"] {
+    max-width: 100% !important;
+    min-height: 42px !important;
+    border-radius: var(--shil-radius-field) !important;
+    background: var(--shil-field-bg) !important;
+    border: 1px solid var(--shil-field-border) !important;
+    box-shadow: none !important;
+    color: var(--shil-text) !important;
+  }
+
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) * {
+    color: var(--shil-text);
+  }
+
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) img,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) svg,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) canvas,
+  body:not(.login-page):not(.welcome-page):not(.shil-route-dashboard) video {
+    max-width: 100% !important;
+  }
+}
+
+/* ============================================================
+   SHIL FINAL DATA-DENSE MOBILE LAYOUT PATCH - 2026-06-04
+   Rule: short values are rendered as compact property/value rows,
+   not as oversized standalone form blocks. This layer intentionally
+   overrides legacy colorful field/card styles on mobile.
+============================================================ */
+@media (max-width: 768px) {
+  :root {
+    --shil-mobile-edge: clamp(8px, 2.7vw, 12px);
+    --shil-row-h: 42px;
+    --shil-block-gap: 6px;
+    --shil-compact-radius: 16px;
+    --shil-card-bg: rgba(245, 252, 255, 0.92);
+    --shil-row-bg: rgba(255, 255, 255, 0.88);
+    --shil-line: rgba(74, 238, 205, 0.34);
+    --shil-ink: #06182a;
+    --shil-muted: rgba(6, 24, 42, 0.62);
+  }
+
+  html, body, #root, .shil-frame, .shil-app, .app-root {
+    width: 100% !important;
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+  }
+
+  body:not(.shil-route-dashboard) .shil-frame-main,
+  body:not(.shil-route-dashboard) .shil-page-content,
+  body:not(.shil-route-dashboard) main,
+  body:not(.shil-route-dashboard) .shil-card-stack,
+  body:not(.shil-route-dashboard) .shil-env-page,
+  body:not(.shil-route-dashboard) .engineering-page-shell,
+  body:not(.shil-route-dashboard) .shil-engineering-page {
+    padding-left: var(--shil-mobile-edge) !important;
+    padding-right: var(--shil-mobile-edge) !important;
+    box-sizing: border-box !important;
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+  }
+
+  body:not(.shil-route-dashboard) .shil-card-stack,
+  body:not(.shil-route-dashboard) .shil-env-page,
+  body:not(.shil-route-dashboard) .shil-form-grid,
+  body:not(.shil-route-dashboard) .shil-summary-grid,
+  body:not(.shil-route-dashboard) .shil-result-grid,
+  body:not(.shil-route-dashboard) .shil-system-banks-grid,
+  body:not(.shil-route-dashboard) .shil-calculation-grid,
+  body:not(.shil-route-dashboard) .shil-scenario-detail-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: var(--shil-block-gap) !important;
+    margin: 0 !important;
+  }
+
+  body:not(.shil-route-dashboard) .shil-section-card,
+  body:not(.shil-route-dashboard) .shil-env-card,
+  body:not(.shil-route-dashboard) .shil-card,
+  body:not(.shil-route-dashboard) .shil-panel,
+  body:not(.shil-route-dashboard) .shil-summary-card,
+  body:not(.shil-route-dashboard) .shil-result-card,
+  body:not(.shil-route-dashboard) .shil-data-card,
+  body:not(.shil-route-dashboard) .shil-info-card,
+  body:not(.shil-route-dashboard) .shil-engineering-card,
+  body:not(.shil-route-dashboard) .shil-block {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 0 var(--shil-block-gap) 0 !important;
+    padding: 8px !important;
+    border-radius: var(--shil-compact-radius) !important;
+    border: 1px solid var(--shil-line) !important;
+    background: var(--shil-card-bg) !important;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.10) !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  body:not(.shil-route-dashboard) .shil-section-head,
+  body:not(.shil-route-dashboard) .shil-section-title,
+  body:not(.shil-route-dashboard) .shil-card-title {
+    min-height: 34px !important;
+    margin: 0 0 6px 0 !important;
+    padding: 6px 8px !important;
+    border-radius: 12px !important;
+    background: rgba(255,255,255,.72) !important;
+    border: 1px solid rgba(74,238,205,.22) !important;
+    color: var(--shil-ink) !important;
+    font-size: 13px !important;
+    line-height: 1.55 !important;
+  }
+
+  /* Universal compact property/value row for legacy fields */
+  body:not(.shil-route-dashboard) .shil-field,
+  body:not(.shil-route-dashboard) .shil-field-row,
+  body:not(.shil-route-dashboard) .shil-input-card,
+  body:not(.shil-route-dashboard) .shil-bank-field,
+  body:not(.shil-route-dashboard) .shil-summary-grid > div,
+  body:not(.shil-route-dashboard) .shil-result-row,
+  body:not(.shil-route-dashboard) .shil-scenario-detail-grid > span,
+  body:not(.shil-route-dashboard) .shil-scenario-detail-grid > strong {
+    min-height: var(--shil-row-h) !important;
+    margin: 0 !important;
+    padding: 6px 8px !important;
+    border-radius: 12px !important;
+    border: 1px solid var(--shil-line) !important;
+    background: var(--shil-row-bg) !important;
+    box-shadow: none !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+
+  body:not(.shil-route-dashboard) .shil-field,
+  body:not(.shil-route-dashboard) .shil-bank-field,
+  body:not(.shil-route-dashboard) .shil-field-row,
+  body:not(.shil-route-dashboard) .shil-input-card {
+    display: grid !important;
+    grid-template-columns: minmax(82px, 34%) minmax(0, 1fr) !important;
+    align-items: center !important;
+    column-gap: 8px !important;
+    row-gap: 4px !important;
+  }
+
+  body:not(.shil-route-dashboard) .shil-field > label,
+  body:not(.shil-route-dashboard) .shil-field label,
+  body:not(.shil-route-dashboard) .shil-bank-field > label,
+  body:not(.shil-route-dashboard) .shil-field-row > span,
+  body:not(.shil-route-dashboard) .shil-summary-grid span,
+  body:not(.shil-route-dashboard) .shil-result-row span {
+    margin: 0 !important;
+    padding: 0 !important;
+    color: var(--shil-muted) !important;
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    line-height: 1.55 !important;
+    text-align: right !important;
+    white-space: normal !important;
+  }
+
+  body:not(.shil-route-dashboard) .shil-field input,
+  body:not(.shil-route-dashboard) .shil-field select,
+  body:not(.shil-route-dashboard) .shil-field textarea,
+  body:not(.shil-route-dashboard) .shil-input,
+  body:not(.shil-route-dashboard) .shil-select,
+  body:not(.shil-route-dashboard) input:not([type="checkbox"]):not([type="radio"]),
+  body:not(.shil-route-dashboard) select,
+  body:not(.shil-route-dashboard) textarea {
+    min-height: 34px !important;
+    height: auto !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 7px 9px !important;
+    border-radius: 10px !important;
+    border: 1px solid rgba(74,238,205,.30) !important;
+    background: rgba(255,255,255,.72) !important;
+    color: var(--shil-ink) !important;
+    font-size: 12px !important;
+    font-weight: 800 !important;
+    text-align: right !important;
+    box-shadow: none !important;
+    box-sizing: border-box !important;
+  }
+
+  body:not(.shil-route-dashboard) textarea {
+    min-height: 48px !important;
+    line-height: 1.7 !important;
+  }
+
+  body:not(.shil-route-dashboard) .shil-env-hint,
+  body:not(.shil-route-dashboard) small,
+  body:not(.shil-route-dashboard) .shil-muted-note,
+  body:not(.shil-route-dashboard) .shil-muted-line {
+    grid-column: 1 / -1 !important;
+    margin: 2px 0 0 0 !important;
+    padding: 5px 8px !important;
+    border-radius: 10px !important;
+    background: rgba(255,255,255,.48) !important;
+    color: rgba(6,24,42,.68) !important;
+    font-size: 10.5px !important;
+    line-height: 1.65 !important;
+  }
+
+  /* GPS becomes an internal mini table instead of tall standalone boxes */
+  body:not(.shil-route-dashboard) .shil-gps-toggle,
+  body:not(.shil-route-dashboard) .shil-gps-manual-grid {
+    grid-column: 1 / -1 !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 4px !important;
+    margin: 0 !important;
+  }
+
+  body:not(.shil-route-dashboard) .shil-gps-manual-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  body:not(.shil-route-dashboard) .shil-gps-toggle button {
+    min-height: 32px !important;
+    padding: 5px 4px !important;
+    border-radius: 10px !important;
+    border: 1px solid rgba(74,238,205,.28) !important;
+    background: rgba(255,255,255,.68) !important;
+    color: var(--shil-ink) !important;
+    font-size: 10.5px !important;
+    font-weight: 800 !important;
+  }
+
+  body:not(.shil-route-dashboard) .shil-gps-toggle button.active {
+    background: rgba(74,238,205,.18) !important;
+    border-color: rgba(74,238,205,.62) !important;
+  }
+
+  /* Summary/result grids become real two-column property/value tables. */
+  body:not(.shil-route-dashboard) .shil-summary-grid > div,
+  body:not(.shil-route-dashboard) .shil-result-row,
+  body:not(.shil-route-dashboard) .shil-info-row,
+  body:not(.shil-route-dashboard) .shil-data-row {
+    display: grid !important;
+    grid-template-columns: minmax(86px, 36%) minmax(0, 1fr) !important;
+    align-items: center !important;
+    gap: 8px !important;
+  }
+
+  body:not(.shil-route-dashboard) .shil-summary-grid strong,
+  body:not(.shil-route-dashboard) .shil-result-row strong,
+  body:not(.shil-route-dashboard) .shil-info-row strong,
+  body:not(.shil-route-dashboard) .shil-data-row strong,
+  body:not(.shil-route-dashboard) .shil-value {
+    color: var(--shil-ink) !important;
+    font-size: 12.5px !important;
+    font-weight: 900 !important;
+    text-align: right !important;
+    line-height: 1.55 !important;
+    min-width: 0 !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  /* Image-as-card project path: the image composes the card, no white empty area. */
+  body:not(.shil-route-dashboard) .shil-execution-grid,
+  body:not(.shil-route-dashboard) .shil-project-path-two-cards {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+
+  body:not(.shil-route-dashboard) .shil-execution-card,
+  body:not(.shil-route-dashboard) .shil-project-path-card {
+    position: relative !important;
+    width: 100% !important;
+    min-height: 146px !important;
+    aspect-ratio: 16 / 7.2 !important;
+    padding: 0 !important;
+    border-radius: 20px !important;
+    overflow: hidden !important;
+    border: 1px solid rgba(74,238,205,.50) !important;
+    background: #071421 !important;
+    box-shadow: 0 12px 28px rgba(0,0,0,.22) !important;
+  }
+
+  body:not(.shil-route-dashboard) .shil-execution-card::after,
+  body:not(.shil-route-dashboard) .shil-project-path-card::after {
+    content: "" !important;
+    position: absolute !important;
+    inset: 0 !important;
+    background: linear-gradient(90deg, rgba(3,10,20,.08), rgba(3,10,20,.22) 42%, rgba(3,10,20,.82)) !important;
+    pointer-events: none !important;
+    z-index: 1 !important;
+  }
+
+  body:not(.shil-route-dashboard) .shil-execution-image {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    transform: none !important;
+    z-index: 0 !important;
+  }
+
+  body:not(.shil-route-dashboard) .shil-execution-card h3,
+  body:not(.shil-route-dashboard) .shil-project-path-card h3 {
+    position: absolute !important;
+    right: 16px !important;
+    left: 52px !important;
+    bottom: 48px !important;
+    margin: 0 !important;
+    color: #fff !important;
+    text-shadow: 0 3px 10px rgba(0,0,0,.65) !important;
+    font-size: 18px !important;
+    line-height: 1.5 !important;
+    font-weight: 950 !important;
+    z-index: 2 !important;
+    text-align: right !important;
+  }
+
+  body:not(.shil-route-dashboard) .shil-execution-card p,
+  body:not(.shil-route-dashboard) .shil-project-path-card p {
+    position: absolute !important;
+    right: 16px !important;
+    left: 52px !important;
+    bottom: 16px !important;
+    margin: 0 !important;
+    color: rgba(255,255,255,.88) !important;
+    text-shadow: 0 2px 8px rgba(0,0,0,.65) !important;
+    font-size: 11.5px !important;
+    line-height: 1.55 !important;
+    font-weight: 800 !important;
+    z-index: 2 !important;
+    text-align: right !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+  }
+
+  body:not(.shil-route-dashboard) .shil-execution-check {
+    position: absolute !important;
+    top: 12px !important;
+    right: 12px !important;
+    width: 24px !important;
+    height: 24px !important;
+    border-radius: 50% !important;
+    background: #22e08c !important;
+    color: #062115 !important;
+    display: grid !important;
+    place-items: center !important;
+    font-size: 13px !important;
+    font-weight: 950 !important;
+    z-index: 3 !important;
+    box-shadow: 0 0 18px rgba(34,224,140,.45) !important;
+  }
+
+  body:not(.shil-route-dashboard) .shil-execution-card.active,
+  body:not(.shil-route-dashboard) .shil-project-path-card.active {
+    border-color: rgba(74,238,205,.95) !important;
+    box-shadow: 0 0 0 2px rgba(74,238,205,.20), 0 14px 30px rgba(0,0,0,.24) !important;
+  }
+
+  /* Remove legacy large white blocks and colorful per-page styling. */
+  body:not(.shil-route-dashboard) [style*="background"].shil-field,
+  body:not(.shil-route-dashboard) [class*="green"],
+  body:not(.shil-route-dashboard) [class*="purple"],
+  body:not(.shil-route-dashboard) [class*="cyan"] {
+    border-color: var(--shil-line) !important;
+  }
+
+  body:not(.shil-route-dashboard) .shil-primary-wide,
+  body:not(.shil-route-dashboard) .shil-confirm-config-button,
+  body:not(.shil-route-dashboard) button[type="submit"] {
+    min-height: 42px !important;
+    margin: 8px 0 0 0 !important;
+    border-radius: 14px !important;
+  }
+
+  body:not(.shil-route-dashboard) .shil-frame-main::after,
+  body:not(.shil-route-dashboard) .shil-page-content::after,
+  body:not(.shil-route-dashboard) main::after {
+    content: "";
+    display: block;
+    height: 14px;
+  }
+}
+
+/* ============================================================
+   SHIL FINAL ENGINEERING GRID PASS - Property | Value everywhere
+   Goal: reduce vertical scroll, remove empty field space, unify data blocks.
+   ============================================================ */
+@media (max-width: 900px) {
+  body:not(.shil-route-dashboard) {
+    --shil-mobile-edge: 8px;
+    --shil-block-gap: 6px;
+    --shil-row-h: 34px;
+    --shil-grid-label: minmax(82px, 34%);
+    --shil-grid-value: minmax(0, 1fr);
+  }
+
+  body:not(.shil-route-dashboard) .shil-page-scroll,
+  body:not(.shil-route-dashboard) .shil-card-stack,
+  body:not(.shil-route-dashboard) .shil-page-content,
+  body:not(.shil-route-dashboard) .engineering-page-content,
+  body:not(.shil-route-dashboard) main {
+    padding-left: var(--shil-mobile-edge) !important;
+    padding-right: var(--shil-mobile-edge) !important;
+    gap: var(--shil-block-gap) !important;
+    box-sizing: border-box !important;
+    max-width: 100vw !important;
+    overflow-x: clip !important;
+  }
+
+  body:not(.shil-route-dashboard) .shil-section-card,
+  body:not(.shil-route-dashboard) .shil-config-block,
+  body:not(.shil-route-dashboard) .glass-card-v15,
+  body:not(.shil-route-dashboard) .form-section-v15,
+  body:not(.shil-route-dashboard) .engineering-result-panel-v15,
+  body:not(.shil-route-dashboard) .final-summary-v15,
+  body:not(.shil-route-dashboard) .shil-compact-engineering-panel {
+    margin: 0 0 var(--shil-block-gap) 0 !important;
+    padding: 8px !important;
+    border-radius: 15px !important;
+    border: 1px solid rgba(74,238,205,.22) !important;
+    background: rgba(255,255,255,.56) !important;
+    box-shadow: 0 10px 22px rgba(5,17,30,.08) !important;
+  }
+
+  body:not(.shil-route-dashboard) .shil-section-head,
+  body:not(.shil-route-dashboard) .widget-head-v15,
+  body:not(.shil-route-dashboard) .form-section-head-v15 {
+    min-height: 0 !important;
+    padding: 0 2px 6px 2px !important;
+    margin: 0 0 4px 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+  }
+
+  body:not(.shil-route-dashboard) .shil-section-head h2,
+  body:not(.shil-route-dashboard) .widget-head-v15 h3,
+  body:not(.shil-route-dashboard) .form-section-head-v15 h3,
+  body:not(.shil-route-dashboard) .form-section-head-v15 h2 {
+    margin: 0 !important;
+    font-size: 13px !important;
+    line-height: 1.45 !important;
+    font-weight: 950 !important;
+    color: var(--shil-ink, #06182a) !important;
+  }
+
+  body:not(.shil-route-dashboard) .shil-section-head span,
+  body:not(.shil-route-dashboard) .widget-head-v15 span,
+  body:not(.shil-route-dashboard) .form-section-head-v15 span,
+  body:not(.shil-route-dashboard) .engine-status-chip-v15 {
+    margin: 0 !important;
+    padding: 3px 7px !important;
+    border-radius: 999px !important;
+    background: rgba(74,238,205,.14) !important;
+    color: rgba(6,24,42,.72) !important;
+    font-size: 9.5px !important;
+    line-height: 1.4 !important;
+    font-weight: 900 !important;
+    white-space: nowrap !important;
+  }
+
+  /* Forms become compact rows. Editable values remain inputs, but consume row-height only. */
+  body:not(.shil-route-dashboard) .shil-form-grid,
+  body:not(.shil-route-dashboard) .advanced-form-status-grid-v15,
+  body:not(.shil-route-dashboard) .form-section-content-v15,
+  body:not(.shil-route-dashboard) .engineering-input-grid-v15,
+  body:not(.shil-route-dashboard) .summary-grid-v15,
+  body:not(.shil-route-dashboard) .engineering-result-grid-v15,
+  body:not(.shil-route-dashboard) .shil-summary-grid,
+  body:not(.shil-route-dashboard) .summary-bom-v15 {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 4px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  body:not(.shil-route-dashboard) .shil-form-grid > label,
+  body:not(.shil-route-dashboard) .input-field-v15,
+  body:not(.shil-route-dashboard) .project-field-v15,
+  body:not(.shil-route-dashboard) .shil-bank-field,
+  body:not(.shil-route-dashboard) .shil-param-grid > label,
+  body:not(.shil-route-dashboard) .form-section-content-v15 > label,
+  body:not(.shil-route-dashboard) .advanced-form-v15 label,
+  body:not(.shil-route-dashboard) .shil-data-row,
+  body:not(.shil-route-dashboard) .engineering-mini-card-v15,
+  body:not(.shil-route-dashboard) .form-status-card-v15,
+  body:not(.shil-route-dashboard) .result-card-v15,
+  body:not(.shil-route-dashboard) .shil-summary-grid > div,
+  body:not(.shil-route-dashboard) .summary-grid-v15 > div,
+  body:not(.shil-route-dashboard) .engineering-result-grid-v15 > div,
+  body:not(.shil-route-dashboard) .summary-bom-item-v15,
+  body:not(.shil-route-dashboard) .shil-bank-datasheet-grid > div,
+  body:not(.shil-route-dashboard) .shil-solar-sizing-preview > div,
+  body:not(.shil-route-dashboard) .environment-card-v15,
+  body:not(.shil-route-dashboard) .weather-card-v15,
+  body:not(.shil-route-dashboard) .system-card-v15,
+  body:not(.shil-route-dashboard) .finance-card-v15,
+  body:not(.shil-route-dashboard) .loss-card-v15,
+  body:not(.shil-route-dashboard) .safety-card-v15,
+  body:not(.shil-route-dashboard) .pv-string-card-v15 {
+    min-height: var(--shil-row-h) !important;
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: var(--shil-grid-label) var(--shil-grid-value) !important;
+    align-items: center !important;
+    column-gap: 7px !important;
+    row-gap: 2px !important;
+    padding: 5px 7px !important;
+    margin: 0 !important;
+    border-radius: 11px !important;
+    border: 1px solid rgba(74,238,205,.18) !important;
+    background: rgba(255,255,255,.62) !important;
+    box-shadow: none !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+
+  body:not(.shil-route-dashboard) .shil-form-grid > label > span,
+  body:not(.shil-route-dashboard) .input-field-v15 > label,
+  body:not(.shil-route-dashboard) .project-field-v15 > label,
+  body:not(.shil-route-dashboard) .shil-bank-field > label,
+  body:not(.shil-route-dashboard) .shil-param-grid > label > span,
+  body:not(.shil-route-dashboard) .form-section-content-v15 > label > span,
+  body:not(.shil-route-dashboard) .advanced-form-v15 label > span,
+  body:not(.shil-route-dashboard) .shil-summary-grid span,
+  body:not(.shil-route-dashboard) .summary-grid-v15 h4,
+  body:not(.shil-route-dashboard) .engineering-result-grid-v15 h4,
+  body:not(.shil-route-dashboard) .engineering-mini-card-v15 h4,
+  body:not(.shil-route-dashboard) .result-title-v15,
+  body:not(.shil-route-dashboard) .form-status-card-v15 h4,
+  body:not(.shil-route-dashboard) .environment-card-v15 span,
+  body:not(.shil-route-dashboard) .weather-card-v15 span,
+  body:not(.shil-route-dashboard) .system-card-v15 span {
+    grid-column: 1 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    color: rgba(6,24,42,.58) !important;
+    font-size: 10.5px !important;
+    line-height: 1.4 !important;
+    font-weight: 900 !important;
+    text-align: right !important;
+    white-space: normal !important;
+  }
+
+  body:not(.shil-route-dashboard) .shil-form-grid input,
+  body:not(.shil-route-dashboard) .shil-form-grid select,
+  body:not(.shil-route-dashboard) .input-field-v15 input,
+  body:not(.shil-route-dashboard) .input-field-v15 select,
+  body:not(.shil-route-dashboard) .project-field-v15 input,
+  body:not(.shil-route-dashboard) .project-field-v15 select,
+  body:not(.shil-route-dashboard) .shil-bank-field input,
+  body:not(.shil-route-dashboard) .shil-bank-field select,
+  body:not(.shil-route-dashboard) .advanced-form-v15 input,
+  body:not(.shil-route-dashboard) .advanced-form-v15 select,
+  body:not(.shil-route-dashboard) .shil-param-grid input,
+  body:not(.shil-route-dashboard) .shil-param-grid select {
+    grid-column: 2 !important;
+    min-height: 26px !important;
+    height: 26px !important;
+    padding: 3px 6px !important;
+    border-radius: 8px !important;
+    border: 1px solid rgba(74,238,205,.20) !important;
+    background: rgba(255,255,255,.42) !important;
+    color: var(--shil-ink, #06182a) !important;
+    font-size: 11.5px !important;
+    font-weight: 900 !important;
+    line-height: 1.2 !important;
+    text-align: right !important;
+    box-shadow: none !important;
+  }
+
+  body:not(.shil-route-dashboard) .shil-form-grid textarea,
+  body:not(.shil-route-dashboard) .input-field-v15 textarea,
+  body:not(.shil-route-dashboard) .project-field-v15 textarea,
+  body:not(.shil-route-dashboard) .advanced-form-v15 textarea {
+    grid-column: 1 / -1 !important;
+    min-height: 54px !important;
+    height: auto !important;
+    margin-top: 3px !important;
+    padding: 7px 8px !important;
+    border-radius: 10px !important;
+    background: rgba(255,255,255,.54) !important;
+    font-size: 11.5px !important;
+    line-height: 1.7 !important;
+  }
+
+  body:not(.shil-route-dashboard) .shil-summary-grid strong,
+  body:not(.shil-route-dashboard) .summary-grid-v15 strong,
+  body:not(.shil-route-dashboard) .engineering-result-grid-v15 strong,
+  body:not(.shil-route-dashboard) .engineering-mini-card-v15 strong,
+  body:not(.shil-route-dashboard) .result-value-v15,
+  body:not(.shil-route-dashboard) .form-status-card-v15 strong,
+  body:not(.shil-route-dashboard) .summary-bom-item-v15 strong,
+  body:not(.shil-route-dashboard) .environment-card-v15 strong,
+  body:not(.shil-route-dashboard) .weather-card-v15 strong,
+  body:not(.shil-route-dashboard) .system-card-v15 strong,
+  body:not(.shil-route-dashboard) .finance-card-v15 strong,
+  body:not(.shil-route-dashboard) .loss-card-v15 strong,
+  body:not(.shil-route-dashboard) .safety-card-v15 strong,
+  body:not(.shil-route-dashboard) .pv-string-card-v15 strong {
+    grid-column: 2 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    color: var(--shil-ink, #06182a) !important;
+    font-size: 12px !important;
+    line-height: 1.4 !important;
+    font-weight: 950 !important;
+    text-align: right !important;
+    min-width: 0 !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  body:not(.shil-route-dashboard) .shil-summary-grid p,
+  body:not(.shil-route-dashboard) .summary-grid-v15 p,
+  body:not(.shil-route-dashboard) .engineering-result-grid-v15 p,
+  body:not(.shil-route-dashboard) .engineering-mini-card-v15 p,
+  body:not(.shil-route-dashboard) .result-unit-v15,
+  body:not(.shil-route-dashboard) .summary-grid-v15 small,
+  body:not(.shil-route-dashboard) .summary-bom-v15 small,
+  body:not(.shil-route-dashboard) .form-status-card-v15 small {
+    grid-column: 1 / -1 !important;
+    margin: 2px 0 0 0 !important;
+    padding: 0 !important;
+    color: rgba(6,24,42,.56) !important;
+    font-size: 9.8px !important;
+    line-height: 1.45 !important;
+    font-weight: 800 !important;
+  }
+
+  /* Long text/details get a reserved compact multiline row, not a tall isolated card. */
+  body:not(.shil-route-dashboard) .shil-textarea,
+  body:not(.shil-route-dashboard) textarea.shil-textarea {
+    min-height: 64px !important;
+    max-height: 108px !important;
+  }
+
+  /* Bank selector cards: selected summary + select + datasheet stay compact. */
+  body:not(.shil-route-dashboard) .shil-bank-selected-head,
+  body:not(.shil-route-dashboard) .shil-bank-smart-note {
+    display: grid !important;
+    grid-template-columns: var(--shil-grid-label) var(--shil-grid-value) !important;
+    align-items: center !important;
+    gap: 6px !important;
+    min-height: 32px !important;
+    padding: 5px 7px !important;
+    margin: 0 0 4px 0 !important;
+    border-radius: 10px !important;
+    background: rgba(255,255,255,.52) !important;
+    border: 1px solid rgba(74,238,205,.16) !important;
+  }
+
+  body:not(.shil-route-dashboard) .shil-bank-selected-head strong,
+  body:not(.shil-route-dashboard) .shil-bank-smart-note strong {
+    grid-column: 2 !important;
+    font-size: 11.3px !important;
+    line-height: 1.45 !important;
+  }
+
+  body:not(.shil-route-dashboard) .shil-bank-selected-head small,
+  body:not(.shil-route-dashboard) .shil-bank-smart-note small,
+  body:not(.shil-route-dashboard) .shil-bank-smart-note span {
+    grid-column: 1 !important;
+    font-size: 9.8px !important;
+    font-weight: 850 !important;
+    color: rgba(6,24,42,.55) !important;
+  }
+
+  body:not(.shil-route-dashboard) .shil-bank-detail-toggle,
+  body:not(.shil-route-dashboard) .shil-soft-button {
+    min-height: 30px !important;
+    padding: 5px 8px !important;
+    margin-top: 4px !important;
+    border-radius: 10px !important;
+    font-size: 10.5px !important;
+    font-weight: 900 !important;
+  }
+
+  /* Dense action/footer guard: last content must end above footer top. */
+  body:not(.shil-route-dashboard) .shil-page-scroll > :last-child,
+  body:not(.shil-route-dashboard) .shil-card-stack > :last-child,
+  body:not(.shil-route-dashboard) .engineering-page-content > :last-child {
+    margin-bottom: 10px !important;
+  }
+}

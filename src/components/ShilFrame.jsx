@@ -23,7 +23,7 @@ export default function ShilFrame({ children }) {
   const navigate = useNavigate();
 
   const path = location.pathname;
-  const hidden = path === "/" || path === "/login" || path === "/welcome";
+  const hidden = path === "/" || path === "/login" || path === "/welcome" || path === "/dashboard";
 
   const title =
     titles[path] ||
