@@ -1,4 +1,5 @@
-﻿import './appearance/styles/shil-force-welcome-after-login.js';
+﻿import "./appearance/styles/shil-mobile-fixed-layout.css";
+import './appearance/styles/shil-force-welcome-after-login.js';
 import './appearance/styles/shil-auth-page-body-class.js';
 
 import './appearance/styles/shil-global-black-text.css';
@@ -61,3 +62,4 @@ import './appearance/styles/shil-real-class-final-theme.css';
 
 
 import './appearance/styles/shil-emergency-readability-fix.css';
+
