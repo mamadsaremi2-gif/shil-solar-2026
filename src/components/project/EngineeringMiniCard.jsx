@@ -1,15 +1,11 @@
 import React from "react";
 
-export default function EngineeringMiniCard({
-  title,
-  value,
-  subtitle,
-}) {
+export default function EngineeringMiniCard({ title, value, subtitle }) {
   return (
-    <div className="engineering-mini-card-v15">
-      <h4>{title}</h4>
+    <div className="engineering-mini-card-v15 shil-data-row">
+      <span>{title}</span>
       <strong>{value}</strong>
-      <p>{subtitle}</p>
+      {subtitle ? <small>{subtitle}</small> : null}
     </div>
   );
 }

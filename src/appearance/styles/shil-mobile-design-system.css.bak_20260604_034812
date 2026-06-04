@@ -31460,20 +31460,3 @@ body.shil-route-new-project .shil-frame-main {
     margin-bottom: 10px !important;
   }
 }
-
-/* =======================================================
-   TEMP DEBUG - HIDE ONLINE STATUS
-   ======================================================= */
-
-.online-status,
-.user-online-status,
-.shil-online-status,
-.shil-status-chip,
-.shil-status-online,
-.dashboard-online-status,
-[class*="online"],
-[class*="status-chip"]{
-  display:none !important;
-  visibility:hidden !important;
-  opacity:0 !important;
-}
