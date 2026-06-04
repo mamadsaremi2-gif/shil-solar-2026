@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export function ShilHeader({ title = "SHIL" }) {
   const navigate = useNavigate();
@@ -24,15 +24,12 @@ export function ShilFooter({ compact = false }) {
 }
 
 export default function ShilPageShell({ title, children, className = "" }) {
-  const location = useLocation();
-  const isDashboard = location.pathname === "/dashboard";
-
   return (
-    <div className={`shil-page-shell ${className} ${isDashboard ? "shil-dashboard-shell-clean" : ""}`} dir="rtl">
+    <div className={`shil-page-shell ${className}`} dir="rtl">
       <div className="shil-master-bg" />
-      {!isDashboard ? <ShilHeader title={title} /> : null}
+      <ShilHeader title={title} />
       <main className="shil-page-content">{children}</main>
-      {!isDashboard ? <ShilFooter /> : null}
+      <ShilFooter />
     </div>
   );
 }
