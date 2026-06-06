@@ -1,0 +1,6 @@
+
+.dashboard-page *, .new-project-page * {}
+.dashboard-page .icon-panel,.new-project-page .icon-panel,
+.dashboard-page .icons-container,.new-project-page .icons-container{
+background:transparent!important;border:none!important;box-shadow:none!important;
+}

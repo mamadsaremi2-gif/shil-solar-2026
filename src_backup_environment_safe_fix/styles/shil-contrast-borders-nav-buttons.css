@@ -1,0 +1,217 @@
+
+/* =========================================================
+   SHIL FINAL CONTRAST BORDERS + NAV BUTTON UNIFICATION
+   - همه دکمه‌های Header/Footer مثل دکمه بازگشت
+   - تفکیک بصری بلوک‌ها/کارت‌ها/فیلدها با نوار متضاد ظریف
+   ========================================================= */
+
+:root {
+  --shil-nav-btn-bg-1: #f8fcff;
+  --shil-nav-btn-bg-2: #eaf4fb;
+  --shil-nav-btn-border: #c8ecff;
+  --shil-nav-btn-text: #0d2535;
+
+  --shil-contrast-line: rgba(45, 185, 225, .72);
+  --shil-contrast-line-soft: rgba(45, 185, 225, .42);
+  --shil-contrast-line-inner: rgba(255,255,255,.92);
+  --shil-section-edge: rgba(74, 95, 116, .28);
+
+  --shil-card-outline-shadow:
+    0 0 0 1px var(--shil-contrast-line-soft),
+    0 12px 28px rgba(20,45,70,.08),
+    inset 0 1px 0 rgba(255,255,255,.90);
+
+  --shil-field-outline-shadow:
+    0 0 0 1px rgba(45,185,225,.42),
+    0 5px 14px rgba(20,45,70,.045),
+    inset 0 1px 0 rgba(255,255,255,.90);
+}
+
+/* ---------- Header / Footer buttons: all like Back button ---------- */
+body:not(.login-page):not(.welcome-page) .shil-header button,
+body:not(.login-page):not(.welcome-page) .shil-footer button,
+body:not(.login-page):not(.welcome-page) .shil-header a,
+body:not(.login-page):not(.welcome-page) .shil-footer a,
+body:not(.login-page):not(.welcome-page) .shil-header .shil-capsule,
+body:not(.login-page):not(.welcome-page) .shil-footer .shil-capsule,
+body:not(.login-page):not(.welcome-page) .shil-header .shil-mini-btn,
+body:not(.login-page):not(.welcome-page) .shil-footer .shil-mini-btn,
+body:not(.login-page):not(.welcome-page) .shil-header .shil-primary-btn,
+body:not(.login-page):not(.welcome-page) .shil-footer .shil-primary-btn,
+body:not(.login-page):not(.welcome-page) .shil-header .shil-ghost-btn,
+body:not(.login-page):not(.welcome-page) .shil-footer .shil-ghost-btn {
+  background:
+    linear-gradient(180deg, var(--shil-nav-btn-bg-1), var(--shil-nav-btn-bg-2)) !important;
+  border: 1px solid var(--shil-nav-btn-border) !important;
+  color: var(--shil-nav-btn-text) !important;
+  font-weight: 900 !important;
+  border-radius: 18px !important;
+  min-height: 34px !important;
+  padding: 7px 15px !important;
+  box-shadow:
+    0 2px 8px rgba(0,0,0,.08),
+    0 0 0 1px rgba(255,255,255,.62) inset,
+    inset 0 1px 0 rgba(255,255,255,.92) !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-header button *,
+body:not(.login-page):not(.welcome-page) .shil-footer button *,
+body:not(.login-page):not(.welcome-page) .shil-header a *,
+body:not(.login-page):not(.welcome-page) .shil-footer a *,
+body:not(.login-page):not(.welcome-page) .shil-header .shil-capsule *,
+body:not(.login-page):not(.welcome-page) .shil-footer .shil-capsule * {
+  color: var(--shil-nav-btn-text) !important;
+  font-weight: 900 !important;
+  text-shadow: none !important;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-header button:hover,
+body:not(.login-page):not(.welcome-page) .shil-footer button:hover,
+body:not(.login-page):not(.welcome-page) .shil-header a:hover,
+body:not(.login-page):not(.welcome-page) .shil-footer a:hover {
+  transform: translateY(-1px) !important;
+  box-shadow:
+    0 4px 12px rgba(0,0,0,.12),
+    0 0 10px rgba(120,220,255,.25),
+    inset 0 1px 0 rgba(255,255,255,.94) !important;
+}
+
+/* ---------- Visible separation for large sections ---------- */
+body:not(.login-page):not(.welcome-page) .shil-env-card,
+body:not(.login-page):not(.welcome-page) .shil-card,
+body:not(.login-page):not(.welcome-page) .shil-panel,
+body:not(.login-page):not(.welcome-page) .shil-block,
+body:not(.login-page):not(.welcome-page) .shil-section,
+body:not(.login-page):not(.welcome-page) .shil-summary-card,
+body:not(.login-page):not(.welcome-page) .shil-final-card,
+body:not(.login-page):not(.welcome-page) .shil-report-card,
+body:not(.login-page):not(.welcome-page) .shil-output-card,
+body:not(.login-page):not(.welcome-page) .shil-form-card,
+body:not(.login-page):not(.welcome-page) .project-card,
+body:not(.login-page):not(.welcome-page) .route-card,
+body:not(.login-page):not(.welcome-page) .project-type-card,
+body:not(.login-page):not(.welcome-page) .new-project-card,
+body:not(.login-page):not(.welcome-page) .dashboard-card,
+body:not(.login-page):not(.welcome-page) section[class*="card"],
+body:not(.login-page):not(.welcome-page) section[class*="Card"],
+body:not(.login-page):not(.welcome-page) div[class*="card"],
+body:not(.login-page):not(.welcome-page) div[class*="Card"],
+body:not(.login-page):not(.welcome-page) div[class*="panel"],
+body:not(.login-page):not(.welcome-page) div[class*="Panel"],
+body:not(.login-page):not(.welcome-page) div[class*="section"],
+body:not(.login-page):not(.welcome-page) div[class*="Section"] {
+  border: 1.25px solid var(--shil-contrast-line) !important;
+  box-shadow: var(--shil-card-outline-shadow) !important;
+  position: relative !important;
+}
+
+/* Thin top/side technical edge for section distinction */
+body:not(.login-page):not(.welcome-page) .shil-env-card::before,
+body:not(.login-page):not(.welcome-page) .shil-card::before,
+body:not(.login-page):not(.welcome-page) .shil-panel::before,
+body:not(.login-page):not(.welcome-page) .shil-summary-card::before,
+body:not(.login-page):not(.welcome-page) .shil-final-card::before,
+body:not(.login-page):not(.welcome-page) .shil-report-card::before,
+body:not(.login-page):not(.welcome-page) .shil-output-card::before,
+body:not(.login-page):not(.welcome-page) .shil-form-card::before,
+body:not(.login-page):not(.welcome-page) section[class*="card"]::before,
+body:not(.login-page):not(.welcome-page) section[class*="Card"]::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  border-radius: inherit !important;
+  pointer-events: none !important;
+  background:
+    linear-gradient(90deg, rgba(45,185,225,.72), rgba(45,185,225,0) 28%, rgba(45,185,225,.38) 100%) top / 100% 2px no-repeat,
+    linear-gradient(180deg, rgba(45,185,225,.42), rgba(45,185,225,0) 45%) right / 2px 100% no-repeat !important;
+  opacity: .72 !important;
+}
+
+/* ---------- Fields / inputs / metric boxes: more contrast ---------- */
+body:not(.login-page):not(.welcome-page) .shil-field,
+body:not(.login-page):not(.welcome-page) .shil-input,
+body:not(.login-page):not(.welcome-page) input,
+body:not(.login-page):not(.welcome-page) textarea,
+body:not(.login-page):not(.welcome-page) select,
+body:not(.login-page):not(.welcome-page) .shil-data-cell,
+body:not(.login-page):not(.welcome-page) .shil-metric,
+body:not(.login-page):not(.welcome-page) .shil-stat,
+body:not(.login-page):not(.welcome-page) .summary-item,
+body:not(.login-page):not(.welcome-page) .data-item,
+body:not(.login-page):not(.welcome-page) .metric-card,
+body:not(.login-page):not(.welcome-page) .result-card,
+body:not(.login-page):not(.welcome-page) td,
+body:not(.login-page):not(.welcome-page) th {
+  border: 1.15px solid var(--shil-contrast-line-soft) !important;
+  box-shadow: var(--shil-field-outline-shadow) !important;
+}
+
+/* Inner form grid dividers to prevent everything blending together */
+body:not(.login-page):not(.welcome-page) .shil-form-grid,
+body:not(.login-page):not(.welcome-page) .shil-manual-climate-grid,
+body:not(.login-page):not(.welcome-page) .shil-orientation-input-grid,
+body:not(.login-page):not(.welcome-page) .shil-site-preview-grid,
+body:not(.login-page):not(.welcome-page) .summary-grid,
+body:not(.login-page):not(.welcome-page) .data-grid,
+body:not(.login-page):not(.welcome-page) .result-grid,
+body:not(.login-page):not(.welcome-page) .equipment-grid {
+  gap: 14px !important;
+}
+
+/* Table-like blocks */
+body:not(.login-page):not(.welcome-page) table,
+body:not(.login-page):not(.welcome-page) .table,
+body:not(.login-page):not(.welcome-page) [class*="table"],
+body:not(.login-page):not(.welcome-page) [class*="Table"] {
+  border: 1.25px solid rgba(45,185,225,.58) !important;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.72) inset,
+    0 10px 24px rgba(20,45,70,.07) !important;
+}
+
+/* Subtle section title divider */
+body:not(.login-page):not(.welcome-page) .shil-section-title,
+body:not(.login-page):not(.welcome-page) h2,
+body:not(.login-page):not(.welcome-page) h3 {
+  padding-bottom: 6px !important;
+  border-bottom: 1px solid rgba(45,185,225,.22) !important;
+}
+
+/* ---------- Action buttons in content: distinguish from fields ---------- */
+body:not(.login-page):not(.welcome-page) .shil-mini-action,
+body:not(.login-page):not(.welcome-page) .shil-action,
+body:not(.login-page):not(.welcome-page) .shil-install-chip,
+body:not(.login-page):not(.welcome-page) .shil-gps-toggle button,
+body:not(.login-page):not(.welcome-page) button[type="button"],
+body:not(.login-page):not(.welcome-page) button[type="submit"] {
+  border: 1.15px solid rgba(45,185,225,.62) !important;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.70) inset,
+    0 6px 14px rgba(20,45,70,.08) !important;
+}
+
+/* Do not over-border mini rail items */
+body:not(.login-page):not(.welcome-page) .shil-mini-rail *,
+body:not(.login-page):not(.welcome-page) .project-mini-rail *,
+body:not(.login-page):not(.welcome-page) .shil-project-mini-rail *,
+body:not(.login-page):not(.welcome-page) .shil-step-rail *,
+body:not(.login-page):not(.welcome-page) .project-step-rail *,
+body:not(.login-page):not(.welcome-page) .shil-route-rail *,
+body:not(.login-page):not(.welcome-page) [class*="MiniRail"] *,
+body:not(.login-page):not(.welcome-page) [class*="mini-rail"] *,
+body:not(.login-page):not(.welcome-page) [class*="step-rail"] *,
+body:not(.login-page):not(.welcome-page) [class*="route-rail"] * {
+  outline: none !important;
+}
+
+/* Preserve icon borders from rail fix */
+body:not(.login-page):not(.welcome-page) .shil-mini-rail .shil-ios-icon-img,
+body:not(.login-page):not(.welcome-page) .project-mini-rail .shil-ios-icon-img,
+body:not(.login-page):not(.welcome-page) .shil-project-mini-rail .shil-ios-icon-img,
+body:not(.login-page):not(.welcome-page) .shil-step-rail .shil-ios-icon-img,
+body:not(.login-page):not(.welcome-page) .project-step-rail .shil-ios-icon-img,
+body:not(.login-page):not(.welcome-page) .shil-route-rail .shil-ios-icon-img {
+  border: 1px solid rgba(199,125,255,.38) !important;
+}

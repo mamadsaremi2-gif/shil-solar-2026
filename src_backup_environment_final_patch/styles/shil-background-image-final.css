@@ -1,0 +1,109 @@
+
+/* =========================================================
+   SHIL BACKGROUND IMAGE FINAL FIX
+   Uses the exact public path:
+   public/assets/shil/background/main/shil-main-bg.webp
+   Vite URL:
+   /assets/shil/background/main/shil-main-bg.webp
+   ========================================================= */
+
+:root {
+  --shil-main-background-image: url('/assets/shil/background/main/shil-main-bg.webp');
+  --shil-page-bg-fallback: #e8eef4;
+  --shil-bg-soft-overlay: rgba(232, 238, 244, .72);
+}
+
+/* Global app background image */
+html,
+body,
+#root {
+  min-height: 100% !important;
+  background-color: var(--shil-page-bg-fallback) !important;
+}
+
+/* Apply image to body and main app root */
+body:not(.login-page):not(.welcome-page),
+body:not(.login-page):not(.welcome-page) #root,
+body:not(.login-page):not(.welcome-page) .app,
+body:not(.login-page):not(.welcome-page) .shil-app,
+body:not(.login-page):not(.welcome-page) .mobile-app,
+body:not(.login-page):not(.welcome-page) .app-shell,
+body:not(.login-page):not(.welcome-page) .shil-shell,
+body:not(.login-page):not(.welcome-page) .mobile-shell,
+body:not(.login-page):not(.welcome-page) .page,
+body:not(.login-page):not(.welcome-page) .screen,
+body:not(.login-page):not(.welcome-page) .mobile-page,
+body:not(.login-page):not(.welcome-page) .shil-page,
+body:not(.login-page):not(.welcome-page) .shil-main,
+body:not(.login-page):not(.welcome-page) main {
+  background-color: var(--shil-page-bg-fallback) !important;
+  background-image:
+    var(--shil-main-background-image) !important;
+  background-size: cover, cover !important;
+  background-position: center center, center center !important;
+  background-repeat: no-repeat, no-repeat !important;
+  background-attachment: fixed, fixed !important;
+}
+
+/* Let internal wrappers show the background instead of covering it */
+body:not(.login-page):not(.welcome-page) .shil-dashboard,
+body:not(.login-page):not(.welcome-page) .dashboard-page,
+body:not(.login-page):not(.welcome-page) .dashboard-screen,
+body:not(.login-page):not(.welcome-page) .project-page,
+body:not(.login-page):not(.welcome-page) .calculation-page,
+body:not(.login-page):not(.welcome-page) .development-page,
+body:not(.login-page):not(.welcome-page) [class*="dashboard"],
+body:not(.login-page):not(.welcome-page) [class*="Dashboard"] {
+  background-color: transparent !important;
+}
+
+/* Keep blocks readable over the image */
+body:not(.login-page):not(.welcome-page) .shil-card,
+body:not(.login-page):not(.welcome-page) .shil-panel,
+body:not(.login-page):not(.welcome-page) .shil-block,
+body:not(.login-page):not(.welcome-page) .shil-section,
+body:not(.login-page):not(.welcome-page) .mobile-card,
+body:not(.login-page):not(.welcome-page) .shil-env-card,
+body:not(.login-page):not(.welcome-page) .shil-summary-card,
+body:not(.login-page):not(.welcome-page) .shil-final-card,
+body:not(.login-page):not(.welcome-page) .shil-report-card,
+body:not(.login-page):not(.welcome-page) .shil-output-card,
+body:not(.login-page):not(.welcome-page) .shil-form-card,
+body:not(.login-page):not(.welcome-page) .project-card,
+body:not(.login-page):not(.welcome-page) .route-card,
+body:not(.login-page):not(.welcome-page) .project-type-card,
+body:not(.login-page):not(.welcome-page) .new-project-card,
+body:not(.login-page):not(.welcome-page) .dashboard-card,
+body:not(.login-page):not(.welcome-page) section,
+body:not(.login-page):not(.welcome-page) article {
+  background-color: rgba(248, 251, 253, .90) !important;
+}
+
+/* On mobile fixed background can be unstable */
+@media (max-width: 768px) {
+  body:not(.login-page):not(.welcome-page),
+  body:not(.login-page):not(.welcome-page) #root,
+  body:not(.login-page):not(.welcome-page) .app,
+  body:not(.login-page):not(.welcome-page) .shil-app,
+  body:not(.login-page):not(.welcome-page) .mobile-app,
+  body:not(.login-page):not(.welcome-page) .app-shell,
+  body:not(.login-page):not(.welcome-page) .shil-shell,
+  body:not(.login-page):not(.welcome-page) .mobile-shell,
+  body:not(.login-page):not(.welcome-page) .page,
+  body:not(.login-page):not(.welcome-page) .screen,
+  body:not(.login-page):not(.welcome-page) .mobile-page,
+  body:not(.login-page):not(.welcome-page) .shil-page,
+  body:not(.login-page):not(.welcome-page) .shil-main,
+  body:not(.login-page):not(.welcome-page) main {
+    background-attachment: scroll, scroll !important;
+  }
+}
+
+
+/* FINAL dashboard/new project cleanup */
+.dashboard-page,.new-project-page,.dashboard-screen,.new-project-screen{
+ border:none!important;outline:none!important;box-shadow:none!important;
+}
+.dashboard-icons-wrapper,.project-icons-wrapper{
+ border:none!important;border-top:none!important;background:transparent!important;box-shadow:none!important;
+}

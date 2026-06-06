@@ -1,0 +1,114 @@
+﻿/* =====================================================
+   SHIL EMERGENCY READABILITY FIX
+   Fix white fields + invisible white text
+   ===================================================== */
+
+:root{
+  --shil-force-text:#05080d;
+  --shil-force-muted:#1b2f45;
+  --shil-force-field:#e8fff0;
+  --shil-force-field-2:#d9f7e4;
+  --shil-force-field-border:#55c987;
+  --shil-force-card-1:#d9d2ff;
+  --shil-force-card-2:#c8d7ff;
+}
+
+/* 1) همه متن‌های صفحات اپ تیره */
+html body:not(.login-page):not(.welcome-page),
+html body:not(.login-page):not(.welcome-page) *,
+html body:not(.login-page):not(.welcome-page) *::before,
+html body:not(.login-page):not(.welcome-page) *::after {
+  color: var(--shil-force-text) !important;
+  -webkit-text-fill-color: var(--shil-force-text) !important;
+  text-shadow: none !important;
+}
+
+/* 2) متن‌های داخل نوار آیکون داشبورد همچنان سفید بمانند */
+html body:not(.login-page):not(.welcome-page)
+.shil-home-shell .shil-ios-icon-title,
+html body:not(.login-page):not(.welcome-page)
+.new-project-grid-3x3 .shil-ios-icon-title,
+html body:not(.login-page):not(.welcome-page)
+.dashboard-icons .shil-ios-icon-title {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 950 !important;
+  text-shadow:
+    0 3px 8px rgba(0,0,0,.95),
+    0 0 16px rgba(90,200,255,.60) !important;
+}
+
+/* 3) کارت‌ها و بلوک‌های واقعی پروژه */
+html body:not(.login-page):not(.welcome-page) .shil-section-card,
+html body:not(.login-page):not(.welcome-page) .shil-config-block,
+html body:not(.login-page):not(.welcome-page) .shil-card-stack > *,
+html body:not(.login-page):not(.welcome-page) .shil-project-path-card,
+html body:not(.login-page):not(.welcome-page) .shil-execution-card,
+html body:not(.login-page):not(.welcome-page) .shil-result-card,
+html body:not(.login-page):not(.welcome-page) .shil-summary-card,
+html body:not(.login-page):not(.welcome-page) .shil-method-context-strip,
+html body:not(.login-page):not(.welcome-page) .shil-project-path-summary {
+  background:
+    linear-gradient(135deg, var(--shil-force-card-1), var(--shil-force-card-2)) !important;
+  border: 1px solid rgba(125,210,255,.85) !important;
+  border-right: 5px solid #63dcff !important;
+  border-radius: 22px !important;
+}
+
+/* 4) همه فیلدها، حتی اگر کلاس ندارند */
+html body:not(.login-page):not(.welcome-page) input,
+html body:not(.login-page):not(.welcome-page) select,
+html body:not(.login-page):not(.welcome-page) textarea,
+html body:not(.login-page):not(.welcome-page) .shil-input,
+html body:not(.login-page):not(.welcome-page) .shil-textarea,
+html body:not(.login-page):not(.welcome-page) .shil-field,
+html body:not(.login-page):not(.welcome-page) .shil-select,
+html body:not(.login-page):not(.welcome-page) .shil-form-grid label,
+html body:not(.login-page):not(.welcome-page) .shil-input-card,
+html body:not(.login-page):not(.welcome-page) .shil-field-card {
+  background:
+    linear-gradient(180deg, var(--shil-force-field), var(--shil-force-field-2)) !important;
+  background-color: var(--shil-force-field) !important;
+  border: 1px solid var(--shil-force-field-border) !important;
+  color: var(--shil-force-text) !important;
+  -webkit-text-fill-color: var(--shil-force-text) !important;
+  caret-color: var(--shil-force-text) !important;
+  border-radius: 14px !important;
+  text-align: center !important;
+  direction: ltr !important;
+}
+
+/* Placeholder هم تیره و خوانا */
+html body:not(.login-page):not(.welcome-page) input::placeholder,
+html body:not(.login-page):not(.welcome-page) textarea::placeholder {
+  color: #40576a !important;
+  -webkit-text-fill-color: #40576a !important;
+  opacity: 1 !important;
+}
+
+/* select option */
+html body:not(.login-page):not(.welcome-page) option {
+  color: var(--shil-force-text) !important;
+  background: var(--shil-force-field) !important;
+}
+
+/* تیتر بلوک‌ها راست‌چین */
+html body:not(.login-page):not(.welcome-page) .shil-section-head,
+html body:not(.login-page):not(.welcome-page) .shil-card-head,
+html body:not(.login-page):not(.welcome-page) h1,
+html body:not(.login-page):not(.welcome-page) h2,
+html body:not(.login-page):not(.welcome-page) h3,
+html body:not(.login-page):not(.welcome-page) h4 {
+  text-align: right !important;
+  direction: rtl !important;
+}
+
+/* اعداد/نتایج وسط‌چین */
+html body:not(.login-page):not(.welcome-page) .shil-result-row,
+html body:not(.login-page):not(.welcome-page) [class*="result"],
+html body:not(.login-page):not(.welcome-page) [class*="value"],
+html body:not(.login-page):not(.welcome-page) [class*="number"] {
+  text-align: center !important;
+  color: var(--shil-force-text) !important;
+  -webkit-text-fill-color: var(--shil-force-text) !important;
+}

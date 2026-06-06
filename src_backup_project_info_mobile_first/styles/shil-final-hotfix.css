@@ -1,0 +1,131 @@
+/* SHIL final asset + navigation hotfix layer */
+:root{
+  --shil-neon-blue:#22d3ff;
+  --shil-neon-purple:#a855f7;
+  --shil-glass-icon:rgba(16, 24, 44, .42);
+}
+
+.shil-login-page,
+.shil-welcome-page{
+  background-image:linear-gradient(180deg, rgba(4,10,19,.18), rgba(4,10,19,.72)), url('/assets/shil/background/login/shil-login-bg.webp') !important;
+  background-size:cover !important;
+  background-position:center !important;
+  background-repeat:no-repeat !important;
+}
+.shil-page-shell,
+.shil-dashboard-shell,
+.shil-dashboard-home,
+.shil-engineering-shell{
+  background-image:linear-gradient(180deg, rgba(4,10,19,.28), rgba(4,10,19,.82)), url('/assets/shil/background/main/shil-main-bg.webp') !important;
+  background-size:cover !important;
+  background-position:center !important;
+  background-repeat:no-repeat !important;
+}
+
+/* Unified glass-neon frame for all app PNG icons */
+.dashboard-icons .shil-ios-icon-img,
+.new-project-grid-3x3 .shil-ios-icon-img,
+.project-mini-rail-grid .shil-ios-icon-img,
+.shil-project-mini-rail .shil-ios-icon-img{
+  position:relative !important;
+  display:grid !important;
+  place-items:center !important;
+  border-radius:22px !important;
+  background:
+    radial-gradient(circle at 28% 18%, rgba(255,255,255,.34), transparent 34%),
+    linear-gradient(135deg, rgba(34,211,238,.30), rgba(168,85,247,.25)),
+    rgba(7,13,26,.28) !important;
+  border:1px solid rgba(255,255,255,.30) !important;
+  box-shadow:
+    0 0 0 1px rgba(34,211,238,.20),
+    0 0 18px rgba(34,211,238,.55),
+    0 0 28px rgba(168,85,247,.38),
+    inset 0 1px 0 rgba(255,255,255,.32),
+    inset 0 -14px 28px rgba(7,13,26,.20) !important;
+  backdrop-filter:blur(14px) saturate(1.25) !important;
+  -webkit-backdrop-filter:blur(14px) saturate(1.25) !important;
+  overflow:visible !important;
+}
+.dashboard-icons .shil-ios-icon-img::after,
+.new-project-grid-3x3 .shil-ios-icon-img::after,
+.project-mini-rail-grid .shil-ios-icon-img::after,
+.shil-project-mini-rail .shil-ios-icon-img::after{
+  content:"";
+  position:absolute;
+  inset:5px;
+  border-radius:17px;
+  border:1px solid rgba(255,255,255,.14);
+  pointer-events:none;
+}
+.dashboard-icons .shil-ios-icon-img img,
+.new-project-grid-3x3 .shil-ios-icon-img img,
+.project-mini-rail-grid .shil-ios-icon-img img,
+.shil-project-mini-rail .shil-ios-icon-img img{
+  width:88% !important;
+  height:88% !important;
+  object-fit:contain !important;
+  background:transparent !important;
+  border:0 !important;
+  border-radius:0 !important;
+  filter:drop-shadow(0 7px 11px rgba(0,0,0,.48)) saturate(1.08) contrast(1.04) !important;
+}
+.project-mini-rail-grid .shil-ios-icon-img,
+.shil-project-mini-rail .shil-ios-icon-img{
+  border-radius:12px !important;
+  box-shadow:0 0 10px rgba(34,211,238,.35), 0 0 16px rgba(168,85,247,.22), inset 0 1px 0 rgba(255,255,255,.25) !important;
+}
+.project-mini-rail-grid .shil-ios-icon-img::after,
+.shil-project-mini-rail .shil-ios-icon-img::after{
+  inset:3px;
+  border-radius:9px;
+}
+.project-mini-rail-grid .shil-ios-icon-link.is-active-step .shil-ios-icon-img,
+.shil-project-mini-rail .shil-ios-icon-link.is-active-step .shil-ios-icon-img{
+  transform:scale(1.04);
+  box-shadow:0 0 0 1px rgba(255,255,255,.24), 0 0 18px rgba(34,211,238,.65), 0 0 24px rgba(168,85,247,.45) !important;
+}
+
+/* Project path cards image repair */
+.shil-execution-card .shil-execution-image,
+.shil-project-path-card .shil-execution-image,
+.shil-utility-select-button img{
+  display:block !important;
+  width:min(42vw, 210px) !important;
+  height:min(42vw, 210px) !important;
+  max-width:210px !important;
+  max-height:210px !important;
+  object-fit:contain !important;
+  margin-inline:auto !important;
+  background:transparent !important;
+  border:0 !important;
+  filter:drop-shadow(0 14px 24px rgba(0,0,0,.30)) !important;
+}
+
+/* System settings must remain connected to previous and next steps */
+.shil-system-nav-row{
+  position:sticky;
+  bottom:calc(env(safe-area-inset-bottom) + 8px);
+  z-index:90;
+  display:grid;
+  grid-template-columns:1fr 1fr 1.35fr;
+  gap:8px;
+  padding:8px;
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:22px;
+  background:rgba(5, 12, 24, .72);
+  backdrop-filter:blur(16px) saturate(1.2);
+  -webkit-backdrop-filter:blur(16px) saturate(1.2);
+  box-shadow:0 -12px 34px rgba(0,0,0,.28);
+}
+.shil-system-nav-row .shil-soft-button,
+.shil-system-nav-row .shil-primary-wide{
+  min-height:44px;
+  margin:0 !important;
+  white-space:nowrap;
+}
+.shil-system-nav-row .shil-primary-wide{
+  background:linear-gradient(135deg, #22d3ee, #a855f7, #fb923c) !important;
+}
+@media (max-width:430px){
+  .shil-system-nav-row{grid-template-columns:1fr;}
+}

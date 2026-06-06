@@ -1,0 +1,26 @@
+/* ===== SHIL DASHBOARD ICON TITLE FIX ===== */
+
+.shil-ios-icon-title,
+.shil-dashboard-icon-title,
+.new-project-grid-3x3 .shil-ios-icon-title,
+.dashboard-icons .shil-ios-icon-title,
+.shil-home-icons .shil-ios-icon-title{
+
+    color:#ffffff !important;
+    font-weight:900 !important;
+
+    text-shadow:
+        0 3px 8px rgba(0,0,0,.95),
+        0 0 18px rgba(0,180,255,.45);
+
+    letter-spacing:.2px;
+    line-height:1.7;
+}
+
+.shil-ios-icon-link{
+    text-align:center;
+}
+
+.shil-ios-icon-title:hover{
+    color:#ffffff !important;
+}

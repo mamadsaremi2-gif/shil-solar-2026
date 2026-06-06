@@ -1,0 +1,402 @@
+
+/* =========================================================
+   SHIL FINAL LIGHT ENGINEERING UI
+   - کارت‌های روشن و یکدست
+   - هدر/فوتر خاکستری مهندسی
+   - آیکون‌های داشبورد و پروژه جدید: گرد، برجسته، قاب نیونی بنفش روشن
+   - Login / Welcome تا حد امکان دست‌نخورده
+   ========================================================= */
+
+:root {
+  --shil-eng-bg-0: #f7fafd;
+  --shil-eng-bg-1: #eef4f9;
+  --shil-eng-bg-2: #e4edf5;
+
+  --shil-eng-card: rgba(255,255,255,.92);
+  --shil-eng-card-soft: rgba(246,251,255,.84);
+  --shil-eng-border: rgba(80, 210, 245, .58);
+  --shil-eng-border-soft: rgba(80, 210, 245, .34);
+
+  --shil-eng-text: #0d2535;
+  --shil-eng-muted: #4d6677;
+
+  --shil-header-gray-1: #556274;
+  --shil-header-gray-2: #465365;
+  --shil-header-gray-3: #384656;
+
+  --shil-neon-purple: #c77dff;
+  --shil-neon-purple-soft: rgba(199, 125, 255, .34);
+  --shil-neon-purple-line: rgba(211, 158, 255, .82);
+}
+
+/* ---------- App Background: Light Engineering ---------- */
+body:not(.login-page):not(.welcome-page),
+body:not(.login-page):not(.welcome-page) #root,
+body:not(.login-page):not(.welcome-page) .app,
+body:not(.login-page):not(.welcome-page) .shil-app,
+body:not(.login-page):not(.welcome-page) .mobile-app,
+body:not(.login-page):not(.welcome-page) .app-shell,
+body:not(.login-page):not(.welcome-page) .shil-shell,
+body:not(.login-page):not(.welcome-page) .mobile-shell,
+body:not(.login-page):not(.welcome-page) .page,
+body:not(.login-page):not(.welcome-page) .screen,
+body:not(.login-page):not(.welcome-page) .mobile-page,
+body:not(.login-page):not(.welcome-page) .shil-page,
+body:not(.login-page):not(.welcome-page) .shil-main {
+  background:
+    radial-gradient(circle at 12% 8%, rgba(80,210,245,.16), transparent 34%),
+    radial-gradient(circle at 92% 10%, rgba(199,125,255,.12), transparent 36%),
+    linear-gradient(180deg, var(--shil-eng-bg-0) 0%, var(--shil-eng-bg-1) 48%, var(--shil-eng-bg-2) 100%) !important;
+  color: var(--shil-eng-text) !important;
+}
+
+/* ---------- Header / Footer: Engineering Gray ---------- */
+body:not(.login-page):not(.welcome-page) .shil-header,
+body:not(.login-page):not(.welcome-page) .shil-footer,
+body:not(.login-page):not(.welcome-page) header.shil-header,
+body:not(.login-page):not(.welcome-page) footer.shil-footer {
+  background:
+    linear-gradient(180deg, var(--shil-header-gray-1), var(--shil-header-gray-2) 58%, var(--shil-header-gray-3)) !important;
+  border-color: rgba(255,255,255,.32) !important;
+  box-shadow:
+    0 10px 26px rgba(24,42,60,.20),
+    inset 0 1px 0 rgba(255,255,255,.28) !important;
+  backdrop-filter: blur(18px) saturate(145%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(145%) !important;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-header *,
+body:not(.login-page):not(.welcome-page) .shil-footer * {
+  color: #ffffff !important;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-brand small {
+  color: rgba(255,255,255,.70) !important;
+}
+
+/* Header/Footer capsules and buttons */
+body:not(.login-page):not(.welcome-page) .shil-capsule,
+body:not(.login-page):not(.welcome-page) .shil-mini-btn,
+body:not(.login-page):not(.welcome-page) .shil-primary-btn,
+body:not(.login-page):not(.welcome-page) .shil-ghost-btn,
+body:not(.login-page):not(.welcome-page) .shil-header button,
+body:not(.login-page):not(.welcome-page) .shil-footer button {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.08)) !important;
+  border: 1px solid rgba(255,255,255,.32) !important;
+  color: #fff !important;
+  box-shadow:
+    0 8px 18px rgba(0,0,0,.16),
+    inset 0 1px 0 rgba(255,255,255,.22) !important;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-primary-btn {
+  background:
+    linear-gradient(135deg, rgba(80,210,245,.34), rgba(199,125,255,.22)) !important;
+  border-color: rgba(255,255,255,.42) !important;
+  font-weight: 900 !important;
+}
+
+/* ---------- Cards / Blocks: Light Unified Cards ---------- */
+body:not(.login-page):not(.welcome-page) .shil-card,
+body:not(.login-page):not(.welcome-page) .shil-panel,
+body:not(.login-page):not(.welcome-page) .shil-block,
+body:not(.login-page):not(.welcome-page) .mobile-card,
+body:not(.login-page):not(.welcome-page) .shil-env-card,
+body:not(.login-page):not(.welcome-page) .shil-summary-card,
+body:not(.login-page):not(.welcome-page) .shil-final-card,
+body:not(.login-page):not(.welcome-page) .shil-report-card,
+body:not(.login-page):not(.welcome-page) .shil-output-card,
+body:not(.login-page):not(.welcome-page) .shil-form-card,
+body:not(.login-page):not(.welcome-page) .project-card,
+body:not(.login-page):not(.welcome-page) .route-card,
+body:not(.login-page):not(.welcome-page) .project-type-card,
+body:not(.login-page):not(.welcome-page) .new-project-card,
+body:not(.login-page):not(.welcome-page) .dashboard-card,
+body:not(.login-page):not(.welcome-page) section[class*="card"],
+body:not(.login-page):not(.welcome-page) section[class*="Card"],
+body:not(.login-page):not(.welcome-page) div[class*="card"],
+body:not(.login-page):not(.welcome-page) div[class*="Card"],
+body:not(.login-page):not(.welcome-page) div[class*="panel"],
+body:not(.login-page):not(.welcome-page) div[class*="Panel"],
+body:not(.login-page):not(.welcome-page) div[class*="block"],
+body:not(.login-page):not(.welcome-page) div[class*="Block"] {
+  background:
+    linear-gradient(145deg, var(--shil-eng-card), var(--shil-eng-card-soft)) !important;
+  border: 1px solid var(--shil-eng-border-soft) !important;
+  box-shadow:
+    0 10px 26px rgba(20,45,70,.08),
+    inset 0 1px 0 rgba(255,255,255,.88) !important;
+  backdrop-filter: blur(18px) saturate(150%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(150%) !important;
+  color: var(--shil-eng-text) !important;
+}
+
+/* Strong section containers */
+body:not(.login-page):not(.welcome-page) .shil-env-page > section,
+body:not(.login-page):not(.welcome-page) .shil-project-path,
+body:not(.login-page):not(.welcome-page) .shil-path-card,
+body:not(.login-page):not(.welcome-page) .shil-final-summary,
+body:not(.login-page):not(.welcome-page) .shil-data-section,
+body:not(.login-page):not(.welcome-page) .shil-equipment-section,
+body:not(.login-page):not(.welcome-page) .shil-protection-section {
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.96), rgba(240,248,252,.86)) !important;
+  border: 1px solid var(--shil-eng-border) !important;
+  box-shadow:
+    0 12px 30px rgba(20,45,70,.09),
+    inset 0 1px 0 rgba(255,255,255,.92) !important;
+}
+
+/* ---------- Text: readable on light cards ---------- */
+body:not(.login-page):not(.welcome-page) h1,
+body:not(.login-page):not(.welcome-page) h2,
+body:not(.login-page):not(.welcome-page) h3,
+body:not(.login-page):not(.welcome-page) h4,
+body:not(.login-page):not(.welcome-page) h5,
+body:not(.login-page):not(.welcome-page) h6,
+body:not(.login-page):not(.welcome-page) .shil-title,
+body:not(.login-page):not(.welcome-page) .shil-section-title,
+body:not(.login-page):not(.welcome-page) .title {
+  color: var(--shil-eng-text) !important;
+  font-weight: 900 !important;
+}
+
+body:not(.login-page):not(.welcome-page) p,
+body:not(.login-page):not(.welcome-page) span,
+body:not(.login-page):not(.welcome-page) label,
+body:not(.login-page):not(.welcome-page) small,
+body:not(.login-page):not(.welcome-page) div,
+body:not(.login-page):not(.welcome-page) a,
+body:not(.login-page):not(.welcome-page) li,
+body:not(.login-page):not(.welcome-page) td,
+body:not(.login-page):not(.welcome-page) th {
+  color: var(--shil-eng-text) !important;
+}
+
+body:not(.login-page):not(.welcome-page) small,
+body:not(.login-page):not(.welcome-page) .muted,
+body:not(.login-page):not(.welcome-page) .shil-muted,
+body:not(.login-page):not(.welcome-page) .shil-env-hint,
+body:not(.login-page):not(.welcome-page) .hint {
+  color: var(--shil-eng-muted) !important;
+}
+
+/* ---------- Inputs / Data Cells ---------- */
+body:not(.login-page):not(.welcome-page) input,
+body:not(.login-page):not(.welcome-page) textarea,
+body:not(.login-page):not(.welcome-page) select,
+body:not(.login-page):not(.welcome-page) .shil-input,
+body:not(.login-page):not(.welcome-page) .shil-field,
+body:not(.login-page):not(.welcome-page) .shil-data-cell,
+body:not(.login-page):not(.welcome-page) .shil-metric,
+body:not(.login-page):not(.welcome-page) .shil-stat,
+body:not(.login-page):not(.welcome-page) .summary-item,
+body:not(.login-page):not(.welcome-page) .data-item {
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.98), rgba(241,248,252,.86)) !important;
+  border: 1px solid rgba(80,210,245,.52) !important;
+  color: var(--shil-eng-text) !important;
+  box-shadow:
+    0 4px 12px rgba(20,45,70,.05),
+    inset 0 1px 0 rgba(255,255,255,.90) !important;
+}
+
+/* ---------- CTA Buttons ---------- */
+body:not(.login-page):not(.welcome-page) .shil-mini-action,
+body:not(.login-page):not(.welcome-page) .shil-action,
+body:not(.login-page):not(.welcome-page) .shil-install-chip,
+body:not(.login-page):not(.welcome-page) .shil-gps-toggle button,
+body:not(.login-page):not(.welcome-page) button[class*="chip"],
+body:not(.login-page):not(.welcome-page) button[class*="Chip"],
+body:not(.login-page):not(.welcome-page) button[type="button"],
+body:not(.login-page):not(.welcome-page) button[type="submit"] {
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.94), rgba(220,244,250,.78)) !important;
+  border: 1px solid rgba(80,210,245,.56) !important;
+  color: var(--shil-eng-text) !important;
+  box-shadow:
+    0 5px 14px rgba(20,45,70,.08),
+    inset 0 1px 0 rgba(255,255,255,.88) !important;
+  font-weight: 900 !important;
+}
+
+/* ---------- REAL Dashboard / New Project Icons ---------- */
+/* Actual component classes: IosIconGrid -> shil-ios-grid / shil-ios-icon-link / shil-ios-icon-img */
+body:not(.login-page):not(.welcome-page) .shil-ios-grid {
+  display: grid !important;
+  gap: clamp(18px, 4vw, 34px) !important;
+  justify-items: center !important;
+  align-items: start !important;
+}
+
+body:not(.login-page):not(.welcome-page) .dashboard-icons,
+body:not(.login-page):not(.welcome-page) .new-project-grid-3x3 {
+  overflow: visible !important;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-ios-icon-link {
+  display: grid !important;
+  justify-items: center !important;
+  align-items: start !important;
+  gap: 10px !important;
+  text-decoration: none !important;
+  overflow: visible !important;
+  color: var(--shil-eng-text) !important;
+  transform: translateZ(0) !important;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-ios-icon-img {
+  width: clamp(76px, 8vw, 104px) !important;
+  height: clamp(76px, 8vw, 104px) !important;
+  min-width: clamp(76px, 8vw, 104px) !important;
+  min-height: clamp(76px, 8vw, 104px) !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+  isolation: isolate !important;
+  overflow: visible !important;
+
+  border-radius: 999px !important;
+  background:
+    radial-gradient(circle at 28% 20%, rgba(255,255,255,.92), rgba(255,255,255,.38) 32%, rgba(235,244,252,.18) 68%, rgba(255,255,255,.12) 100%),
+    linear-gradient(145deg, rgba(255,255,255,.78), rgba(224,238,248,.44)) !important;
+
+  border: 1.5px solid var(--shil-neon-purple-line) !important;
+
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.42) inset,
+    0 0 8px rgba(199,125,255,.36),
+    0 0 18px rgba(199,125,255,.24),
+    0 12px 26px rgba(20,45,70,.18),
+    inset 0 1px 0 rgba(255,255,255,.86),
+    inset 0 -10px 18px rgba(130,78,180,.10) !important;
+
+  backdrop-filter: blur(16px) saturate(165%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(165%) !important;
+
+  transition:
+    transform .18s ease,
+    box-shadow .18s ease,
+    border-color .18s ease !important;
+}
+
+/* Thin inner rim */
+body:not(.login-page):not(.welcome-page) .shil-ios-icon-img::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 4px !important;
+  border-radius: inherit !important;
+  border: 1px solid rgba(255,255,255,.58) !important;
+  box-shadow:
+    0 0 8px rgba(199,125,255,.26),
+    inset 0 0 12px rgba(199,125,255,.11) !important;
+  pointer-events: none !important;
+  z-index: -1 !important;
+}
+
+/* Gloss highlight */
+body:not(.login-page):not(.welcome-page) .shil-ios-icon-img::after {
+  content: "" !important;
+  position: absolute !important;
+  top: 12px !important;
+  left: 18px !important;
+  width: 38% !important;
+  height: 22% !important;
+  border-radius: 999px !important;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.72), rgba(255,255,255,.08)) !important;
+  transform: rotate(-18deg) !important;
+  pointer-events: none !important;
+  z-index: 2 !important;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-ios-icon-img img,
+body:not(.login-page):not(.welcome-page) .shil-ios-icon-img svg {
+  width: 68% !important;
+  height: 68% !important;
+  max-width: 74px !important;
+  max-height: 74px !important;
+  object-fit: contain !important;
+  display: block !important;
+  position: relative !important;
+  z-index: 3 !important;
+  filter:
+    drop-shadow(0 5px 9px rgba(20,45,70,.22))
+    drop-shadow(0 0 7px rgba(199,125,255,.22))
+    saturate(1.06)
+    contrast(1.04) !important;
+  margin: 0 !important;
+  background: transparent !important;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-ios-icon-title {
+  color: var(--shil-eng-text) !important;
+  font-weight: 900 !important;
+  font-size: clamp(12px, 1.4vw, 16px) !important;
+  text-align: center !important;
+  line-height: 1.55 !important;
+  text-shadow: 0 1px 0 rgba(255,255,255,.65) !important;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-ios-icon-link:active .shil-ios-icon-img {
+  transform: scale(.96) translateY(1px) !important;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.32) inset,
+    0 0 7px rgba(199,125,255,.28),
+    0 7px 16px rgba(20,45,70,.15),
+    inset 0 2px 10px rgba(20,45,70,.12) !important;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-ios-icon-link:hover .shil-ios-icon-img {
+  transform: translateY(-2px) scale(1.02) !important;
+  border-color: rgba(224,188,255,.95) !important;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.46) inset,
+    0 0 10px rgba(199,125,255,.42),
+    0 0 22px rgba(199,125,255,.28),
+    0 14px 28px rgba(20,45,70,.18),
+    inset 0 1px 0 rgba(255,255,255,.88) !important;
+}
+
+/* Active step icon in new project rail/grid */
+body:not(.login-page):not(.welcome-page) .shil-ios-icon-link.is-active-step .shil-ios-icon-img {
+  border-color: rgba(80,210,245,.92) !important;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.46) inset,
+    0 0 10px rgba(80,210,245,.46),
+    0 0 22px rgba(199,125,255,.26),
+    0 14px 28px rgba(20,45,70,.18),
+    inset 0 1px 0 rgba(255,255,255,.88) !important;
+}
+
+/* Map pin label readable on light theme */
+body:not(.login-page):not(.welcome-page) .shil-map-label {
+  background: rgba(255,255,255,.88) !important;
+  color: var(--shil-eng-text) !important;
+  border: 1px solid rgba(80,210,245,.56) !important;
+}
+
+/* Final-report style surfaces */
+body:not(.login-page):not(.welcome-page) .final-summary,
+body:not(.login-page):not(.welcome-page) .summary-section,
+body:not(.login-page):not(.welcome-page) .report-section,
+body:not(.login-page):not(.welcome-page) [class*="summary"],
+body:not(.login-page):not(.welcome-page) [class*="Summary"],
+body:not(.login-page):not(.welcome-page) [class*="report"],
+body:not(.login-page):not(.welcome-page) [class*="Report"] {
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.96), rgba(241,248,252,.84)) !important;
+  border-color: rgba(80,210,245,.48) !important;
+  color: var(--shil-eng-text) !important;
+}
+
+/* Keep auth pages */
+[class*="login"],
+[class*="Login"],
+[class*="welcome"],
+[class*="Welcome"] {
+  /* preserved */
+}

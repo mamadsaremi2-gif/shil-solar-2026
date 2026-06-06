@@ -88,6 +88,30 @@ function fileToAttachment(file, type, latitude, longitude) {
 }
 
 export default function Environment() {
+  useEffect(() => {
+    document.body.classList.add("shil-environment-screen");
+
+    const validateConfirm = () => {
+      const buttons = Array.from(document.querySelectorAll("button"));
+      const confirmButton = buttons.find((btn) => btn.classList.contains("shil-primary-wide")) || buttons[buttons.length - 1];
+      if (!confirmButton) return;
+
+      const fields = Array.from(document.querySelectorAll("input, select, textarea"));
+      const filled = fields.filter((el) => String(el.value || "").trim().length > 0).length;
+
+      confirmButton.disabled = filled < 3;
+    };
+
+    setTimeout(validateConfirm, 300);
+    document.addEventListener("input", validateConfirm);
+    document.addEventListener("change", validateConfirm);
+
+    return () => {
+      document.body.classList.remove("shil-environment-screen");
+      document.removeEventListener("input", validateConfirm);
+      document.removeEventListener("change", validateConfirm);
+    };
+  }, []);
 const navigate = useNavigate();
   const { domain = localStorage.getItem("shil:scenarioDomain") || "solar" } = useParams();
 
@@ -104,6 +128,7 @@ const navigate = useNavigate();
   const [siteAttachments, setSiteAttachments] = useState([]);
   const [compassPreview, setCompassPreview] = useState("");
   const [sitePreviews, setSitePreviews] = useState([]);
+  const [activeSitePreview, setActiveSitePreview] = useState("");
   const [savedSiteImageCount, setSavedSiteImageCount] = useState(() => Number(localStorage.getItem("shil:environmentSiteImageCount") || 0));
   const [savedCompassImage, setSavedCompassImage] = useState(() => localStorage.getItem("shil:environmentCompassSaved") === "true");
   const [compassUploadChoice, setCompassUploadChoice] = useState("ask");
@@ -253,19 +278,34 @@ const navigate = useNavigate();
   };
 
   const handleSiteUpload = (event) => {
-    const files = Array.from(event.target.files || []);
-    setSiteAttachments(files.map((file) => fileToAttachment(file, "site-photo", latitude, longitude)).filter(Boolean));
+    const availableSlots = Math.max(0, 6 - sitePreviews.length);
+    const files = Array.from(event.target.files || []).slice(0, availableSlots);
 
     if (!files.length) {
-      setSitePreviews([]);
+      event.target.value = "";
       return;
     }
+
+    const nextAttachments = files
+      .map((file) => fileToAttachment(file, "site-photo", latitude, longitude))
+      .filter(Boolean);
+
+    setSiteAttachments((prev) => [...prev, ...nextAttachments].slice(0, 6));
 
     Promise.all(files.map((file) => new Promise((resolve) => {
       const reader = new FileReader();
       reader.onload = () => resolve(String(reader.result || ""));
       reader.readAsDataURL(file);
-    }))).then(setSitePreviews);
+    }))).then((nextPreviews) => {
+      setSitePreviews((prev) => [...prev, ...nextPreviews].slice(0, 6));
+    });
+
+    event.target.value = "";
+  };
+
+  const removeSiteImage = (index) => {
+    setSitePreviews((prev) => prev.filter((_, itemIndex) => itemIndex !== index));
+    setSiteAttachments((prev) => prev.filter((_, itemIndex) => itemIndex !== index));
   };
 
   const saveInstallationImages = () => {
@@ -306,6 +346,13 @@ const navigate = useNavigate();
       { enableHighAccuracy: true, timeout: 9000, maximumAge: 60000 }
     );
   };
+
+  const environmentReady = Boolean(
+    city.trim() &&
+    String(latitude || "").trim() &&
+    String(longitude || "").trim() &&
+    installType
+  );
 
   const confirmEnvironment = () => {
     const lat = latitude === "" ? null : Number(latitude);
@@ -395,6 +442,7 @@ const navigate = useNavigate();
 
   return (
     <ShilPageShell
+      hideFooter={true}
       title="شرایط محیطی"
       backLabel="بازگشت"
       nextLabel="تایید مرحله"
@@ -516,20 +564,25 @@ const navigate = useNavigate();
               ) : null}
             </div>
 
-            <label className="shil-upload-box shil-site-upload-box">
+            <div className="shil-upload-box shil-site-upload-box">
               <span>تصاویر محل نصب</span>
               <input type="file" accept="image/*" multiple onChange={handleSiteUpload} />
+              <small className="shil-env-hint">حداکثر ۶ تصویر؛ عکس جدید به گالری اضافه می‌شود.</small>
+
               {sitePreviews.length ? (
                 <div className="shil-site-preview-grid shil-site-preview-contain-grid">
                   {sitePreviews.map((src, index) => (
                     <figure key={index} className="shil-site-preview-card">
-                      <img src={src} alt={`Site preview ${index + 1}`} />
+                      <button type="button" className="shil-site-preview-open" onClick={() => setActiveSitePreview(src)}>
+                        <img src={src} alt={`Site preview ${index + 1}`} />
+                      </button>
                       <figcaption>تصویر {index + 1}</figcaption>
+                      <button type="button" className="shil-site-preview-remove" onClick={() => removeSiteImage(index)}>حذف</button>
                     </figure>
                   ))}
                 </div>
               ) : null}
-            </label>
+            </div>
           </div>
           <button type="button" className="shil-mini-action shil-save-images-btn" onClick={saveInstallationImages}>ذخیره تصاویر نصب</button>
           <small className="shil-env-hint">{savedSiteImageCount || savedCompassImage ? `${savedSiteImageCount} تصویر محل نصب و ${savedCompassImage ? "جهت‌نما" : "بدون جهت‌نما"} ذخیره شده است.` : "تصاویر پس از انتخاب، در کادر کامل و بدون برش دیده می‌شوند."}</small>
@@ -569,8 +622,15 @@ const navigate = useNavigate();
           ) : <small className="shil-env-hint">هیچ هشدار محیطی جدی ثبت نشده است.</small>}
         </section>
 
+        {activeSitePreview ? (
+          <div className="shil-image-lightbox" role="dialog" aria-modal="true" onClick={() => setActiveSitePreview("")}>
+            <button type="button" className="shil-image-lightbox-close" onClick={() => setActiveSitePreview("")}>×</button>
+            <img src={activeSitePreview} alt="نمایش تصویر محل نصب" />
+          </div>
+        ) : null}
+
         {validationMessage ? <div className="shil-env-error">{validationMessage}</div> : null}
-        <button type="button" className="shil-primary-wide" onClick={confirmEnvironment}>تأیید شرایط محیطی و ادامه</button>
+        <button type="button" className="shil-primary-wide shil-env-confirm-button" disabled={!environmentReady} onClick={confirmEnvironment}>تأیید شرایط محیطی و ادامه</button>
       </div>
     </ShilPageShell>
   );

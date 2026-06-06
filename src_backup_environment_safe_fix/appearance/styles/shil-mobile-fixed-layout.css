@@ -1,0 +1,108 @@
+﻿/* SHIL REAL FRAME FIX - applies to ShilFrame.jsx */
+
+@media (max-width: 768px) {
+  html,
+  body,
+  #root {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow: hidden !important;
+  }
+
+  .shil-frame {
+    position: relative !important;
+    width: 100vw !important;
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    max-height: 100dvh !important;
+    overflow: hidden !important;
+  }
+
+  .shil-header {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 72px !important;
+    min-height: 72px !important;
+    z-index: 9999 !important;
+    transform: none !important;
+  }
+
+  .shil-footer {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    min-height: 76px !important;
+    z-index: 9999 !important;
+    transform: none !important;
+  }
+
+  .shil-frame-main {
+    position: relative !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding-top: 86px !important;
+    padding-bottom: 92px !important;
+    box-sizing: border-box !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  .shil-step-scroll,
+  .shil-stepper-scroll,
+  .shil-design-path-scroll,
+  .shil-project-steps,
+  .shil-horizontal-steps,
+  .shil-route-steps,
+  .shil-path-steps,
+  .design-path-scroll,
+  .project-path-scroll,
+  .shil-project-stagebar,
+  .shil-stagebar {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 9000 !important;
+    min-height: 82px !important;
+    background: rgba(240, 252, 255, 0.96) !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+  }
+
+  .shil-card,
+  .shil-panel,
+  .shil-summary-card,
+  .shil-bank-card,
+  .shil-form-card,
+  .shil-result-card,
+  .shil-config-card,
+  .shil-section-card,
+  .shil-info-card,
+  .shil-data-card,
+  .shil-engineering-card,
+  .shil-block,
+  .shil-result-row,
+  .shil-field-row,
+  .shil-input-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 18px !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+
+  input,
+  select,
+  textarea,
+  .shil-input,
+  .shil-select,
+  .shil-field {
+    width: 100% !important;
+    min-height: 44px !important;
+    border-radius: 14px !important;
+    box-sizing: border-box !important;
+  }
+}

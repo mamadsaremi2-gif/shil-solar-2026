@@ -1,0 +1,206 @@
+
+/* Final dashboard/new project fix + brighter background */
+.shil-dashboard-home,
+.shil-dashboard-home section,
+.shil-dashboard-home .dashboard-icons,
+.shil-dashboard-home .shil-ios-grid,
+.shil-new-project-no-scroll,
+.shil-new-project-no-scroll .shil-page-content,
+.shil-new-project-no-scroll .new-project-grid-3x3,
+.shil-new-project-no-scroll .shil-ios-grid{
+ background:transparent!important;
+ background-color:transparent!important;
+ border:none!important;
+ box-shadow:none!important;
+ backdrop-filter:none!important;
+ -webkit-backdrop-filter:none!important;
+}
+.shil-dashboard-home::before,.shil-dashboard-home::after,
+.shil-new-project-no-scroll::before,.shil-new-project-no-scroll::after{
+ display:none!important;content:none!important;
+}
+body:not(.login-page):not(.welcome-page){
+ filter:brightness(1.12);
+}
+
+
+/* =========================================================
+   SHIL DASHBOARD SHELL ONLY FIX
+   فقط اصلاح داشبورد:
+   حذف پنل/گلاسه باقی‌مانده از ShilPageShell در داشبورد
+   بدون تغییر پروژه جدید و سایر صفحات
+   ========================================================= */
+
+.shil-dashboard-shell,
+.shil-dashboard-shell .shil-page-content,
+.shil-dashboard-shell .shil-dashboard-home,
+.shil-dashboard-shell .dashboard-icons,
+.shil-dashboard-shell .shil-ios-grid {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.shil-dashboard-shell::before,
+.shil-dashboard-shell::after,
+.shil-dashboard-shell .shil-page-content::before,
+.shil-dashboard-shell .shil-page-content::after,
+.shil-dashboard-shell .shil-dashboard-home::before,
+.shil-dashboard-shell .shil-dashboard-home::after,
+.shil-dashboard-shell .dashboard-icons::before,
+.shil-dashboard-shell .dashboard-icons::after,
+.shil-dashboard-shell .shil-ios-grid::before,
+.shil-dashboard-shell .shil-ios-grid::after {
+  display: none !important;
+  content: none !important;
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* والدهایی که دقیقاً گرید داشبورد را در خود دارند */
+.shil-dashboard-shell div:has(.dashboard-icons),
+.shil-dashboard-shell section:has(.dashboard-icons),
+.shil-dashboard-shell article:has(.dashboard-icons),
+.shil-dashboard-shell div:has(.shil-ios-grid),
+.shil-dashboard-shell section:has(.shil-ios-grid),
+.shil-dashboard-shell article:has(.shil-ios-grid) {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.shil-dashboard-shell div:has(.dashboard-icons)::before,
+.shil-dashboard-shell div:has(.dashboard-icons)::after,
+.shil-dashboard-shell section:has(.dashboard-icons)::before,
+.shil-dashboard-shell section:has(.dashboard-icons)::after,
+.shil-dashboard-shell div:has(.shil-ios-grid)::before,
+.shil-dashboard-shell div:has(.shil-ios-grid)::after,
+.shil-dashboard-shell section:has(.shil-ios-grid)::before,
+.shil-dashboard-shell section:has(.shil-ios-grid)::after {
+  display: none !important;
+  content: none !important;
+}
+
+
+/* =========================================================
+   SHIL DASHBOARD OVERLAY ONLY FIX
+   فقط حذف لایه سفید/شیری سراسری داشبورد
+   بقیه صفحات و ساختارها دست نخورده
+   ========================================================= */
+
+.shil-dashboard-shell,
+.shil-dashboard-shell .shil-page-content,
+.shil-dashboard-shell .shil-dashboard-home {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+  border: none !important;
+  outline: none !important;
+}
+
+/* حذف pseudo overlay احتمالی روی لایه‌های اصلی داشبورد */
+.shil-dashboard-shell::before,
+.shil-dashboard-shell::after,
+.shil-dashboard-shell .shil-page-content::before,
+.shil-dashboard-shell .shil-page-content::after,
+.shil-dashboard-shell .shil-dashboard-home::before,
+.shil-dashboard-shell .shil-dashboard-home::after {
+  display: none !important;
+  content: none !important;
+  background: none !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+}
+
+/* اگر Overlay از والد دارای Grid می‌آید، فقط در داشبورد شفاف شود */
+.shil-dashboard-shell div:has(.dashboard-icons),
+.shil-dashboard-shell section:has(.dashboard-icons),
+.shil-dashboard-shell article:has(.dashboard-icons),
+.shil-dashboard-shell div:has(.shil-ios-grid),
+.shil-dashboard-shell section:has(.shil-ios-grid),
+.shil-dashboard-shell article:has(.shil-ios-grid) {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* بکگراند داشبورد واضح‌تر، بدون سفیدشدگی شدید */
+body:not(.login-page):not(.welcome-page) .shil-dashboard-shell {
+  filter: brightness(1.02) contrast(1.04) !important;
+}
+
+/* خود آیکون‌ها بدون تغییر باقی بمانند */
+.shil-dashboard-shell .shil-ios-icon-img {
+  filter: none !important;
+}
+
+
+body:not(.login-page):not(.welcome-page) .shil-home-shell .shil-page-content,
+body:not(.login-page):not(.welcome-page) .shil-home-shell .shil-home-icons,
+body:not(.login-page):not(.welcome-page) .shil-home-shell .shil-ios-grid.new-project-grid-3x3 {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+  border: none !important;
+  outline: none !important;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-home-shell .shil-page-content::before,
+body:not(.login-page):not(.welcome-page) .shil-home-shell .shil-page-content::after,
+body:not(.login-page):not(.welcome-page) .shil-home-shell .shil-home-icons::before,
+body:not(.login-page):not(.welcome-page) .shil-home-shell .shil-home-icons::after {
+  display: none !important;
+  content: none !important;
+  background: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+/* Dashboard icon titles: match New Project page typography */
+.shil-home-shell .shil-home-icons .shil-ios-icon-title,
+.shil-home-shell .shil-home-icons .new-project-grid-3x3 .shil-ios-icon-title {
+  color: #0d2535 !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  line-height: 1.25 !important;
+  letter-spacing: 0 !important;
+  text-align: center !important;
+  text-shadow: none !important;
+  margin-top: 8px !important;
+  max-width: 120px !important;
+}
+
+/* Dashboard icons block: move slightly down from header */
+.shil-home-shell .shil-home-icons {
+  padding-top: clamp(34px, 4.5vh, 58px) !important;
+}
+
+.shil-home-shell .shil-home-icons .new-project-grid-3x3 {
+  transform: translateY(22px) !important;
+}

@@ -1,0 +1,167 @@
+
+/* =========================================================
+   SHIL FINAL FIX
+   Dashboard + New Project:
+   حذف کامل تمام لایه‌های والد/گلاسه/پنل پشت آیکون‌ها
+   فقط آیکون‌ها و متن روی بک‌گراند اصلی باقی بمانند
+   ========================================================= */
+
+/* Target page roots */
+body:not(.login-page):not(.welcome-page) .dashboard-page,
+body:not(.login-page):not(.welcome-page) .dashboard-screen,
+body:not(.login-page):not(.welcome-page) .shil-dashboard,
+body:not(.login-page):not(.welcome-page) .new-project-page,
+body:not(.login-page):not(.welcome-page) .new-project-screen,
+body:not(.login-page):not(.welcome-page) [class*="dashboard"],
+body:not(.login-page):not(.welcome-page) [class*="Dashboard"],
+body:not(.login-page):not(.welcome-page) [class*="new-project"],
+body:not(.login-page):not(.welcome-page) [class*="NewProject"] {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+
+/* All common parent wrappers behind icon grids */
+body:not(.login-page):not(.welcome-page) .dashboard-container,
+body:not(.login-page):not(.welcome-page) .dashboard-content,
+body:not(.login-page):not(.welcome-page) .dashboard-wrapper,
+body:not(.login-page):not(.welcome-page) .dashboard-grid,
+body:not(.login-page):not(.welcome-page) .dashboard-grid-wrapper,
+body:not(.login-page):not(.welcome-page) .dashboard-icons,
+body:not(.login-page):not(.welcome-page) .dashboard-panel,
+body:not(.login-page):not(.welcome-page) .dashboard-section,
+body:not(.login-page):not(.welcome-page) .dashboard-card-wrapper,
+body:not(.login-page):not(.welcome-page) .new-project-container,
+body:not(.login-page):not(.welcome-page) .new-project-content,
+body:not(.login-page):not(.welcome-page) .new-project-wrapper,
+body:not(.login-page):not(.welcome-page) .new-project-grid,
+body:not(.login-page):not(.welcome-page) .new-project-grid-3x3,
+body:not(.login-page):not(.welcome-page) .new-project-grid-wrapper,
+body:not(.login-page):not(.welcome-page) .project-grid,
+body:not(.login-page):not(.welcome-page) .project-grid-wrapper,
+body:not(.login-page):not(.welcome-page) .project-menu-container,
+body:not(.login-page):not(.welcome-page) .project-path-container,
+body:not(.login-page):not(.welcome-page) .project-path-icons,
+body:not(.login-page):not(.welcome-page) .project-selection-panel,
+body:not(.login-page):not(.welcome-page) .project-selection-wrapper {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* If the parent is a generic section/card/panel around shil-ios-grid, remove it */
+body:not(.login-page):not(.welcome-page) section:has(.shil-ios-grid),
+body:not(.login-page):not(.welcome-page) article:has(.shil-ios-grid),
+body:not(.login-page):not(.welcome-page) div:has(> .shil-ios-grid),
+body:not(.login-page):not(.welcome-page) div:has(.dashboard-icons),
+body:not(.login-page):not(.welcome-page) div:has(.new-project-grid-3x3),
+body:not(.login-page):not(.welcome-page) div:has(.project-path-icons) {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Kill pseudo overlays/lines on those icon parents */
+body:not(.login-page):not(.welcome-page) section:has(.shil-ios-grid)::before,
+body:not(.login-page):not(.welcome-page) section:has(.shil-ios-grid)::after,
+body:not(.login-page):not(.welcome-page) article:has(.shil-ios-grid)::before,
+body:not(.login-page):not(.welcome-page) article:has(.shil-ios-grid)::after,
+body:not(.login-page):not(.welcome-page) div:has(> .shil-ios-grid)::before,
+body:not(.login-page):not(.welcome-page) div:has(> .shil-ios-grid)::after,
+body:not(.login-page):not(.welcome-page) div:has(.dashboard-icons)::before,
+body:not(.login-page):not(.welcome-page) div:has(.dashboard-icons)::after,
+body:not(.login-page):not(.welcome-page) div:has(.new-project-grid-3x3)::before,
+body:not(.login-page):not(.welcome-page) div:has(.new-project-grid-3x3)::after,
+body:not(.login-page):not(.welcome-page) div:has(.project-path-icons)::before,
+body:not(.login-page):not(.welcome-page) div:has(.project-path-icons)::after {
+  display: none !important;
+  content: none !important;
+  background: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Directly neutralize every generic card/panel inside Dashboard and New Project pages */
+body:not(.login-page):not(.welcome-page) .dashboard-page .shil-card,
+body:not(.login-page):not(.welcome-page) .dashboard-page .shil-panel,
+body:not(.login-page):not(.welcome-page) .dashboard-page .shil-block,
+body:not(.login-page):not(.welcome-page) .dashboard-page .shil-section,
+body:not(.login-page):not(.welcome-page) .dashboard-page section,
+body:not(.login-page):not(.welcome-page) .dashboard-page article,
+body:not(.login-page):not(.welcome-page) .dashboard-page div[class*="card"],
+body:not(.login-page):not(.welcome-page) .dashboard-page div[class*="Card"],
+body:not(.login-page):not(.welcome-page) .dashboard-page div[class*="panel"],
+body:not(.login-page):not(.welcome-page) .dashboard-page div[class*="Panel"],
+body:not(.login-page):not(.welcome-page) .dashboard-screen .shil-card,
+body:not(.login-page):not(.welcome-page) .dashboard-screen .shil-panel,
+body:not(.login-page):not(.welcome-page) .dashboard-screen .shil-block,
+body:not(.login-page):not(.welcome-page) .dashboard-screen .shil-section,
+body:not(.login-page):not(.welcome-page) .dashboard-screen section,
+body:not(.login-page):not(.welcome-page) .dashboard-screen article,
+body:not(.login-page):not(.welcome-page) .dashboard-screen div[class*="card"],
+body:not(.login-page):not(.welcome-page) .dashboard-screen div[class*="Card"],
+body:not(.login-page):not(.welcome-page) .dashboard-screen div[class*="panel"],
+body:not(.login-page):not(.welcome-page) .dashboard-screen div[class*="Panel"],
+body:not(.login-page):not(.welcome-page) .new-project-page .shil-card,
+body:not(.login-page):not(.welcome-page) .new-project-page .shil-panel,
+body:not(.login-page):not(.welcome-page) .new-project-page .shil-block,
+body:not(.login-page):not(.welcome-page) .new-project-page .shil-section,
+body:not(.login-page):not(.welcome-page) .new-project-page section,
+body:not(.login-page):not(.welcome-page) .new-project-page article,
+body:not(.login-page):not(.welcome-page) .new-project-page div[class*="card"],
+body:not(.login-page):not(.welcome-page) .new-project-page div[class*="Card"],
+body:not(.login-page):not(.welcome-page) .new-project-page div[class*="panel"],
+body:not(.login-page):not(.welcome-page) .new-project-page div[class*="Panel"],
+body:not(.login-page):not(.welcome-page) .new-project-screen .shil-card,
+body:not(.login-page):not(.welcome-page) .new-project-screen .shil-panel,
+body:not(.login-page):not(.welcome-page) .new-project-screen .shil-block,
+body:not(.login-page):not(.welcome-page) .new-project-screen .shil-section,
+body:not(.login-page):not(.welcome-page) .new-project-screen section,
+body:not(.login-page):not(.welcome-page) .new-project-screen article,
+body:not(.login-page):not(.welcome-page) .new-project-screen div[class*="card"],
+body:not(.login-page):not(.welcome-page) .new-project-screen div[class*="Card"],
+body:not(.login-page):not(.welcome-page) .new-project-screen div[class*="panel"],
+body:not(.login-page):not(.welcome-page) .new-project-screen div[class*="Panel"] {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Icon grids and icon links must remain clean */
+body:not(.login-page):not(.welcome-page) .shil-ios-grid,
+body:not(.login-page):not(.welcome-page) .shil-ios-icon-link {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Keep only the icon circle itself styled */
+body:not(.login-page):not(.welcome-page) .shil-ios-icon-img {
+  background: rgba(241,247,251,.84) !important;
+  background-image: none !important;
+  border: 1px solid rgba(188,139,255,.45) !important;
+  box-shadow:
+    0 0 8px rgba(199,125,255,.24),
+    0 10px 22px rgba(14,35,55,.13),
+    inset 0 1px 0 rgba(255,255,255,.82) !important;
+  backdrop-filter: blur(10px) saturate(130%) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(130%) !important;
+}

@@ -1,0 +1,27 @@
+﻿/* FINAL FORCE - DASHBOARD ICON TEXT WHITE/BOLD */
+
+html body:not(.login-page):not(.welcome-page)
+.shil-home-shell.shil-new-project-no-scroll
+.shil-home-icons
+.new-project-grid-3x3
+.shil-ios-icon-link
+.shil-ios-icon-title {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 950 !important;
+  opacity: 1 !important;
+  filter: none !important;
+  text-shadow:
+    0 3px 8px rgba(0,0,0,.98),
+    0 0 18px rgba(90,200,255,.62) !important;
+}
+
+/* fallback */
+html body .new-project-grid-3x3 .shil-ios-icon-title {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 950 !important;
+  text-shadow:
+    0 3px 8px rgba(0,0,0,.98),
+    0 0 18px rgba(90,200,255,.62) !important;
+}

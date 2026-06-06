@@ -1,0 +1,1217 @@
+/* =========================================================
+   SHIL FRONTEND UI 100% FINAL PASS
+   Scope: visual polish only; no calculation-engine changes.
+   ========================================================= */
+
+:root{
+  --shil-bottom-safe: calc(86px + env(safe-area-inset-bottom));
+  --shil-top-safe: calc(84px + env(safe-area-inset-top));
+  --shil-card-radius: 28px;
+  --shil-card-border: 1px solid rgba(255,255,255,.115);
+  --shil-card-bg: linear-gradient(145deg, rgba(18,24,38,.94), rgba(21,32,44,.88));
+  --shil-text-main: rgba(255,255,255,.94);
+  --shil-text-soft: rgba(224,242,255,.76);
+  --shil-cyan: #22d3ee;
+  --shil-violet: #8b5cf6;
+}
+
+html, body, #root{
+  min-height:100%;
+  width:100%;
+  overflow-x:hidden !important;
+  -webkit-text-size-adjust:100%;
+  text-rendering:optimizeLegibility;
+}
+
+body{
+  direction:rtl;
+  color:var(--shil-text-main);
+  background:#050b18;
+}
+
+*, *::before, *::after{
+  box-sizing:border-box;
+}
+
+/* Persian / English writing support across all form fields */
+input, textarea, select, option, [contenteditable="true"]{
+  direction:auto !important;
+  unicode-bidi:plaintext !important;
+  text-align:start;
+  font-variant-numeric:tabular-nums;
+  letter-spacing:0;
+  line-height:1.7;
+}
+
+input::placeholder, textarea::placeholder{
+  color:rgba(226,240,255,.42) !important;
+}
+
+/* Prevent accidental horizontal overflow on mobile-first pages */
+.shil-dashboard-home,
+.shil-page-shell,
+.shil-engineering-page,
+.shil-card-stack,
+.shil-section-card,
+.shil-execution-grid,
+.shil-project-path-two-cards,
+.shil-system-banks-grid,
+.shil-summary-page,
+.shil-final-report-page{
+  max-width:100vw !important;
+  overflow-x:hidden !important;
+}
+
+/* Unified fixed header/footer spacing behavior */
+.shil-page-shell,
+.shil-engineering-page,
+.shil-dashboard-home{
+  min-height:100dvh;
+  padding-bottom:var(--shil-bottom-safe) !important;
+}
+
+.shil-card-stack{
+  padding-bottom:calc(var(--shil-bottom-safe) + 24px) !important;
+}
+
+/* Premium compact engineering cards */
+.shil-section-card,
+.shil-card,
+.glass-card,
+.shil-result-card,
+.shil-auto-result-card,
+.shil-linked-detail-card{
+  border-radius:var(--shil-card-radius) !important;
+  border:var(--shil-card-border) !important;
+  background:var(--shil-card-bg) !important;
+  box-shadow:0 18px 48px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.05) !important;
+}
+
+.shil-section-head h2,
+.shil-section-card h2,
+.shil-section-card h3{
+  color:var(--shil-text-main) !important;
+  font-weight:950 !important;
+  letter-spacing:-.02em;
+}
+
+.shil-section-note,
+.shil-muted-line,
+.shil-section-card p,
+.shil-linked-detail-card li{
+  color:var(--shil-text-soft) !important;
+}
+
+/* Dashboard and new-project icons: 1-2 visual steps larger */
+.dashboard-icons.shil-ios-grid,
+.new-project-grid-3x3.shil-ios-grid{
+  gap:clamp(18px,4vw,34px) !important;
+}
+
+.dashboard-icons .shil-ios-icon-link,
+.new-project-grid-3x3 .shil-ios-icon-link{
+  min-height:clamp(118px,24vw,158px) !important;
+  padding:12px 10px !important;
+  border-radius:30px !important;
+}
+
+.dashboard-icons .shil-ios-icon-img{
+  width:clamp(86px,20vw,118px) !important;
+  height:clamp(86px,20vw,118px) !important;
+}
+
+.new-project-grid-3x3 .shil-ios-icon-img{
+  width:clamp(74px,18vw,104px) !important;
+  height:clamp(74px,18vw,104px) !important;
+}
+
+.dashboard-icons .shil-ios-icon-img img,
+.new-project-grid-3x3 .shil-ios-icon-img img,
+.dashboard-icons .shil-ios-icon-img svg,
+.new-project-grid-3x3 .shil-ios-icon-img svg{
+  width:100% !important;
+  height:100% !important;
+  object-fit:contain !important;
+  filter:drop-shadow(0 12px 24px rgba(34,211,238,.20)) saturate(1.08) !important;
+}
+
+.dashboard-icons .shil-ios-icon-title,
+.new-project-grid-3x3 .shil-ios-icon-title{
+  margin-top:10px !important;
+  font-size:clamp(13px,3.4vw,16px) !important;
+  font-weight:950 !important;
+  text-align:center !important;
+  line-height:1.55 !important;
+}
+
+/* Project path cards: admin can replace PNGs via /public/project-path-cards.json */
+.shil-project-path-two-cards{
+  display:grid !important;
+  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  gap:14px !important;
+}
+
+.shil-execution-card{
+  min-height:clamp(180px,34vw,260px) !important;
+  border-radius:28px !important;
+  transition:transform .2s ease, border-color .2s ease, box-shadow .2s ease !important;
+}
+
+.shil-execution-card:active{
+  transform:scale(.985) !important;
+}
+
+.shil-execution-card.active{
+  border-color:rgba(34,211,238,.86) !important;
+  box-shadow:0 0 0 1px rgba(34,211,238,.22), 0 22px 60px rgba(34,211,238,.12) !important;
+}
+
+.shil-execution-image{
+  width:min(46vw,260px) !important;
+  max-height:150px !important;
+  object-fit:contain !important;
+  margin:0 auto 10px !important;
+  display:block !important;
+}
+
+/* Buttons: unified tactile feedback */
+button,
+a.shil-soft-link-button,
+.shil-primary-wide{
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+}
+
+button:active,
+a.shil-soft-link-button:active,
+.shil-primary-wide:active{
+  transform:scale(.985);
+}
+
+.shil-primary-wide,
+.shil-confirm-config-button{
+  min-height:54px !important;
+  border-radius:22px !important;
+  font-weight:950 !important;
+  letter-spacing:-.01em;
+}
+
+/* Keep confirmation buttons in normal scroll flow unless a page explicitly uses a fixed footer */
+.shil-confirm-config-scroll-end,
+.shil-confirm-config-button{
+  position:relative !important;
+  left:auto !important;
+  right:auto !important;
+  top:auto !important;
+  bottom:auto !important;
+  transform:none !important;
+}
+
+.shil-confirm-config-scroll-end{
+  width:100%;
+  display:flex;
+  justify-content:center;
+  padding:18px 14px calc(var(--shil-bottom-safe) + 34px) !important;
+}
+
+.shil-confirm-config-scroll-end .shil-confirm-config-button,
+button.shil-confirm-config-button{
+  width:min(100%,680px) !important;
+  margin:0 auto !important;
+}
+
+/* Footer never covers the last field/card */
+.shil-footer,
+.app-footer,
+.mobile-footer,
+.bottom-nav{
+  z-index:9000 !important;
+}
+
+/* Under-development path: simple, clear, no fake content */
+.shil-under-development-page .shil-under-development-card{
+  min-height:calc(100dvh - 240px) !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  gap:16px !important;
+}
+
+.shil-under-development-page .shil-section-head{
+  justify-content:center !important;
+  text-align:center !important;
+}
+
+/* Tables and exports: keep readable on mobile */
+table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+}
+
+th, td{
+  word-break:break-word;
+}
+
+.shil-output-actions,
+.shil-system-table,
+.shil-result-table{
+  max-width:100%;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+}
+
+/* Responsive final tuning */
+@media (max-width:720px){
+  .shil-project-path-two-cards{
+    grid-template-columns:1fr !important;
+  }
+
+  .shil-section-card{
+    border-radius:24px !important;
+    padding:14px !important;
+  }
+
+  .dashboard-icons .shil-ios-icon-img{
+    width:clamp(78px,23vw,104px) !important;
+    height:clamp(78px,23vw,104px) !important;
+  }
+
+  .new-project-grid-3x3 .shil-ios-icon-img{
+    width:clamp(70px,21vw,96px) !important;
+    height:clamp(70px,21vw,96px) !important;
+  }
+}
+
+@media (max-width:380px){
+  .dashboard-icons.shil-ios-grid,
+  .new-project-grid-3x3.shil-ios-grid{
+    gap:14px !important;
+  }
+
+  .dashboard-icons .shil-ios-icon-link,
+  .new-project-grid-3x3 .shil-ios-icon-link{
+    min-height:112px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    scroll-behavior:auto !important;
+    transition-duration:.01ms !important;
+  }
+}
+
+/* =========================================================
+   SHIL DASHBOARD FINAL MOBILE-FIRST PATCH
+   Applies New Project icon/card sizing and layout rules to Dashboard
+   ========================================================= */
+
+.shil-dashboard-mobile-final,
+.shil-dashboard-mobile-final *{
+  box-sizing:border-box;
+}
+
+.shil-dashboard-mobile-final{
+  width:100%;
+  max-width:100vw;
+  overflow-x:hidden !important;
+}
+
+.shil-dashboard-final-layout{
+  width:100%;
+  min-height:calc(100dvh - var(--shil-top-safe, 84px));
+  max-width:100vw;
+  overflow-x:hidden !important;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  gap:14px;
+  padding:8px 14px calc(var(--shil-bottom-safe, 86px) + 18px) !important;
+}
+
+.shil-dashboard-hero{
+  width:min(100%, 520px);
+  margin:0 auto;
+  padding:14px 14px 12px;
+  border-radius:28px;
+  text-align:center;
+  background:linear-gradient(145deg, rgba(7,18,31,.76), rgba(15,28,42,.56));
+  border:1px solid rgba(255,255,255,.10);
+  box-shadow:0 18px 44px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.05);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+}
+
+.shil-dashboard-eyebrow{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:24px;
+  padding:3px 11px;
+  border-radius:999px;
+  font-size:10px;
+  font-weight:950;
+  letter-spacing:.08em;
+  direction:ltr;
+  color:rgba(125,245,255,.92);
+  background:rgba(34,211,238,.10);
+  border:1px solid rgba(34,211,238,.20);
+}
+
+.shil-dashboard-hero h1{
+  margin:8px 0 4px;
+  font-size:clamp(18px,5.4vw,25px);
+  font-weight:950;
+  line-height:1.45;
+  letter-spacing:-.03em;
+  color:rgba(255,255,255,.96);
+}
+
+.shil-dashboard-hero p{
+  margin:0 auto;
+  max-width:36ch;
+  font-size:clamp(11px,3.2vw,13px);
+  font-weight:700;
+  line-height:1.85;
+  color:rgba(226,242,255,.72);
+}
+
+.shil-dashboard-status-row{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-top:10px;
+}
+
+.shil-dashboard-online-chip{
+  min-height:30px;
+  padding:5px 12px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:900;
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.10);
+}
+
+.shil-dashboard-online-chip span{
+  width:8px;
+  height:8px;
+}
+
+.shil-dashboard-icons-final.shil-ios-grid{
+  width:min(100%, 540px);
+  margin:0 auto;
+  display:grid !important;
+  grid-template-columns:repeat(2, minmax(0, 1fr)) !important;
+  gap:clamp(10px,3.4vw,16px) !important;
+  padding:0 0 8px !important;
+  overflow:visible !important;
+}
+
+.shil-dashboard-icons-final .shil-ios-icon-link{
+  width:100%;
+  min-width:0;
+  min-height:clamp(126px,31vw,164px) !important;
+  padding:12px 9px 10px !important;
+  border-radius:30px !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:6px !important;
+  text-align:center !important;
+  overflow:hidden !important;
+  isolation:isolate;
+  position:relative;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(34,211,238,.14), transparent 42%),
+    linear-gradient(145deg, rgba(18,24,38,.94), rgba(21,32,44,.88)) !important;
+  border:1px solid rgba(255,255,255,.12) !important;
+  box-shadow:
+    0 16px 40px rgba(0,0,0,.28),
+    inset 0 1px 0 rgba(255,255,255,.06) !important;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+  transition:transform .18s ease, border-color .18s ease, box-shadow .18s ease, background .18s ease;
+}
+
+.shil-dashboard-icons-final .shil-ios-icon-link::before{
+  content:"";
+  position:absolute;
+  inset:9px;
+  border-radius:24px;
+  border:1px solid rgba(255,255,255,.055);
+  pointer-events:none;
+}
+
+.shil-dashboard-icons-final .shil-ios-icon-link:active{
+  transform:scale(.982);
+  border-color:rgba(34,211,238,.42) !important;
+  box-shadow:
+    0 10px 28px rgba(0,0,0,.30),
+    0 0 0 1px rgba(34,211,238,.10),
+    inset 0 1px 0 rgba(255,255,255,.06) !important;
+}
+
+.shil-dashboard-icons-final .shil-ios-icon-img{
+  width:clamp(78px,22vw,108px) !important;
+  height:clamp(78px,22vw,108px) !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  margin:0 auto !important;
+  border-radius:24px;
+  background:linear-gradient(145deg, rgba(255,255,255,.08), rgba(255,255,255,.025));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+}
+
+.shil-dashboard-icons-final .shil-ios-icon-img img,
+.shil-dashboard-icons-final .shil-ios-icon-img svg{
+  width:86% !important;
+  height:86% !important;
+  max-width:100% !important;
+  max-height:100% !important;
+  object-fit:contain !important;
+  display:block !important;
+  margin:0 auto !important;
+  color:rgba(177,247,255,.94);
+  filter:drop-shadow(0 12px 22px rgba(34,211,238,.22)) saturate(1.08) contrast(1.03) !important;
+}
+
+.shil-dashboard-icons-final .shil-ios-icon-title{
+  width:100%;
+  max-width:100%;
+  min-height:34px;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  margin:3px auto 0 !important;
+  padding:0 4px;
+  text-align:center !important;
+  font-size:clamp(12px,3.45vw,15px) !important;
+  font-weight:950 !important;
+  line-height:1.45 !important;
+  letter-spacing:-.02em;
+  color:rgba(255,255,255,.93) !important;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  word-break:normal;
+}
+
+@media (min-width:720px){
+  .shil-dashboard-final-layout{
+    justify-content:center;
+    padding-inline:20px !important;
+  }
+
+  .shil-dashboard-icons-final.shil-ios-grid{
+    grid-template-columns:repeat(4, minmax(0, 1fr)) !important;
+    max-width:760px;
+  }
+
+  .shil-dashboard-icons-final .shil-ios-icon-link{
+    min-height:150px !important;
+  }
+}
+
+@media (max-width:380px){
+  .shil-dashboard-final-layout{
+    padding-inline:10px !important;
+    gap:10px;
+  }
+
+  .shil-dashboard-hero{
+    padding:11px 10px 10px;
+    border-radius:24px;
+  }
+
+  .shil-dashboard-icons-final.shil-ios-grid{
+    gap:9px !important;
+  }
+
+  .shil-dashboard-icons-final .shil-ios-icon-link{
+    min-height:116px !important;
+    padding:9px 6px !important;
+    border-radius:24px !important;
+  }
+
+  .shil-dashboard-icons-final .shil-ios-icon-img{
+    width:clamp(66px,23vw,82px) !important;
+    height:clamp(66px,23vw,82px) !important;
+    border-radius:20px;
+  }
+
+  .shil-dashboard-icons-final .shil-ios-icon-title{
+    font-size:11.5px !important;
+    min-height:30px;
+  }
+}
+
+/* =========================================================
+   SHIL DASHBOARD FLOATING LAUNCHER FINAL
+   Same visual rules as New Project page
+   ========================================================= */
+
+.shil-dashboard-floating-shell,
+.shil-dashboard-floating-shell *{
+  box-sizing:border-box;
+}
+
+.shil-dashboard-floating-shell{
+  width:100%;
+  max-width:100vw;
+  overflow-x:hidden !important;
+}
+
+.shil-dashboard-floating-page{
+  width:100%;
+  min-height:calc(100dvh - 170px);
+  max-width:100vw;
+  overflow-x:hidden !important;
+  padding:34px 18px calc(var(--shil-bottom-safe, 86px) + 28px) !important;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:22px;
+}
+
+.shil-dashboard-mini-status{
+  position:relative;
+  z-index:2;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  min-height:30px;
+  padding:5px 14px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:900;
+  color:rgba(235,246,255,.92);
+  background:rgba(8,18,32,.48);
+  border:1px solid rgba(255,255,255,.10);
+  box-shadow:0 10px 28px rgba(0,0,0,.18);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+}
+
+.shil-dashboard-mini-status span{
+  width:8px;
+  height:8px;
+  border-radius:999px;
+  background:#22c55e;
+  box-shadow:0 0 14px rgba(34,197,94,.75);
+}
+
+.shil-dashboard-mini-status[data-online="false"] span{
+  background:#f59e0b;
+  box-shadow:0 0 14px rgba(245,158,11,.75);
+}
+
+.shil-dashboard-floating-icons.shil-ios-grid{
+  width:min(100%, 760px);
+  margin:0 auto;
+  padding:0 !important;
+  display:grid !important;
+  grid-template-columns:repeat(4, minmax(0, 1fr)) !important;
+  gap:34px 24px !important;
+  align-items:start !important;
+  justify-items:center !important;
+  overflow:visible !important;
+}
+
+.shil-dashboard-floating-icons .shil-ios-icon-link{
+  width:100% !important;
+  min-width:0 !important;
+  min-height:auto !important;
+  padding:0 !important;
+  margin:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  gap:13px !important;
+  text-align:center !important;
+  overflow:visible !important;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+
+.shil-dashboard-floating-icons .shil-ios-icon-link::before,
+.shil-dashboard-floating-icons .shil-ios-icon-link::after{
+  display:none !important;
+  content:none !important;
+}
+
+.shil-dashboard-floating-icons .shil-ios-icon-link:active{
+  transform:scale(.97);
+}
+
+.shil-dashboard-floating-icons .shil-ios-icon-img{
+  width:clamp(82px, 13vw, 116px) !important;
+  height:clamp(82px, 13vw, 116px) !important;
+  min-width:clamp(82px, 13vw, 116px) !important;
+  min-height:clamp(82px, 13vw, 116px) !important;
+  margin:0 auto !important;
+  padding:0 !important;
+  border-radius:999px !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  overflow:visible !important;
+}
+
+.shil-dashboard-floating-icons .shil-ios-icon-img img,
+.shil-dashboard-floating-icons .shil-ios-icon-img svg{
+  width:100% !important;
+  height:100% !important;
+  max-width:100% !important;
+  max-height:100% !important;
+  object-fit:contain !important;
+  display:block !important;
+  margin:0 auto !important;
+  color:rgba(180,247,255,.95);
+  filter:
+    drop-shadow(0 12px 18px rgba(0,0,0,.45))
+    drop-shadow(0 0 14px rgba(34,211,238,.28))
+    saturate(1.12)
+    contrast(1.04) !important;
+}
+
+.shil-dashboard-floating-icons .shil-ios-icon-title{
+  width:100%;
+  max-width:112px;
+  min-height:42px;
+  padding:0 !important;
+  margin:0 auto !important;
+  display:flex !important;
+  align-items:flex-start !important;
+  justify-content:center !important;
+  text-align:center !important;
+  font-size:clamp(15px, 2.2vw, 20px) !important;
+  font-weight:950 !important;
+  line-height:1.42 !important;
+  letter-spacing:-.03em;
+  color:rgba(255,255,255,.96) !important;
+  text-shadow:0 3px 12px rgba(0,0,0,.55);
+  word-break:normal;
+  overflow:visible !important;
+}
+
+@media (max-width:720px){
+  .shil-dashboard-floating-page{
+    justify-content:center;
+    padding:24px 14px calc(var(--shil-bottom-safe, 86px) + 22px) !important;
+    gap:18px;
+  }
+
+  .shil-dashboard-floating-icons.shil-ios-grid{
+    width:min(100%, 520px);
+    grid-template-columns:repeat(3, minmax(0, 1fr)) !important;
+    gap:34px 16px !important;
+  }
+
+  .shil-dashboard-floating-icons .shil-ios-icon-img{
+    width:clamp(78px, 24vw, 106px) !important;
+    height:clamp(78px, 24vw, 106px) !important;
+    min-width:clamp(78px, 24vw, 106px) !important;
+    min-height:clamp(78px, 24vw, 106px) !important;
+  }
+
+  .shil-dashboard-floating-icons .shil-ios-icon-title{
+    max-width:104px;
+    font-size:clamp(14px, 4.1vw, 18px) !important;
+  }
+}
+
+@media (max-width:390px){
+  .shil-dashboard-floating-page{
+    padding-inline:10px !important;
+    gap:14px;
+  }
+
+  .shil-dashboard-floating-icons.shil-ios-grid{
+    gap:28px 10px !important;
+  }
+
+  .shil-dashboard-floating-icons .shil-ios-icon-img{
+    width:76px !important;
+    height:76px !important;
+    min-width:76px !important;
+    min-height:76px !important;
+  }
+
+  .shil-dashboard-floating-icons .shil-ios-icon-title{
+    max-width:92px;
+    min-height:38px;
+    font-size:13.5px !important;
+  }
+}
+
+/* =========================================================
+   SHIL DASHBOARD 3x3 FINAL PATCH
+   8 main icons + 9th development icon
+   ========================================================= */
+
+.shil-dashboard-3x3-page{
+  justify-content:center !important;
+  gap:18px !important;
+  padding:18px 14px calc(var(--shil-bottom-safe, 86px) + 22px) !important;
+}
+
+.shil-dashboard-icons-3x3.shil-ios-grid{
+  width:min(100%, 620px) !important;
+  display:grid !important;
+  grid-template-columns:repeat(3, minmax(0, 1fr)) !important;
+  grid-auto-rows:auto !important;
+  gap:clamp(26px, 5vw, 42px) clamp(14px, 4vw, 28px) !important;
+  align-items:start !important;
+  justify-items:center !important;
+  margin:0 auto !important;
+  padding:0 !important;
+  overflow:visible !important;
+}
+
+.shil-dashboard-icons-3x3 .shil-ios-icon-link{
+  width:100% !important;
+  max-width:132px !important;
+  min-width:0 !important;
+  min-height:auto !important;
+  padding:0 !important;
+  margin:0 auto !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  gap:12px !important;
+  text-align:center !important;
+  overflow:visible !important;
+}
+
+.shil-dashboard-icons-3x3 .shil-ios-icon-link::before,
+.shil-dashboard-icons-3x3 .shil-ios-icon-link::after{
+  display:none !important;
+  content:none !important;
+}
+
+.shil-dashboard-icons-3x3 .shil-ios-icon-img{
+  width:clamp(82px, 22vw, 108px) !important;
+  height:clamp(82px, 22vw, 108px) !important;
+  min-width:clamp(82px, 22vw, 108px) !important;
+  min-height:clamp(82px, 22vw, 108px) !important;
+  margin:0 auto !important;
+  padding:0 !important;
+  border-radius:999px !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  overflow:visible !important;
+}
+
+.shil-dashboard-icons-3x3 .shil-ios-icon-img img,
+.shil-dashboard-icons-3x3 .shil-ios-icon-img svg{
+  width:100% !important;
+  height:100% !important;
+  object-fit:contain !important;
+  display:block !important;
+  margin:0 auto !important;
+  filter:
+    drop-shadow(0 12px 18px rgba(0,0,0,.45))
+    drop-shadow(0 0 14px rgba(34,211,238,.26))
+    saturate(1.12)
+    contrast(1.04) !important;
+}
+
+.shil-dashboard-icons-3x3 .shil-ios-icon-title{
+  width:100% !important;
+  max-width:118px !important;
+  min-height:42px !important;
+  margin:0 auto !important;
+  padding:0 !important;
+  display:flex !important;
+  align-items:flex-start !important;
+  justify-content:center !important;
+  text-align:center !important;
+  font-size:clamp(14px, 3.8vw, 18px) !important;
+  font-weight:950 !important;
+  line-height:1.42 !important;
+  letter-spacing:-.03em !important;
+  color:rgba(255,255,255,.96) !important;
+  text-shadow:0 3px 12px rgba(0,0,0,.55) !important;
+  overflow:visible !important;
+}
+
+.shil-dashboard-icons-3x3 .shil-ios-icon-link[aria-disabled="true"],
+.shil-dashboard-icons-3x3 .shil-ios-icon-link.is-disabled,
+.shil-dashboard-icons-3x3 .shil-ios-icon-link[data-disabled="true"]{
+  opacity:.78 !important;
+  filter:saturate(.85);
+}
+
+@media (max-width:430px){
+  .shil-dashboard-3x3-page{
+    padding:14px 10px calc(var(--shil-bottom-safe, 86px) + 18px) !important;
+    gap:14px !important;
+  }
+
+  .shil-dashboard-icons-3x3.shil-ios-grid{
+    gap:26px 8px !important;
+  }
+
+  .shil-dashboard-icons-3x3 .shil-ios-icon-img{
+    width:76px !important;
+    height:76px !important;
+    min-width:76px !important;
+    min-height:76px !important;
+  }
+
+  .shil-dashboard-icons-3x3 .shil-ios-icon-title{
+    max-width:94px !important;
+    min-height:38px !important;
+    font-size:13.5px !important;
+  }
+}
+
+/* =========================================================
+   SHIL FINAL OUTPUT ONE-PAGE SUMMARY UPDATE
+   Compact final calculation page + one-page PDF/Image output
+   ========================================================= */
+
+.shil-final-output-page,
+.shil-final-output-page *{
+  box-sizing:border-box;
+}
+
+.shil-final-output-page{
+  width:100%;
+  max-width:100vw;
+  overflow-x:hidden !important;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:12px;
+  padding:6px 10px calc(var(--shil-bottom-safe, 86px) + 18px) !important;
+}
+
+.shil-final-export-sheet{
+  width:min(100%, 760px);
+  max-width:100%;
+  margin:0 auto;
+  direction:rtl;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  padding:14px;
+  border-radius:28px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(34,211,238,.13), transparent 40%),
+    linear-gradient(145deg, rgba(8,16,28,.94), rgba(15,27,39,.90));
+  border:1px solid rgba(255,255,255,.11);
+  box-shadow:0 18px 46px rgba(0,0,0,.30), inset 0 1px 0 rgba(255,255,255,.06);
+  color:rgba(255,255,255,.94);
+  overflow:hidden;
+}
+
+.shil-final-output-hero{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px;
+  border-radius:22px;
+  background:rgba(255,255,255,.055);
+  border:1px solid rgba(255,255,255,.09);
+}
+
+.shil-final-output-hero span{
+  display:inline-flex;
+  margin-bottom:6px;
+  font-size:10px;
+  font-weight:950;
+  letter-spacing:.08em;
+  color:rgba(125,245,255,.92);
+  direction:ltr;
+}
+
+.shil-final-output-hero h2{
+  margin:0;
+  font-size:clamp(18px,5vw,25px);
+  font-weight:950;
+  line-height:1.45;
+}
+
+.shil-final-output-hero p{
+  margin:4px 0 0;
+  max-width:52ch;
+  font-size:12px;
+  font-weight:750;
+  line-height:1.8;
+  color:rgba(226,242,255,.72);
+}
+
+.shil-final-status-pill{
+  flex:0 0 auto;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:30px;
+  padding:5px 12px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:950;
+  color:rgba(11,29,42,.96);
+  background:linear-gradient(135deg, rgba(125,245,255,.94), rgba(255,255,255,.86));
+  box-shadow:0 10px 24px rgba(34,211,238,.18);
+  white-space:nowrap;
+}
+
+.shil-final-two-column{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.shil-final-panel{
+  padding:11px;
+  border-radius:22px;
+  background:rgba(255,255,255,.052);
+  border:1px solid rgba(255,255,255,.085);
+  min-width:0;
+}
+
+.shil-final-panel h3{
+  margin:0 0 9px;
+  font-size:14px;
+  font-weight:950;
+  color:rgba(255,255,255,.96);
+}
+
+.shil-final-mini-grid{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+  gap:7px;
+}
+
+.shil-final-kpi{
+  min-width:0;
+  padding:8px;
+  border-radius:16px;
+  background:rgba(2,8,18,.30);
+  border:1px solid rgba(255,255,255,.07);
+}
+
+.shil-final-kpi span{
+  display:block;
+  margin-bottom:3px;
+  font-size:10.5px;
+  font-weight:800;
+  color:rgba(226,242,255,.62);
+}
+
+.shil-final-kpi strong{
+  display:block;
+  font-size:12.5px;
+  font-weight:950;
+  line-height:1.55;
+  color:rgba(255,255,255,.95);
+  overflow-wrap:anywhere;
+}
+
+.shil-final-route-list{
+  margin:0;
+  padding:0 18px 0 0;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.shil-final-route-list li{
+  font-size:12px;
+  font-weight:800;
+  line-height:1.7;
+  color:rgba(235,246,255,.86);
+}
+
+.shil-final-equipment-list{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:7px;
+}
+
+.shil-final-equipment-row{
+  display:grid;
+  grid-template-columns:1.15fr .7fr 1.15fr;
+  gap:8px;
+  align-items:center;
+  padding:8px;
+  border-radius:16px;
+  background:rgba(2,8,18,.28);
+  border:1px solid rgba(255,255,255,.07);
+}
+
+.shil-final-equipment-row strong,
+.shil-final-equipment-row span,
+.shil-final-equipment-row small{
+  min-width:0;
+  font-size:11.5px;
+  line-height:1.55;
+  overflow-wrap:anywhere;
+}
+
+.shil-final-equipment-row strong{
+  color:rgba(255,255,255,.94);
+  font-weight:950;
+}
+
+.shil-final-equipment-row span{
+  color:rgba(125,245,255,.90);
+  font-weight:900;
+}
+
+.shil-final-equipment-row small{
+  color:rgba(226,242,255,.72);
+  font-weight:750;
+}
+
+.shil-final-note{
+  padding:9px 11px;
+  border-radius:18px;
+  background:rgba(34,211,238,.08);
+  border:1px solid rgba(34,211,238,.16);
+  font-size:11.5px;
+  font-weight:850;
+  line-height:1.8;
+  color:rgba(226,242,255,.82);
+}
+
+.shil-final-output-actions{
+  width:min(100%, 760px);
+  display:grid;
+  grid-template-columns:repeat(3, minmax(0, 1fr));
+  gap:9px;
+}
+
+.shil-final-output-actions button{
+  min-height:46px;
+  border:0;
+  border-radius:18px;
+  padding:9px 8px;
+  font-family:inherit;
+  font-size:12.5px;
+  font-weight:950;
+  color:rgba(255,255,255,.94);
+  background:linear-gradient(145deg, rgba(15,27,39,.95), rgba(8,18,32,.88));
+  border:1px solid rgba(255,255,255,.11);
+  box-shadow:0 12px 28px rgba(0,0,0,.22);
+}
+
+.shil-final-output-actions button:active{
+  transform:scale(.985);
+}
+
+@media (max-width:520px){
+  .shil-final-export-sheet{
+    padding:10px;
+    border-radius:24px;
+    gap:8px;
+  }
+
+  .shil-final-output-hero{
+    padding:10px;
+    border-radius:20px;
+  }
+
+  .shil-final-output-hero p{
+    font-size:11px;
+    line-height:1.7;
+  }
+
+  .shil-final-status-pill{
+    font-size:11px;
+    padding-inline:9px;
+  }
+
+  .shil-final-two-column{
+    grid-template-columns:1fr;
+    gap:8px;
+  }
+
+  .shil-final-panel{
+    padding:9px;
+    border-radius:19px;
+  }
+
+  .shil-final-mini-grid{
+    grid-template-columns:1fr 1fr;
+    gap:6px;
+  }
+
+  .shil-final-kpi{
+    padding:7px;
+  }
+
+  .shil-final-kpi strong{
+    font-size:11.5px;
+  }
+
+  .shil-final-route-list li{
+    font-size:11.2px;
+    line-height:1.55;
+  }
+
+  .shil-final-equipment-row{
+    grid-template-columns:1fr .62fr;
+    gap:5px 7px;
+    padding:7px;
+  }
+
+  .shil-final-equipment-row small{
+    grid-column:1 / -1;
+  }
+
+  .shil-final-output-actions{
+    grid-template-columns:1fr 1fr 1fr;
+    gap:7px;
+  }
+
+  .shil-final-output-actions button{
+    min-height:44px;
+    border-radius:16px;
+    font-size:11px;
+    padding-inline:5px;
+  }
+}
+
+@media print{
+  .shil-final-output-actions,
+  .shil-primary-wide,
+  .shil-soft-link-button{
+    display:none !important;
+  }
+
+  .shil-final-export-sheet{
+    width:100% !important;
+    box-shadow:none !important;
+  }
+}

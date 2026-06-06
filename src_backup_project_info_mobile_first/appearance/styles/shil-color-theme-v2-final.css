@@ -1,0 +1,61 @@
+﻿/* SHIL FINAL PAGE COLOR FORCE */
+
+:root{
+  --shil-v2-page:#eef0ff;
+  --shil-v2-card:#f3eee7;
+  --shil-v2-field:#f3edff;
+  --shil-v2-border:#78dfff;
+  --shil-v2-field-border:#c8b8ff;
+  --shil-v2-text:#18324a;
+}
+
+/* Background */
+html body:not(.login-page):not(.welcome-page) .shil-main,
+html body:not(.login-page):not(.welcome-page) .shil-page-content,
+html body:not(.login-page):not(.welcome-page) .shil-engineering-content,
+html body:not(.login-page):not(.welcome-page) main {
+  background: var(--shil-v2-page) !important;
+  background-image:
+    linear-gradient(135deg, rgba(120,223,255,.12) 1px, transparent 1px) !important;
+  background-size: 44px 44px !important;
+}
+
+/* Cards / sections */
+html body:not(.login-page):not(.welcome-page) .shil-section-card,
+html body:not(.login-page):not(.welcome-page) .shil-card-stack,
+html body:not(.login-page):not(.welcome-page) .shil-card-stack > *,
+html body:not(.login-page):not(.welcome-page) .shil-execution-card,
+html body:not(.login-page):not(.welcome-page) .shil-project-path-card,
+html body:not(.login-page):not(.welcome-page) .shil-result-card,
+html body:not(.login-page):not(.welcome-page) .shil-summary-card,
+html body:not(.login-page):not(.welcome-page) .shil-method-context-strip,
+html body:not(.login-page):not(.welcome-page) .shil-project-path-summary {
+  background: linear-gradient(180deg, #f7f1ea, var(--shil-v2-card)) !important;
+  border: 1px solid var(--shil-v2-border) !important;
+  border-right: 5px solid #72d7ff !important;
+  border-radius: 20px !important;
+  box-shadow: 0 14px 30px rgba(35,45,70,.12) !important;
+}
+
+/* Fields */
+html body:not(.login-page):not(.welcome-page) input,
+html body:not(.login-page):not(.welcome-page) select,
+html body:not(.login-page):not(.welcome-page) textarea,
+html body:not(.login-page):not(.welcome-page) .shil-textarea,
+html body:not(.login-page):not(.welcome-page) .shil-form-grid label,
+html body:not(.login-page):not(.welcome-page) .shil-input-card,
+html body:not(.login-page):not(.welcome-page) .shil-field-card {
+  background: linear-gradient(180deg, #fbf8ff, var(--shil-v2-field)) !important;
+  border: 1px solid var(--shil-v2-field-border) !important;
+  border-radius: 14px !important;
+  color: var(--shil-v2-text) !important;
+}
+
+/* Section headers */
+html body:not(.login-page):not(.welcome-page) .shil-section-head,
+html body:not(.login-page):not(.welcome-page) .shil-card-head {
+  background: linear-gradient(90deg, rgba(243,237,255,.95), rgba(247,241,234,.65)) !important;
+  border: 1px solid rgba(200,184,255,.55) !important;
+  border-radius: 14px !important;
+  padding: 10px !important;
+}

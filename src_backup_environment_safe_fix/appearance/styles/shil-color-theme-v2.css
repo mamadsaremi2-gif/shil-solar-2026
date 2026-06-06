@@ -1,0 +1,59 @@
+﻿:root{
+
+  /* Page */
+  --shil-page-bg:#EEF0FF;
+
+  /* Cards */
+  --shil-card-bg:#F3EEE7;
+
+  /* Fields */
+  --shil-field-bg:#F3EDFF;
+
+  /* Borders */
+  --shil-card-border:#74D7FF;
+  --shil-field-border:#C8B8FF;
+
+  /* Text */
+  --shil-text-main:#18324A;
+  --shil-text-muted:#60718A;
+}
+
+/* Page */
+body:not(.login-page):not(.welcome-page) .shil-main{
+  background:var(--shil-page-bg) !important;
+}
+
+/* Cards / Sections */
+[class*="card"],
+[class*="section"],
+[class*="panel"],
+.shil-card,
+.shil-section{
+  background:var(--shil-card-bg) !important;
+  border:1px solid var(--shil-card-border) !important;
+  border-radius:18px !important;
+}
+
+/* Inputs */
+input,
+select,
+textarea,
+.shil-input,
+.shil-field{
+  background:var(--shil-field-bg) !important;
+  border:1px solid var(--shil-field-border) !important;
+  color:var(--shil-text-main) !important;
+}
+
+/* Text */
+h1,h2,h3,h4,h5,h6,
+label,
+strong{
+  color:var(--shil-text-main) !important;
+}
+
+small,
+span,
+p{
+  color:var(--shil-text-muted);
+}
