@@ -63,8 +63,30 @@ import './appearance/styles/shil-real-class-final-theme.css';
 import './appearance/styles/shil-emergency-readability-fix.css';
 
 
-import "./appearance/styles/project-path-mobile-first.css";
 
-import "./appearance/styles/project-info-mobile-first.css";
 
-import "./appearance/styles/environment-mobile-first.css";
+
+import './appearance/styles/shil-last-override.css';
+
+
+
+
+
+import './appearance/styles/shil-persian-runtime-fix.css';
+
+
+
+
+/* Project UI V3: the only active visual layer for engineering sub-pages. */
+import './appearance/styles/shil-project-unified-v4-compact.css';
+
+import './appearance/styles/shil-app-unification-final.css';
+
+/* SHIL UI V5 final page-aware layer */
+import './appearance/styles/shil-app-unification-v5-final.css';
+
+/* SHIL UI V5.2 - unified confirmation buttons */
+import "./appearance/styles/shil-confirm-buttons-unified-v5-2.css";
+
+/* SHIL UI V5.3 - runtime confirmation button placement */
+import "./appearance/styles/shil-confirm-buttons-runtime-v5-3.js";

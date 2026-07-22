@@ -1,4 +1,4 @@
-
+﻿
 /* SHIL Environment final mobile-first patch */
 
 body.shil-environment-screen {
@@ -422,3 +422,958 @@ body.shil-environment-screen * {
     gap: 6px !important;
   }
 }
+
+ /* FORCE HEADER 55PX */
+.shil-fixed-header,
+body .shil-fixed-header,
+body[class*="shil-"] .shil-fixed-header {
+  height: 55px !important;
+  min-height: 55px !important;
+  max-height: 55px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  box-sizing: border-box !important;
+}
+
+
+/* ===== FORCE FOOTER 40PX ===== */
+
+.shil-bottom-nav,
+.shil-footer,
+footer{
+    height:40px !important;
+    min-height:40px !important;
+    max-height:40px !important;
+    padding-top:0 !important;
+    padding-bottom:0 !important;
+    box-sizing:border-box !important;
+}
+
+
+/* ===== FORCE FIXED FOOTER 40PX ===== */
+
+.shil-bottom-nav,
+.shil-footer,
+footer {
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: 40px !important;
+  min-height: 40px !important;
+  max-height: 40px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  box-sizing: border-box !important;
+  z-index: 9999 !important;
+}
+
+/* محتوا زیر فوتر گیر نکند */
+body,
+#root,
+.shil-page,
+.shil-page-shell,
+.shil-main,
+main {
+  padding-bottom: 40px !important;
+  box-sizing: border-box !important;
+}
+
+/* اگر خود صفحه اسکرول دارد */
+.shil-page-content,
+.shil-content,
+.page-content,
+main {
+  padding-bottom: 56px !important;
+  box-sizing: border-box !important;
+}
+
+
+/* ===== FORCE TRUE FIXED BOTTOM NAV - MOBILE FIRST ===== */
+
+html,
+body,
+#root {
+  min-height: 100% !important;
+  height: 100% !important;
+}
+
+.shil-bottom-nav,
+.shil-footer,
+footer,
+[class*="bottom-nav"],
+[class*="BottomNav"],
+[class*="footer"],
+[class*="Footer"] {
+  position: fixed !important;
+  inset-inline-start: 0 !important;
+  inset-inline-end: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 40px !important;
+  min-height: 40px !important;
+  max-height: 40px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  margin-bottom: 0 !important;
+  box-sizing: border-box !important;
+  z-index: 2147483647 !important;
+  transform: none !important;
+}
+
+/* اگر فوتر داخل main یا container اسکرولی باشد، محتوا زیرش رد شود */
+main,
+.shil-main,
+.shil-page,
+.shil-page-shell,
+.shil-page-content,
+.shil-content,
+.mobile-first-page,
+.mobile-page,
+[class*="mobile-first"],
+[class*="MobileFirst"],
+[class*="page-content"],
+[class*="PageContent"] {
+  padding-bottom: 56px !important;
+  box-sizing: border-box !important;
+  overflow-x: hidden !important;
+}
+
+/* جلوگیری از اینکه parent با transform باعث fixed اشتباه شود */
+.shil-page,
+.shil-page-shell,
+.mobile-first-page,
+.mobile-page,
+[class*="mobile-first"],
+[class*="MobileFirst"] {
+  transform: none !important;
+  perspective: none !important;
+  filter: none !important;
+  contain: none !important;
+}
+
+
+/* ===== FINAL FIX: SHIL PAGE SHELL HEADER FOOTER ===== */
+
+.shil-page-shell {
+  min-height: 100dvh !important;
+  height: 100dvh !important;
+  overflow: hidden !important;
+  position: relative !important;
+}
+
+.shil-fixed-header {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 55px !important;
+  min-height: 55px !important;
+  max-height: 55px !important;
+  box-sizing: border-box !important;
+  z-index: 9999 !important;
+}
+
+.shil-fixed-footer,
+.shil-bottom-nav,
+.shil-footer,
+footer {
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: 40px !important;
+  min-height: 40px !important;
+  max-height: 40px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  box-sizing: border-box !important;
+  z-index: 9999 !important;
+}
+
+.shil-page-content {
+  position: fixed !important;
+  top: 55px !important;
+  bottom: 40px !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding-bottom: 24px !important;
+  box-sizing: border-box !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+
+/* =====================================================
+   SHIL PAGE SHELL - FINAL LAYOUT
+   ===================================================== */
+
+.shil-page-shell{
+    position:relative !important;
+    width:100% !important;
+    height:100dvh !important;
+    min-height:100dvh !important;
+    overflow:hidden !important;
+}
+
+.shil-page-content{
+    position:absolute !important;
+
+    top:55px !important;
+    left:0 !important;
+    right:0 !important;
+    bottom:40px !important;
+
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+
+    box-sizing:border-box !important;
+
+    -webkit-overflow-scrolling:touch !important;
+}
+
+.shil-no-header .shil-page-content{
+    top:0 !important;
+}
+
+.shil-no-footer .shil-page-content{
+    bottom:0 !important;
+}
+
+.shil-fixed-header{
+    position:fixed !important;
+    top:0 !important;
+    left:0 !important;
+    right:0 !important;
+    height:55px !important;
+    min-height:55px !important;
+    max-height:55px !important;
+    z-index:4000 !important;
+}
+
+.shil-fixed-footer{
+    position:fixed !important;
+    left:0 !important;
+    right:0 !important;
+    bottom:0 !important;
+
+    height:40px !important;
+    min-height:40px !important;
+    max-height:40px !important;
+
+    z-index:4000 !important;
+}
+
+/* SHIL_ENV_TOP_GAP_13_FINAL_START */
+
+body.shil-environment-screen .shil-page-content{
+  padding-top: 13px !important;
+}
+
+body.shil-environment-screen main.shil-page-content{
+  padding-top: 13px !important;
+}
+
+body.shil-environment-screen .shil-project-mini-rail{
+  margin-top: 13px !important;
+  top:0px !important;
+}
+
+body.shil-environment-screen .shil-env-page{
+  margin-top: 13px !important;
+  padding-top: 0 !important;
+}
+
+/* SHIL_ENV_TOP_GAP_13_FINAL_END */
+
+/* SHIL_ENV_RAIL_UNIFIED_FINAL_START */
+
+body.shil-environment-screen .shil-project-mini-rail{
+  width: calc(100% - 24px) !important;
+  max-width: 430px !important;
+  height: 94px !important;
+  min-height: 94px !important;
+  max-height: 94px !important;
+  margin: 13px auto 12px !important;
+  padding: 0 !important;
+  border-radius: 999px !important;
+  overflow: hidden !important;
+}
+
+body.shil-environment-screen .project-mini-rail-grid{
+  width: 100% !important;
+  height: 94px !important;
+  min-height: 94px !important;
+  max-height: 94px !important;
+  display: grid !important;
+  grid-auto-flow: column !important;
+  grid-auto-columns: 78px !important;
+  align-items: center !important;
+  justify-content: start !important;
+  gap: 4px !important;
+  padding: 8px 10px !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  scrollbar-width: none !important;
+  border-radius: 999px !important;
+}
+
+body.shil-environment-screen .project-mini-rail-grid::-webkit-scrollbar{
+  display: none !important;
+}
+
+body.shil-environment-screen .project-mini-rail-grid .shil-ios-icon-link{
+  width: 74px !important;
+  min-width: 74px !important;
+  max-width: 74px !important;
+  height: 78px !important;
+  min-height: 78px !important;
+  max-height: 78px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  padding: 0 !important;
+  text-decoration: none !important;
+}
+
+body.shil-environment-screen .project-mini-rail-grid .shil-ios-icon-img{
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 40px !important;
+  min-height: 40px !important;
+  max-width: 40px !important;
+  max-height: 40px !important;
+  border-radius: 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 40px !important;
+}
+
+body.shil-environment-screen .project-mini-rail-grid .shil-ios-icon-img svg{
+  width: 24px !important;
+  height: 24px !important;
+  stroke-width: 2.4 !important;
+}
+
+body.shil-environment-screen .project-mini-rail-grid .shil-ios-icon-title{
+  display: block !important;
+  width: 72px !important;
+  max-width: 72px !important;
+  height: 28px !important;
+  max-height: 28px !important;
+  overflow: hidden !important;
+  text-align: center !important;
+  white-space: normal !important;
+  line-height: 1.25 !important;
+  font-size: 10px !important;
+  font-weight: 900 !important;
+  color: #061421 !important;
+}
+
+body.shil-environment-screen .project-mini-rail-grid .shil-ios-icon-link.is-active-step .shil-ios-icon-img{
+  border: 1px solid #50e6ff !important;
+  box-shadow: 0 0 14px rgba(80,230,255,.65) !important;
+}
+
+/* SHIL_ENV_RAIL_UNIFIED_FINAL_END */
+
+/* SHIL_ENV_RAIL_90_FINAL_START */
+
+body.shil-environment-screen .shil-project-mini-rail{
+  height:90px !important;
+  min-height:90px !important;
+  max-height:90px !important;
+  margin:13px auto 12px !important;
+  padding:0 !important;
+}
+
+body.shil-environment-screen .project-mini-rail-grid{
+  height:90px !important;
+  min-height:90px !important;
+  max-height:90px !important;
+  padding:7px 10px !important;
+  gap:4px !important;
+}
+
+body.shil-environment-screen .project-mini-rail-grid .shil-ios-icon-link{
+  height:74px !important;
+  min-height:74px !important;
+  max-height:74px !important;
+  width:72px !important;
+  min-width:72px !important;
+  max-width:72px !important;
+  gap:4px !important;
+}
+
+body.shil-environment-screen .project-mini-rail-grid .shil-ios-icon-img{
+  width:35px !important;
+  height:35px !important;
+  min-width:35px !important;
+  min-height:35px !important;
+  max-width:35px !important;
+  max-height:35px !important;
+  border-radius:13px !important;
+}
+
+body.shil-environment-screen .project-mini-rail-grid .shil-ios-icon-img svg{
+  width:22px !important;
+  height:22px !important;
+  stroke-width:2.3 !important;
+}
+
+body.shil-environment-screen .project-mini-rail-grid .shil-ios-icon-title{
+  font-size:10px !important;
+  max-height:26px !important;
+  line-height:1.2 !important;
+  font-weight:900 !important;
+  text-align:center !important;
+  overflow:hidden !important;
+}
+
+/* SHIL_ENV_RAIL_90_FINAL_END */
+
+
+/* SHIL_ENV_FOOTER_AND_STATIC_BUTTON_START */
+
+/* فقط صفحه شرایط محیطی */
+
+/* فوتر در Environment حتما دیده شود */
+body.shil-environment-screen .shil-fixed-footer,
+body.shil-environment-screen footer.shil-fixed-footer{
+  display:flex !important;
+  visibility:visible !important;
+  opacity:1 !important;
+  height:40px !important;
+  min-height:40px !important;
+  max-height:40px !important;
+  position:fixed !important;
+  left:0 !important;
+  right:0 !important;
+  bottom:0 !important;
+  z-index:1200 !important;
+}
+
+/* اگر Shell هنوز کلاس no-footer داشته باشد، خنثی شود */
+body.shil-environment-screen .shil-no-footer .shil-fixed-footer{
+  display:flex !important;
+  visibility:visible !important;
+  opacity:1 !important;
+}
+
+/* فضای پایین صفحه برای دکمه و فوتر */
+body.shil-environment-screen .shil-page-content,
+body.shil-environment-screen main.shil-page-content{
+  padding-bottom:72px !important;
+}
+
+/* دکمه تأیید محیط از حالت شناور خارج شود */
+body.shil-environment-screen .shil-primary-wide{
+  position:static !important;
+  left:0px !important;
+  right:0px !important;
+  bottom:0px !important;
+  top:0px !important;
+  transform:none !important;
+
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+
+  width:max-content !important;
+  min-width:110px !important;
+  max-width:calc(100% - 32px) !important;
+
+  height:46px !important;
+  min-height:46px !important;
+  max-height:46px !important;
+
+  margin:14px auto 52px !important;
+  padding:0 18px !important;
+
+  font-size:11px !important;
+  font-weight:900 !important;
+  line-height:1 !important;
+
+  z-index:auto !important;
+}
+
+/* حذف آیکون یا علامت اضافه */
+body.shil-environment-screen .shil-primary-wide::before,
+body.shil-environment-screen .shil-primary-wide::after{
+  content:none !important;
+  display:none !important;
+}
+
+/* اگر داخل دکمه span/svg باقی مانده باشد */
+body.shil-environment-screen .shil-primary-wide svg,
+body.shil-environment-screen .shil-primary-wide img,
+body.shil-environment-screen .shil-primary-wide i{
+  display:none !important;
+}
+
+/* SHIL_ENV_FOOTER_AND_STATIC_BUTTON_END */
+
+
+
+/* SHIL_ENV_CONFIRM_BUTTON_PROJECT_INFO_MATCH_START */
+/* دکمه تأیید محیط: هم‌ساختار با دکمه اطلاعات پروژه، 5px بالای فوتر */
+body.shil-environment-screen .shil-page-content,
+body.shil-environment-screen main.shil-page-content{
+  padding-bottom:0 !important;
+}
+
+body.shil-environment-screen .shil-env-confirm-button.shil-primary-wide,
+body.shil-environment-screen .shil-env-confirm-button{
+  position:fixed !important;
+  left:50% !important;
+  right:0px !important;
+  top:0px !important;
+  bottom:45px !important;
+  transform:translateX(-50%) !important;
+
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+
+  width:calc(100vw - 20px) !important;
+  max-width:430px !important;
+  min-width:0 !important;
+
+  height:48px !important;
+  min-height:48px !important;
+  max-height:48px !important;
+
+  margin:0 !important;
+  padding:0 !important;
+
+  font-size:11px !important;
+  font-weight:900 !important;
+  line-height:1 !important;
+  font-family:inherit !important;
+
+  z-index:80 !important;
+}
+/* SHIL_ENV_CONFIRM_BUTTON_PROJECT_INFO_MATCH_END */
+/* SHIL_ENV_CONFIRM_FIXED_ABOVE_FOOTER_NO_OVERLAP_START */
+body.shil-environment-screen .shil-page-content,
+body.shil-environment-screen main.shil-page-content{
+  padding-bottom:0 !important;
+  scroll-padding-bottom:105px !important;
+}
+
+body.shil-environment-screen .shil-env-page{
+  padding-bottom:105px !important;
+}
+
+body.shil-environment-screen .shil-env-confirm-button,
+body.shil-environment-screen .shil-env-confirm-button.shil-primary-wide{
+  position:fixed !important;
+  left:50% !important;
+  right:0px !important;
+  top:0px !important;
+  bottom:45px !important; /* 40px footer + 5px gap */
+  transform:translateX(-50%) !important;
+  margin:0 !important;
+  padding:0 !important;
+  z-index:1300 !important;
+}
+/* SHIL_ENV_CONFIRM_FIXED_ABOVE_FOOTER_NO_OVERLAP_END */
+
+/* ===== SHIL ENV FIXED BUTTON + NO CONTENT UNDERLAP ===== */
+
+body.shil-environment-screen .shil-env-page{
+    display:flex !important;
+    flex-direction:column !important;
+    min-height:100% !important;
+}
+
+body.shil-environment-screen .shil-page-content,
+body.shil-environment-screen main,
+body.shil-environment-screen .shil-env-content{
+    padding-bottom:0 !important;
+}
+
+body.shil-environment-screen .shil-env-analysis-card,
+body.shil-environment-screen .shil-env-result-card,
+body.shil-environment-screen .shil-env-content>*:last-child{
+    margin-bottom:110px !important;
+}
+
+body.shil-environment-screen .shil-env-confirm-button{
+    position:fixed !important;
+    left:50% !important;
+    transform:translateX(-50%) !important;
+    bottom:45px !important;
+    z-index:9999 !important;
+}
+
+
+/* ENV CONFIRM BUTTON - STICK TO END OF CONTENT, NOT FLOAT */
+body.shil-environment-screen .shil-env-confirm-button,
+body.shil-environment-screen .shil-env-confirm-button.shil-primary-wide{
+  position:sticky !important;
+  left:0px !important;
+  right:0px !important;
+  top:0px !important;
+  bottom:75px !important;
+  transform:none !important;
+
+  display:flex !important;
+  justify-content:center !important;
+  align-items:center !important;
+
+  width:fit-content !important;
+  margin:16px auto 5px auto !important;
+  padding:0 !important;
+  z-index:20 !important;
+}
+
+body.shil-environment-screen .shil-env-page,
+body.shil-environment-screen .shil-page-content,
+body.shil-environment-screen main{
+  padding-bottom:0 !important;
+}
+
+body.shil-environment-screen .shil-env-content,
+body.shil-environment-screen .shil-env-analysis-card,
+body.shil-environment-screen .shil-env-result-card{
+  padding-bottom:0 !important;
+  margin-bottom:0 !important;
+}
+
+
+/* ENV CONFIRM BUTTON - NORMAL LAST CONTENT ITEM */
+body.shil-environment-screen .shil-env-confirm-button,
+body.shil-environment-screen .shil-env-confirm-button.shil-primary-wide{
+  position:relative !important;
+  left:0px !important;
+  right:0px !important;
+  top:0px !important;
+  bottom:0px !important;
+  transform:none !important;
+
+  display:flex !important;
+  justify-content:center !important;
+  align-items:center !important;
+
+  width:fit-content !important;
+  margin:8px 0 5px -22px !important;
+  padding:0 !important;
+  z-index:1 !important;
+}
+
+body.shil-environment-screen .shil-env-page,
+body.shil-environment-screen .shil-page-content,
+body.shil-environment-screen main{
+  padding-bottom:0 !important;
+}
+
+body.shil-environment-screen .shil-env-content > *:last-child{
+  margin-bottom:0 !important;
+}
+
+
+/* CENTER ENV CONFIRM BUTTON */
+body.shil-environment-screen .shil-env-confirm-button,
+body.shil-environment-screen .shil-env-confirm-button.shil-primary-wide{
+    display:block !important;
+    width:max-content !important;
+
+    margin-left:0px !important;
+    margin-right:0px !important;
+    margin-top:8px !important;
+    margin-bottom:5px !important;
+
+    float:none !important;
+    align-self:center !important;
+    justify-self:center !important;
+}
+
+
+/* ENV BUTTON FINAL: LAST ITEM + CENTERED */
+html body.shil-environment-screen button.shil-env-confirm-button,
+html body.shil-environment-screen button.shil-env-confirm-button.shil-primary-wide{
+  position:relative !important;
+  inset:auto !important;
+  left:0px !important;
+  right:0px !important;
+  top:0px !important;
+  bottom:0px !important;
+  transform:none !important;
+
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+
+  width:max-content !important;
+  min-width:0 !important;
+  max-width:max-content !important;
+
+  margin:8px 0 5px -22px !important;
+  padding:0 12px !important;
+
+  float:none !important;
+  align-self:center !important;
+  justify-self:center !important;
+  z-index:1 !important;
+}
+
+html body.shil-environment-screen .shil-env-flow{
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:stretch !important;
+}
+
+html body.shil-environment-screen .shil-env-flow > button.shil-env-confirm-button{
+  align-self:center !important;
+}
+
+
+/* ENV CONFIRM FINAL CENTER + ORIGINAL COLOR */
+body.shil-environment-screen .shil-env-confirm-row{
+  width:100% !important;
+  display:flex !important;
+  justify-content:center !important;
+  align-items:center !important;
+  margin:8px 0 5px 0 !important;
+  padding:0 !important;
+}
+
+body.shil-environment-screen .shil-env-confirm-row .shil-env-confirm-button{
+  position:relative !important;
+  left:0px !important;
+  right:0px !important;
+  top:0px !important;
+  bottom:0px !important;
+  transform:none !important;
+
+  margin:0 auto !important;
+  padding:0 18px !important;
+  width:max-content !important;
+  min-width:110px !important;
+  height:46px !important;
+
+  background:linear-gradient(180deg,#b53cff 0%,#8f24f5 100%) !important;
+  color:#050505 !important;
+  border-radius:24px !important;
+  border:2px solid #7b20d8 !important;
+  box-shadow:0 4px 0 #6c18c4, 0 10px 18px rgba(0,0,0,.22) !important;
+}
+
+
+/* ENV CONFIRM ROW CENTER + KEEP ORIGINAL BUTTON STYLE */
+body.shil-environment-screen .shil-env-confirm-row{
+  width:100% !important;
+  display:flex !important;
+  justify-content:center !important;
+  align-items:center !important;
+  margin:8px 0 5px 0 !important;
+  padding:0 !important;
+}
+
+body.shil-environment-screen .shil-env-confirm-row .shil-env-confirm-button{
+  position:relative !important;
+  left:0px !important;
+  right:0px !important;
+  top:0px !important;
+  bottom:0px !important;
+  transform:none !important;
+  margin:0 auto !important;
+  padding:0 !important;
+  float:none !important;
+}
+
+
+/* ===== ENV CONFIRM BUTTON FINAL POSITION - SAFE CSS ONLY ===== */
+body.shil-environment-screen .shil-env-confirm-button{
+  position:static !important;
+  margin:5px 0 !important;
+  left:0px !important;
+  right:0px !important;
+  top:0px !important;
+  bottom:0px !important;
+  transform:translateX(-22px) !important;
+  padding:0 !important;
+}
+
+body.shil-environment-screen .shil-env-confirm-button-wrapper,
+body.shil-environment-screen .shil-env-confirm-row,
+body.shil-environment-screen .shil-env-confirm-button-parent{
+  padding:0 !important;
+  margin:0 !important;
+  min-height:0 !important;
+  height:auto !important;
+  display:flex !important;
+  justify-content:center !important;
+  align-items:center !important;
+}
+
+/* fallback: direct parent of env button when wrapper class is not present */
+body.shil-environment-screen .shil-env-confirm-button{
+  align-self:center !important;
+}
+
+/* ===== ENV CONFIRM FINAL REWRITE ===== */
+body.shil-environment-screen .env-confirm-final-wrap{
+  padding:0 !important;
+  margin:0 !important;
+  min-height:0 !important;
+  height:auto !important;
+  width:100% !important;
+
+  display:flex !important;
+  justify-content:center !important;
+  align-items:center !important;
+}
+
+body.shil-environment-screen .env-confirm-final-wrap .shil-env-confirm-button{
+  position:relative !important;
+  inset:auto !important;
+  left:0px !important;
+  right:0px !important;
+  top:0px !important;
+  bottom:0px !important;
+
+  margin:5px 0 !important;
+  padding:0 !important;
+  transform:translateX(-22px) !important;
+
+  float:none !important;
+  align-self:center !important;
+  justify-self:center !important;
+}
+
+
+/* ===== ENV CONFIRM BUTTON FINAL - JSX BUTTON VERSION ===== */
+html body.shil-environment-screen .shil-env-confirm-final-row{
+  padding:0 !important;
+  margin:0 !important;
+  min-height:0 !important;
+  height:auto !important;
+  width:100% !important;
+
+  display:flex !important;
+  justify-content:center !important;
+  align-items:center !important;
+}
+
+html body.shil-environment-screen .shil-env-confirm-final-row .shil-env-confirm-final-button{
+  position:relative !important;
+  inset:auto !important;
+  left:0px !important;
+  right:0px !important;
+  top:0px !important;
+  bottom:0px !important;
+
+  width:max-content !important;
+  min-width:0 !important;
+  max-width:none !important;
+  height:46px !important;
+  min-height:46px !important;
+  max-height:46px !important;
+
+  margin:5px 0 !important;
+  padding:0 5px !important;
+  transform:translateX(-22px) !important;
+
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+
+  white-space:nowrap !important;
+  font-family:Vazirmatn, IRANSans, Tahoma, Arial, "Noto Sans Arabic", "Noto Naskh Arabic", sans-serif !important;
+  font-size:16px !important;
+  font-weight:900 !important;
+  line-height:1 !important;
+
+  color:#fff !important;
+  background:#8A2BE2 !important;
+  background-color:#8A2BE2 !important;
+  background-image:none !important;
+
+  border:2px solid #6B1FD3 !important;
+  border-radius:22px !important;
+
+  box-shadow:
+    inset 0 2px 4px rgba(255,255,255,.35),
+    inset 0 -2px 4px rgba(0,0,0,.15) !important;
+
+  float:none !important;
+  align-self:center !important;
+  justify-self:center !important;
+  z-index:1 !important;
+}
+
+html body.shil-environment-screen .shil-env-confirm-final-row .shil-env-confirm-final-button:disabled{
+  opacity:.42 !important;
+  filter:grayscale(.7) !important;
+}
+
+/* ENV FINAL BUTTON - ISOLATED FROM SHIL PRIMARY FIXED RULE */
+html body.shil-environment-screen button.shil-env-confirm-button-final{
+  position:relative !important;
+  inset:auto !important;
+  left:0px !important;
+  right:0px !important;
+  top:0px !important;
+  bottom:0px !important;
+
+  width:max-content !important;
+  min-width:0 !important;
+  max-width:none !important;
+
+  height:46px !important;
+  min-height:46px !important;
+  max-height:46px !important;
+
+  margin:5px 0 !important;
+  padding:0 5px !important;
+
+  transform:translateX(-22px) !important;
+
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+
+  white-space:nowrap !important;
+
+  font-family:Vazirmatn, IRANSans, Tahoma, Arial, "Noto Sans Arabic", "Noto Naskh Arabic", sans-serif !important;
+  font-size:16px !important;
+  font-weight:900 !important;
+  line-height:1 !important;
+
+  color:#ffffff !important;
+  background:#8A2BE2 !important;
+  background-color:#8A2BE2 !important;
+  background-image:none !important;
+
+  border:2px solid #6B1FD3 !important;
+  border-radius:22px !important;
+
+  box-shadow:
+    inset 0 2px 4px rgba(255,255,255,.35),
+    inset 0 -2px 4px rgba(0,0,0,.15) !important;
+
+  float:none !important;
+  align-self:center !important;
+  justify-self:center !important;
+  z-index:1 !important;
+}
+
+html body.shil-environment-screen button.shil-env-confirm-button-final:disabled{
+  opacity:.42 !important;
+  filter:grayscale(.7) !important;
+}
+

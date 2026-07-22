@@ -1,4 +1,4 @@
-/*
+﻿/*
 ============================================================
 SHIL MOBILE DESIGN SYSTEM - SINGLE SOURCE OF TRUTH
 Generated update: 2026-06-04
@@ -7740,7 +7740,7 @@ html,body,#root{width:100%;max-width:100%;min-height:100%;overflow-x:hidden;}
   width:100%;
   max-width:100vw;
   overflow-x:hidden;
-  padding:12px 16px 120px;
+  padding: 12px 16px 0;
   box-sizing:border-box;
 }
 
@@ -7831,7 +7831,7 @@ html,body,#root{width:100%;max-width:100%;min-height:100%;overflow-x:hidden;}
 
 .shil-equipment-page{
   width:100%;
-  padding:12px 16px 120px;
+  padding: 12px 16px 0;
   box-sizing:border-box;
   overflow-x:hidden;
 }
@@ -12446,10 +12446,10 @@ body:not(.login-page):not(.welcome-page) [class*="Project"] {
 
 /* =========================================================
    SHIL FINAL LIGHT ENGINEERING UI
-   - کارت‌های روشن و یکدست
-   - هدر/فوتر خاکستری مهندسی
-   - آیکون‌های داشبورد و پروژه جدید: گرد، برجسته، قاب نیونی بنفش روشن
-   - Login / Welcome تا حد امکان دست‌نخورده
+   - Ú©Ø§Ø±Øªâ€ŒÙ‡Ø§ÛŒ Ø±ÙˆØ´Ù† Ùˆ ÛŒÚ©Ø¯Ø³Øª
+   - Ù‡Ø¯Ø±/ÙÙˆØªØ± Ø®Ø§Ú©Ø³ØªØ±ÛŒ Ù…Ù‡Ù†Ø¯Ø³ÛŒ
+   - Ø¢ÛŒÚ©ÙˆÙ†â€ŒÙ‡Ø§ÛŒ Ø¯Ø§Ø´Ø¨ÙˆØ±Ø¯ Ùˆ Ù¾Ø±ÙˆÚ˜Ù‡ Ø¬Ø¯ÛŒØ¯: Ú¯Ø±Ø¯ØŒ Ø¨Ø±Ø¬Ø³ØªÙ‡ØŒ Ù‚Ø§Ø¨ Ù†ÛŒÙˆÙ†ÛŒ Ø¨Ù†ÙØ´ Ø±ÙˆØ´Ù†
+   - Login / Welcome ØªØ§ Ø­Ø¯ Ø§Ù…Ú©Ø§Ù† Ø¯Ø³Øªâ€ŒÙ†Ø®ÙˆØ±Ø¯Ù‡
    ========================================================= */
 
 :root {
@@ -13058,8 +13058,8 @@ body:not(.login-page):not(.welcome-page) [class*="route-rail"] .shil-ios-icon-ti
 
 /* =========================================================
    SHIL FINAL CONTRAST BORDERS + NAV BUTTON UNIFICATION
-   - همه دکمه‌های Header/Footer مثل دکمه بازگشت
-   - تفکیک بصری بلوک‌ها/کارت‌ها/فیلدها با نوار متضاد ظریف
+   - Ù‡Ù…Ù‡ Ø¯Ú©Ù…Ù‡â€ŒÙ‡Ø§ÛŒ Header/Footer Ù…Ø«Ù„ Ø¯Ú©Ù…Ù‡ Ø¨Ø§Ø²Ú¯Ø´Øª
+   - ØªÙÚ©ÛŒÚ© Ø¨ØµØ±ÛŒ Ø¨Ù„ÙˆÚ©â€ŒÙ‡Ø§/Ú©Ø§Ø±Øªâ€ŒÙ‡Ø§/ÙÛŒÙ„Ø¯Ù‡Ø§ Ø¨Ø§ Ù†ÙˆØ§Ø± Ù…ØªØ¶Ø§Ø¯ Ø¸Ø±ÛŒÙ
    ========================================================= */
 
 :root {
@@ -13278,10 +13278,10 @@ body:not(.login-page):not(.welcome-page) .shil-route-rail .shil-ios-icon-img {
 
 /* =========================================================
    SHIL UNIFIED COLOR SYSTEM - FINAL GLOBAL RULE
-   قانون جامع رنگ‌بندی:
-   1) بکگراند تمام صفحات داخلی: یک رنگ ثابت
-   2) بلوک‌ها/کارت‌ها/سکشن‌ها: رنگ متفاوت و یکدست
-   3) فیلدها/ورودی‌ها/سلول‌ها/دکمه‌های محتوایی: رنگ سوم و قابل تفکیک
+   Ù‚Ø§Ù†ÙˆÙ† Ø¬Ø§Ù…Ø¹ Ø±Ù†Ú¯â€ŒØ¨Ù†Ø¯ÛŒ:
+   1) Ø¨Ú©Ú¯Ø±Ø§Ù†Ø¯ ØªÙ…Ø§Ù… ØµÙØ­Ø§Øª Ø¯Ø§Ø®Ù„ÛŒ: ÛŒÚ© Ø±Ù†Ú¯ Ø«Ø§Ø¨Øª
+   2) Ø¨Ù„ÙˆÚ©â€ŒÙ‡Ø§/Ú©Ø§Ø±Øªâ€ŒÙ‡Ø§/Ø³Ú©Ø´Ù†â€ŒÙ‡Ø§: Ø±Ù†Ú¯ Ù…ØªÙØ§ÙˆØª Ùˆ ÛŒÚ©Ø¯Ø³Øª
+   3) ÙÛŒÙ„Ø¯Ù‡Ø§/ÙˆØ±ÙˆØ¯ÛŒâ€ŒÙ‡Ø§/Ø³Ù„ÙˆÙ„â€ŒÙ‡Ø§/Ø¯Ú©Ù…Ù‡â€ŒÙ‡Ø§ÛŒ Ù…Ø­ØªÙˆØ§ÛŒÛŒ: Ø±Ù†Ú¯ Ø³ÙˆÙ… Ùˆ Ù‚Ø§Ø¨Ù„ ØªÙÚ©ÛŒÚ©
    Applies globally from Dashboard to New Project, Calculations, Review, Development.
    Login / Welcome preserved.
    ========================================================= */
@@ -14083,8 +14083,8 @@ body:not(.login-page):not(.welcome-page) article {
 
 /* =========================================================
    SHIL DASHBOARD + NEW PROJECT ICONS DIRECT ON BACKGROUND
-   فقط صفحه داشبورد و پروژه جدید:
-   حذف رنگ/کادر بلوک پشت آیکون‌ها تا آیکون‌ها مستقیم روی بک‌گراند باشند.
+   ÙÙ‚Ø· ØµÙØ­Ù‡ Ø¯Ø§Ø´Ø¨ÙˆØ±Ø¯ Ùˆ Ù¾Ø±ÙˆÚ˜Ù‡ Ø¬Ø¯ÛŒØ¯:
+   Ø­Ø°Ù Ø±Ù†Ú¯/Ú©Ø§Ø¯Ø± Ø¨Ù„ÙˆÚ© Ù¾Ø´Øª Ø¢ÛŒÚ©ÙˆÙ†â€ŒÙ‡Ø§ ØªØ§ Ø¢ÛŒÚ©ÙˆÙ†â€ŒÙ‡Ø§ Ù…Ø³ØªÙ‚ÛŒÙ… Ø±ÙˆÛŒ Ø¨Ú©â€ŒÚ¯Ø±Ø§Ù†Ø¯ Ø¨Ø§Ø´Ù†Ø¯.
    ========================================================= */
 
 /* Dashboard and New Project icon wrapper containers */
@@ -14465,9 +14465,9 @@ body:not(.login-page):not(.welcome-page){
 
 /* =========================================================
    SHIL DASHBOARD SHELL ONLY FIX
-   فقط اصلاح داشبورد:
-   حذف پنل/گلاسه باقی‌مانده از ShilPageShell در داشبورد
-   بدون تغییر پروژه جدید و سایر صفحات
+   ÙÙ‚Ø· Ø§ØµÙ„Ø§Ø­ Ø¯Ø§Ø´Ø¨ÙˆØ±Ø¯:
+   Ø­Ø°Ù Ù¾Ù†Ù„/Ú¯Ù„Ø§Ø³Ù‡ Ø¨Ø§Ù‚ÛŒâ€ŒÙ…Ø§Ù†Ø¯Ù‡ Ø§Ø² ShilPageShell Ø¯Ø± Ø¯Ø§Ø´Ø¨ÙˆØ±Ø¯
+   Ø¨Ø¯ÙˆÙ† ØªØºÛŒÛŒØ± Ù¾Ø±ÙˆÚ˜Ù‡ Ø¬Ø¯ÛŒØ¯ Ùˆ Ø³Ø§ÛŒØ± ØµÙØ­Ø§Øª
    ========================================================= */
 
 .shil-dashboard-shell,
@@ -14503,7 +14503,7 @@ body:not(.login-page):not(.welcome-page){
   box-shadow: none !important;
 }
 
-/* والدهایی که دقیقاً گرید داشبورد را در خود دارند */
+/* ÙˆØ§Ù„Ø¯Ù‡Ø§ÛŒÛŒ Ú©Ù‡ Ø¯Ù‚ÛŒÙ‚Ø§Ù‹ Ú¯Ø±ÛŒØ¯ Ø¯Ø§Ø´Ø¨ÙˆØ±Ø¯ Ø±Ø§ Ø¯Ø± Ø®ÙˆØ¯ Ø¯Ø§Ø±Ù†Ø¯ */
 .shil-dashboard-shell div:has(.dashboard-icons),
 .shil-dashboard-shell section:has(.dashboard-icons),
 .shil-dashboard-shell article:has(.dashboard-icons),
@@ -14536,8 +14536,8 @@ body:not(.login-page):not(.welcome-page){
 
 /* =========================================================
    SHIL DASHBOARD OVERLAY ONLY FIX
-   فقط حذف لایه سفید/شیری سراسری داشبورد
-   بقیه صفحات و ساختارها دست نخورده
+   ÙÙ‚Ø· Ø­Ø°Ù Ù„Ø§ÛŒÙ‡ Ø³ÙÛŒØ¯/Ø´ÛŒØ±ÛŒ Ø³Ø±Ø§Ø³Ø±ÛŒ Ø¯Ø§Ø´Ø¨ÙˆØ±Ø¯
+   Ø¨Ù‚ÛŒÙ‡ ØµÙØ­Ø§Øª Ùˆ Ø³Ø§Ø®ØªØ§Ø±Ù‡Ø§ Ø¯Ø³Øª Ù†Ø®ÙˆØ±Ø¯Ù‡
    ========================================================= */
 
 .shil-dashboard-shell,
@@ -14553,7 +14553,7 @@ body:not(.login-page):not(.welcome-page){
   outline: none !important;
 }
 
-/* حذف pseudo overlay احتمالی روی لایه‌های اصلی داشبورد */
+/* Ø­Ø°Ù pseudo overlay Ø§Ø­ØªÙ…Ø§Ù„ÛŒ Ø±ÙˆÛŒ Ù„Ø§ÛŒÙ‡â€ŒÙ‡Ø§ÛŒ Ø§ØµÙ„ÛŒ Ø¯Ø§Ø´Ø¨ÙˆØ±Ø¯ */
 .shil-dashboard-shell::before,
 .shil-dashboard-shell::after,
 .shil-dashboard-shell .shil-page-content::before,
@@ -14570,7 +14570,7 @@ body:not(.login-page):not(.welcome-page){
   box-shadow: none !important;
 }
 
-/* اگر Overlay از والد دارای Grid می‌آید، فقط در داشبورد شفاف شود */
+/* Ø§Ú¯Ø± Overlay Ø§Ø² ÙˆØ§Ù„Ø¯ Ø¯Ø§Ø±Ø§ÛŒ Grid Ù…ÛŒâ€ŒØ¢ÛŒØ¯ØŒ ÙÙ‚Ø· Ø¯Ø± Ø¯Ø§Ø´Ø¨ÙˆØ±Ø¯ Ø´ÙØ§Ù Ø´ÙˆØ¯ */
 .shil-dashboard-shell div:has(.dashboard-icons),
 .shil-dashboard-shell section:has(.dashboard-icons),
 .shil-dashboard-shell article:has(.dashboard-icons),
@@ -14586,12 +14586,12 @@ body:not(.login-page):not(.welcome-page){
   border: none !important;
 }
 
-/* بکگراند داشبورد واضح‌تر، بدون سفیدشدگی شدید */
+/* Ø¨Ú©Ú¯Ø±Ø§Ù†Ø¯ Ø¯Ø§Ø´Ø¨ÙˆØ±Ø¯ ÙˆØ§Ø¶Ø­â€ŒØªØ±ØŒ Ø¨Ø¯ÙˆÙ† Ø³ÙÛŒØ¯Ø´Ø¯Ú¯ÛŒ Ø´Ø¯ÛŒØ¯ */
 body:not(.login-page):not(.welcome-page) .shil-dashboard-shell {
   filter: brightness(1.02) contrast(1.04) !important;
 }
 
-/* خود آیکون‌ها بدون تغییر باقی بمانند */
+/* Ø®ÙˆØ¯ Ø¢ÛŒÚ©ÙˆÙ†â€ŒÙ‡Ø§ Ø¨Ø¯ÙˆÙ† ØªØºÛŒÛŒØ± Ø¨Ø§Ù‚ÛŒ Ø¨Ù…Ø§Ù†Ù†Ø¯ */
 .shil-dashboard-shell .shil-ios-icon-img {
   filter: none !important;
 }
@@ -14711,7 +14711,7 @@ body:not(.login-page):not(.welcome-page) {
     linear-gradient(180deg, #f4fbff 0%, #eaf4fa 100%) !important;
 }
 
-/* صفحه بعد از نوار آیکون‌ها */
+/* ØµÙØ­Ù‡ Ø¨Ø¹Ø¯ Ø§Ø² Ù†ÙˆØ§Ø± Ø¢ÛŒÚ©ÙˆÙ†â€ŒÙ‡Ø§ */
 .shil-engineering-content,
 .shil-page-content,
 main.shil-page-content {
@@ -14720,7 +14720,7 @@ main.shil-page-content {
   padding: 12px !important;
 }
 
-/* هر کارت/بلوک اصلی */
+/* Ù‡Ø± Ú©Ø§Ø±Øª/Ø¨Ù„ÙˆÚ© Ø§ØµÙ„ÛŒ */
 .shil-section-card,
 .shil-card,
 .shil-result-card,
@@ -14744,7 +14744,7 @@ main.shil-page-content {
   overflow: hidden !important;
 }
 
-/* خط تزئینی مهندسی روی کارت */
+/* Ø®Ø· ØªØ²Ø¦ÛŒÙ†ÛŒ Ù…Ù‡Ù†Ø¯Ø³ÛŒ Ø±ÙˆÛŒ Ú©Ø§Ø±Øª */
 .shil-section-card::after,
 .shil-result-card::after,
 .shil-summary-card::after,
@@ -14762,7 +14762,7 @@ main.shil-page-content {
   pointer-events: none !important;
 }
 
-/* سربرگ هر بلوک */
+/* Ø³Ø±Ø¨Ø±Ú¯ Ù‡Ø± Ø¨Ù„ÙˆÚ© */
 .shil-section-head,
 .shil-card-head {
   background:
@@ -14780,7 +14780,7 @@ main.shil-page-content {
   font-weight: 950 !important;
 }
 
-/* فرم‌ها و فیلدها */
+/* ÙØ±Ù…â€ŒÙ‡Ø§ Ùˆ ÙÛŒÙ„Ø¯Ù‡Ø§ */
 .shil-form-grid label,
 .shil-form-grid input,
 .shil-form-grid select,
@@ -14792,7 +14792,7 @@ main.shil-page-content {
   box-shadow: inset 0 1px 0 rgba(255,255,255,.9) !important;
 }
 
-/* کارت‌های انتخاب مسیر و روش محاسبات */
+/* Ú©Ø§Ø±Øªâ€ŒÙ‡Ø§ÛŒ Ø§Ù†ØªØ®Ø§Ø¨ Ù…Ø³ÛŒØ± Ùˆ Ø±ÙˆØ´ Ù…Ø­Ø§Ø³Ø¨Ø§Øª */
 .shil-execution-grid,
 .shil-project-path-three-cards {
   gap: 14px !important;
@@ -14814,14 +14814,14 @@ main.shil-page-content {
     0 18px 38px rgba(8,44,68,.16) !important;
 }
 
-/* نقطه انتخاب */
+/* Ù†Ù‚Ø·Ù‡ Ø§Ù†ØªØ®Ø§Ø¨ */
 .shil-execution-check {
   background: #16c36a !important;
   color: #fff !important;
   box-shadow: 0 0 0 6px rgba(22,195,106,.14) !important;
 }
 
-/* دکمه تایید */
+/* Ø¯Ú©Ù…Ù‡ ØªØ§ÛŒÛŒØ¯ */
 .shil-primary-wide,
 .shil-button-primary,
 .shil-primary-entry {
@@ -14833,7 +14833,7 @@ main.shil-page-content {
   box-shadow: 0 14px 30px rgba(18,169,238,.28) !important;
 }
 
-/* نوار آیکون‌ها */
+/* Ù†ÙˆØ§Ø± Ø¢ÛŒÚ©ÙˆÙ†â€ŒÙ‡Ø§ */
 .shil-project-mini-rail {
   background:
     linear-gradient(90deg, rgba(240,252,255,.88), rgba(232,248,255,.72)),
@@ -14842,7 +14842,7 @@ main.shil-page-content {
   box-shadow: 0 12px 28px rgba(8,44,68,.12) !important;
 }
 
-/* موبایل */
+/* Ù…ÙˆØ¨Ø§ÛŒÙ„ */
 @media (max-width: 640px) {
   .shil-engineering-content,
   .shil-page-content {
@@ -15105,14 +15105,14 @@ html body:not(.login-page):not(.welcome-page) .shil-card-head {
   --shil-text:#1c3550;
 }
 
-/* صفحه */
+/* ØµÙØ­Ù‡ */
 body:not(.login-page):not(.welcome-page) .shil-main,
 body:not(.login-page):not(.welcome-page) .shil-page-content,
 body:not(.login-page):not(.welcome-page) main{
     background:var(--shil-page-bg)!important;
 }
 
-/* کارت ها */
+/* Ú©Ø§Ø±Øª Ù‡Ø§ */
 body:not(.login-page):not(.welcome-page) .shil-section-card,
 body:not(.login-page):not(.welcome-page) .shil-card-stack,
 body:not(.login-page):not(.welcome-page) .shil-result-card,
@@ -15125,7 +15125,7 @@ body:not(.login-page):not(.welcome-page) .shil-project-path-summary{
     border-radius:20px!important;
 }
 
-/* فیلدها */
+/* ÙÛŒÙ„Ø¯Ù‡Ø§ */
 body:not(.login-page):not(.welcome-page) input,
 body:not(.login-page):not(.welcome-page) select,
 body:not(.login-page):not(.welcome-page) textarea,
@@ -15149,7 +15149,7 @@ body:not(.login-page):not(.welcome-page) .shil-field-card{
   --shil-text:#13253f;
 }
 
-/* ===== صفحه ===== */
+/* ===== ØµÙØ­Ù‡ ===== */
 
 body:not(.login-page):not(.welcome-page),
 body:not(.login-page):not(.welcome-page) .shil-main,
@@ -15158,7 +15158,7 @@ body:not(.login-page):not(.welcome-page) main{
     background:var(--shil-page-bg)!important;
 }
 
-/* ===== کارت ها ===== */
+/* ===== Ú©Ø§Ø±Øª Ù‡Ø§ ===== */
 
 body:not(.login-page):not(.welcome-page) .shil-section-card,
 body:not(.login-page):not(.welcome-page) .shil-card-stack,
@@ -15178,7 +15178,7 @@ body:not(.login-page):not(.welcome-page) [class*="section"]{
       0 0 20px rgba(145,120,255,.18)!important;
 }
 
-/* ===== فیلدها ===== */
+/* ===== ÙÛŒÙ„Ø¯Ù‡Ø§ ===== */
 
 body:not(.login-page):not(.welcome-page) input,
 body:not(.login-page):not(.welcome-page) select,
@@ -15192,7 +15192,7 @@ body:not(.login-page):not(.welcome-page) .shil-field-card{
     border-radius:14px!important;
 }
 
-/* متن ها */
+/* Ù…ØªÙ† Ù‡Ø§ */
 
 body:not(.login-page):not(.welcome-page) h1,
 body:not(.login-page):not(.welcome-page) h2,
@@ -15219,7 +15219,7 @@ body:not(.login-page):not(.welcome-page) p{
   --shil-text:#11263f;
 }
 
-/* ===== صفحه ===== */
+/* ===== ØµÙØ­Ù‡ ===== */
 
 body:not(.login-page):not(.welcome-page),
 body:not(.login-page):not(.welcome-page) .shil-main,
@@ -15233,7 +15233,7 @@ body:not(.login-page):not(.welcome-page) main{
       ) !important;
 }
 
-/* ===== کارت ها ===== */
+/* ===== Ú©Ø§Ø±Øª Ù‡Ø§ ===== */
 
 body:not(.login-page):not(.welcome-page) [class*="card"],
 body:not(.login-page):not(.welcome-page) [class*="section"],
@@ -15257,7 +15257,7 @@ body:not(.login-page):not(.welcome-page) .shil-summary-card{
     border-radius:22px!important;
 }
 
-/* ===== فیلدها ===== */
+/* ===== ÙÛŒÙ„Ø¯Ù‡Ø§ ===== */
 
 body:not(.login-page):not(.welcome-page) input,
 body:not(.login-page):not(.welcome-page) select,
@@ -15275,7 +15275,7 @@ body:not(.login-page):not(.welcome-page) textarea{
       0 0 10px rgba(143,224,174,.15)!important;
 }
 
-/* متن داخل کارت ها */
+/* Ù…ØªÙ† Ø¯Ø§Ø®Ù„ Ú©Ø§Ø±Øª Ù‡Ø§ */
 
 body:not(.login-page):not(.welcome-page) [class*="card"] h1,
 body:not(.login-page):not(.welcome-page) [class*="card"] h2,
@@ -15294,20 +15294,20 @@ body:not(.login-page):not(.welcome-page) [class*="card"] label{
    SHIL FINAL TYPOGRAPHY + NUMERIC UI RULES
    ===================================================== */
 
-/* همه متن‌ها مشکی/تیره */
+/* Ù‡Ù…Ù‡ Ù…ØªÙ†â€ŒÙ‡Ø§ Ù…Ø´Ú©ÛŒ/ØªÛŒØ±Ù‡ */
 body:not(.login-page):not(.welcome-page),
 body:not(.login-page):not(.welcome-page) * {
   color: #071827 !important;
 }
 
-/* متن داخل کارت‌ها هم مشکی بماند */
+/* Ù…ØªÙ† Ø¯Ø§Ø®Ù„ Ú©Ø§Ø±Øªâ€ŒÙ‡Ø§ Ù‡Ù… Ù…Ø´Ú©ÛŒ Ø¨Ù…Ø§Ù†Ø¯ */
 body:not(.login-page):not(.welcome-page) [class*="card"] *,
 body:not(.login-page):not(.welcome-page) [class*="section"] *,
 body:not(.login-page):not(.welcome-page) [class*="panel"] * {
   color: #071827 !important;
 }
 
-/* سرتیتر بلوک‌ها راست‌چین */
+/* Ø³Ø±ØªÛŒØªØ± Ø¨Ù„ÙˆÚ©â€ŒÙ‡Ø§ Ø±Ø§Ø³Øªâ€ŒÚ†ÛŒÙ† */
 body:not(.login-page):not(.welcome-page) h1,
 body:not(.login-page):not(.welcome-page) h2,
 body:not(.login-page):not(.welcome-page) h3,
@@ -15318,7 +15318,7 @@ body:not(.login-page):not(.welcome-page) .shil-card-head {
   direction: rtl !important;
 }
 
-/* فیلدها و اعداد داخلشان وسط‌چین */
+/* ÙÛŒÙ„Ø¯Ù‡Ø§ Ùˆ Ø§Ø¹Ø¯Ø§Ø¯ Ø¯Ø§Ø®Ù„Ø´Ø§Ù† ÙˆØ³Ø·â€ŒÚ†ÛŒÙ† */
 body:not(.login-page):not(.welcome-page) input,
 body:not(.login-page):not(.welcome-page) select,
 body:not(.login-page):not(.welcome-page) textarea,
@@ -15333,7 +15333,7 @@ body:not(.login-page):not(.welcome-page) .shil-field-card {
   font-variant-numeric: lining-nums tabular-nums !important;
 }
 
-/* خروجی‌ها، نتایج و اعداد محاسباتی وسط‌چین */
+/* Ø®Ø±ÙˆØ¬ÛŒâ€ŒÙ‡Ø§ØŒ Ù†ØªØ§ÛŒØ¬ Ùˆ Ø§Ø¹Ø¯Ø§Ø¯ Ù…Ø­Ø§Ø³Ø¨Ø§ØªÛŒ ÙˆØ³Ø·â€ŒÚ†ÛŒÙ† */
 body:not(.login-page):not(.welcome-page) .shil-result-card,
 body:not(.login-page):not(.welcome-page) .shil-summary-card,
 body:not(.login-page):not(.welcome-page) .shil-result-row,
@@ -15346,7 +15346,7 @@ body:not(.login-page):not(.welcome-page) [class*="number"] {
   font-variant-numeric: lining-nums tabular-nums !important;
 }
 
-/* جلوگیری از فارسی شدن اعداد در مرورگر */
+/* Ø¬Ù„ÙˆÚ¯ÛŒØ±ÛŒ Ø§Ø² ÙØ§Ø±Ø³ÛŒ Ø´Ø¯Ù† Ø§Ø¹Ø¯Ø§Ø¯ Ø¯Ø± Ù…Ø±ÙˆØ±Ú¯Ø± */
 body:not(.login-page):not(.welcome-page) {
   font-feature-settings: "tnum" 1, "lnum" 1;
 }
@@ -15453,7 +15453,7 @@ html body:not(.login-page):not(.welcome-page) [class*="number"] {
   --shil-force-card-2:#c8d7ff;
 }
 
-/* 1) همه متن‌های صفحات اپ تیره */
+/* 1) Ù‡Ù…Ù‡ Ù…ØªÙ†â€ŒÙ‡Ø§ÛŒ ØµÙØ­Ø§Øª Ø§Ù¾ ØªÛŒØ±Ù‡ */
 html body:not(.login-page):not(.welcome-page),
 html body:not(.login-page):not(.welcome-page) *,
 html body:not(.login-page):not(.welcome-page) *::before,
@@ -15463,7 +15463,7 @@ html body:not(.login-page):not(.welcome-page) *::after {
   text-shadow: none !important;
 }
 
-/* 2) متن‌های داخل نوار آیکون داشبورد همچنان سفید بمانند */
+/* 2) Ù…ØªÙ†â€ŒÙ‡Ø§ÛŒ Ø¯Ø§Ø®Ù„ Ù†ÙˆØ§Ø± Ø¢ÛŒÚ©ÙˆÙ† Ø¯Ø§Ø´Ø¨ÙˆØ±Ø¯ Ù‡Ù…Ú†Ù†Ø§Ù† Ø³ÙÛŒØ¯ Ø¨Ù…Ø§Ù†Ù†Ø¯ */
 html body:not(.login-page):not(.welcome-page)
 .shil-home-shell .shil-ios-icon-title,
 html body:not(.login-page):not(.welcome-page)
@@ -15478,7 +15478,7 @@ html body:not(.login-page):not(.welcome-page)
     0 0 16px rgba(90,200,255,.60) !important;
 }
 
-/* 3) کارت‌ها و بلوک‌های واقعی پروژه */
+/* 3) Ú©Ø§Ø±Øªâ€ŒÙ‡Ø§ Ùˆ Ø¨Ù„ÙˆÚ©â€ŒÙ‡Ø§ÛŒ ÙˆØ§Ù‚Ø¹ÛŒ Ù¾Ø±ÙˆÚ˜Ù‡ */
 html body:not(.login-page):not(.welcome-page) .shil-section-card,
 html body:not(.login-page):not(.welcome-page) .shil-config-block,
 html body:not(.login-page):not(.welcome-page) .shil-card-stack > *,
@@ -15495,7 +15495,7 @@ html body:not(.login-page):not(.welcome-page) .shil-project-path-summary {
   border-radius: 22px !important;
 }
 
-/* 4) همه فیلدها، حتی اگر کلاس ندارند */
+/* 4) Ù‡Ù…Ù‡ ÙÛŒÙ„Ø¯Ù‡Ø§ØŒ Ø­ØªÛŒ Ø§Ú¯Ø± Ú©Ù„Ø§Ø³ Ù†Ø¯Ø§Ø±Ù†Ø¯ */
 html body:not(.login-page):not(.welcome-page) input,
 html body:not(.login-page):not(.welcome-page) select,
 html body:not(.login-page):not(.welcome-page) textarea,
@@ -15518,7 +15518,7 @@ html body:not(.login-page):not(.welcome-page) .shil-field-card {
   direction: ltr !important;
 }
 
-/* Placeholder هم تیره و خوانا */
+/* Placeholder Ù‡Ù… ØªÛŒØ±Ù‡ Ùˆ Ø®ÙˆØ§Ù†Ø§ */
 html body:not(.login-page):not(.welcome-page) input::placeholder,
 html body:not(.login-page):not(.welcome-page) textarea::placeholder {
   color: #40576a !important;
@@ -15532,7 +15532,7 @@ html body:not(.login-page):not(.welcome-page) option {
   background: var(--shil-force-field) !important;
 }
 
-/* تیتر بلوک‌ها راست‌چین */
+/* ØªÛŒØªØ± Ø¨Ù„ÙˆÚ©â€ŒÙ‡Ø§ Ø±Ø§Ø³Øªâ€ŒÚ†ÛŒÙ† */
 html body:not(.login-page):not(.welcome-page) .shil-section-head,
 html body:not(.login-page):not(.welcome-page) .shil-card-head,
 html body:not(.login-page):not(.welcome-page) h1,
@@ -15543,7 +15543,7 @@ html body:not(.login-page):not(.welcome-page) h4 {
   direction: rtl !important;
 }
 
-/* اعداد/نتایج وسط‌چین */
+/* Ø§Ø¹Ø¯Ø§Ø¯/Ù†ØªØ§ÛŒØ¬ ÙˆØ³Ø·â€ŒÚ†ÛŒÙ† */
 html body:not(.login-page):not(.welcome-page) .shil-result-row,
 html body:not(.login-page):not(.welcome-page) [class*="result"],
 html body:not(.login-page):not(.welcome-page) [class*="value"],
@@ -15656,7 +15656,7 @@ textarea,
    SHIL 3-LAYER ENGINEERING COLOR SYSTEM
    =================================================== */
 
-/* لایه 1 : صفحه */
+/* Ù„Ø§ÛŒÙ‡ 1 : ØµÙØ­Ù‡ */
 body:not(.login-page):not(.welcome-page) .shil-main,
 .shil-page-content,
 .shil-engineering-content {
@@ -15670,7 +15670,7 @@ body:not(.login-page):not(.welcome-page) .shil-main,
     ) !important;
 }
 
-/* لایه 2 : کارت ها */
+/* Ù„Ø§ÛŒÙ‡ 2 : Ú©Ø§Ø±Øª Ù‡Ø§ */
 .shil-section-card,
 .shil-card,
 .shil-summary-card,
@@ -15692,7 +15692,7 @@ body:not(.login-page):not(.welcome-page) .shil-main,
     0 0 0 1px rgba(135,215,255,.18) !important;
 }
 
-/* لایه 3 : فیلدها */
+/* Ù„Ø§ÛŒÙ‡ 3 : ÙÛŒÙ„Ø¯Ù‡Ø§ */
 input,
 select,
 textarea,
@@ -15710,22 +15710,22 @@ textarea,
   border: 1px solid #bde9ff !important;
 }
 
-/* سکشن آبی */
+/* Ø³Ú©Ø´Ù† Ø¢Ø¨ÛŒ */
 .shil-section-card:nth-child(1) {
   border-right: 5px solid #1ea7ff !important;
 }
 
-/* سکشن سبز */
+/* Ø³Ú©Ø´Ù† Ø³Ø¨Ø² */
 .shil-section-card:nth-child(2) {
   border-right: 5px solid #23c66f !important;
 }
 
-/* سکشن نارنجی */
+/* Ø³Ú©Ø´Ù† Ù†Ø§Ø±Ù†Ø¬ÛŒ */
 .shil-section-card:nth-child(3) {
   border-right: 5px solid #ff9f1a !important;
 }
 
-/* تکرار رنگ‌ها */
+/* ØªÚ©Ø±Ø§Ø± Ø±Ù†Ú¯â€ŒÙ‡Ø§ */
 .shil-section-card:nth-child(4) {
   border-right: 5px solid #1ea7ff !important;
 }
@@ -15738,7 +15738,7 @@ textarea,
   border-right: 5px solid #ff9f1a !important;
 }
 
-/* هدر بلوک‌ها */
+/* Ù‡Ø¯Ø± Ø¨Ù„ÙˆÚ©â€ŒÙ‡Ø§ */
 .shil-section-head {
   background:
     linear-gradient(
@@ -15752,7 +15752,7 @@ textarea,
   margin-bottom: 10px !important;
 }
 
-/* فیلدها برجسته‌تر */
+/* ÙÛŒÙ„Ø¯Ù‡Ø§ Ø¨Ø±Ø¬Ø³ØªÙ‡â€ŒØªØ± */
 .shil-form-grid label,
 .shil-field-card,
 .shil-input-card {
@@ -24518,7 +24518,7 @@ html,body,#root{width:100%;max-width:100%;min-height:100%;overflow-x:hidden;}
   width:100%;
   max-width:100vw;
   overflow-x:hidden;
-  padding:12px 16px 120px;
+  padding: 12px 16px 0;
   box-sizing:border-box;
 }
 
@@ -24609,7 +24609,7 @@ html,body,#root{width:100%;max-width:100%;min-height:100%;overflow-x:hidden;}
 
 .shil-equipment-page{
   width:100%;
-  padding:12px 16px 120px;
+  padding: 12px 16px 0;
   box-sizing:border-box;
   overflow-x:hidden;
 }
@@ -28057,10 +28057,10 @@ body,
 
 /* =========================================================
    SHIL FORCE ICON GRID TRANSPARENT
-   حذف قطعی مستطیل خاکستری/گلاسه پشت آیکون‌های Dashboard و New Project
+   Ø­Ø°Ù Ù‚Ø·Ø¹ÛŒ Ù…Ø³ØªØ·ÛŒÙ„ Ø®Ø§Ú©Ø³ØªØ±ÛŒ/Ú¯Ù„Ø§Ø³Ù‡ Ù¾Ø´Øª Ø¢ÛŒÚ©ÙˆÙ†â€ŒÙ‡Ø§ÛŒ Dashboard Ùˆ New Project
    ========================================================= */
 
-/* فقط در مسیرهای داشبورد و پروژه جدید */
+/* ÙÙ‚Ø· Ø¯Ø± Ù…Ø³ÛŒØ±Ù‡Ø§ÛŒ Ø¯Ø§Ø´Ø¨ÙˆØ±Ø¯ Ùˆ Ù¾Ø±ÙˆÚ˜Ù‡ Ø¬Ø¯ÛŒØ¯ */
 body:has([href="/dashboard"]) .shil-ios-grid,
 body:has([href="/new-project"]) .shil-ios-grid,
 body:has(a[href="/dashboard"]) .shil-ios-grid,
@@ -28078,7 +28078,7 @@ body:has(.shil-ios-icon-link) .shil-ios-grid {
   -webkit-backdrop-filter: none !important;
 }
 
-/* والد مستقیم گرید */
+/* ÙˆØ§Ù„Ø¯ Ù…Ø³ØªÙ‚ÛŒÙ… Ú¯Ø±ÛŒØ¯ */
 body:not(.login-page):not(.welcome-page) div:has(> .shil-ios-grid),
 body:not(.login-page):not(.welcome-page) section:has(> .shil-ios-grid),
 body:not(.login-page):not(.welcome-page) article:has(> .shil-ios-grid),
@@ -28094,7 +28094,7 @@ body:not(.login-page):not(.welcome-page) main:has(> .shil-ios-grid) {
   -webkit-backdrop-filter: none !important;
 }
 
-/* والد غیرمستقیم نزدیک گرید */
+/* ÙˆØ§Ù„Ø¯ ØºÛŒØ±Ù…Ø³ØªÙ‚ÛŒÙ… Ù†Ø²Ø¯ÛŒÚ© Ú¯Ø±ÛŒØ¯ */
 body:not(.login-page):not(.welcome-page) div:has(.shil-ios-grid),
 body:not(.login-page):not(.welcome-page) section:has(.shil-ios-grid),
 body:not(.login-page):not(.welcome-page) article:has(.shil-ios-grid) {
@@ -28105,7 +28105,7 @@ body:not(.login-page):not(.welcome-page) article:has(.shil-ios-grid) {
   -webkit-backdrop-filter: none !important;
 }
 
-/* اگر کلاس‌های اصلی کامپوننت به این نام‌ها باشند */
+/* Ø§Ú¯Ø± Ú©Ù„Ø§Ø³â€ŒÙ‡Ø§ÛŒ Ø§ØµÙ„ÛŒ Ú©Ø§Ù…Ù¾ÙˆÙ†Ù†Øª Ø¨Ù‡ Ø§ÛŒÙ† Ù†Ø§Ù…â€ŒÙ‡Ø§ Ø¨Ø§Ø´Ù†Ø¯ */
 body:not(.login-page):not(.welcome-page) .shil-ios-panel,
 body:not(.login-page):not(.welcome-page) .shil-ios-menu,
 body:not(.login-page):not(.welcome-page) .shil-ios-wrapper,
@@ -28132,7 +28132,7 @@ body:not(.login-page):not(.welcome-page) .menu-container {
   -webkit-backdrop-filter: none !important;
 }
 
-/* هر عنصر بزرگی که داخلش گرید آیکون دارد نباید رنگ داشته باشد */
+/* Ù‡Ø± Ø¹Ù†ØµØ± Ø¨Ø²Ø±Ú¯ÛŒ Ú©Ù‡ Ø¯Ø§Ø®Ù„Ø´ Ú¯Ø±ÛŒØ¯ Ø¢ÛŒÚ©ÙˆÙ† Ø¯Ø§Ø±Ø¯ Ù†Ø¨Ø§ÛŒØ¯ Ø±Ù†Ú¯ Ø¯Ø§Ø´ØªÙ‡ Ø¨Ø§Ø´Ø¯ */
 body:not(.login-page):not(.welcome-page) [class]:has(.shil-ios-grid) {
   background: transparent !important;
   background-color: transparent !important;
@@ -28145,7 +28145,7 @@ body:not(.login-page):not(.welcome-page) [class]:has(.shil-ios-grid) {
   -webkit-backdrop-filter: none !important;
 }
 
-/* خود لینک‌ها کاملاً شفاف */
+/* Ø®ÙˆØ¯ Ù„ÛŒÙ†Ú©â€ŒÙ‡Ø§ Ú©Ø§Ù…Ù„Ø§Ù‹ Ø´ÙØ§Ù */
 body:not(.login-page):not(.welcome-page) .shil-ios-icon-link,
 body:not(.login-page):not(.welcome-page) .shil-ios-icon-link:link,
 body:not(.login-page):not(.welcome-page) .shil-ios-icon-link:visited,
@@ -28162,7 +28162,7 @@ body:not(.login-page):not(.welcome-page) .shil-ios-icon-link:active {
   -webkit-backdrop-filter: none !important;
 }
 
-/* حذف هر pseudo overlay از اطراف گرید */
+/* Ø­Ø°Ù Ù‡Ø± pseudo overlay Ø§Ø² Ø§Ø·Ø±Ø§Ù Ú¯Ø±ÛŒØ¯ */
 body:not(.login-page):not(.welcome-page) [class]:has(.shil-ios-grid)::before,
 body:not(.login-page):not(.welcome-page) [class]:has(.shil-ios-grid)::after,
 body:not(.login-page):not(.welcome-page) .shil-ios-grid::before,
@@ -28176,7 +28176,7 @@ body:not(.login-page):not(.welcome-page) .shil-ios-grid::after {
   box-shadow: none !important;
 }
 
-/* اگر بک سفید به‌صورت inline آمده باشد */
+/* Ø§Ú¯Ø± Ø¨Ú© Ø³ÙÛŒØ¯ Ø¨Ù‡â€ŒØµÙˆØ±Øª inline Ø¢Ù…Ø¯Ù‡ Ø¨Ø§Ø´Ø¯ */
 body:not(.login-page):not(.welcome-page) [style*="background"]:has(.shil-ios-grid),
 body:not(.login-page):not(.welcome-page) [style*="rgba"]:has(.shil-ios-grid),
 body:not(.login-page):not(.welcome-page) [style*="255"]:has(.shil-ios-grid),
@@ -28190,7 +28190,7 @@ body:not(.login-page):not(.welcome-page) [style*="blur"]:has(.shil-ios-grid) {
   -webkit-backdrop-filter: none !important;
 }
 
-/* خود دایره آیکون حفظ شود */
+/* Ø®ÙˆØ¯ Ø¯Ø§ÛŒØ±Ù‡ Ø¢ÛŒÚ©ÙˆÙ† Ø­ÙØ¸ Ø´ÙˆØ¯ */
 body:not(.login-page):not(.welcome-page) .shil-ios-icon-img {
   background: rgba(241,247,251,.84) !important;
   background-image: none !important;
@@ -28209,7 +28209,7 @@ body:not(.login-page):not(.welcome-page) .shil-ios-icon-img {
 /* =========================================================
    SHIL HARD REMOVE ICON PANELS
    Dashboard + New Project:
-   حذف قطعی مستطیل/پنل/گلاسه پشت آیکون‌ها
+   Ø­Ø°Ù Ù‚Ø·Ø¹ÛŒ Ù…Ø³ØªØ·ÛŒÙ„/Ù¾Ù†Ù„/Ú¯Ù„Ø§Ø³Ù‡ Ù¾Ø´Øª Ø¢ÛŒÚ©ÙˆÙ†â€ŒÙ‡Ø§
    ========================================================= */
 
 /* Make main background visible */
@@ -28685,8 +28685,8 @@ body:not(.login-page):not(.welcome-page) .weather-grid-v15 {
 /* =========================================================
    SHIL FINAL FIX
    Dashboard + New Project:
-   حذف کامل تمام لایه‌های والد/گلاسه/پنل پشت آیکون‌ها
-   فقط آیکون‌ها و متن روی بک‌گراند اصلی باقی بمانند
+   Ø­Ø°Ù Ú©Ø§Ù…Ù„ ØªÙ…Ø§Ù… Ù„Ø§ÛŒÙ‡â€ŒÙ‡Ø§ÛŒ ÙˆØ§Ù„Ø¯/Ú¯Ù„Ø§Ø³Ù‡/Ù¾Ù†Ù„ Ù¾Ø´Øª Ø¢ÛŒÚ©ÙˆÙ†â€ŒÙ‡Ø§
+   ÙÙ‚Ø· Ø¢ÛŒÚ©ÙˆÙ†â€ŒÙ‡Ø§ Ùˆ Ù…ØªÙ† Ø±ÙˆÛŒ Ø¨Ú©â€ŒÚ¯Ø±Ø§Ù†Ø¯ Ø§ØµÙ„ÛŒ Ø¨Ø§Ù‚ÛŒ Ø¨Ù…Ø§Ù†Ù†Ø¯
    ========================================================= */
 
 /* Target page roots */
@@ -29754,4 +29754,425 @@ body.shil-route-new-project .shil-frame-main {
   .shil-header-title strong { font-size: 11px !important; }
   .shil-header-title span { font-size: 8px !important; }
   .shil-footer-btn, .shil-header-btn { font-size: 10px !important; }
+}
+
+ /* FORCE HEADER 55PX */
+.shil-fixed-header,
+body .shil-fixed-header,
+body[class*="shil-"] .shil-fixed-header {
+  height: 55px !important;
+  min-height: 55px !important;
+  max-height: 55px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  box-sizing: border-box !important;
+}
+
+
+/* ===== FORCE FOOTER 40PX ===== */
+
+.shil-bottom-nav,
+.shil-footer,
+footer{
+    height:40px !important;
+    min-height:40px !important;
+    max-height:40px !important;
+    padding-top:0 !important;
+    padding-bottom:0 !important;
+    box-sizing:border-box !important;
+}
+
+
+/* ===== FORCE FIXED FOOTER 40PX ===== */
+
+.shil-bottom-nav,
+.shil-footer,
+footer {
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: 40px !important;
+  min-height: 40px !important;
+  max-height: 40px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  box-sizing: border-box !important;
+  z-index: 9999 !important;
+}
+
+/* Ù…Ø­ØªÙˆØ§ Ø²ÛŒØ± ÙÙˆØªØ± Ú¯ÛŒØ± Ù†Ú©Ù†Ø¯ */
+body,
+#root,
+.shil-page,
+.shil-page-shell,
+.shil-main,
+main {
+  padding-bottom: 40px !important;
+  box-sizing: border-box !important;
+}
+
+/* Ø§Ú¯Ø± Ø®ÙˆØ¯ ØµÙØ­Ù‡ Ø§Ø³Ú©Ø±ÙˆÙ„ Ø¯Ø§Ø±Ø¯ */
+.shil-page-content,
+.shil-content,
+.page-content,
+main {
+  padding-bottom: 56px !important;
+  box-sizing: border-box !important;
+}
+
+
+/* ===== FORCE TRUE FIXED BOTTOM NAV - MOBILE FIRST ===== */
+
+html,
+body,
+#root {
+  min-height: 100% !important;
+  height: 100% !important;
+}
+
+.shil-bottom-nav,
+.shil-footer,
+footer,
+[class*="bottom-nav"],
+[class*="BottomNav"],
+[class*="footer"],
+[class*="Footer"] {
+  position: fixed !important;
+  inset-inline-start: 0 !important;
+  inset-inline-end: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 40px !important;
+  min-height: 40px !important;
+  max-height: 40px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  margin-bottom: 0 !important;
+  box-sizing: border-box !important;
+  z-index: 2147483647 !important;
+  transform: none !important;
+}
+
+/* Ø§Ú¯Ø± ÙÙˆØªØ± Ø¯Ø§Ø®Ù„ main ÛŒØ§ container Ø§Ø³Ú©Ø±ÙˆÙ„ÛŒ Ø¨Ø§Ø´Ø¯ØŒ Ù…Ø­ØªÙˆØ§ Ø²ÛŒØ±Ø´ Ø±Ø¯ Ø´ÙˆØ¯ */
+main,
+.shil-main,
+.shil-page,
+.shil-page-shell,
+.shil-page-content,
+.shil-content,
+.mobile-first-page,
+.mobile-page,
+[class*="mobile-first"],
+[class*="MobileFirst"],
+[class*="page-content"],
+[class*="PageContent"] {
+  padding-bottom: 56px !important;
+  box-sizing: border-box !important;
+  overflow-x: hidden !important;
+}
+
+/* Ø¬Ù„ÙˆÚ¯ÛŒØ±ÛŒ Ø§Ø² Ø§ÛŒÙ†Ú©Ù‡ parent Ø¨Ø§ transform Ø¨Ø§Ø¹Ø« fixed Ø§Ø´ØªØ¨Ø§Ù‡ Ø´ÙˆØ¯ */
+.shil-page,
+.shil-page-shell,
+.mobile-first-page,
+.mobile-page,
+[class*="mobile-first"],
+[class*="MobileFirst"] {
+  transform: none !important;
+  perspective: none !important;
+  filter: none !important;
+  contain: none !important;
+}
+
+
+/* ===== FINAL FIX: SHIL PAGE SHELL HEADER FOOTER ===== */
+
+.shil-page-shell {
+  min-height: 100dvh !important;
+  height: 100dvh !important;
+  overflow: hidden !important;
+  position: relative !important;
+}
+
+.shil-fixed-header {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 55px !important;
+  min-height: 55px !important;
+  max-height: 55px !important;
+  box-sizing: border-box !important;
+  z-index: 9999 !important;
+}
+
+.shil-fixed-footer,
+.shil-bottom-nav,
+.shil-footer,
+footer {
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: 40px !important;
+  min-height: 40px !important;
+  max-height: 40px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  box-sizing: border-box !important;
+  z-index: 9999 !important;
+}
+
+.shil-page-content {
+  position: fixed !important;
+  top: 55px !important;
+  bottom: 40px !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding-bottom: 24px !important;
+  box-sizing: border-box !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+
+/* =====================================================
+   SHIL PAGE SHELL - FINAL LAYOUT
+   ===================================================== */
+
+.shil-page-shell{
+    position:relative !important;
+    width:100% !important;
+    height:100dvh !important;
+    min-height:100dvh !important;
+    overflow:hidden !important;
+}
+
+.shil-page-content{
+    position:absolute !important;
+
+    top:55px !important;
+    left:0 !important;
+    right:0 !important;
+    bottom:40px !important;
+
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+
+    box-sizing:border-box !important;
+
+    -webkit-overflow-scrolling:touch !important;
+}
+
+.shil-no-header .shil-page-content{
+    top:0 !important;
+}
+
+.shil-no-footer .shil-page-content{
+    bottom:0 !important;
+}
+
+.shil-fixed-header{
+    position:fixed !important;
+    top:0 !important;
+    left:0 !important;
+    right:0 !important;
+    height:55px !important;
+    min-height:55px !important;
+    max-height:55px !important;
+    z-index:4000 !important;
+}
+
+.shil-fixed-footer{
+    position:fixed !important;
+    left:0 !important;
+    right:0 !important;
+    bottom:0 !important;
+
+    height:40px !important;
+    min-height:40px !important;
+    max-height:40px !important;
+
+    z-index:4000 !important;
+}
+
+
+/* ===== KILL PROJECT PATH PURPLE/YELLOW CARD FRAME ===== */
+
+html body.shil-project-path-screen .shil-engineering-content > div,
+html body.shil-project-path-screen .shil-engineering-content .shil-card-stack,
+html body.shil-project-path-screen .shil-engineering-content .shil-section-card,
+html body.shil-project-path-screen .shil-engineering-content .shil-card-stack > *,
+html body.shil-project-path-screen .shil-engineering-content .shil-project-path-card,
+html body.shil-project-path-screen .shil-engineering-content .shil-execution-card {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-right: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html body.shil-project-path-screen .shil-engineering-content .shil-card-stack::before,
+html body.shil-project-path-screen .shil-engineering-content .shil-card-stack::after,
+html body.shil-project-path-screen .shil-engineering-content .shil-section-card::before,
+html body.shil-project-path-screen .shil-engineering-content .shil-section-card::after,
+html body.shil-project-path-screen .shil-engineering-content .shil-project-path-card::before,
+html body.shil-project-path-screen .shil-engineering-content .shil-project-path-card::after,
+html body.shil-project-path-screen .shil-engineering-content .shil-execution-card::before,
+html body.shil-project-path-screen .shil-engineering-content .shil-execution-card::after {
+  display: none !important;
+  content: none !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+
+
+
+/* SHIL content-flow confirm buttons: keep confirm buttons 8px after the last page data (not fixed/sticky). */
+html body .shil-flow-content-confirm-slot,
+html body .shil-calc-content-confirm-slot,
+html body .shil-system-content-confirm-slot,
+html body .shil-summary-content-confirm-slot,
+html body .shil-run-content-confirm-slot{
+  position: relative !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 100% !important;
+  margin-top: 8px !important;
+  margin-bottom: 0 !important;
+  padding: 0 !important;
+  transform: none !important;
+  left: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  z-index: 1 !important;
+}
+
+html body .shil-flow-content-confirm-slot > button,
+html body .shil-flow-content-confirm-button,
+html body .shil-calc-content-confirm-slot > button,
+html body .shil-system-content-confirm-slot > button,
+html body .shil-summary-content-confirm-slot > button,
+html body .shil-run-content-confirm-slot > button,
+html body .shil-system-final-page .shil-system-content-confirm-slot > .shil-confirm-config-button{
+  position: relative !important;
+  inset: auto !important;
+  left: auto !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: auto !important;
+  transform: none !important;
+  width: min(100%, 420px) !important;
+  max-width: 420px !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  z-index: 1 !important;
+}
+
+html body .shil-system-final-page{
+  padding-bottom: 0 !important;
+}
+
+@media (min-width: 760px){
+  html body .shil-system-final-page .shil-system-content-confirm-slot > .shil-confirm-config-button{
+    left: auto !important;
+    right: auto !important;
+    width: min(100%, 420px) !important;
+    transform: none !important;
+  }
+}
+
+
+/* SHIL PATCH: content confirm is the actual button; no empty wrapper. */
+html body button.shil-flow-content-confirm-slot {
+  position: relative !important;
+  inset: auto !important;
+  left: auto !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: auto !important;
+  transform: none !important;
+  display: flex !important;
+  width: max-content !important;
+  max-width: calc(100% - 24px) !important;
+  min-width: 110px !important;
+  margin: 8px auto 0 !important;
+  padding-left: 18px !important;
+  padding-right: 18px !important;
+  align-items: center !important;
+  justify-content: center !important;
+  align-self: center !important;
+}
+
+
+/* SHIL FINAL INLINE CONFIRM FIX: real button, visible, centered, 8px after content. */
+html body button.shil-inline-confirm-button {
+  position: relative !important;
+  inset: auto !important;
+  left: auto !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: auto !important;
+  transform: none !important;
+  display: flex !important;
+  visibility: visible !important;
+  width: max-content !important;
+  min-width: 110px !important;
+  max-width: calc(100% - 24px) !important;
+  height: 46px !important;
+  min-height: 46px !important;
+  margin: 8px auto calc(52px + env(safe-area-inset-bottom, 0px)) !important;
+  padding: 0 18px !important;
+  align-self: center !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 auto !important;
+  z-index: 50 !important;
+}
+
+/* Calculation inputs confirm: transparent flow row between the last data card and footer. */
+html body .shil-input-content-confirm-slot {
+  position: relative !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 100% !important;
+  min-height: 0 !important;
+  height: auto !important;
+  margin-right: 0 !important;
+  margin-left: 0 !important;
+  margin-bottom: calc(52px + env(safe-area-inset-bottom, 0px)) !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+  transform: none !important;
+}
+html body .shil-input-content-confirm-slot > button,
+html body .shil-input-content-confirm-slot .shil-env-content-confirm-button {
+  position: static !important;
+  left: auto !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: auto !important;
+  transform: none !important;
+  margin: 0 !important;
 }

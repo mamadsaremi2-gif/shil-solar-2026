@@ -657,7 +657,7 @@ export default function CalculationInputs() {
       return;
     }
     if (method === "solar_panel_power" && isUtilityPanelScale && !isUtilityRoute) {
-      setScaleWarning("توان موثر پنل‌ها از ۳۰kW عبور کرده است؛ خروجی این مرحله به صورت خودکار به تنظیمات سیستم نیروگاهی منتقل می‌شود.");
+      setScaleWarning("توان موثر پنل‌ها از ۳۰kW عبور کرده است؛ خروجی این مرحله به صورت خودکار به تنظیمات نیروگاهی منتقل می‌شود.");
     }
 
     if (method !== "solar_panel_power") {
@@ -1019,13 +1019,13 @@ export default function CalculationInputs() {
               </label>
             </div>
             <p className="shil-muted-note">
-              {autonomySnapshot.required ? `باتری الزامی است؛ دلیل: ${autonomySnapshot.reason === "emergency_backup_required" ? "مسیر برق اضطراری" : autonomySnapshot.reason === "autonomy_required" ? "ثبت زمان خودکفایی" : "درخواست کاربر"}. زمان مبنا: ${autonomySnapshot.hours} ساعت.` : "اگر ساعت یا روز خودکفایی وارد شود، صفحه تنظیمات سیستم باتری را اجباری در نظر می‌گیرد."}
+              {autonomySnapshot.required ? `باتری الزامی است؛ دلیل: ${autonomySnapshot.reason === "emergency_backup_required" ? "مسیر برق اضطراری" : autonomySnapshot.reason === "autonomy_required" ? "ثبت زمان خودکفایی" : "درخواست کاربر"}. زمان مبنا: ${autonomySnapshot.hours} ساعت.` : "اگر ساعت یا روز خودکفایی وارد شود، صفحه تنظیمات باتری را اجباری در نظر می‌گیرد."}
             </p>
           </section>
         ) : (
           <section className="shil-env-card">
             <h3 className="shil-section-title">مسیر اختصاصی نیروگاهی</h3>
-            <p className="shil-muted-note">این ورودی با دامنه نیروگاهی به صفحه تنظیمات سیستم منتقل می‌شود و درگیر ظاهر یا منطق مسیر خورشیدی مصرف‌محور نمی‌شود.</p>
+            <p className="shil-muted-note">این ورودی با دامنه نیروگاهی به صفحه تنظیمات منتقل می‌شود و درگیر ظاهر یا منطق مسیر خورشیدی مصرف‌محور نمی‌شود.</p>
           </section>
         )}
         {scaleWarning ? <div className="shil-inline-warning">{scaleWarning}</div> : null}

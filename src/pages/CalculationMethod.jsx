@@ -94,14 +94,14 @@ export default function CalculationMethod() {
     }
   };
 
-  const title = `روش محاسبات ${DOMAIN_LABELS[domain] || DOMAIN_LABELS.solar}`;
+  const title = `روش طراحی ${DOMAIN_LABELS[domain] || DOMAIN_LABELS.solar}`;
 
   return (
     <EngineeringPageShell title={title}>
       <section className="shil-card-stack shil-calculation-method-page">
         <div className="shil-section-card shil-method-minimal-panel">
           <div className="shil-section-head">
-            <h2>انتخاب روش محاسبات</h2>
+            <h2>انتخاب روش طراحی</h2>
             <span>{DOMAIN_LABELS[domain]}</span>
           </div>
 

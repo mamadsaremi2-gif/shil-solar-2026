@@ -18,8 +18,8 @@ body.shil-project-info-screen .shil-fixed-header,
 body.shil-project-info-screen .shil-fixed-footer,
 body.shil-project-info-screen header,
 body.shil-project-info-screen footer {
-  height: 56px !important;
-  min-height: 56px !important;
+  height: 40px !important;
+  min-height: 40px !important;
   background: rgba(255,255,255,0.07) !important;
   backdrop-filter: blur(18px) saturate(1.35);
   -webkit-backdrop-filter: blur(18px) saturate(1.35);
@@ -219,7 +219,7 @@ body.shil-project-info-screen button[type="submit"] {
 /* محتوای صفحه به زیر دکمه تایید نرود */
 body.shil-project-info-screen .shil-page-content,
 body.shil-project-info-screen main {
-  padding-bottom: 112px !important;
+  padding-bottom: 0 !important;
 }
 
 /* فوتر پایین صفحه ثابت بماند */
@@ -229,7 +229,258 @@ body.shil-project-info-screen footer {
   left: 0 !important;
   right: 0 !important;
   bottom: 0 !important;
-  height: 56px !important;
+  height: 40px !important;
   z-index: 70 !important;
 }
+
+
+ /* FORCE HEADER 55PX */
+.shil-fixed-header,
+body .shil-fixed-header,
+body[class*="shil-"] .shil-fixed-header {
+  height: 55px !important;
+  min-height: 55px !important;
+  max-height: 55px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  box-sizing: border-box !important;
+}
+
+
+/* ===== FORCE FOOTER 40PX ===== */
+
+.shil-bottom-nav,
+.shil-footer,
+footer{
+    height:40px !important;
+    min-height:40px !important;
+    max-height:40px !important;
+    padding-top:0 !important;
+    padding-bottom:0 !important;
+    box-sizing:border-box !important;
+}
+
+
+/* ===== FORCE FIXED FOOTER 40PX ===== */
+
+.shil-bottom-nav,
+.shil-footer,
+footer {
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: 40px !important;
+  min-height: 40px !important;
+  max-height: 40px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  box-sizing: border-box !important;
+  z-index: 9999 !important;
+}
+
+/* محتوا زیر فوتر گیر نکند */
+body,
+#root,
+.shil-page,
+.shil-page-shell,
+.shil-main,
+main {
+  padding-bottom: 40px !important;
+  box-sizing: border-box !important;
+}
+
+/* اگر خود صفحه اسکرول دارد */
+.shil-page-content,
+.shil-content,
+.page-content,
+main {
+  padding-bottom: 56px !important;
+  box-sizing: border-box !important;
+}
+
+
+/* ===== FORCE TRUE FIXED BOTTOM NAV - MOBILE FIRST ===== */
+
+html,
+body,
+#root {
+  min-height: 100% !important;
+  height: 100% !important;
+}
+
+.shil-bottom-nav,
+.shil-footer,
+footer,
+[class*="bottom-nav"],
+[class*="BottomNav"],
+[class*="footer"],
+[class*="Footer"] {
+  position: fixed !important;
+  inset-inline-start: 0 !important;
+  inset-inline-end: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 40px !important;
+  min-height: 40px !important;
+  max-height: 40px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  margin-bottom: 0 !important;
+  box-sizing: border-box !important;
+  z-index: 2147483647 !important;
+  transform: none !important;
+}
+
+/* اگر فوتر داخل main یا container اسکرولی باشد، محتوا زیرش رد شود */
+main,
+.shil-main,
+.shil-page,
+.shil-page-shell,
+.shil-page-content,
+.shil-content,
+.mobile-first-page,
+.mobile-page,
+[class*="mobile-first"],
+[class*="MobileFirst"],
+[class*="page-content"],
+[class*="PageContent"] {
+  padding-bottom: 56px !important;
+  box-sizing: border-box !important;
+  overflow-x: hidden !important;
+}
+
+/* جلوگیری از اینکه parent با transform باعث fixed اشتباه شود */
+.shil-page,
+.shil-page-shell,
+.mobile-first-page,
+.mobile-page,
+[class*="mobile-first"],
+[class*="MobileFirst"] {
+  transform: none !important;
+  perspective: none !important;
+  filter: none !important;
+  contain: none !important;
+}
+
+
+/* ===== FINAL FIX: SHIL PAGE SHELL HEADER FOOTER ===== */
+
+.shil-page-shell {
+  min-height: 100dvh !important;
+  height: 100dvh !important;
+  overflow: hidden !important;
+  position: relative !important;
+}
+
+.shil-fixed-header {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 55px !important;
+  min-height: 55px !important;
+  max-height: 55px !important;
+  box-sizing: border-box !important;
+  z-index: 9999 !important;
+}
+
+.shil-fixed-footer,
+.shil-bottom-nav,
+.shil-footer,
+footer {
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: 40px !important;
+  min-height: 40px !important;
+  max-height: 40px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  box-sizing: border-box !important;
+  z-index: 9999 !important;
+}
+
+.shil-page-content {
+  position: fixed !important;
+  top: 55px !important;
+  bottom: 40px !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding-bottom: 24px !important;
+  box-sizing: border-box !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+
+/* =====================================================
+   SHIL PAGE SHELL - FINAL LAYOUT
+   ===================================================== */
+
+.shil-page-shell{
+    position:relative !important;
+    width:100% !important;
+    height:100dvh !important;
+    min-height:100dvh !important;
+    overflow:hidden !important;
+}
+
+.shil-page-content{
+    position:absolute !important;
+
+    top:55px !important;
+    left:0 !important;
+    right:0 !important;
+    bottom:40px !important;
+
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+
+    box-sizing:border-box !important;
+
+    -webkit-overflow-scrolling:touch !important;
+}
+
+.shil-no-header .shil-page-content{
+    top:0 !important;
+}
+
+.shil-no-footer .shil-page-content{
+    bottom:0 !important;
+}
+
+.shil-fixed-header{
+    position:fixed !important;
+    top:0 !important;
+    left:0 !important;
+    right:0 !important;
+    height:55px !important;
+    min-height:55px !important;
+    max-height:55px !important;
+    z-index:4000 !important;
+}
+
+.shil-fixed-footer{
+    position:fixed !important;
+    left:0 !important;
+    right:0 !important;
+    bottom:0 !important;
+
+    height:40px !important;
+    min-height:40px !important;
+    max-height:40px !important;
+
+    z-index:4000 !important;
+}
+
 

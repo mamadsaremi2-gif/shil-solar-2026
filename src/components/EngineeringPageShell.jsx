@@ -7,7 +7,7 @@ export default function EngineeringPageShell({ title, children, className = "" }
   return (
     <ShilPageShell title={title} className={`shil-engineering-shell ${className}`}>
       <ProjectMiniRail />
-      <div className="shil-engineering-content">
+      <div className="shil-engineering-content shil-ds-engineering-content">
         <ProjectStepGuard>{children}</ProjectStepGuard>
       </div>
     </ShilPageShell>

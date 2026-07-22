@@ -1,8 +1,10 @@
-import React, { useEffect, useMemo, useState } from "react";
+import ShilPrimaryButton from "../../components/project/ShilPrimaryButton";
+﻿import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { approveProjectStep } from "../../workflow/projectWorkflow.js";
 import { clearScenarioFlow, startUtilityGateway, setWorkflowMode, FLOW_MODES } from "../../workflow/flowIsolation.js";
 import EngineeringPageShell from "../../components/EngineeringPageShell.jsx";
+import ShilWarningOverlay from "../../components/ShilWarningOverlay.jsx";
 import { readAdminDefaults, readAdminProjectPathCards } from "../../admin/adminStore.js";
 
 const fallbackOptions = [
@@ -131,6 +133,7 @@ export default function ProjectPath() {
     localStorage.setItem("shil:selectedProjectPath", JSON.stringify(selectedOption));
     localStorage.setItem("shil:executionMethod", selectedOption.key);
     localStorage.setItem("shil:calculationDomain", domain);
+
     if (domain === "utility") {
       localStorage.setItem("shil:scenarioDomain", "utility");
     } else {
@@ -165,55 +168,57 @@ export default function ProjectPath() {
   };
 
   return (
-    <EngineeringPageShell title="انتخاب مسیر پروژه">
-      <section className="shil-card-stack">
-        <div className="shil-section-card">
-          <div className="shil-section-head">
-            <h2>مسیر پروژه را انتخاب کنید</h2>
-            <span>Project Path</span>
-          </div>
-
-          <div className="shil-execution-grid shil-project-path-two-cards">
-            {mainOptions.map((option) => (
-              <button
-                type="button"
-                key={option.key}
-                className={`shil-execution-card shil-project-path-card ${selected === option.key ? "active" : ""}`}
-                onClick={() => { setSelected(option.key); setWarning(""); }}
-              >
-                {option.image ? <img src={option.image} alt="" className="shil-execution-image" /> : null}
-                <span className="shil-execution-check">{selected === option.key ? "✓" : ""}</span>
-                <h3>{option.title}</h3>
-                <p>{option.description}</p>
-              </button>
-            ))}
-          </div>
-
-          {utilityOption ? (
-            <details className={`shil-utility-path-field ${selected === utilityOption.key ? "active" : ""}`}>
-              <summary>
-                <span>مسیر نیروگاهی</span>
-                <small>برای پروژه‌های ظرفیت بالا باز کنید</small>
-              </summary>
-              <button
-                type="button"
-                className={`shil-utility-select-button ${selected === utilityOption.key ? "active" : ""}`}
-                onClick={() => { setSelected(utilityOption.key); setWarning(""); }}
-              >
-                {utilityOption.image ? <img src={utilityOption.image} alt="" /> : null}
-                <span>
-                  <strong>{utilityOption.title}</strong>
-                  <small>{utilityOption.description}</small>
-                </span>
-                <b>{selected === utilityOption.key ? "✓" : "انتخاب"}</b>
-              </button>
-            </details>
-          ) : null}
-
-          {warning ? <div className="shil-inline-warning">{warning}</div> : null}
-          <button type="button" className="shil-primary-wide shil-project-path-confirm" disabled={!selectedOption} onClick={confirm}>تأیید مسیر پروژه</button>
+    <EngineeringPageShell title="مسیر پروژه">
+      <>
+        <div className="shil-clean-section-head">
+          <h2>مسیر پروژه را انتخاب کنید</h2>
+          <span>Project Path</span>
         </div>
-      </section>
+
+        <div className="shil-execution-grid shil-project-path-two-cards">
+          {mainOptions.map((option) => (
+            <button
+              type="button"
+              key={option.key}
+              className={`shil-execution-card shil-project-path-card ${selected === option.key ? "active" : ""}`}
+              onClick={() => { setSelected(option.key); setWarning(""); }}
+            >
+              {option.image ? <img src={option.image} alt="" className="shil-execution-image" /> : null}
+              <span className="shil-execution-check">{selected === option.key ? "✓" : ""}</span>
+              <h3>{option.title}</h3>
+              <p>{option.description}</p>
+            </button>
+          ))}
+        </div>
+
+        {utilityOption ? (
+          <details className={`shil-utility-path-field ${selected === utilityOption.key ? "active" : ""}`}>
+            <summary>
+              <span>مسیر نیروگاهی</span>
+              <small>برای پروژه‌های ظرفیت بالا باز کنید</small>
+            </summary>
+            <button
+              type="button"
+              className={`shil-utility-select-button ${selected === utilityOption.key ? "active" : ""}`}
+              onClick={() => { setSelected(utilityOption.key); setWarning(""); }}
+            >
+              {utilityOption.image ? <img src={utilityOption.image} alt="" /> : null}
+              <span>
+                <strong>{utilityOption.title}</strong>
+                <small>{utilityOption.description}</small>
+              </span>
+              <b>{selected === utilityOption.key ? "✓" : "انتخاب"}</b>
+            </button>
+          </details>
+        ) : null}
+
+        <ShilWarningOverlay messages={warning ? [warning] : []} />
+
+        <ShilPrimaryButton className="shil-project-path-confirm" disabled={!selectedOption}
+          onClick={confirm} label="تأیید مسیر" />
+      </>
     </EngineeringPageShell>
   );
 }
+
+

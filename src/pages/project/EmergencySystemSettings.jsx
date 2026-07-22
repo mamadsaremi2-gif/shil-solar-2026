@@ -1,6 +1,8 @@
+import ShilPrimaryButton from "../../components/project/ShilPrimaryButton";
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import EngineeringPageShell from "../../components/EngineeringPageShell.jsx";
+import ShilWarningOverlay from "../../components/ShilWarningOverlay.jsx";
 import { approveProjectStep } from "../../workflow/projectWorkflow.js";
 import { getEnabledEquipment } from "../../data/registry/index.js";
 import {
@@ -217,8 +219,8 @@ export default function EmergencySystemSettings() {
           </div>
         </div>
 
-        {design.warnings.map((item) => <div key={item} className="shil-inline-warning">{item}</div>)}
-        <button type="button" className="shil-primary-wide shil-confirm-config-button" disabled={!design.valid} onClick={confirm}>تأیید تنظیمات برق اضطراری و رفتن به چکیده</button>
+        <ShilWarningOverlay messages={design.warnings} />
+        <ShilPrimaryButton className="shil-flow-content-confirm-button shil-confirm-config-button shil-inline-confirm-button" disabled={!design.valid} onClick={confirm} label="تأیید انرژی"  />
       </section>
     </EngineeringPageShell>
   );

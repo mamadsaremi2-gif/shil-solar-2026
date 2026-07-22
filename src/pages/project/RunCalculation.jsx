@@ -1,3 +1,4 @@
+import ShilPrimaryButton from "../../components/project/ShilPrimaryButton";
 import React, { useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import EngineeringPageShell from "../../components/EngineeringPageShell.jsx";
@@ -71,7 +72,7 @@ function runCore(domain) {
             },
           },
           warnings: solarDesign.warnings || [],
-          explanations: ["خروجی نهایی از طراحی تاییدشده صفحه تنظیمات سیستم خوانده شد."],
+          explanations: ["خروجی نهایی از طراحی تاییدشده صفحه تنظیمات خوانده شد."],
         },
       };
     }
@@ -399,7 +400,7 @@ export default function RunCalculation() {
     { label: "جهت پیشنهادی", value: runContext.direction },
     { label: "زاویه پیشنهادی پنل", value: runContext.tilt },
     { label: "راندمان نهایی محیطی", value: runContext.envEfficiency },
-    { label: "روش محاسبات", value: runContext.methodTitle },
+    { label: "روش طراحی", value: runContext.methodTitle },
     { label: "هسته طراحی", value: runContext.coreTitle },
     { label: "ضریب اطمینان استاندارد", value: runContext.safetyFactor },
     { label: "توان کل پس از ضریب", value: `${runContext.powerAfterFactorW} W` },
@@ -469,13 +470,13 @@ export default function RunCalculation() {
   }
 
   return (
-    <EngineeringPageShell title="اجرای محاسبات و خروجی نهایی">
-      <section className="shil-card-stack shil-final-delivery-page shil-final-delivery-compact">
+    <EngineeringPageShell title="اجرا و خروجی نهایی">
+      <section className="shil-final-delivery-page shil-final-delivery-compact shil-execution-output-page">
         <div className="shil-final-one-page-sheet" ref={exportSheetRef}>
-          <div className="shil-final-sheet-hero shil-final-sheet-hero-centered" style={{ textAlign: "center", justifyContent: "center" }}>
-            <div style={{ width: "100%" }}>
-              <span style={{ display: "block", fontWeight: 800, textAlign: "center" }}>SHIL FINAL SUMMARY</span>
-              <h2 style={{ textAlign: "center", marginTop: 6 }}>اطلاعات نهایی اجرای پروژه</h2>
+          <div className="shil-final-sheet-hero shil-final-sheet-hero-centered shil-ds-center">
+            <div className="shil-ds-full-width">
+              <span className="shil-ds-kicker shil-ds-center-text">SHIL FINAL SUMMARY</span>
+              <h2 className="shil-ds-center-text shil-ds-mt-1">اطلاعات نهایی اجرای پروژه</h2>
             </div>
           </div>
 
@@ -483,10 +484,10 @@ export default function RunCalculation() {
           <ReadOnlyBlock title="تجهیزات اجرای پروژه" badge="Execution Equipment" rows={projectEquipmentRows} />
 
           <ReadOnlyBlock title="سیستم حفاظتی" badge="Protection System" rows={protectionRows}>
-            <div className="shil-final-sheet-block shil-final-protection-detail" style={{ marginTop: 12 }}>
+            <div className="shil-final-sheet-block shil-final-protection-detail shil-ds-mt-3">
               <h3>تقسیم زیرسیستم‌ها برای هر اینورتر</h3>
               <SubsystemProtectionTable ctx={runContext} />
-              <div className="shil-engineering-list" style={{ marginTop: 12 }}>
+              <div className="shil-engineering-list shil-ds-mt-3">
                 <p>{panelLayoutNote(runContext)}</p>
                 <p>فضای نصب پنل‌ها باید بر اساس دیتاشیت پنل انتخابی، تعداد پنل، تعداد استرینگ و فاصله اجرایی بین استرینگ‌ها محاسبه و در نقشه اجرایی تفکیک شود.</p>
               </div>
@@ -503,8 +504,8 @@ export default function RunCalculation() {
           </div>
         </div>
 
-        <div className="shil-section-card shil-final-action-card">
-          <div className="shil-section-head"><h2>خروجی نهایی</h2><span>فقط سه قابلیت اصلی</span></div>
+        <div className="shil-final-action-area">
+          <div className="shil-final-action-heading"><h2>خروجی نهایی</h2><span>فقط سه قابلیت اصلی</span></div>
           <div className="shil-output-actions shil-output-actions-three">
             <button type="button" onClick={saveProjectImage} disabled={Boolean(exporting)}>{exporting === "png" ? "در حال ساخت تصویر..." : "خروجی تصویر"}</button>
             <button type="button" onClick={exportPdf} disabled={Boolean(exporting)}>{exporting === "pdf" ? "در حال ساخت PDF..." : "خروجی PDF"}</button>
@@ -512,7 +513,6 @@ export default function RunCalculation() {
           </div>
         </div>
 
-        <button type="button" className="shil-primary-wide" onClick={saveFinalProject}>{ran ? "پروژه در نهایی‌ها ثبت شد" : "تایید نهایی و ثبت پروژه"}</button>
         <Link className="shil-soft-link-button" to="/projects/final">مشاهده پروژه‌های نهایی</Link>
       </section>
     </EngineeringPageShell>

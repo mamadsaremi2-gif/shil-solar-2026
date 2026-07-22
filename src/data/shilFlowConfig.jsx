@@ -32,14 +32,14 @@ export const dashboardItems = [
 ];
 
 export const projectSteps = [
-  { key: "path", title: "انتخاب مسیر پروژه", to: "/new-project/path", image: SHIL_ASSETS.icons.project.path, icon: <Route size={40} /> },
+  { key: "path", title: "مسیر پروژه", to: "/new-project/path", image: SHIL_ASSETS.icons.project.path, icon: <Route size={40} /> },
   { key: "info", title: "اطلاعات پروژه", to: "/new-project/info", image: SHIL_ASSETS.icons.project.info, icon: <FolderOpen size={40} /> },
   { key: "environment", title: "شرایط محیطی", to: "/new-project/environment", image: SHIL_ASSETS.icons.project.environment, icon: <MapPin size={40} /> },
-  { key: "method", title: "روش محاسبات", to: "/new-project/method", image: SHIL_ASSETS.icons.project.method, icon: <Calculator size={40} /> },
+  { key: "method", title: "روش طراحی", to: "/new-project/method", image: SHIL_ASSETS.icons.project.method, icon: <Calculator size={40} /> },
   { key: "inputs", title: "ورودی محاسبات", to: "/new-project/inputs", image: SHIL_ASSETS.icons.project.inputs, icon: <ClipboardList size={40} /> },
-  { key: "system", title: "تنظیمات سیستم", to: "/new-project/system", image: SHIL_ASSETS.icons.project.system, icon: <Settings size={40} /> },
-  { key: "summary", title: "چکیده اطلاعات", to: "/new-project/summary", image: SHIL_ASSETS.icons.project.summary, icon: <FileCheck size={40} /> },
-  { key: "run", title: "اجرای محاسبات", to: "/new-project/run", image: SHIL_ASSETS.icons.project.run, icon: <Gauge size={40} /> },
+  { key: "system", title: "تنظیمات", to: "/new-project/system", image: SHIL_ASSETS.icons.project.system, icon: <Settings size={40} /> },
+  { key: "summary", title: "چکیده طراحی", to: "/new-project/summary", image: SHIL_ASSETS.icons.project.summary, icon: <FileCheck size={40} /> },
+  { key: "run", title: "اجرا", to: "/new-project/run", image: SHIL_ASSETS.icons.project.run, icon: <Gauge size={40} /> },
   { key: "future", title: "توسعه", to: "/new-project/future", image: SHIL_ASSETS.icons.project.future, icon: <Cuboid size={40} /> },
 ];
 

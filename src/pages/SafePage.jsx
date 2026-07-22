@@ -19,7 +19,7 @@ export default function SafePage({
             <h2>{subtitle}</h2>
           </div>
 
-          <Link to="/" className="header-btn-v15" style={{ marginTop: 18 }}>
+          <Link to="/" className="header-btn-v15 shil-ds-mt-4">
             ?????? ?? ???????
           </Link>
         </section>

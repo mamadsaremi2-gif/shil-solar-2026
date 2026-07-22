@@ -410,3 +410,95 @@ label, .field-label, .shil-field-label { color: var(--shil-readable-dark) !impor
 
 }
 
+
+/* =====================================================
+   SHIL PAGE SHELL - FINAL LAYOUT
+   ===================================================== */
+
+.shil-page-shell{
+    position:relative !important;
+    width:100% !important;
+    height:100dvh !important;
+    min-height:100dvh !important;
+    overflow:hidden !important;
+}
+
+.shil-page-content{
+    position:absolute !important;
+
+    top:55px !important;
+    left:0 !important;
+    right:0 !important;
+    bottom:40px !important;
+
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+
+    box-sizing:border-box !important;
+
+    -webkit-overflow-scrolling:touch !important;
+}
+
+.shil-no-header .shil-page-content{
+    top:0 !important;
+}
+
+.shil-no-footer .shil-page-content{
+    bottom:0 !important;
+}
+
+.shil-fixed-header{
+    position:fixed !important;
+    top:0 !important;
+    left:0 !important;
+    right:0 !important;
+    height:55px !important;
+    min-height:55px !important;
+    max-height:55px !important;
+    z-index:4000 !important;
+}
+
+.shil-fixed-footer{
+    position:fixed !important;
+    left:0 !important;
+    right:0 !important;
+    bottom:0 !important;
+
+    height:40px !important;
+    min-height:40px !important;
+    max-height:40px !important;
+
+    z-index:4000 !important;
+}
+
+
+/* ==========================================================
+   PROJECT INFO - 3 COLUMN LAYOUT
+   ========================================================== */
+
+body.shil-project-info-screen .shil-form-grid{
+    display:grid !important;
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+    gap:10px !important;
+    height:auto !important;
+    min-height:0 !important;
+    max-height:none !important;
+    margin-bottom:8px !important;
+    padding-bottom:8px !important;
+}
+
+body.shil-project-info-screen .shil-form-grid>*{
+    width:100% !important;
+    min-width:0 !important;
+    margin:0 !important;
+}
+
+body.shil-project-info-screen .shil-card-stack,
+body.shil-project-info-screen .shil-section-card{
+    height:auto !important;
+    min-height:0 !important;
+    max-height:none !important;
+    padding-bottom:8px !important;
+    margin-bottom:8px !important;
+}
+

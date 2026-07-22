@@ -1,7 +1,9 @@
+import ShilPrimaryButton from "../../components/project/ShilPrimaryButton";
 import * as React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ShilPageShell from "../../components/ShilPageShell.jsx";
 import ProjectMiniRail from "../../components/ProjectMiniRail.jsx";
+import ShilWarningOverlay from "../../components/ShilWarningOverlay.jsx";
 import { consumerEquipmentLibrary, searchConsumerEquipment } from "../../data/catalogs/consumerEquipmentLibrary.js";
 import { buildScenarioCalculationInput } from "../../core/scenario/scenarioToEngineeringForm.js";
 import { METHOD_LABELS, persistSurfaceLoadPreview as persistLoadEngineResult, runSurfaceLoadPreview as runLoadEngine, runSurfacePvPreview as runUnifiedPvForUi } from "../../calculationGateway/surfacePreviewData.js";
@@ -659,7 +661,7 @@ export default function CalculationInputs() {
       return;
     }
     if (method === "solar_panel_power" && isUtilityPanelScale && !isUtilityRoute) {
-      setScaleWarning("توان موثر پنل‌ها از 30kW عبور کرده است؛ خروجی این مرحله به صورت خودکار به تنظیمات سیستم نیروگاهی منتقل می‌شود.");
+      setScaleWarning("توان موثر پنل‌ها از 30kW عبور کرده است؛ خروجی این مرحله به صورت خودکار به تنظیمات نیروگاهی منتقل می‌شود.");
     }
 
     if (method !== "solar_panel_power") {
@@ -758,8 +760,50 @@ export default function CalculationInputs() {
     navigate(`/new-project/system/${nextDomain}?from=calculation-inputs${isReadyScenarioEquipmentFlow ? "&scenarioFlow=1" : ""}`);
   };
 
+  const inputConfirmSlotRef = React.useRef(null);
+
+  React.useLayoutEffect(() => {
+    const slot = inputConfirmSlotRef.current;
+    if (!slot) return undefined;
+
+    let frame = 0;
+    let observer = null;
+
+    const placeAfterLastVisibleData = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const current = inputConfirmSlotRef.current;
+        if (!current) return;
+
+        // Measure from the natural document-flow position, then add only the
+        // amount needed to clear any visually overflowing content plus 8px.
+        current.style.marginTop = "0px";
+        const previous = current.previousElementSibling;
+        const currentRect = current.getBoundingClientRect();
+        const previousRect = previous?.getBoundingClientRect();
+        const overlap = previousRect ? Math.max(0, previousRect.bottom - currentRect.top) : 0;
+        current.style.marginTop = `${overlap + 8}px`;
+      });
+    };
+
+    placeAfterLastVisibleData();
+    window.addEventListener("resize", placeAfterLastVisibleData);
+
+    const previous = slot.previousElementSibling;
+    if (previous && typeof ResizeObserver !== "undefined") {
+      observer = new ResizeObserver(placeAfterLastVisibleData);
+      observer.observe(previous);
+    }
+
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("resize", placeAfterLastVisibleData);
+      observer?.disconnect();
+    };
+  }, [method, forceAutonomyBattery, autonomyHours, autonomyDays, scaleWarning]);
+
   return (
-    <ShilPageShell title={METHOD_LABELS[method] || "ورودی محاسبات"}>
+    <ShilPageShell title="ورودی محاسبات">
       <ProjectMiniRail />
       <div className="shil-equipment-page">
         <section className="shil-env-card">
@@ -868,7 +912,7 @@ export default function CalculationInputs() {
                   <div><span>راندمان مؤثر</span><strong>{(100 - toNumber(lossPercent, 0)).toFixed(1)}٪</strong></div>
                   <div><span>جهت و زاویه مطابق شرایط محیطی</span><strong>{envSolarDefaults.orientation.toFixed(1)}٪</strong></div>
                 </div>
-                {isUtilityPanelScale && !isUtilityRoute ? (<div className="shil-inline-warning"><strong>توان موثر بالای 30kW است؛ ادامه این ورودی در صفحه تنظیمات نیروگاهی انجام می‌شود.</strong></div>) : null}
+                <ShilWarningOverlay messages={isUtilityPanelScale && !isUtilityRoute ? [<strong key="utility-scale">توان موثر بالای 30kW است؛ ادامه این ورودی در صفحه تنظیمات نیروگاهی انجام می‌شود.</strong>] : []} />
               </>
             ) : (
               <div className="shil-form-grid">
@@ -1015,19 +1059,58 @@ export default function CalculationInputs() {
               </label>
             </div>
             <p className="shil-muted-note">
-              {autonomySnapshot.required ? `باتری الزامی است؛ دلیل: ${autonomySnapshot.reason === "emergency_backup_required" ? "مسیر برق اضطراری" : autonomySnapshot.reason === "autonomy_required" ? "ثبت زمان خودکفایی" : "درخواست کاربر"}. زمان مبنا: ${autonomySnapshot.hours} ساعت.` : "اگر ساعت یا روز خودکفایی وارد شود، صفحه تنظیمات سیستم باتری را اجباری در نظر می‌گیرد."}
+              {autonomySnapshot.required ? `باتری الزامی است؛ دلیل: ${autonomySnapshot.reason === "emergency_backup_required" ? "مسیر برق اضطراری" : autonomySnapshot.reason === "autonomy_required" ? "ثبت زمان خودکفایی" : "درخواست کاربر"}. زمان مبنا: ${autonomySnapshot.hours} ساعت.` : "اگر ساعت یا روز خودکفایی وارد شود، صفحه تنظیمات باتری را اجباری در نظر می‌گیرد."}
             </p>
           </section>
         ) : (
           <section className="shil-env-card">
             <h3 className="shil-section-title">مسیر اختصاصی نیروگاهی</h3>
-            <p className="shil-muted-note">این ورودی با دامنه نیروگاهی به صفحه تنظیمات سیستم منتقل می‌شود و درگیر ظاهر یا منطق مسیر خورشیدی مصرف‌محور نمی‌شود.</p>
+            <p className="shil-muted-note">این ورودی با دامنه نیروگاهی به صفحه تنظیمات منتقل می‌شود و درگیر ظاهر یا منطق مسیر خورشیدی مصرف‌محور نمی‌شود.</p>
           </section>
         )}
-        {scaleWarning ? <div className="shil-inline-warning">{scaleWarning}</div> : null}
-        <button type="button" className="shil-primary-wide" onClick={confirmLoad}>
-          {isReadyScenarioEquipmentFlow ? "تأیید لیست تجهیزات و ادامه مسیر پروژه" : "تأیید اطلاعات و ورود به پیکربندی تنظیمات"}
-        </button>
+        <ShilWarningOverlay messages={scaleWarning ? [scaleWarning] : []} />
+        <div
+          ref={inputConfirmSlotRef}
+          className="shil-input-content-confirm-slot"
+          aria-label="تأیید ورودی محاسبات"
+          style={{
+            position: "relative",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "100%",
+            margin: "8px 0px calc(52px + env(safe-area-inset-bottom, 0px))",
+            padding: 0,
+            minHeight: 0,
+            height: "auto",
+            background: "transparent",
+            border: "0",
+            boxShadow: "none",
+            transform: "none",
+            clear: "both",
+            flexShrink: 0,
+            zIndex: 20,
+          }}
+        >
+          <ShilPrimaryButton
+            className="shil-env-content-confirm-button"
+            onClick={confirmLoad}
+            label="تأیید توان"
+            style={{
+              position: "static",
+              left: "auto",
+              right: "auto",
+              bottom: "auto",
+              top: "auto",
+              transform: "none",
+              width: "max-content",
+              minWidth: 0,
+              maxWidth: "none",
+              padding: "0 12px",
+              whiteSpace: "nowrap",
+            }}
+          />
+        </div>
       </div>
     </ShilPageShell>
   );

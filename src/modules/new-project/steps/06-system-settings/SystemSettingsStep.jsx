@@ -15,11 +15,11 @@ export function SystemSettingsStep({ value = {} }) {
     <div className="shil-card-stack shil-system-settings-mini shil-system-settings-redirect">
       <div className="shil-section-card">
         <div className="shil-section-head">
-          <h2>تنظیمات سیستم</h2>
+          <h2>تنظیمات</h2>
           <span>مسیر جدید فعال</span>
         </div>
         <p className="shil-muted-text">
-          بانک‌های پنل خورشیدی، اینورتر خورشیدی و باتری از این مرحله قدیمی حذف شدند و نسخه نهایی فقط در صفحه اصلی تنظیمات سیستم مدیریت می‌شود.
+          بانک‌های پنل خورشیدی، اینورتر خورشیدی و باتری از این مرحله قدیمی حذف شدند و نسخه نهایی فقط در صفحه اصلی تنظیمات مدیریت می‌شود.
         </p>
         <div className="shil-result-grid">
           <div><span>اینورتر پیشنهادی</span><strong>{design.inverter?.title || "—"}</strong></div>

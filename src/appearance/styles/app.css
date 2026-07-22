@@ -708,3 +708,255 @@ html, body, #root{
   backdrop-filter: none !important;
   box-shadow: none !important;
 }
+
+/* =====================================================
+   SHIL PAGE SHELL - FINAL LAYOUT
+   ===================================================== */
+
+.shil-page-shell{
+    position:relative !important;
+    width:100% !important;
+    height:100dvh !important;
+    min-height:100dvh !important;
+    overflow:hidden !important;
+}
+
+.shil-page-content{
+    position:absolute !important;
+
+    top:55px !important;
+    left:0 !important;
+    right:0 !important;
+    bottom:40px !important;
+
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+
+    box-sizing:border-box !important;
+
+    -webkit-overflow-scrolling:touch !important;
+}
+
+.shil-no-header .shil-page-content{
+    top:0 !important;
+}
+
+.shil-no-footer .shil-page-content{
+    bottom:0 !important;
+}
+
+.shil-fixed-header{
+    position:fixed !important;
+    top:0 !important;
+    left:0 !important;
+    right:0 !important;
+    height:55px !important;
+    min-height:55px !important;
+    max-height:55px !important;
+    z-index:4000 !important;
+}
+
+.shil-fixed-footer{
+    position:fixed !important;
+    left:0 !important;
+    right:0 !important;
+    bottom:0 !important;
+
+    height:40px !important;
+    min-height:40px !important;
+    max-height:40px !important;
+
+    z-index:4000 !important;
+}
+
+
+
+/* SHIL content-flow confirm buttons: keep confirm buttons 8px after the last page data (not fixed/sticky). */
+html body .shil-flow-content-confirm-slot,
+html body .shil-calc-content-confirm-slot,
+html body .shil-system-content-confirm-slot,
+html body .shil-summary-content-confirm-slot,
+html body .shil-run-content-confirm-slot{
+  position: relative !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 100% !important;
+  margin-top: 8px !important;
+  margin-bottom: 0 !important;
+  padding: 0 !important;
+  transform: none !important;
+  left: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  z-index: 1 !important;
+}
+
+html body .shil-flow-content-confirm-slot > button,
+html body .shil-flow-content-confirm-button,
+html body .shil-calc-content-confirm-slot > button,
+html body .shil-system-content-confirm-slot > button,
+html body .shil-summary-content-confirm-slot > button,
+html body .shil-run-content-confirm-slot > button,
+html body .shil-system-final-page .shil-system-content-confirm-slot > .shil-confirm-config-button{
+  position: relative !important;
+  inset: auto !important;
+  left: auto !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: auto !important;
+  transform: none !important;
+  width: min(100%, 420px) !important;
+  max-width: 420px !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  z-index: 1 !important;
+}
+
+html body .shil-system-final-page{
+  padding-bottom: 0 !important;
+}
+
+@media (min-width: 760px){
+  html body .shil-system-final-page .shil-system-content-confirm-slot > .shil-confirm-config-button{
+    left: auto !important;
+    right: auto !important;
+    width: min(100%, 420px) !important;
+    transform: none !important;
+  }
+}
+
+/* Engineering warnings are overlays, not page data. */
+.shil-warning-overlay{
+  position:fixed;
+  z-index:12050;
+  left:50%;
+  bottom:calc(82px + env(safe-area-inset-bottom, 0px));
+  transform:translateX(-50%);
+  width:min(92vw, 680px);
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  pointer-events:none;
+  direction:rtl;
+}
+.shil-warning-overlay-item{
+  display:grid;
+  grid-template-columns:28px minmax(0,1fr);
+  align-items:center;
+  gap:8px;
+  padding:11px 13px;
+  border:1px solid rgba(255,211,92,.65);
+  border-radius:18px;
+  background:rgba(34,47,55,.88);
+  color:#fff;
+  font-size:13px;
+  font-weight:800;
+  line-height:1.85;
+  text-align:right;
+  box-shadow:0 12px 30px rgba(0,0,0,.30);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+}
+.shil-warning-overlay-icon{
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:#ffd45c;
+  color:#1d2730;
+  font-weight:950;
+  font-size:18px;
+}
+@media (max-width:700px){
+  .shil-warning-overlay{
+    bottom:calc(74px + env(safe-area-inset-bottom, 0px));
+    width:calc(100vw - 24px);
+  }
+  .shil-warning-overlay-item{
+    font-size:12px;
+    padding:9px 11px;
+    border-radius:16px;
+  }
+}
+
+
+/* SHIL PATCH: content confirm is the actual button; no empty wrapper. */
+html body button.shil-flow-content-confirm-slot {
+  position: relative !important;
+  inset: auto !important;
+  left: auto !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: auto !important;
+  transform: none !important;
+  display: flex !important;
+  width: max-content !important;
+  max-width: calc(100% - 24px) !important;
+  min-width: 110px !important;
+  margin: 8px auto 0 !important;
+  padding-left: 18px !important;
+  padding-right: 18px !important;
+  align-items: center !important;
+  justify-content: center !important;
+  align-self: center !important;
+}
+
+
+/* SHIL FINAL INLINE CONFIRM FIX: real button, visible, centered, 8px after content. */
+html body button.shil-inline-confirm-button {
+  position: relative !important;
+  inset: auto !important;
+  left: auto !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: auto !important;
+  transform: none !important;
+  display: flex !important;
+  visibility: visible !important;
+  width: max-content !important;
+  min-width: 110px !important;
+  max-width: calc(100% - 24px) !important;
+  height: 46px !important;
+  min-height: 46px !important;
+  margin: 8px auto calc(52px + env(safe-area-inset-bottom, 0px)) !important;
+  padding: 0 18px !important;
+  align-self: center !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 auto !important;
+  z-index: 50 !important;
+}
+
+/* Calculation inputs confirm: transparent flow row between the last data card and footer. */
+html body .shil-input-content-confirm-slot {
+  position: relative !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 100% !important;
+  min-height: 0 !important;
+  height: auto !important;
+  margin-right: 0 !important;
+  margin-left: 0 !important;
+  margin-bottom: calc(52px + env(safe-area-inset-bottom, 0px)) !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+  transform: none !important;
+}
+
+html body .shil-input-content-confirm-slot > button,
+html body .shil-input-content-confirm-slot .shil-env-content-confirm-button {
+  position: static !important;
+  left: auto !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: auto !important;
+  transform: none !important;
+  margin: 0 !important;
+}

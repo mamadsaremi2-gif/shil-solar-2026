@@ -337,7 +337,7 @@ export default function AdminDashboard() {
   function saveCards() {
     const saved = saveAdminProjectPathCards(cards);
     setCards(saved);
-    notify("کارت‌های انتخاب مسیر پروژه ذخیره شدند.");
+    notify("کارت‌های مسیر پروژه ذخیره شدند.");
   }
 
   function updateCatalogItem(group, index, patch) {
@@ -595,7 +595,7 @@ export default function AdminDashboard() {
       ) : null}
 
       {tab === "cards" ? (
-        <AdminPanel title="مدیریت کارت‌های انتخاب مسیر پروژه" subtitle="ادمین می‌تواند تصویر PNG کارت‌ها را بدون تغییر کد جایگزین کند و ترتیب/فعال بودن کارت‌ها را کنترل کند." action={<button type="button" onClick={addCard}>افزودن کارت</button>}>
+        <AdminPanel title="مدیریت کارت‌های مسیر پروژه" subtitle="ادمین می‌تواند تصویر PNG کارت‌ها را بدون تغییر کد جایگزین کند و ترتیب/فعال بودن کارت‌ها را کنترل کند." action={<button type="button" onClick={addCard}>افزودن کارت</button>}>
           <div className="shil-admin-card-editor-grid">
             {cards.map((card, index) => (
               <div className="shil-admin-card-editor" key={card.key || index}>

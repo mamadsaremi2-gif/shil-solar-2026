@@ -6784,8 +6784,8 @@ textarea{
 
 /* SHIL mobile-first product flow update - safe additive layer */
 :root {
-  --shil-header-h: 64px;
-  --shil-footer-h: 62px;
+  --shil-header-h:55px;
+  --shil-footer-h:40px;
   --shil-safe-x: clamp(16px, 5vw, 28px);
   --shil-glass: rgba(12, 18, 28, 0.54);
   --shil-border: rgba(255, 255, 255, 0.18);
@@ -7215,8 +7215,8 @@ button, input, textarea, select { font: inherit; }
    ========================================================= */
 :root{
   --shil-page-pad:16px;
-  --shil-footer-h:86px;
-  --shil-header-h:76px;
+  --shil-footer-h:40px;
+  --shil-header-h:55px;
   --shil-neon-blue:#27d7ff;
   --shil-neon-pink:#f04cff;
   --shil-glass:rgba(10,14,32,.68);
@@ -7445,7 +7445,7 @@ html,body,#root{width:100%;max-width:100%;min-height:100%;overflow-x:hidden;}
 .shil-scenario-row{display:flex;flex-direction:column;gap:6px;margin:12px 0;padding:16px 18px;text-align:center;}
 .shil-scenario-row span{font-size:.82rem;opacity:.72;}
 .shil-primary-wide{width:100%;border:none;border-radius:20px;padding:15px 16px;color:#fff;font-weight:800;background:linear-gradient(90deg,#1cccf5,#b345ff,#ffb22c);box-shadow:0 0 24px rgba(179,69,255,.20);}
-@media (max-width:420px){:root{--shil-page-pad:14px;--shil-footer-h:82px;--shil-header-h:72px}.shil-header-title{max-width:48vw;padding-inline:14px}.shil-inline-field{min-width:170px}}
+@media (max-width:420px){:root{--shil-page-pad:14px;--shil-footer-h:40px;--shil-header-h:55px;padding-inline:14px}.shil-inline-field{min-width:170px}}
 
 .shil-env-page{
   width:100%;
@@ -7600,7 +7600,7 @@ html,body,#root{width:100%;max-width:100%;min-height:100%;overflow-x:hidden;}
   width:100%;
   max-width:100vw;
   overflow-x:hidden;
-  padding:12px 16px 120px;
+  padding: 12px 16px 0;
   box-sizing:border-box;
 }
 
@@ -7691,7 +7691,7 @@ html,body,#root{width:100%;max-width:100%;min-height:100%;overflow-x:hidden;}
 
 .shil-equipment-page{
   width:100%;
-  padding:12px 16px 120px;
+  padding: 12px 16px 0;
   box-sizing:border-box;
   overflow-x:hidden;
 }
@@ -8623,8 +8623,6 @@ html,body,#root{width:100%;max-width:100%;min-height:100%;overflow-x:hidden;}
     grid-template-columns:repeat(2, minmax(0,1fr));
   }
 }
-
-@import "./app.css";
 
 /* SHIL optional AI installation visualization block - summary page */
 .shil-ai-preview-card{
@@ -9824,3 +9822,624 @@ select,
   background-position: center !important;
   background-repeat: no-repeat !important;
 }
+
+ /* FORCE HEADER 55PX */
+.shil-fixed-header,
+body .shil-fixed-header,
+body[class*="shil-"] .shil-fixed-header {
+  height: 55px !important;
+  min-height: 55px !important;
+  max-height: 55px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  box-sizing: border-box !important;
+}
+
+
+/* محتوا زیر فوتر گیر نکند */
+body,
+#root,
+.shil-page,
+.shil-page-shell,
+.shil-main,
+main {
+  padding-bottom: 40px !important;
+  box-sizing: border-box !important;
+}
+
+/* اگر خود صفحه اسکرول دارد */
+.shil-page-content,
+.shil-content,
+.page-content,
+main {
+  padding-bottom: 56px !important;
+  box-sizing: border-box !important;
+}
+
+
+/* اگر فوتر داخل main یا container اسکرولی باشد، محتوا زیرش رد شود */
+main,
+.shil-main,
+.shil-page,
+.shil-page-shell,
+.shil-page-content,
+.shil-content,
+.mobile-first-page,
+.mobile-page,
+[class*="mobile-first"],
+[class*="MobileFirst"],
+[class*="page-content"],
+[class*="PageContent"] {
+  padding-bottom: 56px !important;
+  box-sizing: border-box !important;
+  overflow-x: hidden !important;
+}
+
+/* جلوگیری از اینکه parent با transform باعث fixed اشتباه شود */
+.shil-page,
+.shil-page-shell,
+.mobile-first-page,
+.mobile-page,
+[class*="mobile-first"],
+[class*="MobileFirst"] {
+  transform: none !important;
+  perspective: none !important;
+  filter: none !important;
+  contain: none !important;
+}
+
+/* =========================================================
+   SHIL CLEAN FINAL LAYOUT
+   Header: 55px | Footer: 40px | Main scroll area | Rail attached
+   ========================================================= */
+
+:root{
+  --shil-header-h:55px;
+  --shil-footer-h:40px;
+  --shil-page-pad:16px;
+  --shil-safe-x:16px;
+}
+
+html,
+body,
+#root{
+  width:100%;
+  min-height:100%;
+  margin:0;
+  overflow-x:hidden !important;
+}
+
+body:not(.login-page):not(.welcome-page){
+  height:100dvh !important;
+  overflow:hidden !important;
+}
+
+.shil-page-shell{
+  position:relative !important;
+  width:100% !important;
+  height:100dvh !important;
+  min-height:100dvh !important;
+  overflow:hidden !important;
+}
+
+.shil-master-bg{
+  position:fixed !important;
+  inset:0 !important;
+  z-index:0 !important;
+  pointer-events:none !important;
+}
+
+.shil-fixed-header{
+  position:fixed !important;
+  top:0 !important;
+  left:0 !important;
+  right:0 !important;
+
+  height:55px !important;
+  min-height:55px !important;
+  max-height:55px !important;
+
+  padding-top:0 !important;
+  padding-bottom:0 !important;
+  box-sizing:border-box !important;
+
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+
+  z-index:5000 !important;
+}
+
+.shil-fixed-footer{
+  position:fixed !important;
+  left:0 !important;
+  right:0 !important;
+  bottom:0 !important;
+
+  height:40px !important;
+  min-height:40px !important;
+  max-height:40px !important;
+
+  padding-top:0 !important;
+  padding-bottom:0 !important;
+  box-sizing:border-box !important;
+
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-around !important;
+
+  z-index:5000 !important;
+}
+
+.shil-fixed-footer a{
+  height:32px !important;
+  min-height:32px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  box-sizing:border-box !important;
+}
+
+.shil-page-content,
+main.shil-page-content{
+  position:fixed !important;
+
+  top:55px !important;
+  left:0 !important;
+  right:0 !important;
+  bottom:40px !important;
+
+  width:auto !important;
+  height:auto !important;
+  min-height:0 !important;
+  max-height:none !important;
+
+  padding:0 !important;
+  margin:0 !important;
+
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+
+  box-sizing:border-box !important;
+  -webkit-overflow-scrolling:touch !important;
+  scrollbar-width:thin !important;
+}
+
+.shil-no-header .shil-page-content{
+  top:0 !important;
+}
+
+.shil-no-footer .shil-page-content{
+  bottom:0 !important;
+}
+
+/* Project mini rail: first child of main, so it attaches under header */
+.shil-project-mini-rail{
+  position:sticky !important;
+  top:0 !important;
+  z-index:3000 !important;
+
+  width:100% !important;
+  max-width:100% !important;
+
+  margin:0 !important;
+  padding:10px 8px !important;
+
+  box-sizing:border-box !important;
+
+  overflow-x:auto !important;
+  overflow-y:hidden !important;
+}
+
+.project-mini-rail-grid{
+  display:flex !important;
+  grid-template-columns:none !important;
+  flex-wrap:nowrap !important;
+  width:max-content !important;
+  max-width:none !important;
+  min-width:100% !important;
+}
+
+.shil-engineering-content{
+  width:100% !important;
+  max-width:100% !important;
+  padding:14px 14px 24px !important;
+  margin:0 !important;
+  box-sizing:border-box !important;
+}
+
+.shil-engineering-content > *:first-child{
+  margin-top:0 !important;
+}
+
+/* Page-specific old padding reset */
+body.shil-project-path-screen .shil-page-content,
+body.shil-project-path-screen main.shil-page-content,
+body.shil-calculation-method-screen .shil-page-content,
+body.shil-calculation-method-screen main.shil-page-content,
+body.shil-calculation-inputs-screen .shil-page-content,
+body.shil-calculation-inputs-screen main.shil-page-content{
+  padding-top:0 !important;
+  padding-bottom:0 !important;
+  overflow-y:auto !important;
+}
+
+/* Old ShilFrame compatibility */
+.shil-frame{
+  width:100% !important;
+  height:100dvh !important;
+  position:relative !important;
+  overflow:hidden !important;
+}
+
+.shil-frame-main{
+  position:absolute !important;
+  top:55px !important;
+  left:0 !important;
+  right:0 !important;
+  bottom:40px !important;
+  height:auto !important;
+  padding:0 !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  box-sizing:border-box !important;
+}
+
+.shil-header{
+  position:fixed !important;
+  top:0 !important;
+  left:0 !important;
+  right:0 !important;
+  height:55px !important;
+  min-height:55px !important;
+  max-height:55px !important;
+  z-index:5000 !important;
+}
+
+.shil-footer{
+  position:fixed !important;
+  left:0 !important;
+  right:0 !important;
+  bottom:0 !important;
+  height:40px !important;
+  min-height:40px !important;
+  max-height:40px !important;
+  z-index:5000 !important;
+}
+
+@media (max-width:430px){
+  :root{
+    --shil-header-h:55px;
+    --shil-footer-h:40px;
+    --shil-page-pad:14px;
+    --shil-safe-x:14px;
+  }
+
+  .shil-fixed-header{
+    height:55px !important;
+    min-height:55px !important;
+    max-height:55px !important;
+  }
+
+  .shil-fixed-footer{
+    height:40px !important;
+    min-height:40px !important;
+    max-height:40px !important;
+  }
+}
+
+
+/* ===== KILL PROJECT PATH PURPLE/YELLOW CARD FRAME ===== */
+
+html body.shil-project-path-screen .shil-engineering-content > div,
+html body.shil-project-path-screen .shil-engineering-content .shil-card-stack,
+html body.shil-project-path-screen .shil-engineering-content .shil-section-card,
+html body.shil-project-path-screen .shil-engineering-content .shil-card-stack > *,
+html body.shil-project-path-screen .shil-engineering-content .shil-project-path-card,
+html body.shil-project-path-screen .shil-engineering-content .shil-execution-card {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-right: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html body.shil-project-path-screen .shil-engineering-content .shil-card-stack::before,
+html body.shil-project-path-screen .shil-engineering-content .shil-card-stack::after,
+html body.shil-project-path-screen .shil-engineering-content .shil-section-card::before,
+html body.shil-project-path-screen .shil-engineering-content .shil-section-card::after,
+html body.shil-project-path-screen .shil-engineering-content .shil-project-path-card::before,
+html body.shil-project-path-screen .shil-engineering-content .shil-project-path-card::after,
+html body.shil-project-path-screen .shil-engineering-content .shil-execution-card::before,
+html body.shil-project-path-screen .shil-engineering-content .shil-execution-card::after {
+  display: none !important;
+  content: none !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+
+/* ==========================================================
+   FORCE PROJECT INFO - 3 COLUMN + COMPACT PARENT
+   ========================================================== */
+
+html body.shil-project-info-screen .shil-form-grid,
+html body.shil-project-info-screen .shil-section-card .shil-form-grid,
+html body.shil-project-info-screen .shil-card-stack .shil-form-grid {
+    display:grid !important;
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+    gap:10px !important;
+    height:auto !important;
+    min-height:0 !important;
+    max-height:none !important;
+    margin-bottom:8px !important;
+    padding-bottom:8px !important;
+}
+
+html body.shil-project-info-screen .shil-form-grid > * {
+    width:100% !important;
+    min-width:0 !important;
+    margin:0 !important;
+}
+
+html body.shil-project-info-screen .shil-form-grid,
+html body.shil-project-info-screen .shil-section-card,
+html body.shil-project-info-screen .shil-card-stack {
+    height:auto !important;
+    min-height:0 !important;
+    max-height:none !important;
+    padding-bottom:8px !important;
+    margin-bottom:8px !important;
+}
+
+
+/* ==========================================================
+   FORCE FINAL CLEAN SECTION HEAD STYLE
+   ========================================================== */
+
+html body .shil-clean-section-head {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+
+  height: 36px !important;
+  min-height: 36px !important;
+  max-height: 36px !important;
+
+  padding: 0 14px !important;
+  margin: 0 0 10px !important;
+
+  background: linear-gradient(180deg,#edf9ff 0%,#d8efff 45%,#b7ddf8 100%) !important;
+  border: 1px solid rgba(255,255,255,.9) !important;
+  border-radius: 18px !important;
+
+  box-shadow:
+    inset 0 3px 8px rgba(255,255,255,.95),
+    inset 0 -6px 12px rgba(38,109,170,.35),
+    inset 0 0 18px rgba(0,140,255,.12),
+    0 6px 16px rgba(0,0,0,.15) !important;
+
+  box-sizing: border-box !important;
+}
+
+html body .shil-clean-section-head span {
+  display: none !important;
+}
+
+html body .shil-clean-section-head h2 {
+  width: 100% !important;
+  margin: 0 !important;
+
+  font-size: 14px !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+
+  text-align: center !important;
+  color: #061421 !important;
+}
+
+
+/* SHIL_UNIFIED_FOOTER_40_START */
+
+:root{
+  --shil-footer-h:40px !important;
+  --shil-mobile-footer-h:40px !important;
+  --footer-height:40px !important;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-fixed-footer,
+body:not(.login-page):not(.welcome-page) .app-footer,
+body:not(.login-page):not(.welcome-page) .mobile-footer,
+body:not(.login-page):not(.welcome-page) .shil-footer,
+body:not(.login-page):not(.welcome-page) .footer-bar,
+body:not(.login-page):not(.welcome-page) [class*="Footer"],
+body:not(.login-page):not(.welcome-page) [class*="footer"]{
+  height:40px !important;
+  min-height:40px !important;
+  max-height:40px !important;
+  padding-top:0 !important;
+  padding-bottom:0 !important;
+  box-sizing:border-box !important;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-fixed-footer button,
+body:not(.login-page):not(.welcome-page) .app-footer button,
+body:not(.login-page):not(.welcome-page) .mobile-footer button,
+body:not(.login-page):not(.welcome-page) .shil-footer button,
+body:not(.login-page):not(.welcome-page) .footer-bar button,
+body:not(.login-page):not(.welcome-page) [class*="Footer"] button,
+body:not(.login-page):not(.welcome-page) [class*="footer"] button{
+  height:32px !important;
+  min-height:32px !important;
+  max-height:32px !important;
+  padding-top:0 !important;
+  padding-bottom:0 !important;
+  line-height:1 !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-page-content,
+body:not(.login-page):not(.welcome-page) main{
+  padding-bottom:calc(40px + env(safe-area-inset-bottom,0px) + 12px) !important;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-primary-wide{
+  bottom:45px !important;
+}
+
+/* SHIL_UNIFIED_FOOTER_40_END */
+
+
+/* SHIL_PROJECT_INFO_FOOTER_FORCE_40_START */
+
+body:not(.login-page):not(.welcome-page) .shil-project-info-page ~ .shil-fixed-footer,
+body:not(.login-page):not(.welcome-page) .shil-page-shell:has(.shil-project-info-page) .shil-fixed-footer,
+body:not(.login-page):not(.welcome-page) .shil-page-shell:has([class*="project-info"]) .shil-fixed-footer,
+body:not(.login-page):not(.welcome-page) .shil-page-shell:has([class*="ProjectInfo"]) .shil-fixed-footer{
+  height:40px !important;
+  min-height:40px !important;
+  max-height:40px !important;
+  padding-top:0 !important;
+  padding-bottom:0 !important;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-page-shell:has(.shil-project-info-page) .shil-fixed-footer button,
+body:not(.login-page):not(.welcome-page) .shil-page-shell:has([class*="project-info"]) .shil-fixed-footer button{
+  height:32px !important;
+  min-height:32px !important;
+  max-height:32px !important;
+  padding-top:0 !important;
+  padding-bottom:0 !important;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-page-shell:has(.shil-project-info-page) .shil-page-content,
+body:not(.login-page):not(.welcome-page) .shil-page-shell:has([class*="project-info"]) .shil-page-content{
+  padding-bottom:52px !important;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-page-shell:has(.shil-project-info-page) .shil-primary-wide,
+body:not(.login-page):not(.welcome-page) .shil-page-shell:has([class*="project-info"]) .shil-primary-wide{
+  bottom:45px !important;
+}
+
+/* SHIL_PROJECT_INFO_FOOTER_FORCE_40_END */
+
+
+/* SHIL_FINAL_FOOTER_40_ONLY_CSS_START */
+
+:root{
+  --shil-footer-h:40px !important;
+  --shil-mobile-footer-h:40px !important;
+  --footer-height:40px !important;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-fixed-footer,
+body:not(.login-page):not(.welcome-page) .app-footer,
+body:not(.login-page):not(.welcome-page) .mobile-footer,
+body:not(.login-page):not(.welcome-page) .footer-bar,
+body:not(.login-page):not(.welcome-page) footer{
+  height:40px !important;
+  min-height:40px !important;
+  max-height:40px !important;
+  padding-top:0 !important;
+  padding-bottom:0 !important;
+  box-sizing:border-box !important;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-fixed-footer *,
+body:not(.login-page):not(.welcome-page) .app-footer *,
+body:not(.login-page):not(.welcome-page) .mobile-footer *,
+body:not(.login-page):not(.welcome-page) .footer-bar *,
+body:not(.login-page):not(.welcome-page) footer *{
+  max-height:40px !important;
+  box-sizing:border-box !important;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-fixed-footer button,
+body:not(.login-page):not(.welcome-page) .app-footer button,
+body:not(.login-page):not(.welcome-page) .mobile-footer button,
+body:not(.login-page):not(.welcome-page) .footer-bar button,
+body:not(.login-page):not(.welcome-page) footer button{
+  height:32px !important;
+  min-height:32px !important;
+  max-height:32px !important;
+  padding-top:0 !important;
+  padding-bottom:0 !important;
+  line-height:1 !important;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-page-content,
+body:not(.login-page):not(.welcome-page) main{
+  padding-bottom:52px !important;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-primary-wide{
+  bottom:45px !important;
+}
+
+/* SHIL_FINAL_FOOTER_40_ONLY_CSS_END */
+
+/* SHIL_GLOBAL_RAIL_90_FINAL_START */
+
+body:not(.login-page):not(.welcome-page) .shil-project-mini-rail{
+  height:90px !important;
+  min-height:90px !important;
+  max-height:90px !important;
+  margin:13px auto 12px !important;
+  padding:0 !important;
+}
+
+body:not(.login-page):not(.welcome-page) .project-mini-rail-grid{
+  height:90px !important;
+  min-height:90px !important;
+  max-height:90px !important;
+  padding:7px 10px !important;
+  gap:4px !important;
+}
+
+body:not(.login-page):not(.welcome-page) .project-mini-rail-grid .shil-ios-icon-link{
+  height:74px !important;
+  min-height:74px !important;
+  max-height:74px !important;
+  width:72px !important;
+  min-width:72px !important;
+  max-width:72px !important;
+  gap:4px !important;
+}
+
+body:not(.login-page):not(.welcome-page) .project-mini-rail-grid .shil-ios-icon-img{
+  width:35px !important;
+  height:35px !important;
+  min-width:35px !important;
+  min-height:35px !important;
+  max-width:35px !important;
+  max-height:35px !important;
+  border-radius:13px !important;
+}
+
+body:not(.login-page):not(.welcome-page) .project-mini-rail-grid .shil-ios-icon-img svg{
+  width:22px !important;
+  height:22px !important;
+  stroke-width:2.3 !important;
+}
+
+body:not(.login-page):not(.welcome-page) .project-mini-rail-grid .shil-ios-icon-title{
+  font-size:10px !important;
+  max-height:26px !important;
+  line-height:1.2 !important;
+  font-weight:900 !important;
+  text-align:center !important;
+  overflow:hidden !important;
+}
+
+/* SHIL_GLOBAL_RAIL_90_FINAL_END */
+
+

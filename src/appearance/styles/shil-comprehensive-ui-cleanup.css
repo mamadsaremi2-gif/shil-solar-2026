@@ -1,0 +1,233 @@
+/*
+ * SHIL comprehensive UI cleanup
+ * Removes decorative page backgrounds and redundant empty cards while
+ * preserving controls, data containers, results, tables, alerts and dialogs.
+ */
+
+:root,
+html,
+body,
+#root {
+  background: transparent !important;
+  background-image: none !important;
+}
+
+body::before,
+body::after,
+#root::before,
+#root::after,
+.shil-page-scroll::before,
+.shil-page-scroll::after,
+.shil-page-content::before,
+.shil-page-content::after,
+[class*="screen"]::before,
+[class*="screen"]::after,
+[class*="page"]::before,
+[class*="page"]::after {
+  content: none !important;
+  display: none !important;
+  background: none !important;
+  background-image: none !important;
+}
+
+/* Page/shell layers must never paint an app background. */
+:is(
+  main,
+  .shil-page-scroll,
+  .shil-page-content,
+  .shil-page-shell,
+  .shil-frame,
+  .shil-frame-body,
+  .shil-screen,
+  .shil-project-path-screen,
+  .shil-project-info-screen,
+  .shil-environment-screen,
+  .shil-calculation-method-screen,
+  .shil-summary-page,
+  .shil-system-settings-page,
+  .shil-system-final-page,
+  .shil-equipment-page,
+  [class$="-page"],
+  [class$="-screen"]
+) {
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Decorative wrappers: retain layout, remove visual card treatment. */
+:is(
+  .shil-section-card,
+  .shil-card-stack,
+  .shil-panel,
+  .shil-config-block,
+  .shil-climate-box,
+  .shil-project-path-card,
+  .shil-nav-card,
+  .shil-choice-card,
+  .shil-large-choice,
+  .shil-method-card-minimal,
+  .shil-method-card-engine,
+  .shil-big-route-card,
+  .shil-execution-card,
+  .shil-final-compact-card,
+  .shil-compact-summary-card,
+  .shil-summary-table-card,
+  .shil-equipment-picker-panel,
+  .shil-equipment-picker-card,
+  .shil-equipment-card,
+  .shil-equipment-bank-card,
+  .shil-final-sheet-block
+):not(.shil-keep-card):not([data-keep-card="true"]) {
+  background: transparent !important;
+  background-image: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Structural wrappers should not add a second frame around content. */
+:is(
+  .shil-section-card,
+  .shil-card-stack,
+  .shil-panel,
+  .shil-config-block,
+  .shil-project-path-card,
+  .shil-nav-card,
+  .shil-choice-card,
+  .shil-method-card-minimal,
+  .shil-method-card-engine,
+  .shil-execution-card,
+  .shil-final-compact-card,
+  .shil-compact-summary-card
+):not(.shil-keep-card):not([data-keep-card="true"]) {
+  border-radius: 0 !important;
+}
+
+/* Empty, non-semantic visual cards are useless. */
+:is(
+  .shil-section-card,
+  .shil-card-stack,
+  .shil-panel,
+  .shil-config-block,
+  .shil-field-card,
+  .shil-env-card,
+  .shil-choice-card,
+  .shil-project-path-card,
+  .shil-nav-card,
+  .shil-execution-card,
+  .shil-final-compact-card,
+  .shil-compact-summary-card,
+  [class*="empty-card"],
+  [class*="placeholder-card"]
+):empty {
+  display: none !important;
+}
+
+/* Preserve every area that contains or receives real data. */
+:is(
+  input,
+  textarea,
+  select,
+  button,
+  table,
+  [role="table"],
+  [role="dialog"],
+  [role="alert"],
+  [role="status"],
+  .shil-input,
+  .shil-textarea,
+  .shil-field,
+  .shil-field-card,
+  .shil-form-grid,
+  .shil-summary-grid,
+  .shil-summary-item,
+  .shil-summary-details,
+  .shil-summary-detail-item,
+  .shil-summary-detail-table,
+  .shil-compact-summary-table,
+  .shil-final-compact-table,
+  .shil-final-equipment-table,
+  .shil-equipment-bank-table,
+  .shil-equipment-results-card,
+  .shil-selected-equipment-list,
+  .shil-inline-warning,
+  .shil-floating-warning,
+  .shil-warning-list,
+  .shil-feedback,
+  .shil-map-container,
+  .shil-upload-box,
+  .shil-thread-card,
+  .shil-result-card,
+  .shil-answer,
+  .shil-output,
+  [data-result],
+  [data-answer],
+  [data-output],
+  [data-keep-card="true"],
+  .shil-keep-card
+) {
+  /* Deliberately left intact. This selector documents protected UI. */
+}
+
+/* Remove wallpaper from inline styles on known page roots as a CSS fallback. */
+:is(.shil-page-scroll, .shil-page-content, [class$="-page"], [class$="-screen"])[style] {
+  background: transparent !important;
+  background-image: none !important;
+}
+
+/* Reduce excessive blank spacing caused by removed visual wrappers. */
+:is(.shil-section-card, .shil-card-stack, .shil-panel):not(.shil-keep-card):not([data-keep-card="true"]) {
+  margin-block: 8px !important;
+}
+
+/* Auth screens remain functional but lose layered wallpaper only. */
+body.login-page,
+body.welcome-page,
+body.login-page #root,
+body.welcome-page #root {
+  background-image: none !important;
+}
+
+
+/* Summary page root cleanup: remove the remaining engineering-content layer itself. */
+html body .shil-page-shell.shil-summary-clear-engineering main.shil-page-content,
+html body .shil-page-shell.shil-summary-clear-engineering .shil-engineering-content,
+html body .shil-page-shell.shil-summary-clear-engineering .shil-engineering-content > div,
+html body .shil-page-shell.shil-summary-clear-engineering .shil-summary-page {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html body .shil-page-shell.shil-summary-clear-engineering main.shil-page-content::before,
+html body .shil-page-shell.shil-summary-clear-engineering main.shil-page-content::after,
+html body .shil-page-shell.shil-summary-clear-engineering .shil-engineering-content::before,
+html body .shil-page-shell.shil-summary-clear-engineering .shil-engineering-content::after,
+html body .shil-page-shell.shil-summary-clear-engineering .shil-engineering-content > div::before,
+html body .shil-page-shell.shil-summary-clear-engineering .shil-engineering-content > div::after,
+html body .shil-page-shell.shil-summary-clear-engineering .shil-summary-page::before,
+html body .shil-page-shell.shil-summary-clear-engineering .shil-summary-page::after {
+  content: none !important;
+  display: none !important;
+  background: none !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+/* Keep only actual data cells visually defined on the summary page. */
+html body .shil-page-shell.shil-summary-clear-engineering .shil-summary-grid,
+html body .shil-page-shell.shil-summary-clear-engineering .shil-summary-item,
+html body .shil-page-shell.shil-summary-clear-engineering .shil-inline-warning,
+html body .shil-page-shell.shil-summary-clear-engineering button {
+  isolation: isolate;
+}

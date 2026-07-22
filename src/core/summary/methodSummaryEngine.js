@@ -76,7 +76,7 @@ function solarPanelPowerRows({ solarDesign = {}, solarPanelPowerInput = {}, syst
     }))
     : [];
   return [
-    { label: "روش محاسبات", value: "توان پنل خورشیدی", note: "چکیده اختصاصی مسیر PV؛ موتور محاسبات مشترک است" },
+    { label: "روش طراحی", value: "توان پنل خورشیدی", note: "چکیده اختصاصی مسیر PV؛ موتور محاسبات مشترک است" },
     { label: "توان کل پنل‌ها", value: `${totalKw} kW`, note: `${panelCount} عدد × ${panelPower} وات` },
     { label: "تولید خام روزانه", value: `${rawDaily} kWh`, note: "قبل از اعمال تلفات و راندمان" },
     { label: "تولید واقعی با تلفات", value: `${effectiveDaily} kWh`, note: "پس از اعمال شرایط محیطی، راندمان و تلفات" },
@@ -111,7 +111,7 @@ function multiInverterRuleRow(solarDesign = {}) {
 function equipmentRows(ctx) {
   const m = loadMetrics(ctx);
   return [
-    { label: "روش محاسبات", value: "لیست تجهیزات", note: "چکیده بارمحور؛ بدون MPPT و تقسیم پنل اختصاصی" },
+    { label: "روش طراحی", value: "لیست تجهیزات", note: "چکیده بارمحور؛ بدون MPPT و تقسیم پنل اختصاصی" },
     { label: "تعداد تجهیزات", value: ctx.loadResult?.selectedCount ? `${ctx.loadResult.selectedCount} مورد` : (Array.isArray(ctx.selectedEquipment) ? `${ctx.selectedEquipment.length} مورد` : "بدون تجهیز انتخابی") },
     { label: "توان کل مصرفی", value: `${m.powerW} W`, note: "جمع توان تجهیزات انتخاب‌شده" },
     { label: "انرژی روزانه", value: `${m.energyKWh} kWh`, note: "بر اساس ساعت کارکرد تجهیزات" },
@@ -128,7 +128,7 @@ function profileRows(ctx) {
   const m = loadMetrics(ctx);
   const profile = ctx.loadResult?.profile || ctx.systemSettings?.profile || {};
   return [
-    { label: "روش محاسبات", value: "پروفایل مصرف", note: "چکیده اختصاصی مصرف‌محور بر اساس بازه‌های زمانی" },
+    { label: "روش طراحی", value: "پروفایل مصرف", note: "چکیده اختصاصی مصرف‌محور بر اساس بازه‌های زمانی" },
     { label: "مصرف صبح", value: `${val(profile.morningKWh, ctx.loadResult?.morningKWh, "-")} kWh`, note: "بازه صبح" },
     { label: "مصرف ظهر", value: `${val(profile.noonKWh, ctx.loadResult?.noonKWh, "-")} kWh`, note: "بازه ظهر" },
     { label: "مصرف عصر", value: `${val(profile.eveningKWh, ctx.loadResult?.eveningKWh, "-")} kWh`, note: "بازه عصر" },
@@ -144,7 +144,7 @@ function profileRows(ctx) {
 function energyRows(ctx) {
   const m = loadMetrics(ctx);
   return [
-    { label: "روش محاسبات", value: "انرژی روزانه", note: "چکیده اختصاصی انرژی‌محور" },
+    { label: "روش طراحی", value: "انرژی روزانه", note: "چکیده اختصاصی انرژی‌محور" },
     { label: "انرژی روزانه ورودی", value: `${m.energyKWh} kWh`, note: "مبنای اصلی این مسیر" },
     { label: "توان تخمینی", value: `${m.powerW} W`, note: "از انرژی و ساعت کارکرد/پروفایل به دست آمده" },
     { label: "جریان AC", value: `${m.currentA} A`, note: `بر اساس مسیر ${m.voltage}V` },
@@ -158,7 +158,7 @@ function energyRows(ctx) {
 function powerRows(ctx) {
   const m = loadMetrics(ctx);
   return [
-    { label: "روش محاسبات", value: "توان کل", note: "چکیده اختصاصی توان‌محور" },
+    { label: "روش طراحی", value: "توان کل", note: "چکیده اختصاصی توان‌محور" },
     { label: "توان کل ورودی", value: `${m.powerW} W`, note: "مبنای اصلی انتخاب اینورتر و حفاظت" },
     { label: "انرژی روزانه تخمینی", value: `${m.energyKWh} kWh`, note: "بر اساس ساعت کارکرد ثبت‌شده" },
     { label: "جریان AC", value: `${m.currentA} A`, note: `توان تقسیم بر ولتاژ ${m.voltage}V` },
@@ -172,7 +172,7 @@ function powerRows(ctx) {
 function currentRows(ctx) {
   const m = loadMetrics(ctx);
   return [
-    { label: "روش محاسبات", value: "جریان کل", note: "چکیده اختصاصی جریان‌محور" },
+    { label: "روش طراحی", value: "جریان کل", note: "چکیده اختصاصی جریان‌محور" },
     { label: "جریان کل ورودی", value: `${m.currentA} A`, note: "مبنای اصلی این مسیر" },
     { label: "ولتاژ مسیر", value: `${m.voltage} V`, note: "۲۲۰ تک‌فاز یا ۳۸۰ سه‌فاز" },
     { label: "توان متناظر", value: `${m.powerW} W`, note: "بر اساس جریان و ولتاژ" },
@@ -186,7 +186,7 @@ function currentRows(ctx) {
 function emergencyRows(ctx) {
   const result = ctx.result || {};
   return [
-    { label: "روش محاسبات", value: "برق اضطراری", note: "چکیده اختصاصی سیستم پشتیبان" },
+    { label: "روش طراحی", value: "برق اضطراری", note: "چکیده اختصاصی سیستم پشتیبان" },
     { label: "اینورتر برق اضطراری", value: `${val(result?.inverter?.count, 1)} عدد / ${val(result?.inverter?.ratedPowerW, "-")} وات`, note: "پوشش توان دائم و لحظه‌ای بارهای ضروری" },
     { label: "باتری منتخب", value: batteryLabel(result?.battery), note: "بر اساس زمان برق اضطراری و DoD" },
     { label: "زمان برق اضطراری", value: `${val(result?.settings?.requiredEmergencyHours, 2)} ساعت`, note: "در ظرفیت باتری لحاظ شده" },

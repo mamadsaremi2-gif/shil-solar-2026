@@ -1,3 +1,4 @@
+import ShilPrimaryButton from "../../components/project/ShilPrimaryButton";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ShilPageShell from "../../components/ShilPageShell";
@@ -442,7 +443,6 @@ const navigate = useNavigate();
 
   return (
     <ShilPageShell
-      hideFooter={true}
       title="شرایط محیطی"
       backLabel="بازگشت"
       nextLabel="تایید مرحله"
@@ -630,8 +630,43 @@ const navigate = useNavigate();
         ) : null}
 
         {validationMessage ? <div className="shil-env-error">{validationMessage}</div> : null}
-        <button type="button" className="shil-primary-wide shil-env-confirm-button" disabled={!environmentReady} onClick={confirmEnvironment}>تأیید شرایط محیطی و ادامه</button>
+
+        <div
+          className="shil-env-content-confirm-slot"
+          aria-label="تأیید شرایط محیطی"
+          style={{
+            position: "relative",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "100%",
+            margin: "0px 0px 0px",
+            transform: "translateX(33px)",
+            zIndex: 20,
+          }}
+        >
+          <ShilPrimaryButton
+            className="shil-env-content-confirm-button"
+            disabled={!environmentReady}
+            onClick={confirmEnvironment}
+            label="تأیید محیط"
+            style={{
+              position: "static",
+              left: "auto",
+              right: "auto",
+              bottom: "auto",
+              top: "auto",
+              transform: "none",
+              width: "max-content",
+              minWidth: 0,
+              maxWidth: "none",
+              padding: "0 12px",
+              whiteSpace: "nowrap",
+            }}
+          />
+        </div>
       </div>
     </ShilPageShell>
   );
 }
+

@@ -1,0 +1,1785 @@
+﻿/* ==========================================================
+   SHIL PROJECT CLEAN PAGES
+   Remove repeated parent glass/card wrappers
+   Keep only field/button cards
+   ========================================================== */
+
+body.shil-project-path-screen .shil-page-content,
+body.shil-project-info-screen .shil-page-content,
+body.shil-project-path-screen main.shil-page-content,
+body.shil-project-info-screen main.shil-page-content {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+body.shil-project-path-screen .shil-engineering-content,
+body.shil-project-info-screen .shil-engineering-content {
+  padding: 12px 12px 24px !important;
+  margin: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  border: 0 !important;
+}
+
+body.shil-project-path-screen .shil-engineering-content > div,
+body.shil-project-info-screen .shil-engineering-content > div {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.shil-project-clean-page {
+  width: 100% !important;
+  max-width: 100% !important;
+  display: grid !important;
+  gap: 12px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+.shil-project-clean-page,
+.shil-project-clean-page *,
+.shil-project-clean-page::before,
+.shil-project-clean-page::after,
+.shil-project-clean-page *::before,
+.shil-project-clean-page *::after {
+  outline: 0 !important;
+}
+
+.shil-clean-section-head {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  padding: 0 2px !important;
+  margin: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+.shil-clean-section-head h2 {
+  margin: 0 !important;
+  font-size: 14px !important;
+  font-weight: 900 !important;
+  color: #ffffff !important;
+}
+
+.shil-clean-section-head span {
+  font-size: 11px !important;
+  opacity: .78 !important;
+  color: #ffffff !important;
+}
+
+/* Project Info: 3 minimal columns */
+body.shil-project-info-screen .shil-form-grid,
+body.shil-project-info-screen .shil-form-grid-clean {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+body.shil-project-info-screen .shil-form-grid > *,
+body.shil-project-info-screen .shil-form-grid-clean > * {
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+}
+
+/* Only actual fields/buttons remain as cards */
+.shil-field-card,
+body.shil-project-path-screen .shil-execution-card,
+body.shil-project-path-screen .shil-utility-select-button,
+body.shil-project-path-screen .shil-primary-wide,
+body.shil-project-info-screen .shil-primary-wide {
+  background: rgba(255,255,255,.14) !important;
+  background-image: linear-gradient(135deg, rgba(255,255,255,.20), rgba(255,255,255,.08)) !important;
+  border: 1px solid rgba(255,255,255,.18) !important;
+  border-radius: 18px !important;
+  box-shadow: 0 12px 26px rgba(0,0,0,.18) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  box-sizing: border-box !important;
+}
+
+.shil-field-card {
+  display: grid !important;
+  gap: 6px !important;
+  padding: 10px 8px !important;
+}
+
+.shil-field-card span {
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  color: #fff !important;
+  white-space: nowrap !important;
+}
+
+.shil-field-card input,
+.shil-field-card textarea,
+textarea.shil-field-card {
+  width: 100% !important;
+  min-width: 0 !important;
+  color: #fff !important;
+}
+
+.shil-project-description-clean {
+  min-height: 110px !important;
+  padding: 12px !important;
+  resize: vertical !important;
+}
+
+/* Project path cards */
+body.shil-project-path-screen .shil-project-path-two-cards {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+body.shil-project-path-screen .shil-execution-card {
+  margin: 0 !important;
+  padding: 10px 8px !important;
+}
+
+body.shil-project-path-screen .shil-execution-image {
+  box-shadow: none !important;
+}
+
+body.shil-project-path-screen .shil-utility-path-field {
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+body.shil-project-path-screen .shil-utility-path-field summary {
+  margin: 0 0 8px !important;
+}
+
+body.shil-project-path-screen .shil-project-path-confirm {
+  margin: 0 !important;
+}
+
+/* Kill old wrappers if any remain anywhere */
+body.shil-project-path-screen .shil-card-stack,
+body.shil-project-path-screen .shil-section-card,
+body.shil-project-info-screen .shil-card-stack,
+body.shil-project-info-screen .shil-section-card {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+}
+
+body.shil-project-path-screen .shil-card-stack::before,
+body.shil-project-path-screen .shil-card-stack::after,
+body.shil-project-path-screen .shil-section-card::before,
+body.shil-project-path-screen .shil-section-card::after,
+body.shil-project-info-screen .shil-card-stack::before,
+body.shil-project-info-screen .shil-card-stack::after,
+body.shil-project-info-screen .shil-section-card::before,
+body.shil-project-info-screen .shil-section-card::after {
+  display: none !important;
+  content: none !important;
+}
+
+@media (max-width: 420px) {
+  body.shil-project-info-screen .shil-form-grid,
+  body.shil-project-info-screen .shil-form-grid-clean {
+    gap: 8px !important;
+  }
+
+  .shil-field-card {
+    padding: 8px 6px !important;
+  }
+}
+
+/* ==========================================================
+   PROJECT PATH + INFO
+   FIX CONFIRM BUTTON ABOVE FOOTER
+   ========================================================== */
+
+body.shil-project-path-screen .shil-project-path-confirm,
+body.shil-project-info-screen .shil-project-path-confirm,
+body.shil-project-info-screen .shil-primary-wide,
+body.shil-project-path-screen .shil-primary-wide {
+  position: fixed !important;
+  left: 14px !important;
+  right: 14px !important;
+  bottom: 46px !important; /* footer 40px + gap 6px */
+  z-index: 4500 !important;
+
+  width: auto !important;
+  max-width: none !important;
+
+  margin: 0 !important;
+  height: 46px !important;
+  min-height: 46px !important;
+  max-height: 46px !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  border-radius: 18px !important;
+  box-sizing: border-box !important;
+}
+
+body.shil-project-path-screen .shil-project-clean-page,
+body.shil-project-info-screen .shil-project-clean-page,
+body.shil-project-path-screen .shil-engineering-content,
+body.shil-project-info-screen .shil-engineering-content {
+  padding-bottom: 104px !important;
+}
+
+
+/* ==========================================================
+   AFTER WRAPPER REMOVAL
+   Direct children layout
+   ========================================================== */
+
+body.shil-project-path-screen .shil-engineering-content,
+body.shil-project-info-screen .shil-engineering-content {
+  display: grid !important;
+  gap: 12px !important;
+  padding: 12px 12px 104px !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+body.shil-project-path-screen .shil-project-path-confirm,
+body.shil-project-info-screen .shil-primary-wide {
+  position: fixed !important;
+  left: 14px !important;
+  right: 14px !important;
+  bottom: 46px !important;
+  z-index: 4500 !important;
+  width: auto !important;
+  height: 46px !important;
+  min-height: 46px !important;
+  max-height: 46px !important;
+  margin: 0 !important;
+}
+
+
+/* ==========================================================
+   CALCULATION METHOD CLEAN PAGE
+   Same structure as path/info pages
+   ========================================================== */
+
+body.shil-calculation-method-screen .shil-page-content,
+body.shil-calculation-method-screen main.shil-page-content {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+body.shil-calculation-method-screen .shil-engineering-content {
+  display: grid !important;
+  gap: 12px !important;
+  padding: 12px 12px 104px !important;
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+body.shil-calculation-method-screen .shil-engineering-content > div {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+body.shil-calculation-method-screen .shil-method-context-clean {
+  background: rgba(255,255,255,.10) !important;
+  border: 1px solid rgba(255,255,255,.16) !important;
+  border-radius: 16px !important;
+  box-shadow: none !important;
+  padding: 10px 12px !important;
+  margin: 0 !important;
+}
+
+body.shil-calculation-method-screen .shil-method-grid-clean {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+body.shil-calculation-method-screen .shil-method-card-minimal {
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 10px 8px !important;
+  background: rgba(255,255,255,.14) !important;
+  background-image: linear-gradient(135deg, rgba(255,255,255,.20), rgba(255,255,255,.08)) !important;
+  border: 1px solid rgba(255,255,255,.18) !important;
+  border-radius: 18px !important;
+  box-shadow: 0 12px 26px rgba(0,0,0,.18) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+}
+
+body.shil-calculation-method-screen .shil-method-card-minimal.active {
+  border-color: rgba(39,215,255,.88) !important;
+  box-shadow: 0 0 0 2px rgba(39,215,255,.18), 0 12px 26px rgba(0,0,0,.22) !important;
+}
+
+body.shil-calculation-method-screen .shil-calculation-method-confirm {
+  position: fixed !important;
+  left: 14px !important;
+  right: 14px !important;
+  bottom: 46px !important;
+  z-index: 4500 !important;
+
+  width: auto !important;
+  max-width: none !important;
+
+  height: 46px !important;
+  min-height: 46px !important;
+  max-height: 46px !important;
+
+  margin: 0 !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  border-radius: 18px !important;
+  box-sizing: border-box !important;
+}
+
+body.shil-calculation-method-screen .shil-card-stack,
+body.shil-calculation-method-screen .shil-section-card {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+}
+
+body.shil-calculation-method-screen .shil-card-stack::before,
+body.shil-calculation-method-screen .shil-card-stack::after,
+body.shil-calculation-method-screen .shil-section-card::before,
+body.shil-calculation-method-screen .shil-section-card::after {
+  display: none !important;
+  content: none !important;
+}
+
+
+/* ==========================================================
+   CALCULATION INPUTS
+   SUMMARY GRID ITEMS AS 2 COLUMN CARDS
+   ========================================================== */
+
+body .shil-equipment-page .shil-summary-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+}
+
+body .shil-equipment-page .shil-summary-grid > * {
+  display: grid !important;
+  gap: 6px !important;
+  align-items: center !important;
+  justify-items: center !important;
+  text-align: center !important;
+
+  background: rgba(255,255,255,.14) !important;
+  border: 1px solid rgba(39,215,255,.75) !important;
+  border-radius: 16px !important;
+  padding: 10px 8px !important;
+  box-shadow: none !important;
+
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+}
+
+
+/* ==========================================================
+   CALCULATION INPUTS
+   TWO COLUMN LAYOUT
+   ========================================================== */
+
+body .shil-equipment-page .shil-form-grid{
+    display:grid !important;
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:12px !important;
+
+    width:100% !important;
+    height:auto !important;
+    min-height:0 !important;
+    max-height:none !important;
+}
+
+body .shil-equipment-page .shil-form-grid>*{
+    width:100% !important;
+    min-width:0 !important;
+    margin:0 !important;
+}
+
+body .shil-equipment-page .shil-env-card{
+    height:auto !important;
+    min-height:0 !important;
+    max-height:none !important;
+}
+
+body .shil-equipment-page .shil-env-card>h2,
+body .shil-equipment-page .shil-env-card>h3,
+body .shil-equipment-page .shil-section-head{
+    grid-column:1/-1 !important;
+
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+
+    text-align:center !important;
+
+    height:12px !important;
+    min-height:12px !important;
+    max-height:12px !important;
+
+    margin:0 0 8px !important;
+    padding:0 !important;
+}
+
+
+/* ==========================================================
+   FINAL CLEAN SECTION HEAD STYLE
+   ========================================================== */
+
+body .shil-clean-section-head {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+
+  height: 36px !important;
+  min-height: 36px !important;
+  max-height: 36px !important;
+
+  padding: 0 14px !important;
+  margin: 0 0 10px !important;
+
+  background: linear-gradient(180deg,#edf9ff 0%,#d8efff 45%,#b7ddf8 100%) !important;
+  border: 1px solid rgba(255,255,255,.9) !important;
+  border-radius: 18px !important;
+
+  box-shadow:
+    inset 0 3px 8px rgba(255,255,255,.95),
+    inset 0 -6px 12px rgba(38,109,170,.35),
+    inset 0 0 18px rgba(0,140,255,.12),
+    0 6px 16px rgba(0,0,0,.15) !important;
+
+  box-sizing: border-box !important;
+}
+
+body .shil-clean-section-head span {
+  display: none !important;
+}
+
+body .shil-clean-section-head h2 {
+  width: 100% !important;
+  margin: 0 !important;
+
+  font-size: 14px !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+
+  text-align: center !important;
+  color: #061421 !important;
+}
+
+
+/* ==========================================================
+   FORCE FINAL CLEAN SECTION HEAD STYLE
+   ========================================================== */
+
+html body .shil-clean-section-head {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+
+  height: 36px !important;
+  min-height: 36px !important;
+  max-height: 36px !important;
+
+  padding: 0 14px !important;
+  margin: 0 0 10px !important;
+
+  background: linear-gradient(180deg,#edf9ff 0%,#d8efff 45%,#b7ddf8 100%) !important;
+  border: 1px solid rgba(255,255,255,.9) !important;
+  border-radius: 18px !important;
+
+  box-shadow:
+    inset 0 3px 8px rgba(255,255,255,.95),
+    inset 0 -6px 12px rgba(38,109,170,.35),
+    inset 0 0 18px rgba(0,140,255,.12),
+    0 6px 16px rgba(0,0,0,.15) !important;
+
+  box-sizing: border-box !important;
+}
+
+html body .shil-clean-section-head span {
+  display: none !important;
+}
+
+html body .shil-clean-section-head h2 {
+  width: 100% !important;
+  margin: 0 !important;
+
+  font-size: 14px !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+
+  text-align: center !important;
+  color: #061421 !important;
+}
+
+
+/* ==========================================================
+   FINAL FORCE CLEAN SECTION HEAD STYLE
+   ========================================================== */
+
+html body .shil-clean-section-head {
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+
+  height:36px !important;
+  min-height:36px !important;
+  max-height:36px !important;
+
+  padding:0 14px !important;
+  margin:0 0 10px !important;
+
+  background-color:#cfeeff !important;
+  background-image:linear-gradient(180deg,#f4fbff 0%,#d8efff 48%,#add8f4 100%) !important;
+
+  border:1px solid rgba(255,255,255,.95) !important;
+  border-radius:18px !important;
+
+  box-shadow:
+    inset 0 3px 8px rgba(255,255,255,.95),
+    inset 0 -6px 12px rgba(38,109,170,.35),
+    inset 0 0 18px rgba(0,140,255,.12),
+    0 6px 16px rgba(0,0,0,.15) !important;
+
+  box-sizing:border-box !important;
+}
+
+html body .shil-clean-section-head span {
+  display:none !important;
+}
+
+html body .shil-clean-section-head h2 {
+  width:100% !important;
+  margin:0 !important;
+
+  font-size:14px !important;
+  font-weight:900 !important;
+  line-height:1 !important;
+
+  text-align:center !important;
+  color:#061421 !important;
+}
+
+
+
+
+/* ===== SHIL UNIFIED CONFIRM BUTTONS ===== */
+
+html body button.shil-primary-wide,
+html body button.shil-project-path-confirm,
+html body button.shil-env-confirm-button,
+html body button.shil-confirm-config-button,
+html body button.shil-primary-btn {
+  position: fixed !important;
+
+  width: max-content !important;
+  min-width: 0 !important;
+  max-width: none !important;
+
+  height: 46px !important;
+
+  left: 50% !important;
+  right: auto !important;
+  bottom: 46px !important;
+  transform: translateX(-50%) !important;
+
+  padding: 0 5px !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  white-space: nowrap !important;
+
+  font-family: Vazirmatn, IRANSans, Tahoma, Arial, "Noto Sans Arabic", "Noto Naskh Arabic", sans-serif !important;
+  font-size: 16px !important;
+  font-weight: 900 !important;
+
+  color: #ffffff !important;
+
+  background: #8A2BE2 !important;
+  background-color: #8A2BE2 !important;
+  background-image: none !important;
+
+  border: 2px solid #6B1FD3 !important;
+  border-radius: 22px !important;
+
+  box-shadow:
+    inset 0 2px 4px rgba(255,255,255,.35),
+    inset 0 -2px 4px rgba(0,0,0,.15) !important;
+
+  z-index: 9999 !important;
+}
+
+html body button.shil-primary-wide:disabled,
+html body button.shil-project-path-confirm:disabled,
+html body button.shil-env-confirm-button:disabled,
+html body button.shil-confirm-config-button:disabled,
+html body button.shil-primary-btn:disabled {
+  opacity: 0.42 !important;
+  filter: grayscale(0.7) !important;
+}
+
+/* ===== END SHIL UNIFIED CONFIRM BUTTONS ===== */
+
+
+
+/* ===== SHIL EQUIPMENT BLOCK TITLE CARDS ===== */
+
+body .shil-equipment-page .shil-env-card {
+  position: relative !important;
+  padding-top: 74px !important;
+  overflow: visible !important;
+}
+
+body .shil-equipment-page .shil-env-card > h2,
+body .shil-equipment-page .shil-env-card > h3,
+body .shil-equipment-page .shil-env-card > .shil-section-head {
+  position: absolute !important;
+  top: 18px !important;
+  left: 36px !important;
+  right: 36px !important;
+
+  width: auto !important;
+  min-height: 42px !important;
+
+  margin: 0 !important;
+  padding: 0 14px !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  background: linear-gradient(180deg, #f8fcff 0%, #eaf6ff 100%) !important;
+  border: 2px solid rgba(34, 211, 238, 0.55) !important;
+  border-radius: 22px !important;
+
+  box-shadow:
+    inset 0 2px 4px rgba(255,255,255,.75),
+    0 6px 14px rgba(15, 23, 42, .16) !important;
+
+  font-family: Vazirmatn, IRANSans, Tahoma, Arial, sans-serif !important;
+  font-size: 14px !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  text-align: center !important;
+  color: #061421 !important;
+
+  z-index: 5 !important;
+}
+
+body .shil-equipment-page .shil-env-card > .shil-section-head * {
+  margin: 0 !important;
+  padding: 0 !important;
+
+  font-size: 14px !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  color: #061421 !important;
+  text-align: center !important;
+}
+
+/* حذف ظاهر خط/نوار بنفش قبلی عنوان‌ها */
+body .shil-equipment-page .shil-env-card > h2::before,
+body .shil-equipment-page .shil-env-card > h2::after,
+body .shil-equipment-page .shil-env-card > h3::before,
+body .shil-equipment-page .shil-env-card > h3::after,
+body .shil-equipment-page .shil-env-card > .shil-section-head::before,
+body .shil-equipment-page .shil-env-card > .shil-section-head::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* ===== END SHIL EQUIPMENT BLOCK TITLE CARDS ===== */
+
+
+/* ===== SHIL REMOVE BIG BLOCK CARDS ===== */
+
+body .shil-equipment-page .shil-env-card{
+    background:transparent !important;
+    background-image:none !important;
+
+    border:none !important;
+    outline:none !important;
+
+    box-shadow:none !important;
+
+    border-radius:0 !important;
+
+    backdrop-filter:none !important;
+    -webkit-backdrop-filter:none !important;
+}
+
+/* ===== END SHIL REMOVE BIG BLOCK CARDS ===== */
+
+
+/* ===== SHIL REMOVE EQUIPMENT BIG BACKGROUND CARDS - STRONG ===== */
+
+body .shil-equipment-page section,
+body .shil-equipment-page .shil-env-card,
+body .shil-equipment-page .shil-equipment-picker-card,
+body .shil-equipment-page .shil-selected-equipment-list,
+body .shil-equipment-page .shil-equipment-results-card {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+
+  border: none !important;
+  outline: none !important;
+
+  box-shadow: none !important;
+
+  border-radius: 0 !important;
+
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* اما کارت عنوان‌ها باقی بمانند */
+body .shil-equipment-page .shil-env-card > h2,
+body .shil-equipment-page .shil-env-card > h3,
+body .shil-equipment-page .shil-env-card > .shil-section-head {
+  background: linear-gradient(180deg, #f8fcff 0%, #eaf6ff 100%) !important;
+  border: 2px solid rgba(34, 211, 238, 0.55) !important;
+  border-radius: 22px !important;
+  box-shadow:
+    inset 0 2px 4px rgba(255,255,255,.75),
+    0 6px 14px rgba(15, 23, 42, .16) !important;
+}
+
+/* ===== END SHIL REMOVE EQUIPMENT BIG BACKGROUND CARDS - STRONG ===== */
+
+
+
+
+
+
+
+
+
+
+/* ===== SHIL CALC METHOD HEADER CAPSULES ===== */
+
+/* ردیف اطلاعات بالای روش محاسبات */
+html body .shil-calc-method-page .shil-project-summary,
+html body .shil-calculation-method-page .shil-project-summary,
+html body .shil-method-page .shil-project-summary {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 12px !important;
+  align-items: center !important;
+
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+/* خود کپسول‌ها */
+html body .shil-calc-method-page .shil-project-summary > *,
+html body .shil-calculation-method-page .shil-project-summary > *,
+html body .shil-method-page .shil-project-summary > * {
+  width: 100% !important;
+  min-height: 42px !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  margin: 0 !important;
+  padding: 0 14px !important;
+
+  background: linear-gradient(180deg, #f8fcff 0%, #eaf6ff 100%) !important;
+  border: 2px solid rgba(34, 211, 238, 0.65) !important;
+  border-radius: 999px !important;
+
+  box-shadow:
+    inset 0 2px 4px rgba(255,255,255,.75),
+    0 6px 14px rgba(15, 23, 42, .16) !important;
+
+  font-family: Vazirmatn, IRANSans, Tahoma, Arial, sans-serif !important;
+  font-size: 14px !important;
+  font-weight: 900 !important;
+  line-height: 1.2 !important;
+  color: #061421 !important;
+  text-align: center !important;
+
+  white-space: nowrap !important;
+}
+
+/* ===== END SHIL CALC METHOD HEADER CAPSULES ===== */
+
+
+
+/* ===== SHIL METHOD CONTEXT STRIP TWO CAPSULES ===== */
+
+html body .shil-method-context-strip.shil-method-context-clean {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 12px !important;
+
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+html body .shil-method-context-strip.shil-method-context-clean > span,
+html body .shil-method-context-strip.shil-method-context-clean > strong {
+  min-height: 42px !important;
+  padding: 0 14px !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  background: linear-gradient(180deg, #f8fcff 0%, #eaf6ff 100%) !important;
+  border: 2px solid rgba(34, 211, 238, 0.65) !important;
+  border-radius: 999px !important;
+
+  box-shadow:
+    inset 0 2px 4px rgba(255,255,255,.75),
+    0 6px 14px rgba(15, 23, 42, .16) !important;
+
+  font-size: 14px !important;
+  font-weight: 900 !important;
+  color: #061421 !important;
+  line-height: 1.2 !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+}
+
+/* ===== END SHIL METHOD CONTEXT STRIP TWO CAPSULES ===== */
+
+
+/* ===== SHIL REMOVE OLD CONTEXT STRIP GLOW ===== */
+
+html body .shil-method-context-strip.shil-method-context-clean {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+
+  overflow: visible !important;
+}
+
+html body .shil-method-context-strip.shil-method-context-clean::before,
+html body .shil-method-context-strip.shil-method-context-clean::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* ===== END SHIL REMOVE OLD CONTEXT STRIP GLOW ===== */
+
+
+/* ===== SHIL KILL CONTEXT STRIP OLD HALO STRONG ===== */
+
+html body div.shil-method-context-strip.shil-method-context-clean {
+  column-gap: 18px !important;
+  gap: 18px !important;
+
+  background: none !important;
+  background-color: transparent !important;
+  background-image: none !important;
+
+  border: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+
+  padding: 0 !important;
+  margin: 0 !important;
+
+  isolation: isolate !important;
+}
+
+html body div.shil-method-context-strip.shil-method-context-clean::before,
+html body div.shil-method-context-strip.shil-method-context-clean::after,
+html body div.shil-method-context-strip.shil-method-context-clean > span::before,
+html body div.shil-method-context-strip.shil-method-context-clean > span::after,
+html body div.shil-method-context-strip.shil-method-context-clean > strong::before,
+html body div.shil-method-context-strip.shil-method-context-clean > strong::after {
+  display: none !important;
+  content: none !important;
+  background: none !important;
+  box-shadow: none !important;
+  border: 0 !important;
+}
+
+html body div.shil-method-context-strip.shil-method-context-clean > span,
+html body div.shil-method-context-strip.shil-method-context-clean > strong {
+  position: relative !important;
+  z-index: 2 !important;
+
+  background: #ffffff !important;
+  background-image: linear-gradient(180deg, #ffffff 0%, #f4fbff 100%) !important;
+
+  overflow: hidden !important;
+}
+
+/* ===== END SHIL KILL CONTEXT STRIP OLD HALO STRONG ===== */
+
+
+/* ===== SHIL METHOD STRIP PARENT TRANSPARENT FIX ===== */
+
+html body div.shil-method-context-strip.shil-method-context-clean {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+
+  border: 0 !important;
+  border-right: 0 !important;
+  border-left: 0 !important;
+  border-top: 0 !important;
+  border-bottom: 0 !important;
+
+  box-shadow: none !important;
+  border-radius: 0 !important;
+
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* ===== END SHIL METHOD STRIP PARENT TRANSPARENT FIX ===== */
+
+
+/* ===== SHIL REMOVE METHOD CONTEXT WRAPPER CARD ===== */
+
+html body .shil-method-context-strip.shil-method-context-clean {
+  position: relative !important;
+  z-index: 5 !important;
+}
+
+/* کارت والد پشت دو کپسول */
+html body .shil-method-context-strip.shil-method-context-clean:is(*) {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* اگر مرورگر :has را پشتیبانی کند، والد واقعی را هم شفاف می‌کند */
+html body section:has(> .shil-method-context-strip.shil-method-context-clean),
+html body div:has(> .shil-method-context-strip.shil-method-context-clean),
+html body article:has(> .shil-method-context-strip.shil-method-context-clean) {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+
+  border: 0 !important;
+  outline: 0 !important;
+
+  box-shadow: none !important;
+  border-radius: 0 !important;
+
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* خود دو کپسول باقی بمانند */
+html body .shil-method-context-strip.shil-method-context-clean > span,
+html body .shil-method-context-strip.shil-method-context-clean > strong {
+  background: linear-gradient(180deg, #ffffff 0%, #f4fbff 100%) !important;
+  border: 2px solid rgba(34, 211, 238, 0.65) !important;
+  border-radius: 999px !important;
+  box-shadow:
+    inset 0 2px 4px rgba(255,255,255,.75),
+    0 6px 14px rgba(15,23,42,.16) !important;
+}
+
+/* ===== END SHIL REMOVE METHOD CONTEXT WRAPPER CARD ===== */
+
+
+/* ===== SHIL FIX METHOD CONTEXT STRIP PARENT ONLY ===== */
+
+html body.shil-calculation-method-screen .shil-method-context-strip.shil-method-context-clean {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+
+  box-shadow: none !important;
+
+  border: 0 !important;
+  border-right: 0 !important;
+  border-radius: 0 !important;
+
+  padding: 0 !important;
+  gap: 18px !important;
+}
+
+/* خود دو کپسول حفظ شوند */
+html body.shil-calculation-method-screen .shil-method-context-strip.shil-method-context-clean > span,
+html body.shil-calculation-method-screen .shil-method-context-strip.shil-method-context-clean > strong {
+  background: linear-gradient(180deg, #ffffff 0%, #f4fbff 100%) !important;
+  border: 2px solid rgba(34, 211, 238, 0.65) !important;
+  border-radius: 999px !important;
+  box-shadow:
+    inset 0 2px 4px rgba(255,255,255,.75),
+    0 6px 14px rgba(15,23,42,.16) !important;
+}
+
+/* ===== END SHIL FIX METHOD CONTEXT STRIP PARENT ONLY ===== */
+
+
+
+
+
+
+
+/* ===== SHIL NEON METHOD GRID CARDS ===== */
+
+html body.shil-calculation-method-screen .shil-method-grid-five > * {
+  position: relative !important;
+  overflow: hidden !important;
+
+  border-radius: 30px !important;
+
+  background:
+    linear-gradient(
+      180deg,
+      #eef5ff 0%,
+      #d8e3ff 28%,
+      #c3d2f8 58%,
+      #b2c0ea 100%
+    ) !important;
+
+  border: 2px solid #79ecff !important;
+
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,.96),
+    inset 0 14px 22px rgba(255,255,255,.58),
+    inset 0 -14px 22px rgba(90,60,255,.18),
+
+    0 0 16px rgba(0,220,255,.95),
+    0 0 34px rgba(0,220,255,.60),
+    0 0 64px rgba(0,220,255,.28),
+
+    0 0 22px rgba(180,70,255,.90),
+    0 0 48px rgba(180,70,255,.62),
+    0 0 80px rgba(180,70,255,.24) !important;
+
+  transition: all .25s ease !important;
+}
+
+html body.shil-calculation-method-screen .shil-method-grid-five > *::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  pointer-events: none !important;
+  border-radius: inherit !important;
+
+  background:
+    radial-gradient(
+      circle at 16% 8%,
+      rgba(255,255,255,.98),
+      rgba(255,255,255,.48) 14%,
+      transparent 36%
+    ),
+    radial-gradient(
+      circle at 92% 10%,
+      rgba(0,230,255,.42),
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at 92% 92%,
+      rgba(185,70,255,.48),
+      transparent 44%
+    ),
+    linear-gradient(
+      135deg,
+      rgba(255,255,255,.26),
+      rgba(255,255,255,.05) 34%,
+      transparent 54%
+    ) !important;
+
+  z-index: 0 !important;
+}
+
+html body.shil-calculation-method-screen .shil-method-grid-five > * > * {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* ===== END SHIL NEON METHOD GRID CARDS ===== */
+
+
+/* ===== SHIL MOVE METHOD GRID DOWN ===== */
+
+html body.shil-calculation-method-screen .shil-method-grid-five{
+    margin-top:5px !important;
+}
+
+/* ===== END SHIL MOVE METHOD GRID DOWN ===== */
+
+
+/* ===== SHIL ENVIRONMENT RAIL MATCH OTHER PAGES ===== */
+
+html body.shil-environment-screen .shil-env-rail,
+html body.shil-environment-screen .shil-project-rail,
+html body.shil-environment-screen .shil-step-rail,
+html body.shil-environment-screen .shil-method-rail {
+  height: 54px !important;
+  min-height: 54px !important;
+
+  padding: 0 14px !important;
+  margin: 0 auto 10px auto !important;
+
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 13px !important;
+
+  width: max-content !important;
+  min-width: 100% !important;
+  max-width: none !important;
+
+  overflow-x: auto !important;
+  overflow-y: visible !important;
+
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+
+  border-radius: 18px !important;
+  white-space: nowrap !important;
+  scroll-snap-type: x proximity !important;
+}
+
+html body.shil-environment-screen .shil-env-rail > *,
+html body.shil-environment-screen .shil-project-rail > *,
+html body.shil-environment-screen .shil-step-rail > *,
+html body.shil-environment-screen .shil-method-rail > * {
+  height: 42px !important;
+  min-width: max-content !important;
+
+  padding: 0 14px !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  border-radius: 999px !important;
+
+  background: linear-gradient(180deg, #ffffff 0%, #f4fbff 100%) !important;
+  border: 2px solid rgba(34, 211, 238, 0.65) !important;
+
+  box-shadow:
+    inset 0 2px 4px rgba(255,255,255,.75),
+    0 6px 14px rgba(15,23,42,.16) !important;
+
+  font-size: 13px !important;
+  font-weight: 900 !important;
+  color: #061421 !important;
+  white-space: nowrap !important;
+}
+
+/* ===== END SHIL ENVIRONMENT RAIL MATCH OTHER PAGES ===== */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ===== SHIL SYSTEM SETTINGS FINAL LAYOUT ===== */
+
+html body .shil-system-settings-page .shil-section-card.shil-config-block {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-right: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  margin-bottom: 18px !important;
+  overflow: visible !important;
+}
+
+html body .shil-system-settings-page .shil-section-card.shil-config-block > .shil-section-head {
+  margin: 0 0 12px 0 !important;
+  height: 52px !important;
+  padding: 0 16px !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+
+  border-radius: 26px !important;
+  background: linear-gradient(90deg, #ffffff, #dfe7f4) !important;
+  border: 2px solid rgba(200,184,255,.75) !important;
+  box-shadow:
+    inset 0 2px 4px rgba(255,255,255,.85),
+    0 8px 16px rgba(15,23,42,.15) !important;
+}
+
+html body .shil-system-settings-page .shil-section-head h2 {
+  font-size: 15px !important;
+  font-weight: 900 !important;
+  color: #061421 !important;
+}
+
+html body .shil-system-settings-page .shil-section-head span {
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  color: #34495e !important;
+}
+
+/* بلوک اول: چکیده مسیر توان کل */
+html body .shil-system-settings-page .shil-section-card.shil-config-block:first-of-type .shil-summary-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* انتخاب نوع سیستم: 3 ستون */
+html body .shil-system-settings-page .shil-choice-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* ضرایب طراحی: 2 ستون */
+html body .shil-system-settings-page .shil-form-grid.compact {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* چکیده نهایی: 2 ستون */
+html body .shil-system-settings-page .shil-section-card.shil-config-block:last-of-type .shil-summary-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* کارت‌های خلاصه */
+html body .shil-system-settings-page .shil-summary-item {
+  min-height: 70px !important;
+  padding: 14px !important;
+
+  border-radius: 22px !important;
+  background: linear-gradient(180deg, #ffffff, #f5fbff) !important;
+  border: 1px solid rgba(140,220,255,.65) !important;
+  box-shadow:
+    inset 0 2px 4px rgba(255,255,255,.85),
+    0 6px 14px rgba(15,23,42,.10) !important;
+}
+
+html body .shil-system-settings-page .shil-summary-item strong,
+html body .shil-system-settings-page .shil-summary-item b {
+  font-size: 22px !important;
+  font-weight: 900 !important;
+}
+
+/* آیتم‌های فرم ضرایب */
+html body .shil-system-settings-page .shil-form-grid.compact > * {
+  border-radius: 22px !important;
+  background: linear-gradient(180deg, #ffffff, #f5fbff) !important;
+  border: 1px solid rgba(90,230,140,.65) !important;
+  box-shadow:
+    inset 0 2px 4px rgba(255,255,255,.9),
+    0 6px 14px rgba(15,23,42,.10) !important;
+  padding: 12px !important;
+}
+
+/* ورودی‌ها */
+html body .shil-system-settings-page select,
+html body .shil-system-settings-page input {
+  height: 52px !important;
+  border-radius: 18px !important;
+}
+
+/* بانک‌های پنل، اینورتر، باتری */
+html body .shil-system-settings-page .shil-bank-grid {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: 0 !important;
+}
+
+html body .shil-system-settings-page .shil-bank-grid select {
+  height: 52px !important;
+  border-radius: 18px !important;
+  background: #ffffff !important;
+  font-size: 18px !important;
+  font-weight: 800 !important;
+}
+
+html body .shil-system-settings-page .shil-bank-grid button {
+  height: 52px !important;
+  border-radius: 18px !important;
+  background: linear-gradient(135deg, #e8f2ff, #d9e6fb) !important;
+  border: 1px solid rgba(160,210,255,.65) !important;
+  box-shadow: 0 6px 14px rgba(15,23,42,.12) !important;
+}
+
+/* ===== END SHIL SYSTEM SETTINGS FINAL LAYOUT ===== */
+
+
+
+/* ===== SHIL SYSTEM SETTINGS FINAL TITLE STYLE ===== */
+
+html body .shil-system-settings-page .shil-section-card.shil-config-block > .shil-section-head {
+  position: relative !important;
+  top: 7px !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  text-align: center !important;
+
+  height: 36px !important;
+  min-height: 36px !important;
+  max-height: 36px !important;
+
+  padding: 0 14px !important;
+  margin: 0 0 10px !important;
+
+  background-color: rgb(207, 238, 255) !important;
+  background-image:
+    linear-gradient(
+      rgb(244, 251, 255) 0%,
+      rgb(216, 239, 255) 48%,
+      rgb(173, 216, 244) 100%
+    ) !important;
+
+  border: 1px solid rgba(255, 255, 255, 0.95) !important;
+  border-radius: 18px !important;
+
+  box-shadow:
+    inset 0 3px 8px rgba(255,255,255,.95),
+    inset 0 -6px 12px rgba(38,109,170,.35),
+    inset 0 0 18px rgba(0,140,255,.12),
+    0 6px 16px rgba(0,0,0,.15) !important;
+
+  box-sizing: border-box !important;
+}
+
+html body .shil-system-settings-page .shil-section-card.shil-config-block > .shil-section-head h2,
+html body .shil-system-settings-page .shil-section-card.shil-config-block > .shil-section-head h3,
+html body .shil-system-settings-page .shil-section-card.shil-config-block > .shil-section-head span {
+  width: 100% !important;
+  margin: 0 !important;
+
+  font-family: Vazirmatn, Tahoma, Arial, sans-serif !important;
+  font-size: 14px !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+
+  text-align: center !important;
+
+  color: rgb(6,20,33) !important;
+  -webkit-text-fill-color: rgb(6,20,33) !important;
+
+  text-shadow: none !important;
+}
+
+/* ===== END SHIL SYSTEM SETTINGS FINAL TITLE STYLE ===== */
+
+
+
+/* ===== SHIL 3D SUMMARY CARDS FINAL ===== */
+
+html body .shil-system-settings-page .shil-summary-item {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+
+  text-align: center !important;
+
+  background:
+    linear-gradient(
+      180deg,
+      #fafdff 0%,
+      #edf7ff 48%,
+      #d9edff 100%
+    ) !important;
+
+  border: 1px solid rgba(255,255,255,.95) !important;
+  border-radius: 26px !important;
+
+  box-shadow:
+    inset 0 3px 10px rgba(255,255,255,.95),
+    inset 0 -8px 16px rgba(70,150,220,.22),
+    inset 0 0 22px rgba(0,170,255,.10),
+    0 8px 18px rgba(0,0,0,.18) !important;
+
+  transition: .25s !important;
+}
+
+html body .shil-system-settings-page .shil-summary-item span,
+html body .shil-system-settings-page .shil-summary-item label,
+html body .shil-system-settings-page .shil-summary-item small,
+html body .shil-system-settings-page .shil-summary-item p {
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  line-height: 1.15 !important;
+
+  text-align: center !important;
+  width: 100% !important;
+
+  color: #35536e !important;
+  -webkit-text-fill-color: #35536e !important;
+
+  letter-spacing: .2px !important;
+}
+
+html body .shil-system-settings-page .shil-summary-item strong,
+html body .shil-system-settings-page .shil-summary-item b,
+html body .shil-system-settings-page .shil-summary-item h3,
+html body .shil-system-settings-page .shil-summary-item h4 {
+  font-size: 18px !important;
+  font-weight: 900 !important;
+  line-height: 1.15 !important;
+
+  text-align: center !important;
+  width: 100% !important;
+
+  color: #061421 !important;
+  -webkit-text-fill-color: #061421 !important;
+
+  text-shadow:
+    0 1px 0 #ffffff,
+    0 2px 4px rgba(0,120,255,.12) !important;
+}
+
+/* ===== END SHIL 3D SUMMARY CARDS FINAL ===== */
+
+
+
+/* ===== SHIL FORCE 3D SUMMARY CARDS OVERRIDE ===== */
+
+html body .shil-system-settings-page .shil-section-card.shil-config-block .shil-summary-grid > .shil-summary-item {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  text-align: center !important;
+
+  background: linear-gradient(180deg,#fafdff 0%,#edf7ff 48%,#d9edff 100%) !important;
+  border: 1px solid rgba(255,255,255,.95) !important;
+  border-radius: 26px !important;
+
+  box-shadow:
+    inset 0 3px 10px rgba(255,255,255,.95),
+    inset 0 -8px 16px rgba(70,150,220,.22),
+    inset 0 0 22px rgba(0,170,255,.10),
+    0 8px 18px rgba(0,0,0,.18) !important;
+}
+
+html body .shil-system-settings-page .shil-section-card.shil-config-block .shil-summary-grid > .shil-summary-item span {
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  line-height: 1.15 !important;
+  text-align: center !important;
+  width: 100% !important;
+  color: #35536e !important;
+  -webkit-text-fill-color: #35536e !important;
+}
+
+html body .shil-system-settings-page .shil-section-card.shil-config-block .shil-summary-grid > .shil-summary-item strong {
+  font-size: 18px !important;
+  font-weight: 900 !important;
+  line-height: 1.15 !important;
+  text-align: center !important;
+  width: 100% !important;
+  color: #061421 !important;
+  -webkit-text-fill-color: #061421 !important;
+  text-shadow: 0 1px 0 #fff, 0 2px 4px rgba(0,120,255,.12) !important;
+}
+
+/* ===== END SHIL FORCE 3D SUMMARY CARDS OVERRIDE ===== */
+
+
+
+/* ===== SHIL SYSTEM TYPE TABLE STYLE ===== */
+
+html body .shil-system-settings-page .shil-choice-grid.three {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 0 !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+
+  background: transparent !important;
+
+  border: 1px solid rgba(130,210,245,.75) !important;
+  border-radius: 0 0 18px 18px !important;
+  overflow: hidden !important;
+
+  box-shadow:
+    0 8px 18px rgba(0,0,0,.16),
+    inset 0 1px 0 rgba(255,255,255,.85) !important;
+}
+
+html body .shil-system-settings-page .shil-choice-grid.three > .shil-choice-card {
+  height: 52px !important;
+  min-height: 52px !important;
+
+  margin: 0 !important;
+  padding: 0 8px !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  text-align: center !important;
+
+  border-radius: 0 !important;
+  border: 0 !important;
+  border-left: 1px solid rgba(130,210,245,.75) !important;
+
+  background:
+    linear-gradient(180deg,#ffffff 0%,#eaf7ff 100%) !important;
+
+  box-shadow: none !important;
+
+  font-size: 14px !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+
+  color: #061421 !important;
+  -webkit-text-fill-color: #061421 !important;
+}
+
+html body .shil-system-settings-page .shil-choice-grid.three > .shil-choice-card:last-child {
+  border-left: 0 !important;
+}
+
+html body .shil-system-settings-page .shil-choice-grid.three > .shil-choice-card.is-selected {
+  background:
+    linear-gradient(180deg,#f3edff 0%,#e7dcff 100%) !important;
+
+  box-shadow:
+    inset 0 0 0 2px rgba(139,92,246,.65),
+    inset 0 2px 8px rgba(255,255,255,.95) !important;
+}
+
+html body .shil-system-settings-page .shil-system-type-table-title {
+  height: 36px !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  text-align: center !important;
+
+  margin: 0 !important;
+  padding: 0 12px !important;
+
+  font-size: 13px !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+
+  color: #061421 !important;
+  -webkit-text-fill-color: #061421 !important;
+
+  background:
+    linear-gradient(180deg,#fafdff 0%,#d9efff 100%) !important;
+
+  border: 1px solid rgba(130,210,245,.75) !important;
+  border-bottom: 0 !important;
+  border-radius: 18px 18px 0 0 !important;
+
+  box-shadow:
+    inset 0 2px 6px rgba(255,255,255,.9) !important;
+}
+
+html body .shil-system-settings-page .shil-system-type-details {
+  margin-top: 8px !important;
+  border-radius: 18px !important;
+  overflow: hidden !important;
+}
+
+html body .shil-system-settings-page .shil-system-type-details-toggle {
+  width: 100% !important;
+  height: 42px !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  gap: 8px !important;
+
+  border: 1px solid rgba(130,210,245,.75) !important;
+  border-radius: 18px !important;
+
+  background:
+    linear-gradient(180deg,#fafdff 0%,#d9efff 100%) !important;
+
+  box-shadow:
+    inset 0 2px 6px rgba(255,255,255,.9),
+    0 6px 14px rgba(0,0,0,.12) !important;
+
+  font-size: 13px !important;
+  font-weight: 900 !important;
+
+  color: #061421 !important;
+  -webkit-text-fill-color: #061421 !important;
+
+  cursor: pointer !important;
+}
+
+html body .shil-system-settings-page .shil-system-type-details-box {
+  margin-top: 8px !important;
+
+  border: 1px solid rgba(130,210,245,.75) !important;
+  border-radius: 18px !important;
+
+  overflow: hidden !important;
+
+  background:
+    linear-gradient(180deg,#fafdff 0%,#e7f5ff 100%) !important;
+
+  box-shadow:
+    0 8px 18px rgba(0,0,0,.14),
+    inset 0 2px 6px rgba(255,255,255,.85) !important;
+}
+
+html body .shil-system-settings-page .shil-system-type-details-box > div {
+  display: grid !important;
+  grid-template-columns: 80px 1fr !important;
+  gap: 8px !important;
+
+  padding: 10px 12px !important;
+
+  border-bottom: 1px solid rgba(130,210,245,.45) !important;
+
+  align-items: center !important;
+  text-align: right !important;
+}
+
+html body .shil-system-settings-page .shil-system-type-details-box > div:last-child {
+  border-bottom: 0 !important;
+}
+
+html body .shil-system-settings-page .shil-system-type-details-box strong {
+  font-size: 13px !important;
+  font-weight: 900 !important;
+
+  color: #061421 !important;
+  -webkit-text-fill-color: #061421 !important;
+
+  text-align: center !important;
+}
+
+html body .shil-system-settings-page .shil-system-type-details-box span {
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  line-height: 1.5 !important;
+
+  color: #35536e !important;
+  -webkit-text-fill-color: #35536e !important;
+}
+
+/* ===== END SHIL SYSTEM TYPE TABLE STYLE ===== */
+

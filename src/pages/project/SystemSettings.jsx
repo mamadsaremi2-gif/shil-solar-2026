@@ -1,6 +1,8 @@
+import ShilPrimaryButton from "../../components/project/ShilPrimaryButton";
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import EngineeringPageShell from "../../components/EngineeringPageShell.jsx";
+import ShilWarningOverlay from "../../components/ShilWarningOverlay.jsx";
 import { approveProjectStep } from "../../workflow/projectWorkflow.js";
 import { getEnabledEquipment } from "../../data/registry/index.js";
 import { buildSolarSystemDesign } from "../../engines/solarDesignEngine.js";
@@ -37,9 +39,136 @@ function Toast({ message }) {
 }
 
 function SummaryGrid({ rows = [] }) {
-  return <div className="shil-summary-grid">{rows.filter(Boolean).map(([label, value]) => (
-    <div key={label} className="shil-summary-item"><span>{label}</span><strong>{value || "-"}</strong></div>
-  ))}</div>;
+  const [open, setOpen] = useState(false);
+  const cleanRows = rows.filter(Boolean);
+
+  const pick = (...keys) => cleanRows.find(([label]) => keys.some((key) => label.includes(key)))?.[1] || "-";
+
+  const mainRows = [
+    { label: "توان مصرفی", value: pick("توان مصرفی", "توان مبنا") },
+    { label: "انرژی روزانه", value: pick("انرژی روزانه", "مصرف روزانه") },
+    { label: "توان آرایه", value: pick("توان کل پنل", "توان مبنای آرایه", "توان هر پنل") },
+    { label: "اینورتر", value: pick("اینورتر معرفی", "توان مبنای انتخاب اینورتر") },
+    { label: "پنل", value: pick("پنل معرفی", "تعداد پنل") },
+    { label: "باتری", value: pick("باتری معرفی") },
+    { label: "استرینگ", value: pick("استرینگ") },
+    { label: "روش", value: pick("روش ورود") },
+  ].filter((item) => item.value && item.value !== "-");
+
+  const cardStyle = {
+    width: "100%",
+    boxSizing: "border-box",
+    border: "1px solid rgba(0, 217, 255, 0.35)",
+    borderRadius: "22px",
+    background: "linear-gradient(180deg, rgba(255,255,255,0.96), rgba(236,250,255,0.94))",
+    boxShadow: "0 12px 28px rgba(0, 27, 65, 0.18), inset 0 1px 0 rgba(255,255,255,0.8)",
+    overflow: "hidden",
+    direction: "rtl",
+  };
+
+  const topGridStyle = {
+    display: "grid",
+    gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+    gap: "8px",
+    padding: "10px",
+  };
+
+  const itemStyle = {
+    minHeight: "64px",
+    border: "1px solid rgba(0, 200, 220, 0.28)",
+    borderRadius: "16px",
+    background: "linear-gradient(180deg, rgba(255,255,255,0.98), rgba(245,252,255,0.92))",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: "6px",
+    padding: "8px 6px",
+    boxSizing: "border-box",
+    textAlign: "center",
+  };
+
+  const labelStyle = {
+    fontSize: "12px",
+    fontWeight: 800,
+    color: "#33516b",
+    lineHeight: 1.25,
+    whiteSpace: "normal",
+  };
+
+  const valueStyle = {
+    width: "100%",
+    fontSize: "14px",
+    fontWeight: 950,
+    color: "#071827",
+    lineHeight: 1.25,
+    overflowWrap: "anywhere",
+    wordBreak: "break-word",
+    whiteSpace: "normal",
+  };
+
+  const detailButtonStyle = {
+    width: "100%",
+    border: 0,
+    borderTop: "1px solid rgba(0, 135, 180, 0.2)",
+    background: "linear-gradient(90deg, rgba(178,205,231,0.95), rgba(241,248,255,0.98))",
+    minHeight: "42px",
+    fontSize: "15px",
+    fontWeight: 950,
+    color: "#071827",
+    cursor: "pointer",
+  };
+
+  return <div className="shil-summary-table-card" style={cardStyle}>
+    <div style={topGridStyle}>
+      {mainRows.slice(0, 8).map(({ label, value }) => (
+        <div key={label} className="shil-summary-modern-item" style={itemStyle}>
+          <span style={labelStyle}>{label}</span>
+          <strong style={valueStyle}>{value || "-"}</strong>
+        </div>
+      ))}
+    </div>
+
+    <button type="button" className="shil-summary-detail-chip" style={detailButtonStyle} onClick={() => setOpen((v) => !v)}>
+      {open ? "▲ بستن جزئیات محاسبات" : "▼ مشاهده جزئیات محاسبات"}
+    </button>
+
+    <div
+      className={open ? "shil-summary-details open" : "shil-summary-details"}
+      style={{
+        display: open ? "block" : "none",
+        padding: "10px",
+        background: "rgba(255,255,255,0.72)",
+      }}
+    >
+      <div
+        className="shil-summary-details-grid"
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+          gap: "8px",
+        }}
+      >
+        {cleanRows.map(([label, value]) => (
+          <div
+            key={label}
+            className="shil-summary-detail-item"
+            style={{
+              border: "1px solid rgba(0, 200, 220, 0.22)",
+              borderRadius: "14px",
+              padding: "8px 6px",
+              textAlign: "center",
+              background: "rgba(255,255,255,0.86)",
+              minWidth: 0,
+            }}
+          >
+            <span style={labelStyle}>{label}</span>
+            <strong style={valueStyle}>{value || "-"}</strong>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>;
 }
 
 function MethodSummaryCard({ handoff }) {
@@ -71,7 +200,7 @@ function MethodSummaryCard({ handoff }) {
     energy: [
       ["روش ورود", "انرژی روزانه"],
       ["مصرف روزانه", `${faNumber(load.dailyEnergyKWh || load.totalEnergyKWh, 2)} kWh`],
-      ["توان مبنا", load.totalPowerW ? `${faNumber(load.totalPowerW)} W` : "بر اساس تنظیمات سیستم"],
+      ["توان مبنا", load.totalPowerW ? `${faNumber(load.totalPowerW)} W` : "بر اساس تنظیمات"],
       ["مبنای طراحی", "ظرفیت تولید و ذخیره انرژی"],
     ],
     profile: [
@@ -91,29 +220,85 @@ function MethodSummaryCard({ handoff }) {
   return <section className="shil-section-card shil-config-block">
     <div className="shil-section-head"><h2>چکیده مسیر {METHOD_TITLES[method] || method}</h2><span>{basis === "pv_generation" ? "مبنای تولید" : "مبنای مصرف"}</span></div>
     <SummaryGrid rows={rowsByMethod[method] || rowsByMethod.equipment} />
-    {Array.isArray(summary.warnings) && summary.warnings.length > 0 ? summary.warnings.map((item) => <div key={item} className="shil-inline-warning">{item}</div>) : null}
+    <ShilWarningOverlay messages={summary.warnings} />
   </section>;
 }
 
 function BankSelectCard({ title, subtitle, items, value, onChange, smartTitle, smartValue, selectedItem, detailRows = [], disabled = false, kind = "equipment" }) {
   const [open, setOpen] = useState(false);
   const activeItem = selectedItem || items.find((item) => item.id === value) || null;
-  return <section className={`shil-section-card shil-config-block shil-bank-smart-card ${disabled ? "is-locked" : ""}`}>
-    <div className="shil-section-head"><h2>{title}</h2><span>{subtitle}</span></div>
-    <div className="shil-bank-selected-head">
-      <strong>{compactEquipmentLabel(activeItem, kind)}</strong>
-      <small>{smartValue}</small>
+
+  const itemLabel =
+    kind === "panel" ? "پنل هوشمند" :
+    kind === "inverter" ? "اینورتر هوشمند" :
+    kind === "battery" ? "باتری هوشمند" :
+    "تجهیز هوشمند";
+
+  const qtyLabel =
+    kind === "panel" ? "تعداد پنل هوشمند" :
+    kind === "inverter" ? "تعداد اینورتر هوشمند" :
+    kind === "battery" ? "تعداد باتری هوشمند" :
+    "تعداد";
+
+  const sheetLabel =
+    kind === "panel" ? "دیتاشیت پنل هوشمند" :
+    kind === "inverter" ? "دیتاشیت اینورتر هوشمند" :
+    kind === "battery" ? "دیتاشیت باتری هوشمند" :
+    "دیتاشیت";
+
+  const qtyValue = String(smartValue || "").split("/")[0].trim() || "-";
+
+  return <section className={`shil-equipment-bank-card ${disabled ? "is-locked" : ""}`}>
+    <div className="shil-equipment-bank-title">{title}</div>
+
+    <table className="shil-equipment-bank-table">
+      <thead>
+        <tr>
+          <th>انتخاب</th>
+          <th>{itemLabel}</th>
+          <th>{qtyLabel}</th>
+          <th>{sheetLabel}</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+          <td>
+            <button type="button" className="shil-equipment-bank-chip" onClick={() => setOpen((v) => !v)} disabled={disabled}>
+              {open ? "▲ بستن" : "▼ نمایش"}
+            </button>
+          </td>
+          <td>{compactEquipmentLabel(activeItem, kind)}</td>
+          <td>{qtyValue}</td>
+          <td>
+            <button type="button" className="shil-equipment-bank-sheet" onClick={() => setOpen(true)}>
+              📄 مشاهده
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div className={open ? "shil-equipment-bank-details open" : "shil-equipment-bank-details"}>
+      <div className="shil-equipment-bank-old-content">
+        <select value={value || activeItem?.id || ""} onChange={(event) => onChange(event.target.value)} disabled={disabled}>
+          {items.map((item) => <option key={item.id} value={item.id}>{compactEquipmentLabel(item, kind)}</option>)}
+        </select>
+
+        <div className="shil-bank-smart-note">
+          <span>پیشنهاد هوشمند</span>
+          <strong>{smartTitle}</strong>
+          <small>{smartValue}</small>
+        </div>
+
+        <div className="shil-summary-grid shil-bank-datasheet-grid">
+          {detailRows.filter(Boolean).map(([label, val]) => <div key={label}><span>{label}</span><strong>{val || "-"}</strong></div>)}
+        </div>
+      </div>
     </div>
-    <select value={value || activeItem?.id || ""} onChange={(event) => onChange(event.target.value)} disabled={disabled}>
-      {items.map((item) => <option key={item.id} value={item.id}>{compactEquipmentLabel(item, kind)}</option>)}
-    </select>
-    <div className="shil-bank-smart-note"><span>پیشنهاد هوشمند</span><strong>{smartTitle}</strong><small>{smartValue}</small></div>
-    <button type="button" className="shil-soft-button shil-bank-detail-toggle" onClick={() => setOpen((v) => !v)}>{open ? "بستن دیتاشیت" : "نمایش جزییات دیتاشیت"}</button>
-    {open ? <div className="shil-summary-grid shil-bank-datasheet-grid">
-      {detailRows.filter(Boolean).map(([label, val]) => <div key={label}><span>{label}</span><strong>{val || "-"}</strong></div>)}
-    </div> : null}
   </section>;
 }
+
 
 export default function SystemSettings() {
   const navigate = useNavigate();
@@ -215,9 +400,9 @@ export default function SystemSettings() {
     navigate("/new-project/summary/solar");
   };
 
-  return <EngineeringPageShell title="تنظیمات سیستم خورشیدی" activeStep="system" backTo="/new-project/inputs/solar">
+  return <EngineeringPageShell title="تنظیمات" activeStep="system" backTo="/new-project/inputs/solar">
     <Toast message={warning} />
-    <div className="shil-page-scroll shil-system-settings-page">
+    <div className="shil-page-scroll shil-system-settings-page" style={{ paddingBottom: "0px" }}>
       <MethodSummaryCard handoff={handoff} />
 
       <section className="shil-section-card shil-config-block">
@@ -248,7 +433,7 @@ export default function SystemSettings() {
       </div>
 
       <section className="shil-section-card shil-config-block">
-        <div className="shil-section-head"><h2>چکیده تنظیمات سیستم</h2><span>{design.valid ? "قابل تأیید" : "نیازمند اصلاح"}</span></div>
+        <div className="shil-section-head"><h2>چکیده تنظیمات</h2><span>{design.valid ? "قابل تأیید" : "نیازمند اصلاح"}</span></div>
         <SummaryGrid rows={[
           ["توان مصرفی مبنا", kw(design.load.basePowerW)],
           ["انرژی روزانه مبنا", `${enNumber(design.load.finalEnergyKWh, 2)} kWh/day`],
@@ -261,10 +446,42 @@ export default function SystemSettings() {
           ["تولید روزانه تخمینی", `${enNumber(design.pvArray.estimatedDailyKWh, 2)} kWh/day`],
           ["باتری معرفی‌شده", showBatteryBank ? `${compactEquipmentLabel(design.battery?.item, "battery")} / ${faNumber(design.battery?.count)} عدد / ${faNumber(design.battery?.grossEnergyKWh, 2)} kWh` : "غیرفعال در این سناریو"],
         ]} />
-        {design.warnings.map((item) => <div key={item} className="shil-inline-warning">{item}</div>)}
+        <ShilWarningOverlay messages={design.warnings} />
       </section>
 
-      <button type="button" className="shil-primary-wide shil-confirm-config-button" disabled={!design.valid} onClick={confirm}>تأیید تنظیمات و رفتن به چکیده</button>
+              <div
+          className="shil-env-content-confirm-slot"
+          aria-label="تأیید تنظیمات"
+          style={{
+            position: "relative",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "100%",
+            margin: "0px 0px 0px",
+            transform: "translateX(33px)",
+            zIndex: 20,
+          }}
+        >
+          <ShilPrimaryButton
+            className="shil-env-content-confirm-button"
+            disabled={!design.valid} onClick={confirm}
+            label="تأیید پنل"
+            style={{
+              position: "static",
+              left: "auto",
+              right: "auto",
+              bottom: "auto",
+              top: "auto",
+              transform: "none",
+              width: "max-content",
+              minWidth: 0,
+              maxWidth: "none",
+              padding: "0 12px",
+              whiteSpace: "nowrap",
+            }}
+          />
+        </div>
     </div>
   </EngineeringPageShell>;
 }

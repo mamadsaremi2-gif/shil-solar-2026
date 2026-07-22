@@ -1,5 +1,6 @@
-import * as React from "react";
-import { Link, useLocation, useParams } from "react-router-dom";
+import ShilPrimaryButton from "../../components/project/ShilPrimaryButton";
+﻿import * as React from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { approveProjectStep } from "../../workflow/projectWorkflow.js";
 import EngineeringPageShell from "../../components/EngineeringPageShell.jsx";
 
@@ -56,6 +57,7 @@ function getCardsForDomain(domain) {
 }
 
 export default function CalculationMethod() {
+  const navigate = useNavigate();
   const params = useParams();
   const location = useLocation();
   const query = new URLSearchParams(location.search);
@@ -70,6 +72,11 @@ export default function CalculationMethod() {
   );
 
   const methodCards = React.useMemo(() => getCardsForDomain(domain), [domain]);
+
+  const [selectedMethod, setSelectedMethod] = React.useState(
+    localStorage.getItem("shil:calculationMethod") || ""
+  );
+
   const context = React.useMemo(
     () => ({
       projectPath: readDraft("shil:projectPath") || readDraft("shil:selectedProjectPath"),
@@ -79,61 +86,72 @@ export default function CalculationMethod() {
     []
   );
 
-  const handleSelect = (methodKey) => {
+  React.useEffect(() => {
+    document.body.classList.add("shil-calculation-method-screen");
+    return () => document.body.classList.remove("shil-calculation-method-screen");
+  }, []);
+
+  const handleConfirm = () => {
+    if (!selectedMethod) return;
+
     approveProjectStep("method");
-    localStorage.setItem("shil:calculationMethod", methodKey);
-    localStorage.setItem("shil:selectedCalculationMethod", methodKey);
+    localStorage.setItem("shil:calculationMethod", selectedMethod);
+    localStorage.setItem("shil:selectedCalculationMethod", selectedMethod);
     localStorage.setItem("shil:calculationDomain", domain);
     localStorage.setItem("shil:scenarioDomain", domain);
 
-    // مسیرها از همین نقطه ایزوله می‌مانند؛ دیتای مسیرهای دیگر نباید وارد UI بعدی شود.
     if (domain === "emergency") {
       localStorage.removeItem("shil:solarPanelPowerInput");
       localStorage.removeItem("shil:solarPanelPowerPreview");
       localStorage.removeItem("shil:unifiedPvEngineResult:input");
     }
+
+    if (selectedMethod === "utility_scale") {
+      navigate("/new-project/system/utility?from=method");
+      return;
+    }
+
+    navigate(`/new-project/input/${domain}/${selectedMethod}`);
   };
 
-  const title = `روش محاسبات ${DOMAIN_LABELS[domain] || DOMAIN_LABELS.solar}`;
+  const title = `روش طراحی ${DOMAIN_LABELS[domain] || DOMAIN_LABELS.solar}`;
 
   return (
     <EngineeringPageShell title={title}>
-      <section className="shil-card-stack shil-calculation-method-page">
-        <div className="shil-section-card shil-method-minimal-panel">
-          <div className="shil-section-head">
-            <h2>انتخاب روش محاسبات</h2>
-            <span>{DOMAIN_LABELS[domain]}</span>
-          </div>
+      <div className="shil-clean-section-head">
+        <h2>انتخاب روش طراحی</h2>
+        <span>{DOMAIN_LABELS[domain]}</span>
+      </div>
 
-          <div className="shil-method-context-strip">
-            <span>{context.projectPath?.title || DOMAIN_LABELS[domain]}</span>
-            <strong>{context.environment?.city || "اطلاعات پروژه و شرایط مسیر ثبت می‌شود"}</strong>
-          </div>
+      <div className="shil-method-context-strip shil-method-context-clean">
+        <span>{context.projectPath?.title || DOMAIN_LABELS[domain]}</span>
+        <strong>{context.environment?.city || "اطلاعات پروژه و شرایط مسیر ثبت می‌شود"}</strong>
+      </div>
 
-          <div className="shil-method-grid-five shil-method-grid-minimal">
-            {methodCards.map((method, index) => (
-              <Link
-                key={method.key}
-                className="shil-large-choice shil-method-card-engine shil-method-card-minimal"
-                onClick={() => handleSelect(method.key)}
-                to={method.key === "utility_scale" ? "/new-project/system/utility?from=method" : `/new-project/input/${domain}/${method.key}`}
-                state={{ domain, method: method.key, from: "calculation-method" }}
-              >
-                <span className="shil-method-badge">{method.badge}</span>
-                <small>گزینه {index + 1}</small>
-                <h2>{method.title}</h2>
-                <p>{method.hint}</p>
-              </Link>
-            ))}
-          </div>
+      <div className="shil-method-grid-five shil-method-grid-minimal shil-method-grid-clean">
+        {methodCards.map((method, index) => (
+          <button
+            type="button"
+            key={method.key}
+            className={`shil-large-choice shil-method-card-engine shil-method-card-minimal ${selectedMethod === method.key ? "active" : ""}`}
+            onClick={() => setSelectedMethod(method.key)}
+          >
+            <span className="shil-method-badge">{method.badge}</span>
+            <small>گزینه {index + 1}</small>
+            <h2>{method.title}</h2>
+            <p>{method.hint}</p>
+          </button>
+        ))}
+      </div>
 
-          {domain === "emergency" ? (
-            <p className="shil-muted-note">
-              این صفحه مخصوص برق اضطراری است؛ فقط جریان کل، توان کل و لیست تجهیزات فعال هستند و هیچ مسیر PV، پنل، MPPT یا تولید خورشیدی در ادامه این شاخه نمایش داده نمی‌شود.
-            </p>
-          ) : null}
-        </div>
-      </section>
+      {domain === "emergency" ? (
+        <p className="shil-muted-note">
+          این صفحه مخصوص برق اضطراری است؛ فقط جریان کل، توان کل و لیست تجهیزات فعال هستند.
+        </p>
+      ) : null}
+
+      <ShilPrimaryButton className="shil-calculation-method-confirm" disabled={!selectedMethod}
+        onClick={handleConfirm} label="تأیید روش" />
     </EngineeringPageShell>
   );
 }

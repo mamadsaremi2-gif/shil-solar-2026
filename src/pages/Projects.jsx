@@ -14,11 +14,11 @@ const STEP_TITLES = {
   info: "اطلاعات پروژه",
   environment: "شرایط محیطی",
   path: "انتخاب مسیر",
-  method: "روش محاسبات",
+  method: "روش طراحی",
   inputs: "ورودی محاسبات",
-  system: "تنظیمات سیستم",
-  summary: "چکیده اطلاعات",
-  run: "اجرای محاسبات",
+  system: "تنظیمات",
+  summary: "چکیده طراحی",
+  run: "اجرا",
 };
 
 function formatDate(value) {

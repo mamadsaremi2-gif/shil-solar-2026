@@ -44,7 +44,7 @@ export function runSurfaceLoadPreview(input = {}) {
     previewOnly: true,
     recommendedInverterW: round(load.surgePowerW * 1.1, 0),
     recommendedBatteryWh: round(load.totalEnergyWh * 1.2, 0),
-    explanations: ["این بخش فقط پیش‌نمایش سطحی است؛ محاسبات واقعی فقط در صفحه اجرای محاسبات انجام می‌شود."],
+    explanations: ["این بخش فقط پیش‌نمایش سطحی است؛ محاسبات واقعی فقط در صفحه اجرا انجام می‌شود."],
     warnings: [],
   };
   return result;

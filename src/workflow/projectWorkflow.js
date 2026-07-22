@@ -7,14 +7,14 @@ export const PROJECT_PATHS = Object.freeze({
 });
 
 export const PROJECT_STEP_ORDER = [
-  { key: "path", route: "/new-project/path", title: "انتخاب مسیر پروژه" },
+  { key: "path", route: "/new-project/path", title: "مسیر پروژه" },
   { key: "info", route: "/new-project/info", title: "اطلاعات پروژه" },
   { key: "environment", route: "/new-project/environment", title: "شرایط محیطی", optionalFor: [PROJECT_PATHS.EMERGENCY] },
   { key: "method", route: "/new-project/method", title: "روش ورود دیتا" },
   { key: "inputs", route: "/new-project/inputs", title: "ورودی محاسبات" },
-  { key: "system", route: "/new-project/system", title: "تنظیمات سیستم" },
-  { key: "summary", route: "/new-project/summary", title: "چکیده اطلاعات" },
-  { key: "run", route: "/new-project/run", title: "اجرای محاسبات" },
+  { key: "system", route: "/new-project/system", title: "تنظیمات" },
+  { key: "summary", route: "/new-project/summary", title: "چکیده طراحی" },
+  { key: "run", route: "/new-project/run", title: "اجرا" },
 ];
 
 const STORAGE_KEY = "shil-project-workflow-v3";

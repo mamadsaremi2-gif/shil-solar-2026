@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import EngineeringPageShell from "../components/EngineeringPageShell.jsx";
+import { ActionBar, DataGrid, DataSection, PageStack, StatusMessage } from "../components/ShilDesignSystem.jsx";
 import { approveProjectStep } from "../workflow/projectWorkflow.js";
 import { getProjectPath, getSystemSettingsDraft, getSystemSetupHandoff, normalizeProjectDomain, writeJson } from "../engines/projectFlowData.js";
 
@@ -73,12 +74,7 @@ function buildUtilityOutput(draft) {
 }
 
 function ResultCard({ title, rows = [] }) {
-  return <section className="shil-section-card">
-    <div className="shil-section-head"><h2>{title}</h2><span>نتیجه</span></div>
-    <div className="shil-summary-grid">{rows.filter(Boolean).map(([label, value]) => (
-      <div key={label} className="shil-summary-item"><span>{label}</span><strong>{value || "-"}</strong></div>
-    ))}</div>
-  </section>;
+  return <DataSection title={title} meta="نتیجه"><DataGrid rows={rows} /></DataSection>;
 }
 
 export default function RunCalculation() {
@@ -102,18 +98,16 @@ export default function RunCalculation() {
   };
 
   return <EngineeringPageShell title={output.title} activeStep="run" backTo={`/new-project/summary/${domain}`}>
-    <div className="shil-page-scroll shil-run-page">
-      <section className="shil-section-card">
-        <div className="shil-section-head"><h2>مبنای اجرای محاسبات</h2><span>{domain}</span></div>
+    <PageStack className="shil-page-scroll shil-run-page">
+      <DataSection title="مبنای اجرا" meta={domain}>
         <p className="shil-muted-line">{output.basis}</p>
-      </section>
+      </DataSection>
       <ResultCard title="خلاصه عددی" rows={output.headline} />
       <ResultCard title="تجهیزات و اقلام اجرایی" rows={output.equipment} />
-      {output.warnings?.length ? <section className="shil-section-card"><div className="shil-section-head"><h2>هشدارهای مهندسی</h2><span>بازبینی</span></div>{output.warnings.map((item) => <div key={item} className="shil-inline-warning">{item}</div>)}</section> : null}
-      <section className="shil-section-card">
-        <div className="shil-section-head"><h2>خروجی نهایی</h2><span>ثبت و گزارش</span></div>
-        <button type="button" className="shil-primary-wide" onClick={finish}>ثبت خروجی نهایی پروژه</button>
-      </section>
-    </div>
+      {output.warnings?.length ? <DataSection title="هشدارهای مهندسی" meta="بازبینی">{output.warnings.map((item) => <StatusMessage key={item}>{item}</StatusMessage>)}</DataSection> : null}
+      <DataSection title="خروجی نهایی" meta="ثبت و گزارش">
+        <ActionBar><button type="button" className="shil-primary-wide" onClick={finish}>ثبت خروجی نهایی پروژه</button></ActionBar>
+      </DataSection>
+    </PageStack>
   </EngineeringPageShell>;
 }

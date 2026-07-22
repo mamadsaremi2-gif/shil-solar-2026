@@ -1,3 +1,4 @@
+import EquipmentBankCard from "./components/equipment-bank/EquipmentBankCard";
 export const SHIL_AI_LAYER_VERSION = "AI-INSTALLATION-PREVIEW-v2.0";
 
 function safeNumber(value, fallback = 0) {

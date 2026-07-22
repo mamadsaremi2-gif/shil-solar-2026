@@ -218,7 +218,7 @@ export default function EmergencySystemSettings() {
         </div>
 
         {design.warnings.map((item) => <div key={item} className="shil-inline-warning">{item}</div>)}
-        <button type="button" className="shil-primary-wide shil-confirm-config-button" disabled={!design.valid} onClick={confirm}>تأیید تنظیمات برق اضطراری و رفتن به چکیده</button>
+        <button type="button" className="shil-primary-wide shil-flow-content-confirm-button shil-confirm-config-button shil-flow-content-confirm-slot shil-system-content-confirm-slot" disabled={!design.valid} onClick={confirm}>تأیید تنظیمات برق اضطراری و رفتن به چکیده</button>
       </section>
     </EngineeringPageShell>
   );

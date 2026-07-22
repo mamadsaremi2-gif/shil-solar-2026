@@ -46,7 +46,7 @@ export default function ProjectMiniRail() {
 
   const pathStep = projectSteps.find((step) => step.key === "path") || {
     key: "path",
-    title: "انتخاب مسیر پروژه",
+    title: "مسیر پروژه",
   };
 
   const items = [
