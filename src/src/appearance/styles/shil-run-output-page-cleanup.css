@@ -1,0 +1,145 @@
+/*
+ * SHIL execution and final-output cleanup
+ * Keeps data-bearing rows/tables/buttons; removes page and wrapper decoration.
+ */
+
+body:not(.login-page):not(.welcome-page) .shil-page-shell:has(.shil-execution-output-page),
+body:not(.login-page):not(.welcome-page) .shil-page-shell:has(.shil-final-output-clean-page),
+body:not(.login-page):not(.welcome-page) .shil-page-shell:has(.shil-execution-output-page) main,
+body:not(.login-page):not(.welcome-page) .shil-page-shell:has(.shil-final-output-clean-page) main,
+body:not(.login-page):not(.welcome-page) .shil-page-shell:has(.shil-execution-output-page) .shil-page-content,
+body:not(.login-page):not(.welcome-page) .shil-page-shell:has(.shil-final-output-clean-page) .shil-page-content,
+body:not(.login-page):not(.welcome-page) .shil-page-shell:has(.shil-execution-output-page) .shil-engineering-content,
+body:not(.login-page):not(.welcome-page) .shil-page-shell:has(.shil-final-output-clean-page) .shil-engineering-content,
+body:not(.login-page):not(.welcome-page) .shil-execution-output-page,
+body:not(.login-page):not(.welcome-page) .shil-final-output-clean-page {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  border: 0 !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-page-shell:has(.shil-execution-output-page) .shil-engineering-content::before,
+body:not(.login-page):not(.welcome-page) .shil-page-shell:has(.shil-execution-output-page) .shil-engineering-content::after,
+body:not(.login-page):not(.welcome-page) .shil-page-shell:has(.shil-final-output-clean-page) .shil-engineering-content::before,
+body:not(.login-page):not(.welcome-page) .shil-page-shell:has(.shil-final-output-clean-page) .shil-engineering-content::after,
+body:not(.login-page):not(.welcome-page) .shil-execution-output-page::before,
+body:not(.login-page):not(.welcome-page) .shil-execution-output-page::after,
+body:not(.login-page):not(.welcome-page) .shil-final-output-clean-page::before,
+body:not(.login-page):not(.welcome-page) .shil-final-output-clean-page::after {
+  content: none !important;
+  display: none !important;
+  background: none !important;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-execution-output-page {
+  display: grid !important;
+  gap: 12px !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* The export sheet remains a semantic data container, but no longer paints a page/card. */
+body:not(.login-page):not(.welcome-page) .shil-execution-output-page .shil-final-one-page-sheet {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-execution-output-page .shil-final-one-page-sheet::before,
+body:not(.login-page):not(.welcome-page) .shil-execution-output-page .shil-final-one-page-sheet::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* Titles are labels, not cards. */
+body:not(.login-page):not(.welcome-page) .shil-execution-output-page .shil-final-sheet-hero,
+body:not(.login-page):not(.welcome-page) .shil-execution-output-page .shil-final-action-area,
+body:not(.login-page):not(.welcome-page) .shil-final-output-clean-page,
+body:not(.login-page):not(.welcome-page) .shil-final-output-clean-page .shil-final-output-data-block {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-execution-output-page .shil-final-sheet-hero {
+  min-height: 0 !important;
+  margin: 0 0 8px !important;
+  padding: 4px 0 8px !important;
+}
+
+/* Data-bearing blocks stay visible; only their redundant outer shell is removed. */
+body:not(.login-page):not(.welcome-page) .shil-execution-output-page .shil-final-readonly-block,
+body:not(.login-page):not(.welcome-page) .shil-execution-output-page .shil-final-result-block,
+body:not(.login-page):not(.welcome-page) .shil-execution-output-page .shil-final-protection-detail {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  padding: 0 !important;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-execution-output-page .shil-final-readonly-block {
+  margin-top: 12px !important;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-execution-output-page .shil-section-head,
+body:not(.login-page):not(.welcome-page) .shil-execution-output-page .shil-final-action-heading,
+body:not(.login-page):not(.welcome-page) .shil-final-output-clean-page .shil-section-head {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 0 0 7px !important;
+  margin: 0 !important;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-execution-output-page .shil-final-action-area {
+  margin: 2px 0 0 !important;
+  padding: 0 !important;
+}
+
+/* Keep actual result rows, equipment tables and action buttons intact. */
+body:not(.login-page):not(.welcome-page) .shil-execution-output-page .shil-final-compact-row,
+body:not(.login-page):not(.welcome-page) .shil-execution-output-page .shil-final-equipment-table > div,
+body:not(.login-page):not(.welcome-page) .shil-execution-output-page .shil-inline-warning,
+body:not(.login-page):not(.welcome-page) .shil-final-output-clean-page .shil-summary-grid > div {
+  visibility: visible !important;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-execution-output-page .shil-soft-link-button {
+  margin: 0 !important;
+}
+
+@media print {
+  body .shil-execution-output-page .shil-final-one-page-sheet {
+    width: 190mm !important;
+    padding: 8mm !important;
+  }
+}

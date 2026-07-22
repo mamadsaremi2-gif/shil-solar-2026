@@ -98,7 +98,7 @@ export default function CalculationMethod() {
 
   return (
     <EngineeringPageShell title={title}>
-      <section className="shil-card-stack shil-calculation-method-page">
+      <section id="shil-calculation-method-root" className="shil-card-stack shil-calculation-method-page">
         <div className="shil-section-card shil-method-minimal-panel">
           <div className="shil-section-head">
             <h2>انتخاب روش طراحی</h2>

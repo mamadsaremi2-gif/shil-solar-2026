@@ -1,0 +1,322 @@
+/* SHIL Calculation Inputs V5.9
+   Hard isolated page layer. This file must remain the final stylesheet import.
+   Purpose: remove legacy page/wrapper surfaces and keep only data controls/cards
+   on the shared engineering background. */
+
+#shil-calculation-inputs-root.shil-calculation-inputs-page {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 14px !important;
+  width: min(100%, 980px) !important;
+  max-width: 980px !important;
+  margin: 0 auto !important;
+  padding: 0 12px calc(76px + env(safe-area-inset-bottom, 0px)) !important;
+  color: var(--shil-u-text, #0b1f3d) !important;
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+/* Legacy outer cards are layout groups only. */
+#shil-calculation-inputs-root > section,
+#shil-calculation-inputs-root > .shil-env-card,
+#shil-calculation-inputs-root > .shil-equipment-picker-card,
+#shil-calculation-inputs-root > .shil-equipment-results-card,
+#shil-calculation-inputs-root > .shil-selected-equipment-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: inherit !important;
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  overflow: visible !important;
+}
+
+/* Unified compact section headings; remove the old purple capsule. */
+#shil-calculation-inputs-root .shil-section-title {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 48px !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 10px 16px !important;
+  color: #0b1f3d !important;
+  background: rgba(231, 240, 249, 0.93) !important;
+  background-image: none !important;
+  border: 1px solid rgba(148, 163, 184, 0.58) !important;
+  border-radius: 18px !important;
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.12) !important;
+  font-size: clamp(17px, 4.4vw, 24px) !important;
+  font-weight: 900 !important;
+  line-height: 1.35 !important;
+  text-align: center !important;
+}
+
+#shil-calculation-inputs-root .shil-section-title::before,
+#shil-calculation-inputs-root .shil-section-title::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* Data cards sit directly on the common page background. */
+#shil-calculation-inputs-root .shil-summary-grid,
+#shil-calculation-inputs-root .shil-form-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+#shil-calculation-inputs-root .shil-summary-grid > div,
+#shil-calculation-inputs-root .shil-form-grid > label,
+#shil-calculation-inputs-root .shil-equipment-field,
+#shil-calculation-inputs-root .shil-equipment-picker-panel,
+#shil-calculation-inputs-root .shil-selected-equipment-list > article,
+#shil-calculation-inputs-root .shil-equipment-option,
+#shil-calculation-inputs-root .shil-muted-note,
+#shil-calculation-inputs-root .shil-empty-selection,
+#shil-calculation-inputs-root .shil-load-kind-note,
+#shil-calculation-inputs-root .shil-expert-mini,
+#shil-calculation-inputs-root .shil-check-row {
+  color: #0b1f3d !important;
+  background: rgba(249, 252, 255, 0.94) !important;
+  background-image: none !important;
+  border: 1px solid rgba(125, 153, 181, 0.42) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 7px 20px rgba(15, 23, 42, 0.10) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+#shil-calculation-inputs-root .shil-summary-grid > div {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  min-height: 92px !important;
+  padding: 12px !important;
+  text-align: center !important;
+}
+
+#shil-calculation-inputs-root .shil-summary-grid span {
+  color: #405b73 !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+}
+
+#shil-calculation-inputs-root .shil-summary-grid strong {
+  color: #07182e !important;
+  font-size: 17px !important;
+  font-weight: 950 !important;
+  overflow-wrap: anywhere !important;
+}
+
+#shil-calculation-inputs-root .shil-form-grid > label {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  gap: 8px !important;
+  min-width: 0 !important;
+  padding: 12px !important;
+  text-align: center !important;
+  font-size: 13px !important;
+  font-weight: 900 !important;
+}
+
+#shil-calculation-inputs-root .shil-input,
+#shil-calculation-inputs-root input:not([type="checkbox"]):not([type="radio"]),
+#shil-calculation-inputs-root select,
+#shil-calculation-inputs-root textarea {
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 46px !important;
+  margin: 0 !important;
+  padding: 8px 11px !important;
+  color: #07182e !important;
+  background: #fff !important;
+  border: 1px solid rgba(125, 153, 181, 0.58) !important;
+  border-radius: 13px !important;
+  box-shadow: none !important;
+  font-size: 14px !important;
+  font-weight: 750 !important;
+  text-align: center !important;
+}
+
+#shil-calculation-inputs-root .shil-equipment-field {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  width: 100% !important;
+  min-height: 62px !important;
+  padding: 12px 14px !important;
+  text-align: right !important;
+}
+
+#shil-calculation-inputs-root .shil-equipment-picker-panel {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  padding: 12px !important;
+}
+
+#shil-calculation-inputs-root .shil-equipment-scroll-list {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+  max-height: 360px !important;
+  padding: 2px !important;
+  overflow: auto !important;
+  background: transparent !important;
+  border: 0 !important;
+}
+
+#shil-calculation-inputs-root .shil-equipment-option {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+  min-height: 68px !important;
+  padding: 10px !important;
+  text-align: right !important;
+}
+
+#shil-calculation-inputs-root .shil-equipment-option.active {
+  border-color: #21b8df !important;
+  box-shadow: 0 0 0 2px rgba(33, 184, 223, 0.17) !important;
+}
+
+#shil-calculation-inputs-root .shil-equipment-actions {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+  width: 100% !important;
+}
+
+#shil-calculation-inputs-root .shil-selected-equipment-list > article {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 12px !important;
+}
+
+#shil-calculation-inputs-root .shil-equipment-controls {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+}
+
+#shil-calculation-inputs-root .shil-equipment-controls > label {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  min-width: 0 !important;
+  font-size: 12px !important;
+  font-weight: 850 !important;
+  text-align: center !important;
+}
+
+#shil-calculation-inputs-root .shil-check-row {
+  grid-column: 1 / -1 !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 9px !important;
+  min-height: 52px !important;
+  padding: 10px 12px !important;
+}
+
+#shil-calculation-inputs-root .shil-check-row input[type="checkbox"] {
+  width: 20px !important;
+  height: 20px !important;
+  flex: 0 0 auto !important;
+}
+
+#shil-calculation-inputs-root .shil-muted-note,
+#shil-calculation-inputs-root .shil-empty-selection,
+#shil-calculation-inputs-root .shil-load-kind-note,
+#shil-calculation-inputs-root .shil-expert-mini {
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 12px 14px !important;
+  line-height: 1.8 !important;
+  text-align: center !important;
+}
+
+#shil-calculation-inputs-root .shil-input-content-confirm-slot {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  min-height: 46px !important;
+  margin: 8px 0 calc(62px + env(safe-area-inset-bottom, 0px)) !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+#shil-calculation-inputs-root .shil-input-content-confirm-slot > button,
+#shil-calculation-inputs-root .shil-env-content-confirm-button {
+  position: relative !important;
+  display: block !important;
+  left: auto !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: auto !important;
+  transform: none !important;
+  float: none !important;
+  width: 220px !important;
+  min-width: 220px !important;
+  max-width: 220px !important;
+  height: 46px !important;
+  min-height: 46px !important;
+  max-height: 46px !important;
+  margin: 0 auto !important;
+  padding: 0 18px !important;
+}
+
+@media (max-width: 680px) {
+  #shil-calculation-inputs-root.shil-calculation-inputs-page {
+    gap: 12px !important;
+    padding-inline: 8px !important;
+  }
+
+  #shil-calculation-inputs-root .shil-summary-grid,
+  #shil-calculation-inputs-root .shil-form-grid,
+  #shil-calculation-inputs-root .shil-equipment-scroll-list,
+  #shil-calculation-inputs-root .shil-equipment-controls {
+    grid-template-columns: 1fr !important;
+  }
+
+  #shil-calculation-inputs-root .shil-equipment-actions {
+    grid-template-columns: 1fr !important;
+  }
+
+  #shil-calculation-inputs-root .shil-summary-grid > div {
+    min-height: 78px !important;
+  }
+}

@@ -90,3 +90,44 @@ import "./appearance/styles/shil-confirm-buttons-unified-v5-2.css";
 
 /* SHIL UI V5.3 - runtime confirmation button placement */
 import "./appearance/styles/shil-confirm-buttons-runtime-v5-3.js";
+
+/* SHIL UI V5.4 - shared main image on every non-auth page */
+import './appearance/styles/shil-all-pages-main-background-v5-4.css';
+import './appearance/styles/environment-unified-v5-7-final.css';
+
+/* SHIL Environment V5.8 hard isolation - must stay last */
+import './appearance/styles/environment-hard-override-v5-8-final.css';
+
+/* SHIL Calculation Inputs V5.9 hard isolation - must stay last */
+import './appearance/styles/calculation-inputs-hard-override-v5-9-final.css';
+/* SHIL System Settings V5.10 hard isolation - must stay last */
+import './appearance/styles/system-settings-hard-override-v5-10-final.css';
+
+/* SHIL Summary V5.11 hard isolation - must stay last */
+import './appearance/styles/summary-hard-override-v5-11-final.css';
+/* SHIL Run Output V5.12 hard isolation - must stay last */
+import './appearance/styles/run-output-hard-override-v5-12-final.css';
+
+/* SHIL V5.13 - global compact layout, must stay last */
+import "./appearance/styles/all-pages-compact-unified-v5-13-final.css";
+
+/* SHIL Calculation Method V5.14 hard isolation - must stay last */
+import './appearance/styles/calculation-method-hard-override-v5-14-final.css';
+
+/* SHIL System Settings V5.15 - compact data layout + sticky rail */
+import './appearance/styles/system-settings-compact-sticky-v5-15-final.css';
+
+/* SHIL System Settings V5.16 focused fix - settings page only */
+import './appearance/styles/system-settings-v5-16-focused-fix.css';
+
+/* SHIL Calculation Inputs V5.17 focused fix - calculation inputs page only */
+import './appearance/styles/calculation-inputs-v5-17-focused-fix.css';
+
+/* SHIL Environment V5.18 focused compact layout - environment page only */
+import './appearance/styles/environment-v5-18-focused-compact.css';
+
+/* SHIL Calculation Method V5.19 focused compact layout - calculation method page only */
+import './appearance/styles/calculation-method-v5-19-focused-compact.css';
+
+/* SHIL V5.20 - identical sticky project rail on every engineering page */
+import './appearance/styles/project-rail-unified-v5-20-final.css';

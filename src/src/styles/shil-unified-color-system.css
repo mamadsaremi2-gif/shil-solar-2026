@@ -1,0 +1,751 @@
+
+/* =========================================================
+   SHIL UNIFIED COLOR SYSTEM - FINAL GLOBAL RULE
+   قانون جامع رنگ‌بندی:
+   1) بکگراند تمام صفحات داخلی: یک رنگ ثابت
+   2) بلوک‌ها/کارت‌ها/سکشن‌ها: رنگ متفاوت و یکدست
+   3) فیلدها/ورودی‌ها/سلول‌ها/دکمه‌های محتوایی: رنگ سوم و قابل تفکیک
+   Applies globally from Dashboard to New Project, Calculations, Review, Development.
+   Login / Welcome preserved.
+   ========================================================= */
+
+:root {
+  /* Page background: one flat engineering color */
+  --shil-page-bg: #e8eef4;
+
+  /* Block/card/section surface */
+  --shil-block-bg: #f8fbfd;
+  --shil-block-bg-strong: #ffffff;
+
+  /* Fields / inputs / data cells */
+  --shil-field-bg: #eef8fc;
+  --shil-field-bg-strong: #f5fcff;
+
+  /* Headers / footers */
+  --shil-nav-bg: #4f5d6e;
+  --shil-nav-bg-2: #435263;
+
+  /* Buttons inside header/footer */
+  --shil-nav-btn-bg: #edf8ff;
+  --shil-nav-btn-bg-2: #dff0fa;
+
+  /* Lines */
+  --shil-block-border: #82d9f2;
+  --shil-field-border: #42c2e6;
+  --shil-soft-border: rgba(66, 194, 230, .42);
+
+  /* Text */
+  --shil-text: #0c2433;
+  --shil-muted: #516b7a;
+  --shil-white: #ffffff;
+
+  /* Shadows */
+  --shil-block-shadow:
+    0 8px 20px rgba(14, 35, 55, .07),
+    inset 0 1px 0 rgba(255,255,255,.96);
+
+  --shil-field-shadow:
+    0 4px 10px rgba(14, 35, 55, .045),
+    inset 0 1px 0 rgba(255,255,255,.90);
+}
+
+/* ---------- 1) One single page background ---------- */
+html,
+body {
+  background: var(--shil-page-bg) !important;
+}
+
+body:not(.login-page):not(.welcome-page),
+body:not(.login-page):not(.welcome-page) #root,
+body:not(.login-page):not(.welcome-page) .app,
+body:not(.login-page):not(.welcome-page) .shil-app,
+body:not(.login-page):not(.welcome-page) .mobile-app,
+body:not(.login-page):not(.welcome-page) .app-shell,
+body:not(.login-page):not(.welcome-page) .shil-shell,
+body:not(.login-page):not(.welcome-page) .mobile-shell,
+body:not(.login-page):not(.welcome-page) .page,
+body:not(.login-page):not(.welcome-page) .screen,
+body:not(.login-page):not(.welcome-page) .mobile-page,
+body:not(.login-page):not(.welcome-page) .shil-page,
+body:not(.login-page):not(.welcome-page) .shil-main,
+body:not(.login-page):not(.welcome-page) main {
+  background: var(--shil-page-bg) !important;
+  background-image: none !important;
+  color: var(--shil-text) !important;
+}
+
+/* Remove dark watermark dominance */
+body:not(.login-page):not(.welcome-page) [class*="watermark"],
+body:not(.login-page):not(.welcome-page) [class*="Watermark"] {
+  opacity: .035 !important;
+}
+
+/* ---------- Navigation frame ---------- */
+body:not(.login-page):not(.welcome-page) .shil-header,
+body:not(.login-page):not(.welcome-page) .shil-footer,
+body:not(.login-page):not(.welcome-page) header,
+body:not(.login-page):not(.welcome-page) footer {
+  background: linear-gradient(180deg, var(--shil-nav-bg), var(--shil-nav-bg-2)) !important;
+  background-image: linear-gradient(180deg, var(--shil-nav-bg), var(--shil-nav-bg-2)) !important;
+  border-color: rgba(255,255,255,.26) !important;
+  box-shadow:
+    0 8px 20px rgba(10, 25, 45, .18),
+    inset 0 1px 0 rgba(255,255,255,.22) !important;
+  color: var(--shil-white) !important;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-header *,
+body:not(.login-page):not(.welcome-page) .shil-footer *,
+body:not(.login-page):not(.welcome-page) header *,
+body:not(.login-page):not(.welcome-page) footer * {
+  color: var(--shil-white) !important;
+}
+
+/* Header/Footer buttons exactly like the clean Back button */
+body:not(.login-page):not(.welcome-page) .shil-header button,
+body:not(.login-page):not(.welcome-page) .shil-footer button,
+body:not(.login-page):not(.welcome-page) .shil-header a,
+body:not(.login-page):not(.welcome-page) .shil-footer a,
+body:not(.login-page):not(.welcome-page) header button,
+body:not(.login-page):not(.welcome-page) footer button,
+body:not(.login-page):not(.welcome-page) header a,
+body:not(.login-page):not(.welcome-page) footer a,
+body:not(.login-page):not(.welcome-page) .shil-capsule,
+body:not(.login-page):not(.welcome-page) .shil-mini-btn,
+body:not(.login-page):not(.welcome-page) .shil-primary-btn,
+body:not(.login-page):not(.welcome-page) .shil-ghost-btn {
+  background: linear-gradient(180deg, var(--shil-nav-btn-bg), var(--shil-nav-btn-bg-2)) !important;
+  background-image: linear-gradient(180deg, var(--shil-nav-btn-bg), var(--shil-nav-btn-bg-2)) !important;
+  color: var(--shil-text) !important;
+  border: 1px solid #c5eafd !important;
+  border-radius: 18px !important;
+  font-weight: 900 !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+  box-shadow:
+    0 2px 8px rgba(0,0,0,.10),
+    inset 0 1px 0 rgba(255,255,255,.95) !important;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-header button *,
+body:not(.login-page):not(.welcome-page) .shil-footer button *,
+body:not(.login-page):not(.welcome-page) .shil-header a *,
+body:not(.login-page):not(.welcome-page) .shil-footer a *,
+body:not(.login-page):not(.welcome-page) header button *,
+body:not(.login-page):not(.welcome-page) footer button *,
+body:not(.login-page):not(.welcome-page) header a *,
+body:not(.login-page):not(.welcome-page) footer a *,
+body:not(.login-page):not(.welcome-page) .shil-capsule * {
+  color: var(--shil-text) !important;
+  text-shadow: none !important;
+  font-weight: 900 !important;
+}
+
+/* ---------- Project rail area: keep horizontal and compact ---------- */
+body:not(.login-page):not(.welcome-page) .shil-mini-rail,
+body:not(.login-page):not(.welcome-page) .project-mini-rail,
+body:not(.login-page):not(.welcome-page) .shil-project-mini-rail,
+body:not(.login-page):not(.welcome-page) .shil-step-rail,
+body:not(.login-page):not(.welcome-page) .project-step-rail,
+body:not(.login-page):not(.welcome-page) .shil-route-rail,
+body:not(.login-page):not(.welcome-page) [class*="MiniRail"],
+body:not(.login-page):not(.welcome-page) [class*="mini-rail"],
+body:not(.login-page):not(.welcome-page) [class*="step-rail"],
+body:not(.login-page):not(.welcome-page) [class*="route-rail"] {
+  background: #dce5ee !important;
+  background-image: none !important;
+  border: 1px solid #b9d8e8 !important;
+  border-radius: 18px !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+}
+
+/* ---------- 2) Blocks / Cards / Sections: second color ---------- */
+body:not(.login-page):not(.welcome-page) .shil-card,
+body:not(.login-page):not(.welcome-page) .shil-panel,
+body:not(.login-page):not(.welcome-page) .shil-block,
+body:not(.login-page):not(.welcome-page) .shil-section,
+body:not(.login-page):not(.welcome-page) .mobile-card,
+body:not(.login-page):not(.welcome-page) .shil-env-card,
+body:not(.login-page):not(.welcome-page) .shil-summary-card,
+body:not(.login-page):not(.welcome-page) .shil-final-card,
+body:not(.login-page):not(.welcome-page) .shil-report-card,
+body:not(.login-page):not(.welcome-page) .shil-output-card,
+body:not(.login-page):not(.welcome-page) .shil-form-card,
+body:not(.login-page):not(.welcome-page) .project-card,
+body:not(.login-page):not(.welcome-page) .route-card,
+body:not(.login-page):not(.welcome-page) .project-type-card,
+body:not(.login-page):not(.welcome-page) .new-project-card,
+body:not(.login-page):not(.welcome-page) .dashboard-card,
+body:not(.login-page):not(.welcome-page) .method-card,
+body:not(.login-page):not(.welcome-page) .equipment-card,
+body:not(.login-page):not(.welcome-page) .summary-section,
+body:not(.login-page):not(.welcome-page) .report-section,
+body:not(.login-page):not(.welcome-page) section,
+body:not(.login-page):not(.welcome-page) article,
+body:not(.login-page):not(.welcome-page) div[class*="card"],
+body:not(.login-page):not(.welcome-page) div[class*="Card"],
+body:not(.login-page):not(.welcome-page) div[class*="panel"],
+body:not(.login-page):not(.welcome-page) div[class*="Panel"],
+body:not(.login-page):not(.welcome-page) div[class*="section"],
+body:not(.login-page):not(.welcome-page) div[class*="Section"],
+body:not(.login-page):not(.welcome-page) div[class*="block"],
+body:not(.login-page):not(.welcome-page) div[class*="Block"] {
+  background: var(--shil-block-bg) !important;
+  background-image: none !important;
+  border: 1.25px solid var(--shil-block-border) !important;
+  box-shadow: var(--shil-block-shadow) !important;
+  color: var(--shil-text) !important;
+}
+
+/* Stronger top edge on real blocks */
+body:not(.login-page):not(.welcome-page) .shil-card,
+body:not(.login-page):not(.welcome-page) .shil-panel,
+body:not(.login-page):not(.welcome-page) .shil-env-card,
+body:not(.login-page):not(.welcome-page) .shil-summary-card,
+body:not(.login-page):not(.welcome-page) .shil-final-card,
+body:not(.login-page):not(.welcome-page) .shil-report-card,
+body:not(.login-page):not(.welcome-page) .shil-output-card,
+body:not(.login-page):not(.welcome-page) section {
+  position: relative !important;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-card::before,
+body:not(.login-page):not(.welcome-page) .shil-panel::before,
+body:not(.login-page):not(.welcome-page) .shil-env-card::before,
+body:not(.login-page):not(.welcome-page) .shil-summary-card::before,
+body:not(.login-page):not(.welcome-page) .shil-final-card::before,
+body:not(.login-page):not(.welcome-page) .shil-report-card::before,
+body:not(.login-page):not(.welcome-page) .shil-output-card::before,
+body:not(.login-page):not(.welcome-page) section::before {
+  content: "" !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 10px !important;
+  right: 10px !important;
+  height: 2px !important;
+  border-radius: 999px !important;
+  background: var(--shil-field-border) !important;
+  opacity: .75 !important;
+  pointer-events: none !important;
+}
+
+/* ---------- 3) Fields / Inputs / Cells: third color ---------- */
+body:not(.login-page):not(.welcome-page) input,
+body:not(.login-page):not(.welcome-page) textarea,
+body:not(.login-page):not(.welcome-page) select,
+body:not(.login-page):not(.welcome-page) option,
+body:not(.login-page):not(.welcome-page) .shil-input,
+body:not(.login-page):not(.welcome-page) .shil-field,
+body:not(.login-page):not(.welcome-page) .shil-data-cell,
+body:not(.login-page):not(.welcome-page) .shil-metric,
+body:not(.login-page):not(.welcome-page) .shil-stat,
+body:not(.login-page):not(.welcome-page) .summary-item,
+body:not(.login-page):not(.welcome-page) .data-item,
+body:not(.login-page):not(.welcome-page) .metric-card,
+body:not(.login-page):not(.welcome-page) .result-card,
+body:not(.login-page):not(.welcome-page) .bank-card,
+body:not(.login-page):not(.welcome-page) .equipment-item,
+body:not(.login-page):not(.welcome-page) .calc-cell,
+body:not(.login-page):not(.welcome-page) .table-cell,
+body:not(.login-page):not(.welcome-page) td,
+body:not(.login-page):not(.welcome-page) th,
+body:not(.login-page):not(.welcome-page) div[class*="field"],
+body:not(.login-page):not(.welcome-page) div[class*="Field"],
+body:not(.login-page):not(.welcome-page) div[class*="metric"],
+body:not(.login-page):not(.welcome-page) div[class*="Metric"],
+body:not(.login-page):not(.welcome-page) div[class*="stat"],
+body:not(.login-page):not(.welcome-page) div[class*="Stat"],
+body:not(.login-page):not(.welcome-page) div[class*="cell"],
+body:not(.login-page):not(.welcome-page) div[class*="Cell"] {
+  background: var(--shil-field-bg) !important;
+  background-image: none !important;
+  border: 1.15px solid var(--shil-field-border) !important;
+  color: var(--shil-text) !important;
+  box-shadow: var(--shil-field-shadow) !important;
+}
+
+/* Placeholder / values readability */
+body:not(.login-page):not(.welcome-page) input::placeholder,
+body:not(.login-page):not(.welcome-page) textarea::placeholder {
+  color: var(--shil-muted) !important;
+  opacity: 1 !important;
+}
+
+body:not(.login-page):not(.welcome-page) table,
+body:not(.login-page):not(.welcome-page) .table,
+body:not(.login-page):not(.welcome-page) [class*="table"],
+body:not(.login-page):not(.welcome-page) [class*="Table"] {
+  background: var(--shil-block-bg) !important;
+  background-image: none !important;
+  border: 1.25px solid var(--shil-block-border) !important;
+  color: var(--shil-text) !important;
+  box-shadow: var(--shil-block-shadow) !important;
+}
+
+/* Force all table values dark */
+body:not(.login-page):not(.welcome-page) table *,
+body:not(.login-page):not(.welcome-page) .table *,
+body:not(.login-page):not(.welcome-page) [class*="table"] *,
+body:not(.login-page):not(.welcome-page) [class*="Table"] * {
+  color: var(--shil-text) !important;
+}
+
+/* ---------- Text system ---------- */
+body:not(.login-page):not(.welcome-page) h1,
+body:not(.login-page):not(.welcome-page) h2,
+body:not(.login-page):not(.welcome-page) h3,
+body:not(.login-page):not(.welcome-page) h4,
+body:not(.login-page):not(.welcome-page) h5,
+body:not(.login-page):not(.welcome-page) h6,
+body:not(.login-page):not(.welcome-page) .shil-title,
+body:not(.login-page):not(.welcome-page) .shil-section-title,
+body:not(.login-page):not(.welcome-page) .title {
+  color: var(--shil-text) !important;
+  font-weight: 900 !important;
+  text-shadow: none !important;
+}
+
+body:not(.login-page):not(.welcome-page) p,
+body:not(.login-page):not(.welcome-page) span,
+body:not(.login-page):not(.welcome-page) label,
+body:not(.login-page):not(.welcome-page) small,
+body:not(.login-page):not(.welcome-page) div,
+body:not(.login-page):not(.welcome-page) a,
+body:not(.login-page):not(.welcome-page) li,
+body:not(.login-page):not(.welcome-page) td,
+body:not(.login-page):not(.welcome-page) th,
+body:not(.login-page):not(.welcome-page) strong,
+body:not(.login-page):not(.welcome-page) b {
+  color: var(--shil-text) !important;
+  text-shadow: none !important;
+}
+
+body:not(.login-page):not(.welcome-page) small,
+body:not(.login-page):not(.welcome-page) .muted,
+body:not(.login-page):not(.welcome-page) .shil-muted,
+body:not(.login-page):not(.welcome-page) .shil-env-hint,
+body:not(.login-page):not(.welcome-page) .hint {
+  color: var(--shil-muted) !important;
+}
+
+/* ---------- Content buttons use field color, not block color ---------- */
+body:not(.login-page):not(.welcome-page) .shil-mini-action,
+body:not(.login-page):not(.welcome-page) .shil-action,
+body:not(.login-page):not(.welcome-page) .shil-install-chip,
+body:not(.login-page):not(.welcome-page) .shil-gps-toggle button,
+body:not(.login-page):not(.welcome-page) button[type="button"],
+body:not(.login-page):not(.welcome-page) button[type="submit"] {
+  background: var(--shil-field-bg-strong) !important;
+  background-image: none !important;
+  border: 1.15px solid var(--shil-field-border) !important;
+  color: var(--shil-text) !important;
+  box-shadow: var(--shil-field-shadow) !important;
+  font-weight: 900 !important;
+}
+
+/* Active chips / selected states */
+body:not(.login-page):not(.welcome-page) button.active,
+body:not(.login-page):not(.welcome-page) .active,
+body:not(.login-page):not(.welcome-page) [aria-selected="true"] {
+  border-color: #159cc8 !important;
+  box-shadow:
+    0 0 0 1px rgba(21,156,200,.42),
+    0 0 12px rgba(21,156,200,.16),
+    inset 0 1px 0 rgba(255,255,255,.94) !important;
+}
+
+/* ---------- Icon system: keep dashboard/project icons separated ---------- */
+body:not(.login-page):not(.welcome-page) .shil-ios-icon-img {
+  background: #f1f7fb !important;
+  background-image: none !important;
+  border: 1.25px solid rgba(188, 139, 255, .66) !important;
+  box-shadow:
+    0 0 8px rgba(199,125,255,.24),
+    0 8px 18px rgba(14,35,55,.12),
+    inset 0 1px 0 rgba(255,255,255,.88) !important;
+}
+
+/* Rail icons compact */
+body:not(.login-page):not(.welcome-page) .shil-mini-rail .shil-ios-icon-img,
+body:not(.login-page):not(.welcome-page) .project-mini-rail .shil-ios-icon-img,
+body:not(.login-page):not(.welcome-page) .shil-project-mini-rail .shil-ios-icon-img,
+body:not(.login-page):not(.welcome-page) .shil-step-rail .shil-ios-icon-img,
+body:not(.login-page):not(.welcome-page) .project-step-rail .shil-ios-icon-img,
+body:not(.login-page):not(.welcome-page) .shil-route-rail .shil-ios-icon-img,
+body:not(.login-page):not(.welcome-page) [class*="MiniRail"] .shil-ios-icon-img,
+body:not(.login-page):not(.welcome-page) [class*="mini-rail"] .shil-ios-icon-img,
+body:not(.login-page):not(.welcome-page) [class*="step-rail"] .shil-ios-icon-img,
+body:not(.login-page):not(.welcome-page) [class*="route-rail"] .shil-ios-icon-img {
+  width: 46px !important;
+  height: 46px !important;
+  min-width: 46px !important;
+  min-height: 46px !important;
+  border-radius: 14px !important;
+}
+
+/* ---------- Final summary/report page keeps clean report feel ---------- */
+body:not(.login-page):not(.welcome-page) .final-summary,
+body:not(.login-page):not(.welcome-page) .summary-section,
+body:not(.login-page):not(.welcome-page) .report-section,
+body:not(.login-page):not(.welcome-page) [class*="summary"],
+body:not(.login-page):not(.welcome-page) [class*="Summary"],
+body:not(.login-page):not(.welcome-page) [class*="report"],
+body:not(.login-page):not(.welcome-page) [class*="Report"] {
+  background: var(--shil-block-bg-strong) !important;
+  background-image: none !important;
+  border-color: var(--shil-block-border) !important;
+  color: var(--shil-text) !important;
+}
+
+/* ---------- Prevent old dark overlays from winning ---------- */
+body:not(.login-page):not(.welcome-page) [style*="rgba(5,14,17"],
+body:not(.login-page):not(.welcome-page) [style*="#020607"],
+body:not(.login-page):not(.welcome-page) [style*="#061013"] {
+  background: var(--shil-block-bg) !important;
+  color: var(--shil-text) !important;
+}
+
+/* Preserve Login / Welcome */
+[class*="login"],
+[class*="Login"],
+[class*="welcome"],
+[class*="Welcome"] {
+  /* Auth visual identity remains separate */
+}
+
+/* =========================================================
+   SHIL FINAL BACKGROUND RULE
+   Main artwork only under icon rail / navigation visual band.
+   Engineering pages content must stay clean and light.
+   ========================================================= */
+
+body:not(.login-page):not(.welcome-page) .shil-main {
+  background-image: none !important;
+  background: #eef4f8 !important;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-page-content,
+body:not(.login-page):not(.welcome-page) .shil-engineering-content,
+body:not(.login-page):not(.welcome-page) .shil-card-stack,
+body:not(.login-page):not(.welcome-page) .shil-section-card {
+  background-image: none !important;
+}
+
+.shil-project-mini-rail {
+  background-image:
+    linear-gradient(180deg, rgba(240, 252, 255, 0.88), rgba(240, 252, 255, 0.82)),
+    url('/assets/shil/background/main/shil-main-bg.webp') !important;
+  background-size: cover !important;
+  background-position: center !important;
+}
+
+
+/* =========================================================
+   SHIL MOBILE-FIRST ENGINEERING UI
+   Clean solar/energy engineering theme after icon rail
+   ========================================================= */
+
+:root {
+  --shil-eng-bg: #eef6fb;
+  --shil-eng-panel: rgba(255, 255, 255, 0.92);
+  --shil-eng-panel-2: rgba(245, 252, 255, 0.96);
+  --shil-eng-line: rgba(22, 188, 235, 0.65);
+  --shil-eng-line-soft: rgba(22, 188, 235, 0.22);
+  --shil-eng-ink: #0b2a3d;
+  --shil-eng-muted: #547083;
+  --shil-eng-blue: #12a9ee;
+  --shil-eng-shadow: 0 14px 34px rgba(11, 42, 61, 0.10);
+}
+
+body:not(.login-page):not(.welcome-page) .shil-main {
+  background:
+    radial-gradient(circle at 12% 18%, rgba(31, 183, 255, 0.12), transparent 30%),
+    linear-gradient(180deg, #f7fcff 0%, var(--shil-eng-bg) 100%) !important;
+  background-image: none !important;
+}
+
+.shil-page-content,
+.shil-engineering-content {
+  position: relative;
+  padding: 10px 10px 92px !important;
+  background: transparent !important;
+}
+
+.shil-page-content::before,
+.shil-engineering-content::before {
+  content: "";
+  position: fixed;
+  inset: 96px 0 70px 0;
+  pointer-events: none;
+  opacity: 0.18;
+  background:
+    linear-gradient(135deg, transparent 0 48%, rgba(22,188,235,.28) 49%, transparent 50%),
+    radial-gradient(circle at 0% 70%, rgba(15,133,207,.18), transparent 34%);
+  background-size: 88px 88px, 100% 100%;
+  z-index: 0;
+}
+
+.shil-project-mini-rail {
+  position: relative;
+  margin: 8px 10px 10px !important;
+  border: 1px solid rgba(22,188,235,.22) !important;
+  border-radius: 18px !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  background:
+    linear-gradient(90deg, rgba(240,252,255,.94), rgba(245,251,255,.72)),
+    url('/assets/shil/background/main/shil-main-bg.webp') center/cover no-repeat !important;
+  box-shadow: 0 10px 28px rgba(11,42,61,.08) !important;
+}
+
+.shil-card-stack,
+.shil-section-card,
+.shil-method-context-strip,
+.shil-project-path-summary {
+  position: relative;
+  z-index: 1;
+}
+
+.shil-card-stack {
+  display: grid !important;
+  gap: 10px !important;
+  padding: 0 !important;
+}
+
+.shil-section-card,
+.shil-method-context-strip,
+.shil-project-path-summary,
+.shil-execution-card,
+.shil-result-card,
+.shil-summary-card {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.96), rgba(247,252,255,.94)) !important;
+  border: 1px solid var(--shil-eng-line-soft) !important;
+  border-right: 3px solid var(--shil-eng-line) !important;
+  border-radius: 18px !important;
+  box-shadow: var(--shil-eng-shadow) !important;
+  padding: 14px !important;
+  overflow: hidden !important;
+}
+
+.shil-section-card::before,
+.shil-execution-card::before,
+.shil-result-card::before,
+.shil-summary-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, transparent, rgba(22,188,235,.08), transparent),
+    radial-gradient(circle at 12% 0%, rgba(255,190,70,.10), transparent 28%);
+}
+
+.shil-section-head,
+.shil-card-head {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+  margin-bottom: 10px !important;
+  padding-bottom: 8px !important;
+  border-bottom: 1px dashed rgba(22,188,235,.34) !important;
+}
+
+.shil-section-head h2,
+.shil-card-head h2,
+.shil-section-card h2 {
+  color: var(--shil-eng-ink) !important;
+  font-size: 15px !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.02em !important;
+}
+
+.shil-section-head span,
+.shil-card-head span,
+.shil-section-card small {
+  color: var(--shil-eng-muted) !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+}
+
+.shil-form-grid {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 10px !important;
+}
+
+.shil-form-grid label,
+.shil-input-card,
+.shil-field-card {
+  background: rgba(255,255,255,.74) !important;
+  border: 1px solid rgba(22,188,235,.18) !important;
+  border-radius: 14px !important;
+  padding: 10px !important;
+}
+
+.shil-form-grid input,
+.shil-form-grid select,
+.shil-form-grid textarea,
+.shil-textarea {
+  width: 100% !important;
+  border: 1px solid rgba(22,188,235,.22) !important;
+  border-radius: 12px !important;
+  background: rgba(248,252,255,.92) !important;
+  color: var(--shil-eng-ink) !important;
+  padding: 10px 11px !important;
+  font-weight: 800 !important;
+}
+
+.shil-execution-grid,
+.shil-project-path-three-cards {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 12px !important;
+}
+
+.shil-project-path-card,
+.shil-execution-card {
+  min-height: unset !important;
+}
+
+.shil-project-path-card img,
+.shil-execution-image {
+  width: 96px !important;
+  height: 96px !important;
+  object-fit: cover !important;
+  border-radius: 14px !important;
+  box-shadow: 0 10px 24px rgba(11,42,61,.16) !important;
+}
+
+.shil-primary-wide,
+.shil-primary-entry,
+.shil-button-primary {
+  border-radius: 16px !important;
+  border: 1px dashed rgba(18,169,238,.55) !important;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.96), rgba(233,249,255,.96)) !important;
+  color: var(--shil-eng-ink) !important;
+  font-weight: 900 !important;
+  box-shadow: 0 10px 22px rgba(18,169,238,.10) !important;
+}
+
+.shil-primary-wide::before {
+  content: "+";
+  color: var(--shil-eng-blue);
+  font-size: 20px;
+  margin-inline-end: 8px;
+}
+
+.shil-fixed-footer {
+  background: linear-gradient(180deg, rgba(83,105,124,.96), rgba(58,78,96,.98)) !important;
+  box-shadow: 0 -12px 24px rgba(11,42,61,.18) !important;
+}
+
+@media (min-width: 760px) {
+  .shil-page-content,
+  .shil-engineering-content {
+    padding: 14px 18px 96px !important;
+  }
+
+  .shil-execution-grid,
+  .shil-project-path-three-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .shil-form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 520px) {
+  .shil-project-mini-rail {
+    margin: 6px 8px 8px !important;
+    border-radius: 16px !important;
+  }
+
+  .shil-section-card,
+  .shil-execution-card,
+  .shil-result-card,
+  .shil-summary-card {
+    padding: 12px !important;
+    border-radius: 16px !important;
+  }
+
+  .shil-section-head h2,
+  .shil-card-head h2,
+  .shil-section-card h2 {
+    font-size: 14px !important;
+  }
+
+  .shil-project-path-card img,
+  .shil-execution-image {
+    width: 84px !important;
+    height: 84px !important;
+  }
+}
+
+/* =====================================================
+   SHIL PAGE SHELL - FINAL LAYOUT
+   ===================================================== */
+
+.shil-page-shell{
+    position:relative !important;
+    width:100% !important;
+    height:100dvh !important;
+    min-height:100dvh !important;
+    overflow:hidden !important;
+}
+
+.shil-page-content{
+    position:absolute !important;
+
+    top:55px !important;
+    left:0 !important;
+    right:0 !important;
+    bottom:40px !important;
+
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+
+    box-sizing:border-box !important;
+
+    -webkit-overflow-scrolling:touch !important;
+}
+
+.shil-no-header .shil-page-content{
+    top:0 !important;
+}
+
+.shil-no-footer .shil-page-content{
+    bottom:0 !important;
+}
+
+.shil-fixed-header{
+    position:fixed !important;
+    top:0 !important;
+    left:0 !important;
+    right:0 !important;
+    height:55px !important;
+    min-height:55px !important;
+    max-height:55px !important;
+    z-index:4000 !important;
+}
+
+.shil-fixed-footer{
+    position:fixed !important;
+    left:0 !important;
+    right:0 !important;
+    bottom:0 !important;
+
+    height:40px !important;
+    min-height:40px !important;
+    max-height:40px !important;
+
+    z-index:4000 !important;
+}
+

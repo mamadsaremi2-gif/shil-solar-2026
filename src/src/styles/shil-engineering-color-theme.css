@@ -1,0 +1,125 @@
+﻿:root{
+  --shil-page-bg:#0f2747;
+  --shil-card-bg:#e8e0ff;
+  --shil-field-bg:#e8fff0;
+
+  --shil-card-border:#c5b2ff;
+  --shil-field-border:#98e3b2;
+  --shil-text:#13253f;
+}
+
+/* ===== صفحه ===== */
+
+body:not(.login-page):not(.welcome-page),
+body:not(.login-page):not(.welcome-page) .shil-main,
+body:not(.login-page):not(.welcome-page) .shil-page-content,
+body:not(.login-page):not(.welcome-page) main{
+    background:var(--shil-page-bg)!important;
+}
+
+/* ===== کارت ها ===== */
+
+body:not(.login-page):not(.welcome-page) .shil-section-card,
+body:not(.login-page):not(.welcome-page) .shil-card-stack,
+body:not(.login-page):not(.welcome-page) .shil-result-card,
+body:not(.login-page):not(.welcome-page) .shil-summary-card,
+body:not(.login-page):not(.welcome-page) .shil-project-path-card,
+body:not(.login-page):not(.welcome-page) .shil-method-context-strip,
+body:not(.login-page):not(.welcome-page) .shil-project-path-summary,
+body:not(.login-page):not(.welcome-page) [class*="card"],
+body:not(.login-page):not(.welcome-page) [class*="section"]{
+
+    background:var(--shil-card-bg)!important;
+    border:1px solid var(--shil-card-border)!important;
+    border-radius:22px!important;
+    box-shadow:
+      0 8px 24px rgba(0,0,0,.18),
+      0 0 20px rgba(145,120,255,.18)!important;
+}
+
+/* ===== فیلدها ===== */
+
+body:not(.login-page):not(.welcome-page) input,
+body:not(.login-page):not(.welcome-page) select,
+body:not(.login-page):not(.welcome-page) textarea,
+body:not(.login-page):not(.welcome-page) .shil-input-card,
+body:not(.login-page):not(.welcome-page) .shil-field-card{
+
+    background:var(--shil-field-bg)!important;
+    border:1px solid var(--shil-field-border)!important;
+    color:var(--shil-text)!important;
+    border-radius:14px!important;
+}
+
+/* متن ها */
+
+body:not(.login-page):not(.welcome-page) h1,
+body:not(.login-page):not(.welcome-page) h2,
+body:not(.login-page):not(.welcome-page) h3,
+body:not(.login-page):not(.welcome-page) h4,
+body:not(.login-page):not(.welcome-page) label,
+body:not(.login-page):not(.welcome-page) span,
+body:not(.login-page):not(.welcome-page) p{
+    color:var(--shil-text)!important;
+}
+
+/* =====================================================
+   SHIL PAGE SHELL - FINAL LAYOUT
+   ===================================================== */
+
+.shil-page-shell{
+    position:relative !important;
+    width:100% !important;
+    height:100dvh !important;
+    min-height:100dvh !important;
+    overflow:hidden !important;
+}
+
+.shil-page-content{
+    position:absolute !important;
+
+    top:55px !important;
+    left:0 !important;
+    right:0 !important;
+    bottom:40px !important;
+
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+
+    box-sizing:border-box !important;
+
+    -webkit-overflow-scrolling:touch !important;
+}
+
+.shil-no-header .shil-page-content{
+    top:0 !important;
+}
+
+.shil-no-footer .shil-page-content{
+    bottom:0 !important;
+}
+
+.shil-fixed-header{
+    position:fixed !important;
+    top:0 !important;
+    left:0 !important;
+    right:0 !important;
+    height:55px !important;
+    min-height:55px !important;
+    max-height:55px !important;
+    z-index:4000 !important;
+}
+
+.shil-fixed-footer{
+    position:fixed !important;
+    left:0 !important;
+    right:0 !important;
+    bottom:0 !important;
+
+    height:40px !important;
+    min-height:40px !important;
+    max-height:40px !important;
+
+    z-index:4000 !important;
+}
+

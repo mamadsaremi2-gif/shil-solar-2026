@@ -1,0 +1,35 @@
+import React from "react";
+
+export default function ShilPrimaryButton({
+  label = "تأیید",
+  children,
+  className = "",
+  style,
+  ...props
+}) {
+  const fixedStyle = {
+    bottom: "80px",
+    height: "46px",
+    minHeight: "46px",
+    maxHeight: "46px",
+    width: "max-content",
+    minWidth: "110px",
+    maxWidth: "calc(100vw - 32px)",
+    padding: "0 18px",
+    fontSize: "11px",
+    fontWeight: 900,
+    lineHeight: 1,
+    backgroundImage: "none"
+  };
+
+  return (
+    <button
+      type="button"
+      {...props}
+      className={["shil-primary-wide", className].filter(Boolean).join(" ")}
+      style={{ ...(style || {}), ...fixedStyle }}
+    >
+      {label || children || "تأیید"}
+    </button>
+  );
+}

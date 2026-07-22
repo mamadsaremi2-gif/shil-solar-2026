@@ -1,0 +1,606 @@
+﻿
+function applyProjectLayoutOffsets(){
+
+    const title=document.querySelector(".shil-clean-section-head");
+    if(title){
+        title.style.setProperty("position","relative","important");
+        title.style.setProperty("top","7px","important");
+    }
+
+    const cards=document.querySelector(".shil-project-path-two-cards");
+    if(cards){
+        cards.style.setProperty("position","relative","important");
+        cards.style.setProperty("top","14px","important");
+    }
+
+    const utility=document.querySelector(".shil-utility-path-field");
+    if(utility){
+        utility.style.setProperty("position","relative","important");
+        utility.style.setProperty("top","21px","important");
+    }
+
+    const btn=document.querySelector(".shil-project-path-confirm");
+    if(btn){
+        btn.style.setProperty("backdrop-filter","none","important");
+        btn.style.setProperty("-webkit-backdrop-filter","none","important");
+        btn.style.setProperty("filter","none","important");
+
+        btn.style.setProperty("background-image","none","important");
+        btn.style.setProperty("background-color","#8A2BE2","important");
+
+        btn.style.setProperty("border","2px solid #6B1FD3","important");
+        btn.style.setProperty("border-radius","22px","important");
+
+        btn.style.setProperty(
+            "box-shadow",
+            "inset 0 2px 4px rgba(255,255,255,.35), inset 0 -2px 4px rgba(0,0,0,.15)",
+            "important"
+        );
+
+        btn.style.setProperty("color","#ffffff","important");
+        btn.style.setProperty("text-shadow","none","important");
+    }
+
+    document.querySelectorAll(".shil-project-path-card h3").forEach(el=>{
+        el.style.setProperty("display","flex","important");
+        el.style.setProperty("align-items","center","important");
+        el.style.setProperty("justify-content","center","important");
+        el.style.setProperty("text-align","center","important");
+        el.style.setProperty("width","100%","important");
+        el.style.setProperty("margin","12px auto 8px","important");
+        el.style.setProperty("line-height","1.15","important");
+    });
+
+}
+
+applyProjectLayoutOffsets();
+
+setTimeout(applyProjectLayoutOffsets,50);
+setTimeout(applyProjectLayoutOffsets,250);
+setTimeout(applyProjectLayoutOffsets,700);
+
+new MutationObserver(applyProjectLayoutOffsets).observe(document.body,{
+    childList:true,
+    subtree:true
+});
+
+
+function applyProjectInfoLayout(){
+    const isInfoPage = document.body.classList.contains("shil-project-info-screen");
+    if(!isInfoPage) return;
+
+    const root =
+        document.querySelector(".shil-project-info-page") ||
+        document.querySelector(".shil-project-page") ||
+        document.querySelector(".shil-engineering-content");
+
+    if(root){
+        root.style.setProperty("position","relative","important");
+        root.style.setProperty("padding-top","21px","important");
+    }
+
+    document.querySelectorAll(".shil-clean-section-head").forEach(head=>{
+        head.style.setProperty("display","flex","important");
+        head.style.setProperty("align-items","center","important");
+        head.style.setProperty("justify-content","center","important");
+
+        head.style.setProperty("height","40px","important");
+        head.style.setProperty("margin","0 0 14px","important");
+
+        head.style.setProperty(
+            "background",
+            "linear-gradient(180deg,#f6fdff 0%,#dff5ff 55%,#aedbff 100%)",
+            "important"
+        );
+
+        head.style.setProperty(
+            "box-shadow",
+            "inset 0 2px 6px rgba(255,255,255,.95), inset 0 -7px 14px rgba(63,173,255,.30)",
+            "important"
+        );
+
+        head.style.setProperty("border-radius","20px","important");
+        head.style.setProperty("border","1px solid rgba(255,255,255,.95)","important");
+
+        const span = head.querySelector("span");
+        if(span){
+            span.style.setProperty("display","none","important");
+        }
+
+        const h2 = head.querySelector("h2");
+        if(h2){
+            h2.style.setProperty("width","100%","important");
+            h2.style.setProperty("margin","0","important");
+            h2.style.setProperty("font-size","16px","important");
+            h2.style.setProperty("font-weight","900","important");
+            h2.style.setProperty("text-align","center","important");
+            h2.style.setProperty("color","#071827","important");
+        }
+    });
+
+    document.querySelectorAll(".shil-form-grid").forEach(grid=>{
+        grid.style.setProperty("display","grid","important");
+        grid.style.setProperty(
+            "grid-template-columns",
+            "repeat(3,minmax(0,1fr))",
+            "important"
+        );
+        grid.style.setProperty("gap","10px","important");
+        grid.style.setProperty("margin-bottom","14px","important");
+    });
+
+    document.querySelectorAll(".shil-form-grid>*").forEach(el=>{
+        el.style.setProperty("width","100%","important");
+        el.style.setProperty("margin","0","important");
+    });
+}
+
+
+applyProjectInfoLayout();
+setTimeout(applyProjectInfoLayout,50);
+setTimeout(applyProjectInfoLayout,250);
+setTimeout(applyProjectInfoLayout,700);
+
+new MutationObserver(applyProjectInfoLayout).observe(document.body,{
+    childList:true,
+    subtree:true
+});
+
+
+function applyProjectInfoTextareaSize(){
+    const isInfoPage = document.body.classList.contains("shil-project-info-screen");
+    if(!isInfoPage) return;
+
+    document.querySelectorAll("textarea").forEach(el=>{
+        el.style.setProperty("min-height","130px","important");
+        el.style.setProperty("height","130px","important");
+        el.style.setProperty("max-height","130px","important");
+
+        el.style.setProperty("padding","18px","important");
+        el.style.setProperty("line-height","1.6","important");
+        el.style.setProperty("resize","none","important");
+        el.style.setProperty("overflow-y","auto","important");
+
+        const card = el.closest(".shil-field-card,.shil-env-card");
+        if(card){
+            card.style.setProperty("min-height","180px","important");
+            card.style.setProperty("height","auto","important");
+        }
+    });
+}
+
+
+applyProjectInfoTextareaSize();
+setTimeout(applyProjectInfoTextareaSize,50);
+setTimeout(applyProjectInfoTextareaSize,250);
+setTimeout(applyProjectInfoTextareaSize,700);
+
+new MutationObserver(applyProjectInfoTextareaSize).observe(document.body,{
+    childList:true,
+    subtree:true
+});
+
+
+/* SHIL PATCH - force project path confirm button compact */
+(function () {
+  const applyCompactConfirmButton = () => {
+    document.querySelectorAll(".shil-project-path-confirm").forEach((btn) => {
+      btn.style.setProperty("width", "max-content", "important");
+      btn.style.setProperty("min-width", "0", "important");
+      btn.style.setProperty("max-width", "none", "important");
+
+      btn.style.setProperty("padding-left", "5px", "important");
+      btn.style.setProperty("padding-right", "5px", "important");
+      btn.style.setProperty("padding-top", "0", "important");
+      btn.style.setProperty("padding-bottom", "0", "important");
+
+      btn.style.setProperty("height", "46px", "important");
+      btn.style.setProperty("display", "inline-flex", "important");
+      btn.style.setProperty("align-items", "center", "important");
+      btn.style.setProperty("justify-content", "center", "important");
+      btn.style.setProperty("white-space", "nowrap", "important");
+
+      btn.style.setProperty("left", "50%", "important");
+      btn.style.setProperty("right", "auto", "important");
+      btn.style.setProperty("transform", "translateX(-50%)", "important");
+    });
+  };
+
+  applyCompactConfirmButton();
+  setTimeout(applyCompactConfirmButton, 100);
+  setTimeout(applyCompactConfirmButton, 500);
+  setTimeout(applyCompactConfirmButton, 1000);
+
+  new MutationObserver(applyCompactConfirmButton).observe(document.documentElement, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ["class", "style"]
+  });
+})();
+
+/* SHIL PATCH - force project info confirm button compact */
+(function () {
+  const applyCompactProjectInfoConfirmButton = () => {
+    document.querySelectorAll(
+      ".shil-project-info-confirm, .shil-project-details-confirm, .shil-project-data-confirm, button"
+    ).forEach((btn) => {
+      const text = (btn.innerText || btn.textContent || "").trim();
+
+      if (
+        !btn.classList.contains("shil-project-info-confirm") &&
+        !btn.classList.contains("shil-project-details-confirm") &&
+        !btn.classList.contains("shil-project-data-confirm") &&
+        !text.includes("تأیید") &&
+        !text.includes("تایید")
+      ) {
+        return;
+      }
+
+      const pageText = document.body.innerText || "";
+      if (
+        !pageText.includes("اطلاعات پروژه") &&
+        !pageText.includes("مشخصات پروژه")
+      ) {
+        return;
+      }
+
+      btn.style.setProperty("width", "max-content", "important");
+      btn.style.setProperty("min-width", "0", "important");
+      btn.style.setProperty("max-width", "none", "important");
+
+      btn.style.setProperty("padding-left", "5px", "important");
+      btn.style.setProperty("padding-right", "5px", "important");
+      btn.style.setProperty("padding-top", "0", "important");
+      btn.style.setProperty("padding-bottom", "0", "important");
+
+      btn.style.setProperty("height", "46px", "important");
+      btn.style.setProperty("display", "inline-flex", "important");
+      btn.style.setProperty("align-items", "center", "important");
+      btn.style.setProperty("justify-content", "center", "important");
+      btn.style.setProperty("white-space", "nowrap", "important");
+
+      btn.style.setProperty("left", "50%", "important");
+      btn.style.setProperty("right", "auto", "important");
+      btn.style.setProperty("transform", "translateX(-50%)", "important");
+    });
+  };
+
+  applyCompactProjectInfoConfirmButton();
+  setTimeout(applyCompactProjectInfoConfirmButton, 100);
+  setTimeout(applyCompactProjectInfoConfirmButton, 500);
+  setTimeout(applyCompactProjectInfoConfirmButton, 1000);
+
+  new MutationObserver(applyCompactProjectInfoConfirmButton).observe(document.documentElement, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ["class", "style"]
+  });
+})();
+
+
+
+
+
+/* ===== SHIL ALL CONFIRM BUTTONS PATCH ===== */
+(function () {
+  const styleConfirmButtons = () => {
+    document.querySelectorAll("button").forEach((btn) => {
+      const text = (btn.innerText || btn.textContent || "").trim();
+
+      if (!text.includes("تایید") && !text.includes("تأیید")) return;
+
+      btn.style.setProperty("width", "max-content", "important");
+      btn.style.setProperty("min-width", "0", "important");
+      btn.style.setProperty("max-width", "none", "important");
+
+      btn.style.setProperty("padding-left", "5px", "important");
+      btn.style.setProperty("padding-right", "5px", "important");
+      btn.style.setProperty("padding-top", "0", "important");
+      btn.style.setProperty("padding-bottom", "0", "important");
+
+      btn.style.setProperty("height", "46px", "important");
+      btn.style.setProperty("display", "inline-flex", "important");
+      btn.style.setProperty("align-items", "center", "important");
+      btn.style.setProperty("justify-content", "center", "important");
+      btn.style.setProperty("white-space", "nowrap", "important");
+
+      btn.style.setProperty("left", "50%", "important");
+      btn.style.setProperty("right", "auto", "important");
+      btn.style.setProperty("transform", "translateX(-50%)", "important");
+
+      btn.style.setProperty("background", "#8A2BE2", "important");
+      btn.style.setProperty("background-color", "#8A2BE2", "important");
+      btn.style.setProperty("background-image", "none", "important");
+      btn.style.setProperty("color", "#ffffff", "important");
+      btn.style.setProperty("border", "2px solid #6B1FD3", "important");
+      btn.style.setProperty("border-radius", "22px", "important");
+      btn.style.setProperty(
+        "box-shadow",
+        "inset 0 2px 4px rgba(255,255,255,.35), inset 0 -2px 4px rgba(0,0,0,.15)",
+        "important"
+      );
+    });
+  };
+
+  styleConfirmButtons();
+  setTimeout(styleConfirmButtons, 100);
+  setTimeout(styleConfirmButtons, 400);
+  setTimeout(styleConfirmButtons, 900);
+
+  window.addEventListener("click", () => setTimeout(styleConfirmButtons, 80));
+  window.addEventListener("popstate", () => setTimeout(styleConfirmButtons, 80));
+})();
+  
+/* ===== END SHIL ALL CONFIRM BUTTONS PATCH ===== */
+
+
+/* ===== SHIL SYSTEM TYPE TABLE BEHAVIOR ===== */
+(function () {
+  const applySystemTypeTable = () => {
+    const page = document.querySelector(".shil-system-settings-page");
+    if (!page) return;
+
+    const card = [...page.querySelectorAll(".shil-section-card.shil-config-block")]
+      .find(el => (el.innerText || "").includes("نوع سیستم خورشیدی"));
+
+    if (!card) return;
+
+    const grid = card.querySelector(":scope > .shil-choice-grid.three");
+    if (!grid) return;
+
+    const head = card.querySelector(":scope > .shil-section-head");
+    if (head) {
+      const span = head.querySelector("span");
+      if (span) span.style.setProperty("display", "none", "important");
+    }
+
+    if (!card.querySelector(".shil-system-type-table-title")) {
+      const tableTitle = document.createElement("div");
+      tableTitle.className = "shil-system-type-table-title";
+      tableTitle.textContent = "اختصاصی مسیر پنل خورشیدی";
+      grid.parentNode.insertBefore(tableTitle, grid);
+    }
+
+    const labels = ["آفگرید", "هیبرید", "آنگرید"];
+    [...grid.querySelectorAll(".shil-choice-card")].forEach((btn, i) => {
+      if (labels[i]) btn.textContent = labels[i];
+    });
+
+    if (!card.querySelector(".shil-system-type-details")) {
+      const details = document.createElement("div");
+      details.className = "shil-system-type-details";
+      details.innerHTML = `
+        <button type="button" class="shil-system-type-details-toggle">توضیحات <span>⌄</span></button>
+        <div class="shil-system-type-details-box" style="display:none">
+          <div><strong>آفگرید</strong><span>باتری الزامی است و سیستم بدون شبکه کار می‌کند.</span></div>
+          <div><strong>هیبرید</strong><span>پنل خورشیدی، باتری و اتصال به شبکه را هم‌زمان پشتیبانی می‌کند.</span></div>
+          <div><strong>آنگرید</strong><span>بدون باتری و به‌صورت پیش‌فرض متصل به شبکه برق است.</span></div>
+        </div>
+      `;
+      grid.parentNode.insertBefore(details, grid.nextSibling);
+    }
+
+    const toggle = card.querySelector(".shil-system-type-details-toggle");
+    const box = card.querySelector(".shil-system-type-details-box");
+
+    if (toggle && box && !toggle.dataset.shilBound) {
+      toggle.dataset.shilBound = "1";
+      toggle.addEventListener("click", () => {
+        const isOpen = box.style.display !== "none";
+        box.style.display = isOpen ? "none" : "block";
+        const icon = toggle.querySelector("span");
+        if (icon) icon.textContent = isOpen ? "⌄" : "⌃";
+      });
+    }
+  };
+
+  applySystemTypeTable();
+  setTimeout(applySystemTypeTable, 100);
+  setTimeout(applySystemTypeTable, 500);
+  setTimeout(applySystemTypeTable, 1000);
+
+  window.addEventListener("click", () => setTimeout(applySystemTypeTable, 80));
+})();
+  
+/* ===== END SHIL SYSTEM TYPE TABLE BEHAVIOR ===== */
+
+
+
+/* ===== SHIL ENERGY SUMMARY SMART TABLE BEHAVIOR ===== */
+(function () {
+  const applyEnergySummarySmartTable = () => {
+    const page = document.querySelector(".shil-system-settings-page");
+    if (!page) return;
+
+    const card = [...page.querySelectorAll(".shil-section-card.shil-config-block")]
+      .find(el =>
+        (el.innerText || "").includes("چکیده مسیر انرژی روزانه") ||
+        (el.innerText || "").includes("چکیده مسیر توان کل")
+      );
+
+    if (!card) return;
+
+    const head = card.querySelector(":scope > .shil-section-head");
+    const grid = card.querySelector(":scope > .shil-summary-grid");
+    if (!grid) return;
+
+    if (grid.dataset.shilEnergySmart === "1") return;
+
+    const rows = [...grid.querySelectorAll(":scope > .shil-summary-item")]
+      .map(item => {
+        const label =
+          item.querySelector("span,label,p,small")?.innerText?.trim() ||
+          item.children[0]?.innerText?.trim() ||
+          item.innerText?.split("\n")[0]?.trim() ||
+          "";
+
+        const value =
+          item.querySelector("strong,b,h3,h4")?.innerText?.trim() ||
+          [...item.children].slice(1).map(x => x.innerText?.trim()).filter(Boolean).join(" ") ||
+          item.innerText?.split("\n").slice(1).join(" ").trim() ||
+          "";
+
+        return { label, value };
+      })
+      .filter(x => x.label);
+
+    if (!rows.length) return;
+
+    const tableTitle =
+      head?.querySelector("span")?.innerText?.trim() ||
+      "مبنای مصرف";
+
+    card.style.setProperty("background", "transparent", "important");
+    card.style.setProperty("border", "0", "important");
+    card.style.setProperty("border-right", "0", "important");
+    card.style.setProperty("box-shadow", "none", "important");
+    card.style.setProperty("padding", "0", "important");
+    card.style.setProperty("margin-bottom", "18px", "important");
+    card.style.setProperty("overflow", "visible", "important");
+
+    if (head) {
+      const sub = head.querySelector("span");
+      if (sub) sub.style.setProperty("display", "none", "important");
+    }
+
+    let tableTitleEl = card.querySelector(".shil-energy-summary-table-title");
+    if (!tableTitleEl) {
+      tableTitleEl = document.createElement("div");
+      tableTitleEl.className = "shil-energy-summary-table-title";
+      grid.parentNode.insertBefore(tableTitleEl, grid);
+    }
+
+    tableTitleEl.textContent = tableTitle;
+
+    grid.classList.add("shil-energy-summary-grid");
+    grid.dataset.shilEnergySmart = "1";
+    grid.style.setProperty("grid-template-columns", `repeat(${rows.length}, minmax(0, 1fr))`, "important");
+
+    [...grid.querySelectorAll(":scope > .shil-summary-item")].forEach((item, i) => {
+      const data = rows[i];
+      if (!data) return;
+      item.innerHTML = `<span>${data.label}</span>`;
+    });
+
+    let details = card.querySelector(".shil-energy-summary-details");
+    if (!details) {
+      details = document.createElement("div");
+      details.className = "shil-energy-summary-details";
+      grid.parentNode.insertBefore(details, grid.nextSibling);
+    }
+
+    details.innerHTML = `
+      <button type="button" class="shil-energy-summary-details-toggle">توضیحات <span>⌄</span></button>
+      <div class="shil-energy-summary-details-box" style="display:none">
+        <div class="shil-energy-summary-details-head">
+          ${rows.map(r => `<strong>${r.label}</strong>`).join("")}
+        </div>
+        <div class="shil-energy-summary-details-values">
+          ${rows.map(r => `<span>${r.value || "—"}</span>`).join("")}
+        </div>
+      </div>
+    `;
+
+    const box = details.querySelector(".shil-energy-summary-details-box");
+    const toggle = details.querySelector(".shil-energy-summary-details-toggle");
+
+    details.querySelectorAll(".shil-energy-summary-details-head,.shil-energy-summary-details-values")
+      .forEach(row => {
+        row.style.setProperty("grid-template-columns", `repeat(${rows.length}, minmax(0,1fr))`, "important");
+      });
+
+    if (toggle && box) {
+      toggle.addEventListener("click", () => {
+        const isOpen = box.style.display !== "none";
+        box.style.display = isOpen ? "none" : "block";
+        const icon = toggle.querySelector("span");
+        if (icon) icon.textContent = isOpen ? "⌄" : "⌃";
+      });
+    }
+  };
+
+  applyEnergySummarySmartTable();
+  setTimeout(applyEnergySummarySmartTable, 100);
+  setTimeout(applyEnergySummarySmartTable, 500);
+  setTimeout(applyEnergySummarySmartTable, 1000);
+
+  window.addEventListener("click", () => setTimeout(applyEnergySummarySmartTable, 80));
+})();
+  
+/* ===== END SHIL ENERGY SUMMARY SMART TABLE BEHAVIOR ===== */
+
+
+/* SHIL_PRIMARY_BUTTON_SAFE_START */
+(function(){
+  if (window.__SHIL_PRIMARY_BUTTON_SAFE__) return;
+  window.__SHIL_PRIMARY_BUTTON_SAFE__ = true;
+
+  function applyPrimaryButtonSafe(){
+    document.querySelectorAll(".shil-primary-wide").forEach(function(btn){
+      if (!btn) return;
+
+      btn.textContent = "تأیید اطلاعات";
+
+      btn.querySelectorAll("svg,i,img,span").forEach(function(el){
+        el.remove();
+      });
+
+      btn.style.setProperty("bottom","68px","important");
+      btn.style.setProperty("height","46px","important");
+      btn.style.setProperty("min-height","46px","important");
+      btn.style.setProperty("max-height","46px","important");
+      btn.style.setProperty("width","max-content","important");
+      btn.style.setProperty("min-width","110px","important");
+      btn.style.setProperty("padding","0 18px","important");
+      btn.style.setProperty("font-size","11px","important");
+      btn.style.setProperty("font-weight","900","important");
+      btn.style.setProperty("background-image","none","important");
+    });
+  }
+
+  function injectPrimaryButtonStyle(){
+    if (document.getElementById("shil-primary-button-safe-style")) return;
+
+    const style = document.createElement("style");
+    style.id = "shil-primary-button-safe-style";
+    style.textContent = `
+      .shil-primary-wide{
+        bottom:68px!important;
+        height:46px!important;
+        min-height:46px!important;
+        max-height:46px!important;
+        width:max-content!important;
+        min-width:110px!important;
+        padding:0 18px!important;
+        font-size:11px!important;
+        font-weight:900!important;
+      }
+
+      .shil-primary-wide::before,
+      .shil-primary-wide::after{
+        content:none!important;
+        display:none!important;
+        background:none!important;
+      }
+    `;
+
+    document.head.appendChild(style);
+  }
+
+  function runSafe(){
+    injectPrimaryButtonStyle();
+    applyPrimaryButtonSafe();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", runSafe);
+  } else {
+    setTimeout(runSafe, 0);
+  }
+
+  window.addEventListener("load", runSafe);
+})();
+/* SHIL_PRIMARY_BUTTON_SAFE_END */
+

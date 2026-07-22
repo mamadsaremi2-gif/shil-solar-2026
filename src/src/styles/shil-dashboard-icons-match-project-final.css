@@ -1,0 +1,114 @@
+
+/* =========================================================
+   SHIL Dashboard icons: use the exact New Project icon rules
+   ---------------------------------------------------------
+   Dashboard no longer has its own icon scale / label / shadow rules.
+   The Dashboard.jsx grid now uses .new-project-grid-3x3, so the same
+   shared IosIconGrid CSS is applied to both pages.
+   This file only keeps the dashboard wrapper transparent and centered.
+   ========================================================= */
+
+.shil-home-shell,
+.shil-home-shell .shil-page-content,
+.shil-home-icons,
+.shil-home-icons .shil-ios-grid,
+.shil-home-icons .new-project-grid-3x3 {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.shil-home-shell::before,
+.shil-home-shell::after,
+.shil-home-shell .shil-page-content::before,
+.shil-home-shell .shil-page-content::after,
+.shil-home-icons::before,
+.shil-home-icons::after,
+.shil-home-icons .shil-ios-grid::before,
+.shil-home-icons .shil-ios-grid::after {
+  display: none !important;
+  content: none !important;
+  background: none !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.shil-home-icons {
+  width: 100% !important;
+  min-height: calc(100vh - 150px) !important;
+  display: grid !important;
+  place-items: center !important;
+  padding: calc(env(safe-area-inset-top) + 46px) var(--shil-safe-x) calc(env(safe-area-inset-bottom) + 32px) !important;
+}
+
+/* Safety: the grid must remain the shared New Project grid, not a dashboard grid. */
+.shil-home-icons .new-project-grid-3x3.shil-ios-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+}
+
+/* =====================================================
+   SHIL PAGE SHELL - FINAL LAYOUT
+   ===================================================== */
+
+.shil-page-shell{
+    position:relative !important;
+    width:100% !important;
+    height:100dvh !important;
+    min-height:100dvh !important;
+    overflow:hidden !important;
+}
+
+.shil-page-content{
+    position:absolute !important;
+
+    top:55px !important;
+    left:0 !important;
+    right:0 !important;
+    bottom:40px !important;
+
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+
+    box-sizing:border-box !important;
+
+    -webkit-overflow-scrolling:touch !important;
+}
+
+.shil-no-header .shil-page-content{
+    top:0 !important;
+}
+
+.shil-no-footer .shil-page-content{
+    bottom:0 !important;
+}
+
+.shil-fixed-header{
+    position:fixed !important;
+    top:0 !important;
+    left:0 !important;
+    right:0 !important;
+    height:55px !important;
+    min-height:55px !important;
+    max-height:55px !important;
+    z-index:4000 !important;
+}
+
+.shil-fixed-footer{
+    position:fixed !important;
+    left:0 !important;
+    right:0 !important;
+    bottom:0 !important;
+
+    height:40px !important;
+    min-height:40px !important;
+    max-height:40px !important;
+
+    z-index:4000 !important;
+}
+
