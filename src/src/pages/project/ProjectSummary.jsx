@@ -52,7 +52,7 @@ export default function ProjectSummary() {
 
       <header className="dashboard-header-v15">
 
-        <Link to="/new-project" className="header-btn-v15">
+        <Link to="/new-project/path" className="header-btn-v15">
           <ChevronLeft size={22} />
         </Link>
 

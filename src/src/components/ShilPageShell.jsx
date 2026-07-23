@@ -27,7 +27,7 @@ function ShilFooter({ compact = false }) {
   return (
     <footer className="shil-fixed-footer">
       <Link to="/dashboard">خانه</Link>
-      {!compact && <Link to="/new-project">پروژه جدید</Link>}
+      {!compact && <Link to="/new-project/path">پروژه جدید</Link>}
       {!compact && <Link to="/projects">پروژه‌ها</Link>}
       <Link to="/contact">ارتباط</Link>
     </footer>
