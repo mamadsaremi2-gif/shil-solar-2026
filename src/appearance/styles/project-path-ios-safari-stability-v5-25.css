@@ -1,0 +1,40 @@
+/* SHIL V5.25
+   iOS Safari stability patch for the Project Path screen only.
+   This file intentionally does not change dimensions, spacing, colors,
+   typography, card layout, or the compact visual system. */
+
+@supports (-webkit-touch-callout: none) {
+  /* Avoid an expensive sticky + blur + momentum-scroll compositor stack
+     only while the Project Path page is mounted. */
+  .shil-project-path-page .shil-project-mini-rail {
+    position: relative !important;
+    top: auto !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    scroll-behavior: auto !important;
+    scroll-snap-type: none !important;
+    scrollbar-gutter: auto !important;
+    isolation: auto !important;
+  }
+
+  .shil-project-path-page .shil-project-mini-rail .shil-ios-icon-link {
+    scroll-snap-align: none !important;
+  }
+
+  /* Keep the existing visual appearance, but prevent additional GPU layers
+     from being created for cards and their images on WebKit. */
+  .shil-project-path-page .shil-project-path-card,
+  .shil-project-path-page .shil-utility-path-field,
+  .shil-project-path-page .shil-utility-select-button,
+  .shil-project-path-page .shil-execution-image {
+    transform: none !important;
+    will-change: auto !important;
+    backface-visibility: visible !important;
+    -webkit-backface-visibility: visible !important;
+  }
+
+  .shil-project-path-page .shil-execution-image,
+  .shil-project-path-page .shil-utility-select-button img {
+    content-visibility: visible !important;
+  }
+}
