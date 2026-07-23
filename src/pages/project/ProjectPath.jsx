@@ -65,8 +65,21 @@ export default function ProjectPath() {
   useEffect(() => {
     document.body.classList.add("shil-project-path-screen");
 
+    const preventZoom = (event) => {
+      if (event.ctrlKey) event.preventDefault();
+    };
+
+    const preventGesture = (event) => event.preventDefault();
+
+    window.addEventListener("wheel", preventZoom, { passive: false });
+    window.addEventListener("gesturestart", preventGesture, { passive: false });
+    window.addEventListener("gesturechange", preventGesture, { passive: false });
+
     return () => {
       document.body.classList.remove("shil-project-path-screen");
+      window.removeEventListener("wheel", preventZoom);
+      window.removeEventListener("gesturestart", preventGesture);
+      window.removeEventListener("gesturechange", preventGesture);
     };
   }, []);
 
@@ -155,7 +168,7 @@ export default function ProjectPath() {
   };
 
   return (
-    <EngineeringPageShell title="مسیر پروژه" className="shil-project-path-page">
+    <EngineeringPageShell title="مسیر پروژه">
       <>
         <div className="shil-clean-section-head">
           <h2>مسیر پروژه را انتخاب کنید</h2>
@@ -170,7 +183,7 @@ export default function ProjectPath() {
               className={`shil-execution-card shil-project-path-card ${selected === option.key ? "active" : ""}`}
               onClick={() => { setSelected(option.key); setWarning(""); }}
             >
-              {option.image ? <img src={option.image} alt="" className="shil-execution-image" decoding="async" /> : null}
+              {option.image ? <img src={option.image} alt="" className="shil-execution-image" /> : null}
               <span className="shil-execution-check">{selected === option.key ? "✓" : ""}</span>
               <h3>{option.title}</h3>
               <p>{option.description}</p>
@@ -189,7 +202,7 @@ export default function ProjectPath() {
               className={`shil-utility-select-button ${selected === utilityOption.key ? "active" : ""}`}
               onClick={() => { setSelected(utilityOption.key); setWarning(""); }}
             >
-              {utilityOption.image ? <img src={utilityOption.image} alt="" decoding="async" /> : null}
+              {utilityOption.image ? <img src={utilityOption.image} alt="" /> : null}
               <span>
                 <strong>{utilityOption.title}</strong>
                 <small>{utilityOption.description}</small>
