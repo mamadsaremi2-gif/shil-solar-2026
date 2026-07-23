@@ -1,4 +1,4 @@
-﻿body.shil-project-path-screen,
+body.shil-project-path-screen,
 body.shil-project-path-screen html,
 body.shil-project-path-screen #root {
   width: 100%;
@@ -416,5 +416,54 @@ footer {
     max-height:40px !important;
 
     z-index:4000 !important;
+}
+
+/* ===== iOS Safari stability patch v5.23 =====
+   Keeps the page structure intact while reducing WebKit compositing pressure. */
+@supports (-webkit-touch-callout: none) {
+  body.shil-project-path-screen .shil-fixed-header,
+  body.shil-project-path-screen .shil-fixed-footer,
+  body.shil-project-path-screen .shil-bottom-nav,
+  body.shil-project-path-screen .shil-engineering-rail,
+  body.shil-project-path-screen .shil-step-rail,
+  body.shil-project-path-screen .shil-flow-rail,
+  body.shil-project-path-screen .shil-project-rail,
+  body.shil-project-path-screen header,
+  body.shil-project-path-screen footer {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    background: rgba(18, 47, 82, 0.96) !important;
+  }
+
+  body.shil-project-path-screen {
+    position: static !important;
+    min-height: 100vh !important;
+    height: 100vh !important;
+  }
+
+  body.shil-project-path-screen #root,
+  body.shil-project-path-screen .shil-page-content,
+  body.shil-project-path-screen main {
+    min-height: 100vh !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+  }
+
+  body.shil-project-path-screen .shil-card-stack {
+    height: calc(100vh - 178px) !important;
+  }
+}
+
+@supports (height: 100dvh) {
+  @supports not (-webkit-touch-callout: none) {
+    body.shil-project-path-screen,
+    body.shil-project-path-screen #root,
+    body.shil-project-path-screen .shil-page-content,
+    body.shil-project-path-screen main {
+      min-height: 100dvh !important;
+      height: 100dvh !important;
+      max-height: 100dvh !important;
+    }
+  }
 }
 

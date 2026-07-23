@@ -65,21 +65,8 @@ export default function ProjectPath() {
   useEffect(() => {
     document.body.classList.add("shil-project-path-screen");
 
-    const preventZoom = (event) => {
-      if (event.ctrlKey) event.preventDefault();
-    };
-
-    const preventGesture = (event) => event.preventDefault();
-
-    window.addEventListener("wheel", preventZoom, { passive: false });
-    window.addEventListener("gesturestart", preventGesture, { passive: false });
-    window.addEventListener("gesturechange", preventGesture, { passive: false });
-
     return () => {
       document.body.classList.remove("shil-project-path-screen");
-      window.removeEventListener("wheel", preventZoom);
-      window.removeEventListener("gesturestart", preventGesture);
-      window.removeEventListener("gesturechange", preventGesture);
     };
   }, []);
 
