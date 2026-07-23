@@ -8,66 +8,68 @@ const contactRows = [
   { label: "موبایل", value: "09135656153" },
   { label: "ایمیل", value: "info@shil.ir" },
   { label: "ساعات کاری", value: "شنبه تا چهارشنبه، 8:00 تا 16:30" },
+  { label: "وب‌سایت", value: "shil.ir", href: "https://shil.ir" },
 ];
 
 const qrItems = [
   {
     title: "اینستاگرام شخصی",
     subtitle: "@MOHAMAD_SAREMI1991",
-    src: "/assets/contact/instagram-personal.jpg",
+    src: "/assets/contact/instagram-personal.png",
   },
   {
     title: "اینستاگرام SHIL",
     subtitle: "@SHILIRAN",
-    src: "/assets/contact/instagram-shil.jpg",
+    src: "/assets/contact/instagram-shil.png",
   },
   {
     title: "تلگرام",
     subtitle: "@MOHAMAD_SAREMI1991",
-    src: "/assets/contact/telegram.jpg",
+    src: "/assets/contact/telegram.png",
   },
   {
     title: "واتساپ بیزینس",
-    subtitle: "m.saremi-shilirian company",
-    src: "/assets/contact/whatsapp.jpg",
+    subtitle: "09135656153",
+    src: "/assets/contact/whatsapp.png",
   },
 ];
 
 export default function Contact() {
   return (
-    <ShilPageShell title="ارتباط با ما">
-      <section className="shil-contact-banner">
-        <img src="/assets/shil/contact/shil-products-banner.webp" alt="محصولات SHIL" />
-        <a href="https://shil.ir" target="_blank" rel="noreferrer">ورود به سایت SHIL</a>
-      </section>
-
-      <section className="shil-info-panel shil-contact-info-card" aria-label="اطلاعات تماس SHIL">
-        <div className="shil-contact-section-head">
-          <h3>اطلاعات تماس</h3>
+    <ShilPageShell title="ارتباط با ما" className="shil-contact-page-v529">
+      <section className="shil-contact-data" aria-label="اطلاعات تماس SHIL">
+        <header className="shil-contact-data-head">
+          <h2>اطلاعات تماس</h2>
           <span>SHIL Engineering</span>
-        </div>
-        <div className="shil-contact-info-list">
+        </header>
+
+        <div className="shil-contact-data-list">
           {contactRows.map((row) => (
-            <div className="shil-contact-info-row" key={row.label}>
+            <div className="shil-contact-data-row" key={row.label}>
               <strong>{row.label}</strong>
-              <span>{row.value}</span>
+              {row.href ? (
+                <a href={row.href} target="_blank" rel="noreferrer">{row.value}</a>
+              ) : (
+                <span>{row.value}</span>
+              )}
             </div>
           ))}
         </div>
       </section>
 
-      <section className="shil-info-panel shil-contact-qr-panel" aria-label="کدهای ارتباطی SHIL">
-        <div className="shil-contact-section-head">
-          <h3>کدهای ارتباطی</h3>
+      <section className="shil-contact-qrs" aria-label="کدهای ارتباطی SHIL">
+        <header className="shil-contact-data-head">
+          <h2>کدهای ارتباطی</h2>
           <span>اسکن سریع</span>
-        </div>
-        <div className="shil-qr-grid shil-contact-qr-grid">
+        </header>
+
+        <div className="shil-contact-qrs-grid">
           {qrItems.map((item) => (
-            <div className="shil-qr-card shil-contact-qr-card" key={item.title}>
-              <img src={item.src} alt={item.title} loading="lazy" />
+            <article className="shil-contact-qr-item" key={item.title}>
+              <img src={item.src} alt={`کد QR ${item.title}`} loading="lazy" />
               <strong>{item.title}</strong>
               <span>{item.subtitle}</span>
-            </div>
+            </article>
           ))}
         </div>
       </section>

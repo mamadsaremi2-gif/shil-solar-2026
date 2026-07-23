@@ -105,8 +105,8 @@ function ProjectList({ type }) {
 export default function Projects({ view }) {
   if (view) return <ProjectList type={view} />;
   return (
-    <ShilPageShell title="مدیریت پروژه‌ها">
-      <section className="shil-two-card-grid">
+    <ShilPageShell title="مدیریت پروژه‌ها" className="shil-projects-landing-v529">
+      <section className="shil-two-card-grid shil-projects-menu-v529">
         <Link to="/projects/running" className="shil-nav-card"><Clock3 size={48} /><h3>پروژه‌های در حال اجرا</h3><p>ادامه از آخرین مرحله ذخیره‌شده</p></Link>
         <Link to="/projects/final" className="shil-nav-card"><CheckCircle2 size={48} /><h3>پروژه‌های نهایی</h3><p>خروجی‌ها و گزارش‌های تکمیل‌شده</p></Link>
         <Link to="/projects/archived" className="shil-nav-card"><Archive size={48} /><h3>آرشیو پروژه‌ها</h3><p>پروژه‌های کنار گذاشته‌شده</p></Link>

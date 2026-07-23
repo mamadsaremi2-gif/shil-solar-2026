@@ -1,0 +1,284 @@
+/* SHIL V5.29 - focused cleanup for Contact, Projects and Education only */
+
+/* Shared page content alignment */
+.shil-contact-page-v529 .shil-page-content,
+.shil-projects-landing-v529 .shil-page-content,
+.shil-education-page-v529 .shil-page-content {
+  width: 100%;
+  max-width: 760px;
+  margin-inline: auto;
+  padding-inline: clamp(10px, 3vw, 18px) !important;
+  text-align: center;
+}
+
+/* Contact: data sits directly on background, no oversized wrapper card */
+.shil-contact-page-v529 .shil-contact-data,
+.shil-contact-page-v529 .shil-contact-qrs {
+  width: 100%;
+  margin: 0;
+  padding: 12px 0;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.shil-contact-page-v529 .shil-contact-data + .shil-contact-qrs {
+  margin-top: 6px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255,255,255,.18) !important;
+}
+
+.shil-contact-page-v529 .shil-contact-data-head {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 7px 12px;
+  margin: 0 0 10px;
+}
+
+.shil-contact-page-v529 .shil-contact-data-head h2 {
+  margin: 0;
+  font-size: clamp(18px, 4.5vw, 22px);
+  line-height: 1.35;
+  font-weight: 900;
+}
+
+.shil-contact-page-v529 .shil-contact-data-head span {
+  padding: 4px 10px;
+  border: 1px solid rgba(125,211,252,.32);
+  border-radius: 999px;
+  background: rgba(255,255,255,.9);
+  color: #0f172a;
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.shil-contact-page-v529 .shil-contact-data-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 7px;
+  width: min(100%, 620px);
+  margin-inline: auto;
+}
+
+.shil-contact-page-v529 .shil-contact-data-row {
+  display: grid;
+  grid-template-columns: minmax(70px, 92px) minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 9px 12px;
+  border: 1px solid rgba(255,255,255,.55);
+  border-radius: 15px;
+  background: rgba(242,247,252,.93);
+  box-shadow: 0 6px 18px rgba(2,12,27,.12);
+  text-align: right;
+}
+
+.shil-contact-page-v529 .shil-contact-data-row strong {
+  font-size: 12px;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.shil-contact-page-v529 .shil-contact-data-row span,
+.shil-contact-page-v529 .shil-contact-data-row a {
+  color: #0f172a;
+  font-size: 12px;
+  line-height: 1.75;
+  font-weight: 700;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.shil-contact-page-v529 .shil-contact-qrs-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  width: min(100%, 620px);
+  margin-inline: auto;
+}
+
+.shil-contact-page-v529 .shil-contact-qr-item {
+  display: grid;
+  place-items: center;
+  align-content: start;
+  gap: 6px;
+  min-width: 0;
+  padding: 10px 8px;
+  border: 1px solid rgba(255,255,255,.55);
+  border-radius: 17px;
+  background: rgba(242,247,252,.94);
+  box-shadow: 0 6px 18px rgba(2,12,27,.12);
+}
+
+.shil-contact-page-v529 .shil-contact-qr-item img {
+  width: min(100%, 132px);
+  aspect-ratio: 1;
+  object-fit: contain;
+  padding: 4px;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.shil-contact-page-v529 .shil-contact-qr-item strong {
+  color: #0f172a;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.shil-contact-page-v529 .shil-contact-qr-item span {
+  direction: ltr;
+  unicode-bidi: plaintext;
+  color: #334155;
+  font-size: 9.5px;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+/* Projects landing: exactly three compact centered cards */
+.shil-projects-landing-v529 .shil-projects-menu-v529 {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  align-content: center;
+  justify-items: center;
+  gap: 11px !important;
+  width: min(100%, 520px);
+  min-height: calc(100% - 8px);
+  margin: 0 auto !important;
+  padding: 12px 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.shil-projects-landing-v529 .shil-nav-card {
+  display: grid !important;
+  grid-template-columns: 42px minmax(0, 1fr) !important;
+  grid-template-rows: auto auto !important;
+  place-items: center start !important;
+  align-content: center !important;
+  gap: 1px 12px !important;
+  width: min(100%, 440px) !important;
+  min-height: 0 !important;
+  padding: 14px 16px !important;
+  border: 1px solid rgba(255,255,255,.38) !important;
+  border-radius: 18px !important;
+  background: linear-gradient(135deg, rgba(91,103,207,.96), rgba(124,103,238,.96)) !important;
+  box-shadow: 0 8px 22px rgba(15,23,42,.22) !important;
+  color: #081426 !important;
+  text-align: right !important;
+}
+
+.shil-projects-landing-v529 .shil-nav-card > svg {
+  grid-row: 1 / span 2;
+  width: 34px;
+  height: 34px;
+  stroke-width: 2.1;
+}
+
+.shil-projects-landing-v529 .shil-nav-card h3 {
+  margin: 0 !important;
+  font-size: 16px !important;
+  line-height: 1.45 !important;
+  font-weight: 900 !important;
+}
+
+.shil-projects-landing-v529 .shil-nav-card p {
+  margin: 1px 0 0 !important;
+  font-size: 11px !important;
+  line-height: 1.55 !important;
+  font-weight: 700 !important;
+  color: rgba(8,20,38,.82) !important;
+}
+
+/* Education: remove the pale underlay and place compact cards on background */
+.shil-education-page-v529 .shil-education-intro-v529,
+.shil-education-page-v529 .shil-education-list-v529 {
+  width: min(100%, 620px);
+  margin-inline: auto;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.shil-education-page-v529 .shil-education-intro-v529 {
+  padding: 12px 8px 10px;
+}
+
+.shil-education-page-v529 .shil-education-intro-v529 h3 {
+  margin: 0 0 7px;
+  font-size: clamp(18px, 4.6vw, 22px);
+  font-weight: 900;
+}
+
+.shil-education-page-v529 .shil-education-intro-v529 p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.85;
+  font-weight: 700;
+}
+
+.shil-education-page-v529 .shil-education-list-v529 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  padding: 4px 0 12px;
+}
+
+.shil-education-page-v529 .shil-education-card-v529 {
+  display: grid;
+  gap: 3px;
+  width: 100%;
+  padding: 13px 16px;
+  border: 1px solid rgba(255,255,255,.38);
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(91,103,207,.96), rgba(124,103,238,.96));
+  box-shadow: 0 8px 22px rgba(15,23,42,.2);
+  text-align: center;
+  color: #081426;
+}
+
+.shil-education-page-v529 .shil-education-card-v529 strong {
+  font-size: 15px;
+  line-height: 1.55;
+  font-weight: 900;
+}
+
+.shil-education-page-v529 .shil-education-card-v529 span {
+  font-size: 10.5px;
+  line-height: 1.5;
+  font-weight: 700;
+  color: rgba(8,20,38,.8);
+}
+
+@media (max-width: 430px) {
+  .shil-contact-page-v529 .shil-contact-data-row {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+    gap: 2px;
+  }
+
+  .shil-contact-page-v529 .shil-contact-qrs-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .shil-contact-page-v529 .shil-contact-qr-item {
+    grid-template-columns: 92px minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    justify-items: start;
+    text-align: right;
+    padding: 9px 12px;
+  }
+
+  .shil-contact-page-v529 .shil-contact-qr-item img {
+    grid-row: 1 / span 2;
+    width: 86px;
+  }
+
+  .shil-projects-landing-v529 .shil-nav-card {
+    width: 100% !important;
+  }
+}

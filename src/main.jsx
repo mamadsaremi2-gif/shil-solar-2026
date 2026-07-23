@@ -134,3 +134,6 @@ import './appearance/styles/project-rail-unified-v5-20-final.css';
 
 /* SHIL V5.28 - exact scroll viewport between safe header and footer; must stay last */
 import './appearance/styles/shil-scroll-viewport-v5-28-final.css';
+
+/* SHIL V5.29 - focused cleanup: Contact, Projects and Education only */
+import './appearance/styles/contact-projects-education-v5-29.css';
