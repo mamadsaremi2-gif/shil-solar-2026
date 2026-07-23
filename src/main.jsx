@@ -131,5 +131,3 @@ import './appearance/styles/calculation-method-v5-19-focused-compact.css';
 
 /* SHIL V5.20 - identical sticky project rail on every engineering page */
 import './appearance/styles/project-rail-unified-v5-20-final.css';
-/* V5.25 - iOS Safari stability patch for Project Path only. Keep last. */
-import './appearance/styles/project-path-ios-safari-stability-v5-25.css';

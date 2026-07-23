@@ -1,5 +1,5 @@
 import ShilPrimaryButton from "../../components/project/ShilPrimaryButton";
-import React, { useEffect, useMemo, useState } from "react";
+﻿import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { approveProjectStep } from "../../workflow/projectWorkflow.js";
 import { clearScenarioFlow, startUtilityGateway, setWorkflowMode, FLOW_MODES } from "../../workflow/flowIsolation.js";
@@ -36,7 +36,6 @@ const fallbackOptions = [
 
 function normalizeCards(cards) {
   if (!Array.isArray(cards)) return fallbackOptions;
-
   const safeCards = cards
     .filter((item) => item && item.key && item.title && item.active !== false)
     .filter((item) => !["future", "development", "under-development", "coming-soon"].includes(String(item.key || "").toLowerCase()))
@@ -51,16 +50,10 @@ function normalizeCards(cards) {
     }));
 
   const base = safeCards.length ? safeCards : fallbackOptions;
-  const withoutDev = base.filter(
-    (item) =>
-      !["future", "development", "under-development", "coming-soon"].includes(String(item.key || "").toLowerCase()) &&
-      !/در حال توسعه|توسعه/.test(String(item.title || ""))
-  );
-
+  const withoutDev = base.filter((item) => !["future", "development", "under-development", "coming-soon"].includes(String(item.key || "").toLowerCase()) && !/در حال توسعه|توسعه/.test(String(item.title || "")));
   const hasUtility = withoutDev.some((item) => item.calculationDomain === "utility" || item.key === "utility");
   const withUtility = hasUtility ? withoutDev : [...withoutDev, fallbackOptions.find((item) => item.key === "utility")].filter(Boolean);
-
-  return withUtility.sort((a, b) => Number(a.order || 99) - Number(b.order || 99));
+  return withUtility.sort((a, b) => (Number(a.order || 99) - Number(b.order || 99)));
 }
 
 export default function ProjectPath() {
@@ -69,41 +62,23 @@ export default function ProjectPath() {
   const [warning, setWarning] = useState("");
   const [options, setOptions] = useState(() => normalizeCards(readAdminProjectPathCards()));
 
-  // -------------------------------
-  //  اصلاح gesture-blocking روی موبایل
-  // -------------------------------
   useEffect(() => {
     document.body.classList.add("shil-project-path-screen");
 
-    const preventZoom = (event) => {
-      if (event.ctrlKey) event.preventDefault();
-    };
-
-    // فقط روی دسکتاپ فعال شود
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    if (!isMobile) {
-      window.addEventListener("wheel", preventZoom, { passive: false });
-    }
-
     return () => {
       document.body.classList.remove("shil-project-path-screen");
-      window.removeEventListener("wheel", preventZoom);
     };
   }, []);
 
-  // -------------------------------
-  //  اصلاح fetch و جلوگیری از کرش Safari
-  // -------------------------------
   useEffect(() => {
     let alive = true;
-
     const adminCards = normalizeCards(readAdminProjectPathCards());
     if (adminCards.length) {
       setOptions(adminCards);
-      return; // جلوگیری از cleanup اشتباه
+      return () => { alive = false; };
     }
 
-    fetch(`/project-path-cards.json`, { cache: "no-store" })
+    fetch(`/project-path-cards.json?v=${Date.now()}`, { cache: "no-store" })
       .then((res) => (res.ok ? res.json() : fallbackOptions))
       .then((cards) => {
         if (alive) setOptions(normalizeCards(cards));
@@ -112,9 +87,7 @@ export default function ProjectPath() {
         if (alive) setOptions(fallbackOptions);
       });
 
-    return () => {
-      alive = false;
-    };
+    return () => { alive = false; };
   }, []);
 
   const mainOptions = useMemo(
@@ -143,7 +116,6 @@ export default function ProjectPath() {
     clearScenarioFlow();
     setWorkflowMode(domain === "utility" ? FLOW_MODES.UTILITY : FLOW_MODES.MANUAL);
     approveProjectStep("path");
-
     localStorage.setItem("shil:projectPath", selectedOption.key);
     localStorage.setItem("shil:selectedProjectPath", JSON.stringify(selectedOption));
     localStorage.setItem("shil:executionMethod", selectedOption.key);
@@ -171,17 +143,10 @@ export default function ProjectPath() {
     }
 
     if (domain === "emergency") {
-      const adminDefaults = readAdminDefaults();
-      localStorage.setItem(
-        "shil:emergencyPowerSettings",
-        JSON.stringify({
-          requiredEmergencyHours: adminDefaults.emergencyRequiredHours || 2,
-          safetyFactor: adminDefaults.emergencySafetyFactor || 1.25,
-          autoMode: true,
-        })
-      );
       localStorage.setItem("shil:selectedCalculationMethod", JSON.stringify({ key: "emergency", title: "برق اضطراری" }));
       localStorage.setItem("shil:calculationMethod", "equipment");
+      const adminDefaults = readAdminDefaults();
+      localStorage.setItem("shil:emergencyPowerSettings", JSON.stringify({ requiredEmergencyHours: adminDefaults.emergencyRequiredHours || 2, safetyFactor: adminDefaults.emergencySafetyFactor || 1.25, autoMode: true }));
       navigate("/new-project/info");
       return;
     }
@@ -203,10 +168,7 @@ export default function ProjectPath() {
               type="button"
               key={option.key}
               className={`shil-execution-card shil-project-path-card ${selected === option.key ? "active" : ""}`}
-              onClick={() => {
-                setSelected(option.key);
-                setWarning("");
-              }}
+              onClick={() => { setSelected(option.key); setWarning(""); }}
             >
               {option.image ? <img src={option.image} alt="" className="shil-execution-image" /> : null}
               <span className="shil-execution-check">{selected === option.key ? "✓" : ""}</span>
@@ -225,10 +187,7 @@ export default function ProjectPath() {
             <button
               type="button"
               className={`shil-utility-select-button ${selected === utilityOption.key ? "active" : ""}`}
-              onClick={() => {
-                setSelected(utilityOption.key);
-                setWarning("");
-              }}
+              onClick={() => { setSelected(utilityOption.key); setWarning(""); }}
             >
               {utilityOption.image ? <img src={utilityOption.image} alt="" /> : null}
               <span>
@@ -242,13 +201,11 @@ export default function ProjectPath() {
 
         <ShilWarningOverlay messages={warning ? [warning] : []} />
 
-        <ShilPrimaryButton
-          className="shil-project-path-confirm"
-          disabled={!selectedOption}
-          onClick={confirm}
-          label="تأیید مسیر"
-        />
+        <ShilPrimaryButton className="shil-project-path-confirm" disabled={!selectedOption}
+          onClick={confirm} label="تأیید مسیر" />
       </>
     </EngineeringPageShell>
   );
 }
+
+

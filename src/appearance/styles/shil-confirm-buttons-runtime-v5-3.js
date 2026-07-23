@@ -89,10 +89,11 @@
   window.addEventListener('popstate', scheduleApply);
   window.addEventListener('hashchange', scheduleApply);
 
+  // Observe only inserted/removed nodes. Observing the `style` attribute here
+  // creates a self-triggering loop because styleButton() writes inline styles.
+  // Safari/iOS can terminate the page before a JavaScript error is reported.
   new MutationObserver(scheduleApply).observe(document.documentElement, {
     childList: true,
-    subtree: true,
-    attributes: true,
-    attributeFilter: ['class', 'style', 'disabled']
+    subtree: true
   });
 })();
