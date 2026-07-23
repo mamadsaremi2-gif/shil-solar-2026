@@ -1,0 +1,165 @@
+/*
+ * SHIL V5.28 - unified mobile scroll viewport
+ * - Header owns the iOS top safe area.
+ * - The scroll viewport starts immediately below the header.
+ * - The scroll viewport ends immediately above the footer.
+ * - First/last page data remain fully visible without overlay gaps.
+ */
+
+:root {
+  --shil-v528-safe-top: env(safe-area-inset-top, 0px);
+  --shil-v528-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --shil-v528-header-bar: 55px;
+  --shil-v528-footer-bar: 68px;
+  --shil-v528-header-total: calc(var(--shil-v528-header-bar) + var(--shil-v528-safe-top));
+  --shil-v528-footer-total: calc(var(--shil-v528-footer-bar) + var(--shil-v528-safe-bottom));
+  --shil-v528-edge-gap: 8px;
+}
+
+html,
+body,
+#root {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  margin: 0 !important;
+}
+
+body:not(.login-page):not(.welcome-page) {
+  height: 100dvh !important;
+  min-height: 100dvh !important;
+  overflow: hidden !important;
+}
+
+/* One viewport for every ordinary and engineering page. */
+.shil-page-shell:not(.shil-page--auth),
+.shil-engineering-shell {
+  position: relative !important;
+  width: 100% !important;
+  height: 100dvh !important;
+  min-height: 100dvh !important;
+  max-height: 100dvh !important;
+  overflow: hidden !important;
+}
+
+/* Header includes the iPhone status-bar safe area. */
+.shil-page-shell:not(.shil-page--auth) > .shil-fixed-header,
+.shil-engineering-shell > .shil-fixed-header {
+  position: fixed !important;
+  inset: 0 0 auto 0 !important;
+  width: 100% !important;
+  height: var(--shil-v528-header-total) !important;
+  min-height: var(--shil-v528-header-total) !important;
+  max-height: var(--shil-v528-header-total) !important;
+  padding-top: var(--shil-v528-safe-top) !important;
+  padding-right: clamp(8px, 2vw, 14px) !important;
+  padding-bottom: 0 !important;
+  padding-left: clamp(8px, 2vw, 14px) !important;
+  box-sizing: border-box !important;
+  z-index: 5000 !important;
+}
+
+/* Footer includes the bottom home-indicator safe area. */
+.shil-page-shell:not(.shil-page--auth) > .shil-fixed-footer,
+.shil-engineering-shell > .shil-fixed-footer {
+  position: fixed !important;
+  inset: auto 0 0 0 !important;
+  width: 100% !important;
+  height: var(--shil-v528-footer-total) !important;
+  min-height: var(--shil-v528-footer-total) !important;
+  max-height: var(--shil-v528-footer-total) !important;
+  padding-top: 8px !important;
+  padding-right: clamp(8px, 2vw, 14px) !important;
+  padding-bottom: calc(8px + var(--shil-v528-safe-bottom)) !important;
+  padding-left: clamp(8px, 2vw, 14px) !important;
+  box-sizing: border-box !important;
+  z-index: 5000 !important;
+}
+
+/* The only vertical scroll viewport: exactly between header and footer. */
+.shil-page-shell:not(.shil-page--auth) > .shil-page-content,
+.shil-page-shell:not(.shil-page--auth) > main.shil-page-content,
+.shil-engineering-shell > .shil-page-content,
+.shil-engineering-shell > main.shil-page-content {
+  position: fixed !important;
+  top: var(--shil-v528-header-total) !important;
+  right: 0 !important;
+  bottom: var(--shil-v528-footer-total) !important;
+  left: 0 !important;
+  width: auto !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  margin: 0 !important;
+  padding: 0 clamp(8px, 2vw, 14px) var(--shil-v528-edge-gap) !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior-y: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+  scroll-padding-top: 0 !important;
+  scroll-padding-bottom: var(--shil-v528-edge-gap) !important;
+  box-sizing: border-box !important;
+  z-index: 1 !important;
+}
+
+/* Pages intentionally hiding one chrome edge. */
+.shil-page-shell.shil-no-header:not(.shil-page--auth) > .shil-page-content {
+  top: 0 !important;
+}
+
+.shil-page-shell.shil-no-footer:not(.shil-page--auth) > .shil-page-content {
+  bottom: 0 !important;
+}
+
+/* First data starts flush under the header; no inherited top spacer. */
+.shil-page-shell:not(.shil-page--auth) > .shil-page-content > :first-child,
+.shil-engineering-shell > .shil-page-content > :first-child {
+  margin-top: 0 !important;
+}
+
+/* The project rail is the first data row and touches the header viewport edge. */
+.shil-page-shell:not(.shil-page--auth) > .shil-page-content > .shil-project-mini-rail,
+.shil-engineering-shell > .shil-page-content > .shil-project-mini-rail {
+  top: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+/* The first block after the rail also starts without an artificial gap. */
+.shil-page-content > .shil-project-mini-rail + * {
+  margin-top: 0 !important;
+}
+
+/* End scrolling only after the final data block is completely above the footer. */
+.shil-page-shell:not(.shil-page--auth) > .shil-page-content > :last-child,
+.shil-engineering-shell > .shil-page-content > :last-child {
+  margin-bottom: 0 !important;
+}
+
+/* Neutralize old page-level spacer elements that were compensating for overlays. */
+.shil-page-shell:not(.shil-page--auth) .shil-page-content > :is(
+  .shil-page-stack,
+  .shil-card-stack,
+  .shil-section-stack,
+  .shil-form-stack,
+  .shil-result-stack,
+  .shil-engineering-content,
+  .shil-ds-engineering-content,
+  .shil-page-scroll
+) {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: var(--shil-v528-edge-gap) !important;
+  min-height: 0 !important;
+}
+
+@supports not (height: 100dvh) {
+  body:not(.login-page):not(.welcome-page),
+  .shil-page-shell:not(.shil-page--auth),
+  .shil-engineering-shell {
+    height: 100vh !important;
+    min-height: 100vh !important;
+    max-height: 100vh !important;
+  }
+}

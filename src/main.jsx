@@ -132,5 +132,5 @@ import './appearance/styles/calculation-method-v5-19-focused-compact.css';
 /* SHIL V5.20 - identical sticky project rail on every engineering page */
 import './appearance/styles/project-rail-unified-v5-20-final.css';
 
-/* SHIL V5.27 - final safe-area shell + all-app mobile-first compaction. */
-import './appearance/styles/shil-all-app-mobile-first-v5-27-final.css';
+/* SHIL V5.28 - exact scroll viewport between safe header and footer; must stay last */
+import './appearance/styles/shil-scroll-viewport-v5-28-final.css';
