@@ -1,4 +1,4 @@
-﻿import React, { Suspense, lazy } from "react";
+import React, { Suspense, lazy } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import UXFlowController from "../components/UXFlowController.jsx";
@@ -10,7 +10,6 @@ const LoginPage = lazy(() => import("../modules/auth/pages/LoginPage.jsx"));
 const WelcomePage = lazy(() => import("../modules/auth/pages/WelcomePage.jsx"));
 const Dashboard = lazy(() => import("../modules/dashboard/pages/Dashboard.jsx"));
 const AdminDashboard = lazy(() => import("../modules/admin/pages/AdminDashboard.jsx"));
-const NewProject = lazy(() => import("../modules/new-project/pages/NewProject.jsx"));
 const Projects = lazy(() => import("../modules/projects/pages/Projects.jsx"));
 const Contact = lazy(() => import("../modules/contact/pages/Contact.jsx"));
 const Feedback = lazy(() => import("../modules/feedback/pages/Feedback.jsx"));
@@ -50,7 +49,7 @@ export default function App() {
           <Route path="/welcome" element={<WelcomePage />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/new-project" element={<ProjectPath />} />
+          <Route path="/new-project" element={<Navigate to="/new-project/path" replace />} />
 
           <Route path="/new-project/info" element={<ProjectInfo />} />
           <Route path="/new-project/environment/:domain" element={<Environment />} />

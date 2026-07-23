@@ -44,10 +44,11 @@ function normalizeResumeUrl(pathname, domain, step) {
 
 export function buildProjectSnapshot(pathname = window.location.pathname, status = "running") {
   if (!pathname.startsWith("/new-project")) return null;
-  // The path-selection screen is only the entry point. Do not create or
-  // rewrite a running-project snapshot before the user has selected a route.
-  // This also prevents unnecessary storage work during the first mobile render.
-  if (pathname === "/new-project" || pathname === "/new-project/path" || pathname.includes("/future")) return null;
+  if (
+    pathname === "/new-project" ||
+    pathname === "/new-project/path" ||
+    pathname.includes("/future")
+  ) return null;
   const domain = getDomain();
   const step = getStepKeyFromPath(pathname) || "info";
   const projectKey = makeProjectKey();

@@ -10,7 +10,6 @@ const LoginPage = lazy(() => import("../modules/auth/pages/LoginPage.jsx"));
 const WelcomePage = lazy(() => import("../modules/auth/pages/WelcomePage.jsx"));
 const Dashboard = lazy(() => import("../modules/dashboard/pages/Dashboard.jsx"));
 const AdminDashboard = lazy(() => import("../modules/admin/pages/AdminDashboard.jsx"));
-const NewProject = lazy(() => import("../modules/new-project/pages/NewProject.jsx"));
 const Projects = lazy(() => import("../modules/projects/pages/Projects.jsx"));
 const Contact = lazy(() => import("../modules/contact/pages/Contact.jsx"));
 const Feedback = lazy(() => import("../modules/feedback/pages/Feedback.jsx"));

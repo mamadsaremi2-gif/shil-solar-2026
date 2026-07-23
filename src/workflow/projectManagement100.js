@@ -44,7 +44,11 @@ function normalizeResumeUrl(pathname, domain, step) {
 
 export function buildProjectSnapshot(pathname = window.location.pathname, status = "running") {
   if (!pathname.startsWith("/new-project")) return null;
-  if (pathname === "/new-project" || pathname.includes("/future")) return null;
+  if (
+    pathname === "/new-project" ||
+    pathname === "/new-project/path" ||
+    pathname.includes("/future")
+  ) return null;
   const domain = getDomain();
   const step = getStepKeyFromPath(pathname) || "info";
   const projectKey = makeProjectKey();

@@ -2,6 +2,10 @@ import React, { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { captureCurrentProjectSnapshot } from "../workflow/uxFlowController.js";
 
+function isProjectLandingPath(pathname) {
+  return pathname === "/new-project" || pathname === "/new-project/path";
+}
+
 export default function UXFlowController() {
   const location = useLocation();
   const [toast, setToast] = useState(null);
@@ -9,6 +13,7 @@ export default function UXFlowController() {
   const debounceRef = useRef(null);
 
   function softSave(pathname = window.location.pathname, showToast = false) {
+    if (isProjectLandingPath(pathname)) return null;
     const record = captureCurrentProjectSnapshot(pathname);
     if (record && showToast && lastSavedPath.current !== pathname) {
       lastSavedPath.current = pathname;

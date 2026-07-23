@@ -7,7 +7,7 @@ export default function DashboardBottomNav() {
   const items = [
     { to: "/", label: "داشبورد", icon: <LayoutGrid size={22} /> },
     { to: "/projects", label: "پروژه‌ها", icon: <FolderOpen size={22} /> },
-    { to: "/new-project", label: "پروژه جدید", icon: <PlusSquare size={22} /> },
+    { to: "/new-project/path", label: "پروژه جدید", icon: <PlusSquare size={22} /> },
   ];
   return (
     <nav className="bottom-nav-v15">
