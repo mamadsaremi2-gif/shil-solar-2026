@@ -1,20 +1,34 @@
-﻿{
+{
+  "id": "/",
   "name": "SHIL Engineering",
   "short_name": "SHIL",
+  "description": "SHIL Smart Engineering Platform",
+  "lang": "fa",
+  "dir": "rtl",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
   "theme_color": "#081120",
   "background_color": "#020617",
-  "display": "standalone",
-  "start_url": "/",
   "icons": [
     {
-      "src": "/icon-192.png",
+      "src": "/pwa-icons/icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
-      "src": "/icon-512.png",
+      "src": "/pwa-icons/icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
