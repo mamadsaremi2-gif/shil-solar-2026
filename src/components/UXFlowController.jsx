@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { captureCurrentProjectSnapshot } from "../workflow/uxFlowController.js";
+import { captureCurrentProjectSnapshot, markCurrentProjectFinal } from "../workflow/uxFlowController.js";
 
 function isProjectLandingPath(pathname) {
   return pathname === "/new-project" || pathname === "/new-project/path";
@@ -14,7 +14,8 @@ export default function UXFlowController() {
 
   function softSave(pathname = window.location.pathname, showToast = false) {
     if (isProjectLandingPath(pathname)) return null;
-    const record = captureCurrentProjectSnapshot(pathname);
+    const isFinalRoute = pathname.includes("/new-project/run/");
+    const record = isFinalRoute ? markCurrentProjectFinal() : captureCurrentProjectSnapshot(pathname);
     if (record && showToast && lastSavedPath.current !== pathname) {
       lastSavedPath.current = pathname;
       setToast({ text: "پروژه در بخش در حال اجرا ذخیره شد", type: "success" });
@@ -37,15 +38,18 @@ export default function UXFlowController() {
       setToast({ text: event.detail?.message || "انجام شد", type: event.detail?.type || "info" });
       window.setTimeout(() => setToast(null), 1800);
     };
+    const saveOnVisibilityChange = () => {
+      if (document.visibilityState === "hidden") saveNow();
+    };
     window.addEventListener("beforeunload", saveNow);
-    window.addEventListener("visibilitychange", saveNow);
+    window.addEventListener("visibilitychange", saveOnVisibilityChange);
     window.addEventListener("input", debouncedSave, true);
     window.addEventListener("change", debouncedSave, true);
     window.addEventListener("shil-ux-toast", toastHandler);
     return () => {
       window.clearTimeout(debounceRef.current);
       window.removeEventListener("beforeunload", saveNow);
-      window.removeEventListener("visibilitychange", saveNow);
+      window.removeEventListener("visibilitychange", saveOnVisibilityChange);
       window.removeEventListener("input", debouncedSave, true);
       window.removeEventListener("change", debouncedSave, true);
       window.removeEventListener("shil-ux-toast", toastHandler);

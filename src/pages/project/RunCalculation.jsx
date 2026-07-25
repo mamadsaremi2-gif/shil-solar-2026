@@ -1,5 +1,5 @@
 import ShilPrimaryButton from "../../components/project/ShilPrimaryButton";
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import EngineeringPageShell from "../../components/EngineeringPageShell.jsx";
 import { approveProjectStep } from "../../workflow/projectWorkflow.js";
@@ -339,7 +339,6 @@ function panelLayoutNote(ctx) {
 export default function RunCalculation() {
   const { domain = "solar" } = useParams();
   const emergency = domain === "emergency";
-  const [ran, setRan] = useState(false);
   const [exporting, setExporting] = useState("");
   const exportSheetRef = useRef(null);
   const coreRun = useMemo(() => runCore(domain), [domain]);
@@ -426,15 +425,19 @@ export default function RunCalculation() {
   ];
 
   const protectionRows = buildProtectionRows(runContext);
+  const finalizationRef = useRef(false);
 
-  function saveFinalProject() {
+  useEffect(() => {
+    if (finalizationRef.current) return;
+    finalizationRef.current = true;
+
     approveProjectStep("run");
-    const payload = { domain, project, summary, result, aiPreview, savedAt: new Date().toISOString() };
+    const savedAt = new Date().toISOString();
+    const payload = { domain, project, summary, result, aiPreview, savedAt };
     localStorage.setItem("shil:finalEngineeringOutput", JSON.stringify(payload));
-    markCurrentProjectFinal({ result, aiPreview });
-    setRan(true);
-    showUxToast("پروژه در بخش پروژه‌های نهایی ثبت شد", "success");
-  }
+    markCurrentProjectFinal({ result, aiPreview, savedAt });
+    window.dispatchEvent(new CustomEvent("shil-workflow-updated"));
+  }, [domain, project, summary, result, aiPreview]);
 
   async function exportPdf() {
     try {
@@ -505,7 +508,6 @@ export default function RunCalculation() {
         </div>
 
         <div className="shil-final-action-area">
-          <div className="shil-final-action-heading"><h2>خروجی نهایی</h2><span>فقط سه قابلیت اصلی</span></div>
           <div className="shil-output-actions shil-output-actions-three">
             <button type="button" onClick={saveProjectImage} disabled={Boolean(exporting)}>{exporting === "png" ? "در حال ساخت تصویر..." : "خروجی تصویر"}</button>
             <button type="button" onClick={exportPdf} disabled={Boolean(exporting)}>{exporting === "pdf" ? "در حال ساخت PDF..." : "خروجی PDF"}</button>

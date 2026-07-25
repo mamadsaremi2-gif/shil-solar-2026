@@ -83,7 +83,22 @@ export function buildProjectSnapshot(pathname = window.location.pathname, status
 export function saveProjectCheckpoint(pathname = window.location.pathname, status = "running") {
   const patch = buildProjectSnapshot(pathname, status);
   if (!patch) return null;
-  return upsertUserRecord(PROJECTS_KEY, (item) => item.projectKey === patch.projectKey, patch);
+
+  const existing = readUserRecords(PROJECTS_KEY, []).find((item) => item.projectKey === patch.projectKey);
+  const reachedFinalOutput = patch.currentStep === "run" || pathname.includes("/new-project/run/");
+  const keepFinal = existing?.status === "final";
+
+  const nextPatch = reachedFinalOutput || keepFinal
+    ? {
+        ...patch,
+        status: "final",
+        currentStep: "run",
+        completedAt: existing?.completedAt || new Date().toISOString(),
+        resumeUrl: patch.domain === "emergency" ? "/new-project/run/emergency" : "/new-project/run/solar",
+      }
+    : patch;
+
+  return upsertUserRecord(PROJECTS_KEY, (item) => item.projectKey === nextPatch.projectKey, nextPatch);
 }
 
 export function completeCurrentProject(extra = {}) {
