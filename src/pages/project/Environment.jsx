@@ -116,15 +116,19 @@ export default function Environment() {
 const navigate = useNavigate();
   const { domain = localStorage.getItem("shil:scenarioDomain") || "solar" } = useParams();
 
-  const [city, setCity] = useState(isfahan?.name || "اصفهان");
-  const [selectedCity, setSelectedCity] = useState(isfahan || null);
-  const [manualOverride, setManualOverride] = useState(false);
-  const [address, setAddress] = useState("");
-  const [gpsMode, setGpsMode] = useState("auto");
-  const [latitude, setLatitude] = useState(String(defaultClimate.latitude));
-  const [longitude, setLongitude] = useState(String(defaultClimate.longitude));
-  const [installType, setInstallType] = useState("urban");
-  const [manualClimate, setManualClimate] = useState(() => cityToClimate(isfahan, domain, "urban"));
+  const persistedEnvironment = useMemo(() => {
+    try { return JSON.parse(localStorage.getItem("shil:environmentDraft") || "null") || {}; }
+    catch { return {}; }
+  }, []);
+  const [city, setCity] = useState(persistedEnvironment.city || isfahan?.name || "اصفهان");
+  const [selectedCity, setSelectedCity] = useState(() => findIranCityByName(persistedEnvironment.city) || isfahan || null);
+  const [manualOverride, setManualOverride] = useState(Boolean(persistedEnvironment.manualOverride));
+  const [address, setAddress] = useState(persistedEnvironment.address || "");
+  const [gpsMode, setGpsMode] = useState(persistedEnvironment.gpsMode || "auto");
+  const [latitude, setLatitude] = useState(String(persistedEnvironment.latitude ?? defaultClimate.latitude));
+  const [longitude, setLongitude] = useState(String(persistedEnvironment.longitude ?? defaultClimate.longitude));
+  const [installType, setInstallType] = useState(persistedEnvironment.installType || "urban");
+  const [manualClimate, setManualClimate] = useState(() => persistedEnvironment.climate || cityToClimate(isfahan, domain, persistedEnvironment.installType || "urban"));
   const [compassAttachment, setCompassAttachment] = useState(null);
   const [siteAttachments, setSiteAttachments] = useState([]);
   const [compassPreview, setCompassPreview] = useState("");
@@ -135,9 +139,9 @@ const navigate = useNavigate();
   const [compassUploadChoice, setCompassUploadChoice] = useState("ask");
   const [gpsStatus, setGpsStatus] = useState("");
   const [validationMessage, setValidationMessage] = useState("");
-  const [installTiltDeg, setInstallTiltDeg] = useState(String(estimateRecommendedTilt(defaultClimate.latitude)));
-  const [installAzimuthDeg, setInstallAzimuthDeg] = useState("180");
-  const [directionSlots, setDirectionSlots] = useState(defaultDirectionSlots);
+  const [installTiltDeg, setInstallTiltDeg] = useState(String(persistedEnvironment.installTiltDeg ?? estimateRecommendedTilt(defaultClimate.latitude)));
+  const [installAzimuthDeg, setInstallAzimuthDeg] = useState(String(persistedEnvironment.installAzimuthDeg ?? 180));
+  const [directionSlots, setDirectionSlots] = useState(persistedEnvironment.directionSlots || defaultDirectionSlots);
 
   const shilMapPinPosition = useMemo(() => {
     const toSafeNumber = (value) => {
@@ -206,6 +210,17 @@ const navigate = useNavigate();
     latitude,
     longitude,
   }), [manualClimate, domain, latitude, longitude]);
+
+  useEffect(() => {
+    const payload = {
+      ...persistedEnvironment, domain, city, province: selectedCity?.province || "",
+      address, gpsMode, latitude, longitude, installType, climate: manualClimate,
+      installTiltDeg, installAzimuthDeg, directionSlots, manualOverride,
+      savedAt: new Date().toISOString(),
+    };
+    localStorage.setItem("shil:environmentDraft", JSON.stringify(payload));
+  }, [domain, city, selectedCity, address, gpsMode, latitude, longitude, installType,
+      manualClimate, installTiltDeg, installAzimuthDeg, directionSlots, manualOverride]);
 
   const assessment = useMemo(() => analyzeEnvironmentForEngineering({
     domain,

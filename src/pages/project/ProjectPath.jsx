@@ -58,7 +58,12 @@ function normalizeCards(cards) {
 
 export default function ProjectPath() {
   const navigate = useNavigate();
-  const [selected, setSelected] = useState("");
+  const [selected, setSelected] = useState(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem("shil:selectedProjectPath") || "null");
+      return saved?.key || localStorage.getItem("shil:projectPath") || "";
+    } catch { return localStorage.getItem("shil:projectPath") || ""; }
+  });
   const [warning, setWarning] = useState("");
   const [options, setOptions] = useState(() => normalizeCards(readAdminProjectPathCards()));
 
@@ -89,6 +94,15 @@ export default function ProjectPath() {
 
     return () => { alive = false; };
   }, []);
+
+  useEffect(() => {
+    if (!selected) return;
+    const option = options.find((item) => item.key === selected);
+    if (!option) return;
+    localStorage.setItem("shil:projectPath", option.key);
+    localStorage.setItem("shil:selectedProjectPath", JSON.stringify(option));
+    localStorage.setItem("shil:calculationDomain", option.calculationDomain || option.key);
+  }, [selected, options]);
 
   const mainOptions = useMemo(
     () => options.filter((item) => !(item.calculationDomain === "utility" || item.key === "utility")),

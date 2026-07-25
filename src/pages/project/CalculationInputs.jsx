@@ -188,6 +188,15 @@ export default function CalculationInputs() {
     }
   }, [requestedMethod, method, domain]);
 
+  const persistedInputDraft = React.useMemo(() => {
+    const projectKey = localStorage.getItem("shil:activeProjectKey") || "active-draft";
+    return readDraft(`shil:calculation-inputs-state:v2:${projectKey}:${domain}:${method}`) || {};
+  }, [domain, method]);
+  const inputDraftKey = React.useMemo(() => {
+    const projectKey = localStorage.getItem("shil:activeProjectKey") || "active-draft";
+    return `shil:calculation-inputs-state:v2:${projectKey}:${domain}:${method}`;
+  }, [domain, method]);
+
   const [query, setQuery] = React.useState("");
   const [isEquipmentPickerOpen, setIsEquipmentPickerOpen] = React.useState(false);
   const [scaleWarning, setScaleWarning] = React.useState("");
@@ -195,36 +204,36 @@ export default function CalculationInputs() {
   const scenarioSeededItems = React.useMemo(() => matchScenarioEquipmentItems(scenario), [scenario]);
   const isReadyScenarioEquipmentFlow = isScenarioFlowFor(domain) && method === "equipment" && ["solar", "emergency"].includes(domain);
 
-  const [selectedIds, setSelectedIds] = React.useState(() => new Set(isReadyScenarioEquipmentFlow ? scenarioSeededItems.map((item) => item.id) : []));
-  const [itemOverrides, setItemOverrides] = React.useState(() => isReadyScenarioEquipmentFlow ? buildScenarioEquipmentOverrides(scenario, scenarioSeededItems) : {});
-  const [showExpert, setShowExpert] = React.useState(false);
-  const [manualEnergyKWh, setManualEnergyKWh] = React.useState("");
-  const [manualPowerW, setManualPowerW] = React.useState("");
-  const [manualCurrentA, setManualCurrentA] = React.useState("");
-  const [manualVoltage, setManualVoltage] = React.useState(domain === "emergency" ? "220" : "220");
-  const [manualHours, setManualHours] = React.useState(domain === "emergency" ? "6" : "5");
-  const [profileVoltage, setProfileVoltage] = React.useState("220");
-  const [profilePowerW, setProfilePowerW] = React.useState("1000");
-  const [profileMorningKWh, setProfileMorningKWh] = React.useState("1");
-  const [profileNoonKWh, setProfileNoonKWh] = React.useState("1");
-  const [profileEveningKWh, setProfileEveningKWh] = React.useState("2");
-  const [profileNightKWh, setProfileNightKWh] = React.useState("1");
-  const [profileStartFactor, setProfileStartFactor] = React.useState("1.6");
+  const [selectedIds, setSelectedIds] = React.useState(() => new Set(persistedInputDraft.selectedIds || (isReadyScenarioEquipmentFlow ? scenarioSeededItems.map((item) => item.id) : [])));
+  const [itemOverrides, setItemOverrides] = React.useState(() => persistedInputDraft.itemOverrides || (isReadyScenarioEquipmentFlow ? buildScenarioEquipmentOverrides(scenario, scenarioSeededItems) : {}));
+  const [showExpert, setShowExpert] = React.useState(Boolean(persistedInputDraft.showExpert));
+  const [manualEnergyKWh, setManualEnergyKWh] = React.useState(persistedInputDraft.manualEnergyKWh ?? "");
+  const [manualPowerW, setManualPowerW] = React.useState(persistedInputDraft.manualPowerW ?? "");
+  const [manualCurrentA, setManualCurrentA] = React.useState(persistedInputDraft.manualCurrentA ?? "");
+  const [manualVoltage, setManualVoltage] = React.useState(persistedInputDraft.manualVoltage ?? "220");
+  const [manualHours, setManualHours] = React.useState(persistedInputDraft.manualHours ?? (domain === "emergency" ? "6" : "5"));
+  const [profileVoltage, setProfileVoltage] = React.useState(persistedInputDraft.profileVoltage ?? "220");
+  const [profilePowerW, setProfilePowerW] = React.useState(persistedInputDraft.profilePowerW ?? "1000");
+  const [profileMorningKWh, setProfileMorningKWh] = React.useState(persistedInputDraft.profileMorningKWh ?? "1");
+  const [profileNoonKWh, setProfileNoonKWh] = React.useState(persistedInputDraft.profileNoonKWh ?? "1");
+  const [profileEveningKWh, setProfileEveningKWh] = React.useState(persistedInputDraft.profileEveningKWh ?? "2");
+  const [profileNightKWh, setProfileNightKWh] = React.useState(persistedInputDraft.profileNightKWh ?? "1");
+  const [profileStartFactor, setProfileStartFactor] = React.useState(persistedInputDraft.profileStartFactor ?? "1.6");
 
   const environment = React.useMemo(() => readDraft("shil:environmentDraft") || {}, []);
   const environmentAssessment = React.useMemo(() => readDraft("shil:environmentAssessment") || {}, []);
   const envSolarDefaults = React.useMemo(() => getEnvironmentSolarDefaults(environment, environmentAssessment), [environment, environmentAssessment]);
 
   const defaultPanel = SHIL_SOLAR_PANELS.find((p) => p.powerW === 620) || SHIL_SOLAR_PANELS[0];
-  const [selectedPanelId, setSelectedPanelId] = React.useState(defaultPanel?.id || "");
-  const [panelCount, setPanelCount] = React.useState("10");
-  const [psh, setPsh] = React.useState(String(envSolarDefaults.psh));
-  const [lossPercent, setLossPercent] = React.useState(String(envSolarDefaults.totalLoss));
-  const [acVoltageRoute, setAcVoltageRoute] = React.useState("220");
-  const [inverterSplitCount, setInverterSplitCount] = React.useState("1");
-  const [forceAutonomyBattery, setForceAutonomyBattery] = React.useState(domain === "emergency");
-  const [autonomyHours, setAutonomyHours] = React.useState(domain === "emergency" ? "6" : "");
-  const [autonomyDays, setAutonomyDays] = React.useState("");
+  const [selectedPanelId, setSelectedPanelId] = React.useState(persistedInputDraft.selectedPanelId || defaultPanel?.id || "");
+  const [panelCount, setPanelCount] = React.useState(persistedInputDraft.panelCount ?? "10");
+  const [psh, setPsh] = React.useState(persistedInputDraft.psh ?? String(envSolarDefaults.psh));
+  const [lossPercent, setLossPercent] = React.useState(persistedInputDraft.lossPercent ?? String(envSolarDefaults.totalLoss));
+  const [acVoltageRoute, setAcVoltageRoute] = React.useState(persistedInputDraft.acVoltageRoute ?? "220");
+  const [inverterSplitCount, setInverterSplitCount] = React.useState(persistedInputDraft.inverterSplitCount ?? "1");
+  const [forceAutonomyBattery, setForceAutonomyBattery] = React.useState(persistedInputDraft.forceAutonomyBattery ?? (domain === "emergency"));
+  const [autonomyHours, setAutonomyHours] = React.useState(persistedInputDraft.autonomyHours ?? (domain === "emergency" ? "6" : ""));
+  const [autonomyDays, setAutonomyDays] = React.useState(persistedInputDraft.autonomyDays ?? "");
 
   const items = React.useMemo(() => {
     const results = searchConsumerEquipment(query);
@@ -257,8 +266,26 @@ export default function CalculationInputs() {
     return Array.from({ length: invCount }, (_, index) => base + (index < rest ? 1 : 0));
   }, [panelCount, inverterSplitCount]);
 
-  const [showManualPanelSplit, setShowManualPanelSplit] = React.useState(false);
-  const [manualPanelDistribution, setManualPanelDistribution] = React.useState([]);
+  const [showManualPanelSplit, setShowManualPanelSplit] = React.useState(Boolean(persistedInputDraft.showManualPanelSplit));
+  const [manualPanelDistribution, setManualPanelDistribution] = React.useState(persistedInputDraft.manualPanelDistribution || []);
+
+  React.useEffect(() => {
+    const payload = {
+      selectedIds: Array.from(selectedIds), itemOverrides, showExpert,
+      manualEnergyKWh, manualPowerW, manualCurrentA, manualVoltage, manualHours,
+      profileVoltage, profilePowerW, profileMorningKWh, profileNoonKWh,
+      profileEveningKWh, profileNightKWh, profileStartFactor,
+      selectedPanelId, panelCount, psh, lossPercent, acVoltageRoute,
+      inverterSplitCount, forceAutonomyBattery, autonomyHours, autonomyDays,
+      showManualPanelSplit, manualPanelDistribution, savedAt: new Date().toISOString(),
+    };
+    localStorage.setItem(inputDraftKey, JSON.stringify(payload));
+  }, [inputDraftKey, selectedIds, itemOverrides, showExpert, manualEnergyKWh, manualPowerW,
+      manualCurrentA, manualVoltage, manualHours, profileVoltage, profilePowerW,
+      profileMorningKWh, profileNoonKWh, profileEveningKWh, profileNightKWh,
+      profileStartFactor, selectedPanelId, panelCount, psh, lossPercent, acVoltageRoute,
+      inverterSplitCount, forceAutonomyBattery, autonomyHours, autonomyDays,
+      showManualPanelSplit, manualPanelDistribution]);
 
   React.useEffect(() => {
     setManualPanelDistribution((prev) => {
