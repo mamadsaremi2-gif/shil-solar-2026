@@ -575,3 +575,10 @@ html body.shil-project-path-screen .shil-project-path-confirm:last-child {
 .shil-add-array-button{min-height:42px;border:1px dashed rgba(139,92,246,.55);border-radius:12px;background:rgba(124,58,237,.08);color:inherit;font-weight:900}
 .shil-add-array-button:disabled{opacity:.45}
 @media (max-width:700px){.shil-array-fields{grid-template-columns:1fr 1fr}.shil-array-result-row,.shil-array-summary{grid-template-columns:1fr}.shil-installation-array-card{padding:10px}}
+
+/* V6.0 geometry-only installation arrays */
+.shil-array-fields--geometry-only{grid-template-columns:repeat(2,minmax(0,1fr))}
+.shil-array-fields--geometry-only label{display:grid;gap:7px}
+.shil-array-fields--geometry-only small{font-size:12px;line-height:1.7;opacity:.78}
+.shil-array-summary--geometry{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (max-width:700px){.shil-array-fields--geometry-only,.shil-array-summary--geometry{grid-template-columns:1fr}}

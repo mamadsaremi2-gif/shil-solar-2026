@@ -22,9 +22,7 @@ export function analyzeInstallationArrays({ environment = {}, arrays = [] } = {}
     .slice(0, 4)
     .map((item, index) => ({
       id: item.id || `array-${index + 1}`,
-      title: item.title || `آرایه ${index + 1}`,
-      panelCount: Math.max(1, Math.round(toNumber(item.panelCount, 1))),
-      panelPower: Math.max(1, toNumber(item.panelPower, 550)),
+      title: item.title || `آرایه نصب ${index + 1}`,
       azimuth: normalizeAzimuthDeg(item.azimuth, DEFAULT_SOLAR_AZIMUTH_DEG),
       tilt: clampNumber(item.tilt, 0, 80, estimateRecommendedTilt(environment.latitude)),
       enabled: true,
@@ -32,9 +30,7 @@ export function analyzeInstallationArrays({ environment = {}, arrays = [] } = {}
 
   const safeArrays = normalizedArrays.length ? normalizedArrays : [{
     id: "legacy-default-array",
-    title: "آرایه اصلی",
-    panelCount: 1,
-    panelPower: 550,
+    title: "آرایه نصب اصلی",
     azimuth: normalizeAzimuthDeg(environment.selectedAzimuthDeg ?? environment.installAzimuthDeg ?? DEFAULT_SOLAR_AZIMUTH_DEG),
     tilt: clampNumber(environment.selectedTiltDeg ?? environment.installTiltDeg ?? estimateRecommendedTilt(environment.latitude), 0, 80, estimateRecommendedTilt(environment.latitude)),
     enabled: true,
@@ -46,11 +42,25 @@ export function analyzeInstallationArrays({ environment = {}, arrays = [] } = {}
       selectedAzimuthDeg: item.azimuth,
       selectedTiltDeg: item.tilt,
     });
-    return { ...item, installedPowerW: item.panelCount * item.panelPower, assessment };
+    return {
+      ...item,
+      geometryOnly: true,
+      assessment,
+      sizingHint: {
+        relativeYieldFactor: assessment.effectiveEfficiency,
+        allocationStatus: "deferred-to-design-engine",
+      },
+    };
   });
 
-  const totalInstalledPowerW = arrayResults.reduce((sum, item) => sum + item.installedPowerW, 0) || 1;
-  const weighted = (selector) => arrayResults.reduce((sum, item) => sum + toNumber(selector(item.assessment), 0) * item.installedPowerW, 0) / totalInstalledPowerW;
+  // At the environmental stage panel model, panel power and panel count are intentionally unknown.
+  // Therefore the provisional project factor is an equal-weight geometry average. The design engine
+  // can later replace these weights after it selects the panel and sizes each installation array.
+  const equalWeight = 1 / Math.max(1, arrayResults.length);
+  const weighted = (selector) => arrayResults.reduce(
+    (sum, item) => sum + toNumber(selector(item.assessment), 0) * equalWeight,
+    0,
+  );
   const round2 = (value) => Math.round(value * 100) / 100;
   const base = arrayResults[0].assessment;
   const combinedAssessment = {
@@ -65,6 +75,8 @@ export function analyzeInstallationArrays({ environment = {}, arrays = [] } = {}
     effectiveEfficiency: round2(weighted((a) => a.effectiveEfficiency)),
     installationMode: "multi",
     installationArrayCount: arrayResults.length,
+    aggregationMode: "equal-geometry-provisional",
+    sizingStatus: "pending-design-method",
     warnings: Array.from(new Set(arrayResults.flatMap((item) => item.assessment.warnings || []))),
   };
 
@@ -73,8 +85,9 @@ export function analyzeInstallationArrays({ environment = {}, arrays = [] } = {}
     combinedAssessment,
     summary: {
       arrayCount: arrayResults.length,
-      totalPanelCount: arrayResults.reduce((sum, item) => sum + item.panelCount, 0),
-      totalInstalledPowerW,
+      geometryOnly: true,
+      sizingStatus: "pending-design-method",
+      aggregationMode: "equal-geometry-provisional",
       combinedEfficiency: combinedAssessment.effectiveEfficiency,
       combinedLossPercent: combinedAssessment.totalLossPercent,
     },
