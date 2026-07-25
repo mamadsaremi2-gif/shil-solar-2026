@@ -7,7 +7,8 @@ function isProjectLandingPath(pathname) {
 }
 
 function isEngineeringPath(pathname = "") {
-  return pathname.startsWith("/new-project/") && !isProjectLandingPath(pathname);
+  // Every page in the new-project flow, including ProjectPath, owns persistent state.
+  return pathname === "/new-project" || pathname.startsWith("/new-project/");
 }
 
 function safeParse(value, fallback = null) {
@@ -174,13 +175,12 @@ export default function UXFlowController() {
   }, [location.pathname]);
 
   useEffect(() => {
-    const previousPath = activePathRef.current;
-    if (previousPath && previousPath !== location.pathname) {
-      captureEngineeringPageDraft(previousPath);
-    }
+    // Never save the previous route here: at effect time React may already have
+    // committed the next page DOM. Saving then would overwrite the previous
+    // page draft with fields from the new page.
     activePathRef.current = location.pathname;
 
-    const timers = [0, 80, 240, 600].map((delay) => window.setTimeout(() => {
+    const timers = [0, 50, 140, 320, 700, 1200].map((delay) => window.setTimeout(() => {
       restoreEngineeringPageDraft(location.pathname);
     }, delay));
 
@@ -201,14 +201,27 @@ export default function UXFlowController() {
       }, 180);
     };
     const choiceSave = (event) => {
-      const target = event.target?.closest?.(
-        ".shil-choice-card, .shil-method-card, [role='radio']"
+      const activePath = activePathRef.current || window.location.pathname;
+      if (!isEngineeringPath(activePath)) return;
+
+      // This listener runs in capture phase, before React navigation handlers.
+      // Save the current page DOM synchronously so the old page is not already
+      // unmounted when a confirm/back/rail button changes the route.
+      const navigationTarget = event.target?.closest?.(
+        "a[href], button, [role='button'], .shil-choice-card, .shil-method-card, [role='radio']"
       );
-      if (!target) return;
+      if (!navigationTarget) return;
+
+      captureEngineeringPageDraft(activePath);
+
+      // A choice click can update React state after the capture-phase snapshot.
+      // Take one second snapshot in the same route only; cancel it naturally if
+      // navigation has already changed the active route.
       window.clearTimeout(draftDebounceRef.current);
       draftDebounceRef.current = window.setTimeout(() => {
-        captureEngineeringPageDraft(activePathRef.current || window.location.pathname);
-      }, 80);
+        const currentPath = activePathRef.current || window.location.pathname;
+        if (currentPath === activePath) captureEngineeringPageDraft(activePath);
+      }, 60);
     };
     const toastHandler = (event) => {
       setToast({ text: event.detail?.message || "انجام شد", type: event.detail?.type || "info" });
@@ -217,7 +230,12 @@ export default function UXFlowController() {
     const saveOnVisibilityChange = () => {
       if (document.visibilityState === "hidden") saveNow();
     };
+    const saveBeforeHistoryNavigation = () => {
+      captureEngineeringPageDraft(activePathRef.current || window.location.pathname);
+    };
     window.addEventListener("beforeunload", saveNow);
+    window.addEventListener("pagehide", saveNow);
+    window.addEventListener("popstate", saveBeforeHistoryNavigation, true);
     window.addEventListener("visibilitychange", saveOnVisibilityChange);
     window.addEventListener("input", debouncedSave, true);
     window.addEventListener("change", debouncedSave, true);
@@ -227,6 +245,8 @@ export default function UXFlowController() {
       window.clearTimeout(debounceRef.current);
       window.clearTimeout(draftDebounceRef.current);
       window.removeEventListener("beforeunload", saveNow);
+      window.removeEventListener("pagehide", saveNow);
+      window.removeEventListener("popstate", saveBeforeHistoryNavigation, true);
       window.removeEventListener("visibilitychange", saveOnVisibilityChange);
       window.removeEventListener("input", debouncedSave, true);
       window.removeEventListener("change", debouncedSave, true);
