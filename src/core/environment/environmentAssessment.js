@@ -14,3 +14,69 @@ export function estimateCorrosionRisk({ humidity, installType }) { const h = toN
 export function estimateIngressProtection({ humidity, installType }) { const risk = estimateCorrosionRisk({ humidity, installType }); if (risk === "high") return "IP65 / IP66"; if (risk === "medium") return "IP54 / IP65"; return "IP54"; }
 export function buildEnvironmentWarnings(environment) { const warnings = []; const humidity = toNumber(environment.humidity, 30); const maxTemp = toNumber(environment.temperatureMaxC, 40); const minTemp = toNumber(environment.temperatureMinC, 0); const sun = toNumber(environment.peakSunHours, 0); const soiling = toNumber(environment.soilingLossPercent, 3); const azimuthDelta = getAzimuthDeltaFromSouth(environment.selectedAzimuthDeg ?? environment.recommendedAzimuthDeg ?? DEFAULT_SOLAR_AZIMUTH_DEG); const totalOrientationLoss = toNumber(environment.totalOrientationLossPercent, 0); if (environment.domain === "solar" && sun < 4.2) warnings.push("ساعت آفتابی مؤثر پایین است؛ تعداد پنل یا ظرفیت تولید باید با ضریب اطمینان بیشتر بررسی شود."); if (environment.domain === "solar" && azimuthDelta >= 70) warnings.push("جهت نصب از جنوب انحراف قابل توجه دارد؛ راندمان واقعی پنل در موتور خورشیدی کاهش داده شد."); if (environment.domain === "solar" && totalOrientationLoss >= 10) warnings.push("مجموع افت جهت و زاویه نصب بالاست؛ زاویه و جهت پنل قبل از اجرا بازبینی شود."); if (maxTemp >= 45) warnings.push("دمای بیشینه بالا است؛ افت حرارتی پنل/اینورتر در محاسبات لحاظ شود."); if (minTemp <= -10) warnings.push("حداقل دمای پایین است؛ ولتاژ مدار باز پنل در سرمای شدید کنترل شود."); if (humidity >= 65 || environment.installType === "coastal") warnings.push("رطوبت یا محیط ساحلی بالاست؛ تجهیزات ضدخوردگی و تابلو با IP بالاتر پیشنهاد می‌شود."); if (soiling >= 6 || environment.installType === "desert" || environment.installType === "industrial") warnings.push("آلودگی/گردوغبار قابل توجه است؛ برنامه شست‌وشوی پنل و ضریب Soiling لحاظ شود."); if (!environment.compassAttachment) warnings.push("اسکرین‌شات قطب‌نما بارگذاری نشده؛ جهت نهایی پنل باید در بازدید محل تأیید شود."); if (!environment.siteAttachment && environment.domain === "solar") warnings.push("تصویر محل نصب بارگذاری نشده؛ ریسک سایه‌اندازی و محدودیت فضای نصب هنوز دستی بررسی می‌شود."); return warnings; }
 export function analyzeEnvironmentForEngineering(environment = {}) { const domain = environment.domain || "solar"; const recommendedTiltDeg = domain === "solar" ? estimateRecommendedTilt(environment.latitude) : 0; const recommendedAzimuthDeg = domain === "solar" ? DEFAULT_SOLAR_AZIMUTH_DEG : 0; const selectedTiltDeg = domain === "solar" ? clampNumber(environment.selectedTiltDeg ?? environment.installTiltDeg ?? recommendedTiltDeg, 0, 80, recommendedTiltDeg) : 0; const selectedAzimuthDeg = domain === "solar" ? normalizeAzimuthDeg(environment.selectedAzimuthDeg ?? environment.installAzimuthDeg ?? recommendedAzimuthDeg, recommendedAzimuthDeg) : 0; const orientation = domain === "solar" ? getOrientationEfficiency({ azimuthDeg: selectedAzimuthDeg, tiltDeg: selectedTiltDeg, recommendedTiltDeg }) : { orientationLossPercent: 0, tiltLossPercent: 0, totalOrientationLossPercent: 0, orientationEfficiency: 1 }; const thermalDeratePercent = domain === "solar" ? estimateThermalDeratePercent(environment.temperatureMaxC) : 0; const corrosionRisk = estimateCorrosionRisk(environment); const recommendedIngressProtection = estimateIngressProtection(environment); const needsAntiCorrosion = corrosionRisk !== "low"; const manualReviewRequired = Boolean(!environment.compassAttachment || (domain === "solar" && !environment.siteAttachment)); const totalLossPercent = domain === "solar" ? clampNumber(thermalDeratePercent + toNumber(environment.soilingLossPercent, 3) + toNumber(environment.wiringLossPercent, 3) + orientation.totalOrientationLossPercent, 0, 60, 0) : 0; const effectiveEfficiency = domain === "solar" ? clampNumber(1 - totalLossPercent / 100, 0.35, 1, 0.8) : 1; const warnings = buildEnvironmentWarnings({ ...environment, domain, selectedTiltDeg, selectedAzimuthDeg, recommendedTiltDeg, recommendedAzimuthDeg, totalOrientationLossPercent: orientation.totalOrientationLossPercent }); return { status: warnings.length ? "needs-review" : "ready", domain, recommendedTiltDeg, recommendedAzimuthDeg, selectedTiltDeg, selectedAzimuthDeg, orientationLossPercent: orientation.orientationLossPercent, tiltLossPercent: orientation.tiltLossPercent, totalOrientationLossPercent: orientation.totalOrientationLossPercent, orientationEfficiency: orientation.orientationEfficiency, totalLossPercent, effectiveEfficiency, thermalDeratePercent, corrosionRisk, recommendedIngressProtection, needsAntiCorrosion, manualReviewRequired, directionSlots: environment.directionSlots || null, compassAnalysis: { mode: environment.compassAttachment ? "uploaded" : "not-provided", assumedSouthAzimuthDeg: selectedAzimuthDeg, note: environment.compassAttachment ? "فایل قطب‌نما ذخیره شد؛ جهت/زاویه انتخاب‌شده در محاسبات راندمان و تلفات خورشیدی اعمال می‌شود." : "بدون تصویر قطب‌نما، جهت و زاویه نصب از فیلدهای دستی یا پیش‌فرض مهندسی خوانده می‌شود." }, siteImageAnalysis: { mode: environment.siteAttachment ? "uploaded" : "not-provided", shadingRisk: environment.siteAttachment ? "manual-review" : "unknown", note: environment.siteAttachment ? "تصویر محل نصب ذخیره شد؛ برای تشخیص دقیق سایه/مانع باید در مرحله AI Vision یا بازدید مهندسی بررسی شود." : "تصویر محل نصب موجود نیست؛ محاسبات با فرض نبود سایه مستقیم ادامه پیدا می‌کند." }, warnings }; }
+
+
+export function analyzeInstallationArrays({ environment = {}, arrays = [] } = {}) {
+  const normalizedArrays = (Array.isArray(arrays) ? arrays : [])
+    .filter((item) => item && item.enabled !== false)
+    .slice(0, 4)
+    .map((item, index) => ({
+      id: item.id || `array-${index + 1}`,
+      title: item.title || `آرایه ${index + 1}`,
+      panelCount: Math.max(1, Math.round(toNumber(item.panelCount, 1))),
+      panelPower: Math.max(1, toNumber(item.panelPower, 550)),
+      azimuth: normalizeAzimuthDeg(item.azimuth, DEFAULT_SOLAR_AZIMUTH_DEG),
+      tilt: clampNumber(item.tilt, 0, 80, estimateRecommendedTilt(environment.latitude)),
+      enabled: true,
+    }));
+
+  const safeArrays = normalizedArrays.length ? normalizedArrays : [{
+    id: "legacy-default-array",
+    title: "آرایه اصلی",
+    panelCount: 1,
+    panelPower: 550,
+    azimuth: normalizeAzimuthDeg(environment.selectedAzimuthDeg ?? environment.installAzimuthDeg ?? DEFAULT_SOLAR_AZIMUTH_DEG),
+    tilt: clampNumber(environment.selectedTiltDeg ?? environment.installTiltDeg ?? estimateRecommendedTilt(environment.latitude), 0, 80, estimateRecommendedTilt(environment.latitude)),
+    enabled: true,
+  }];
+
+  const arrayResults = safeArrays.map((item) => {
+    const assessment = analyzeEnvironmentForEngineering({
+      ...environment,
+      selectedAzimuthDeg: item.azimuth,
+      selectedTiltDeg: item.tilt,
+    });
+    return { ...item, installedPowerW: item.panelCount * item.panelPower, assessment };
+  });
+
+  const totalInstalledPowerW = arrayResults.reduce((sum, item) => sum + item.installedPowerW, 0) || 1;
+  const weighted = (selector) => arrayResults.reduce((sum, item) => sum + toNumber(selector(item.assessment), 0) * item.installedPowerW, 0) / totalInstalledPowerW;
+  const round2 = (value) => Math.round(value * 100) / 100;
+  const base = arrayResults[0].assessment;
+  const combinedAssessment = {
+    ...base,
+    selectedTiltDeg: null,
+    selectedAzimuthDeg: null,
+    orientationLossPercent: round2(weighted((a) => a.orientationLossPercent)),
+    tiltLossPercent: round2(weighted((a) => a.tiltLossPercent)),
+    totalOrientationLossPercent: round2(weighted((a) => a.totalOrientationLossPercent)),
+    orientationEfficiency: round2(weighted((a) => a.orientationEfficiency)),
+    totalLossPercent: round2(weighted((a) => a.totalLossPercent)),
+    effectiveEfficiency: round2(weighted((a) => a.effectiveEfficiency)),
+    installationMode: "multi",
+    installationArrayCount: arrayResults.length,
+    warnings: Array.from(new Set(arrayResults.flatMap((item) => item.assessment.warnings || []))),
+  };
+
+  return {
+    arrayResults,
+    combinedAssessment,
+    summary: {
+      arrayCount: arrayResults.length,
+      totalPanelCount: arrayResults.reduce((sum, item) => sum + item.panelCount, 0),
+      totalInstalledPowerW,
+      combinedEfficiency: combinedAssessment.effectiveEfficiency,
+      combinedLossPercent: combinedAssessment.totalLossPercent,
+    },
+  };
+}

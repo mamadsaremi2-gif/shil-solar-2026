@@ -558,3 +558,20 @@ html body .shil-page--project-path .shil-project-path-confirm:last-child,
 html body.shil-project-path-screen .shil-project-path-confirm:last-child {
   align-self: center !important;
 }
+
+/* SHIL V6.0 phase 1 - safe multi-orientation installation arrays */
+.shil-installation-mode-switch{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0 12px;padding:4px;border:1px solid rgba(139,92,246,.28);border-radius:14px;background:rgba(15,23,42,.28)}
+.shil-installation-mode-switch button{min-height:40px;border:0;border-radius:10px;background:transparent;color:inherit;font-weight:800;cursor:pointer}
+.shil-installation-mode-switch button.active{background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;box-shadow:0 6px 18px rgba(124,58,237,.28)}
+.shil-installation-arrays{display:grid;gap:12px;margin:12px 0}
+.shil-installation-array-card{padding:12px;border:1px solid rgba(139,92,246,.28);border-radius:16px;background:rgba(255,255,255,.04)}
+.shil-installation-array-head{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;margin-bottom:10px}
+.shil-array-remove{min-height:38px;padding:0 12px;border-radius:10px;border:1px solid rgba(239,68,68,.3);background:rgba(239,68,68,.1);color:#fca5a5;font-weight:800}
+.shil-array-remove:disabled{opacity:.4}
+.shil-array-fields{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.shil-array-fields label{display:grid;gap:5px;font-size:12px;font-weight:700}
+.shil-array-result-row,.shil-array-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
+.shil-array-result-row span,.shil-array-summary span{padding:8px;border-radius:10px;background:rgba(124,58,237,.09);text-align:center;font-size:12px}
+.shil-add-array-button{min-height:42px;border:1px dashed rgba(139,92,246,.55);border-radius:12px;background:rgba(124,58,237,.08);color:inherit;font-weight:900}
+.shil-add-array-button:disabled{opacity:.45}
+@media (max-width:700px){.shil-array-fields{grid-template-columns:1fr 1fr}.shil-array-result-row,.shil-array-summary{grid-template-columns:1fr}.shil-installation-array-card{padding:10px}}

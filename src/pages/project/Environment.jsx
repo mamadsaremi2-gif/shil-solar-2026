@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import ShilPageShell from "../../components/ShilPageShell";
 import ProjectMiniRail from "../../components/ProjectMiniRail.jsx";
 import SmartCityInput, { findIranCityByName, getDefaultIranCity } from "../../components/SmartCityInput";
-import { analyzeEnvironmentForEngineering, estimateRecommendedTilt, normalizePersianNumber } from "../../core/environment/environmentAssessment.js";
+import { analyzeEnvironmentForEngineering, analyzeInstallationArrays, estimateRecommendedTilt, normalizePersianNumber } from "../../core/environment/environmentAssessment.js";
 import { approveProjectStep } from "../../workflow/projectWorkflow.js";
 import { clearScenarioFlow, isScenarioFlowFor } from "../../workflow/flowIsolation.js";
 
@@ -171,6 +171,15 @@ const navigate = useNavigate();
   const [validationMessage, setValidationMessage] = useState("");
   const [installTiltDeg, setInstallTiltDeg] = useState(String(persistedEnvironment.installTiltDeg ?? estimateRecommendedTilt(defaultClimate.latitude)));
   const [installAzimuthDeg, setInstallAzimuthDeg] = useState(String(persistedEnvironment.installAzimuthDeg ?? 180));
+  const [installationMode, setInstallationMode] = useState(persistedEnvironment.installationMode === "multi" ? "multi" : "single");
+  const [installationArrays, setInstallationArrays] = useState(() => {
+    const saved = Array.isArray(persistedEnvironment.installationArrays) ? persistedEnvironment.installationArrays : [];
+    if (saved.length) return saved.slice(0, 4);
+    return [
+      { id: "array-1", title: "آرایه ۱", panelCount: 10, panelPower: 550, azimuth: 90, tilt: 20, enabled: true },
+      { id: "array-2", title: "آرایه ۲", panelCount: 10, panelPower: 550, azimuth: 270, tilt: 20, enabled: true },
+    ];
+  });
   const [directionSlots, setDirectionSlots] = useState(persistedEnvironment.directionSlots || defaultDirectionSlots);
 
   const shilMapPinPosition = useMemo(() => {
@@ -245,15 +254,15 @@ const navigate = useNavigate();
     const payload = {
       ...persistedEnvironment, domain, city, province: selectedCity?.province || "",
       address, gpsMode, latitude, longitude, installType, climate: manualClimate,
-      installTiltDeg, installAzimuthDeg, directionSlots, manualOverride,
+      installTiltDeg, installAzimuthDeg, installationMode, installationArrays, directionSlots, manualOverride,
       savedAt: new Date().toISOString(),
     };
     localStorage.setItem(environmentDraftKey, JSON.stringify(payload));
     localStorage.setItem("shil:environmentDraft", JSON.stringify(payload));
   }, [domain, city, selectedCity, address, gpsMode, latitude, longitude, installType,
-      manualClimate, installTiltDeg, installAzimuthDeg, directionSlots, manualOverride]);
+      manualClimate, installTiltDeg, installAzimuthDeg, installationMode, installationArrays, directionSlots, manualOverride]);
 
-  const assessment = useMemo(() => analyzeEnvironmentForEngineering({
+  const singleAssessment = useMemo(() => analyzeEnvironmentForEngineering({
     domain,
     city,
     province: selectedCity?.province || "اصفهان",
@@ -278,6 +287,60 @@ const navigate = useNavigate();
     siteAttachments,
     siteAttachment: siteAttachments[0] || null,
   }), [domain, city, selectedCity, address, gpsMode, latitude, longitude, activeInstallType, climate, installTiltDeg, installAzimuthDeg, directionSlots, compassAttachment, siteAttachments]);
+
+  const multiArrayAssessment = useMemo(() => analyzeInstallationArrays({
+    environment: {
+      domain,
+      city,
+      province: selectedCity?.province || "اصفهان",
+      address,
+      gpsMode,
+      latitude: latitude === "" ? null : Number(latitude),
+      longitude: longitude === "" ? null : Number(longitude),
+      installType: activeInstallType.key,
+      installTypeLabel: activeInstallType.label,
+      temperatureAverageC: climate.temperature,
+      temperatureMaxC: climate.temperatureMaxC,
+      temperatureMinC: climate.temperatureMinC,
+      altitude: climate.altitude,
+      humidity: climate.humidity,
+      peakSunHours: climate.peakSunHours,
+      soilingLossPercent: activeInstallType.soiling,
+      wiringLossPercent: 3,
+      directionSlots,
+      compassAttachment,
+      siteAttachments,
+      siteAttachment: siteAttachments[0] || null,
+    },
+    arrays: installationArrays,
+  }), [domain, city, selectedCity, address, gpsMode, latitude, longitude, activeInstallType, climate, directionSlots, compassAttachment, siteAttachments, installationArrays]);
+
+  const assessment = installationMode === "multi" ? multiArrayAssessment.combinedAssessment : singleAssessment;
+  const installationArrayResults = multiArrayAssessment.arrayResults;
+
+  const updateInstallationArray = (id, patch) => {
+    setInstallationArrays((prev) => prev.map((item) => item.id === id ? { ...item, ...patch } : item));
+  };
+
+  const addInstallationArray = () => {
+    setInstallationArrays((prev) => {
+      if (prev.length >= 4) return prev;
+      const nextIndex = prev.length + 1;
+      return [...prev, {
+        id: `array-${Date.now()}`,
+        title: `آرایه ${nextIndex}`,
+        panelCount: 1,
+        panelPower: Number(prev[0]?.panelPower || 550),
+        azimuth: 180,
+        tilt: Number(prev[0]?.tilt || estimateRecommendedTilt(latitude)),
+        enabled: true,
+      }];
+    });
+  };
+
+  const removeInstallationArray = (id) => {
+    setInstallationArrays((prev) => prev.length <= 1 ? prev : prev.filter((item) => item.id !== id));
+  };
 
   const pickCity = (item) => {
     if (!item) return;
@@ -439,6 +502,9 @@ const navigate = useNavigate();
       recommendedAzimuthDeg: assessment.recommendedAzimuthDeg,
       selectedTiltDeg: assessment.selectedTiltDeg,
       selectedAzimuthDeg: assessment.selectedAzimuthDeg,
+      installationMode,
+      installationArrays: installationMode === "multi" ? installationArrayResults.map(({ assessment: arrayAssessment, ...item }) => ({ ...item, assessment: arrayAssessment })) : [],
+      installationArraySummary: installationMode === "multi" ? multiArrayAssessment.summary : null,
       directionSlots,
       orientationLossPercent: assessment.orientationLossPercent,
       tiltLossPercent: assessment.tiltLossPercent,
@@ -475,6 +541,8 @@ const navigate = useNavigate();
       },
       installTiltDeg: assessment.selectedTiltDeg,
       installAzimuthDeg: assessment.selectedAzimuthDeg,
+      installationMode,
+      installationArrays,
       savedAt: new Date().toISOString(),
     };
 
@@ -595,11 +663,47 @@ const navigate = useNavigate();
           </div>
           <small className="shil-env-hint">{activeInstallType.description}</small>
 
-          <div className="shil-manual-climate-grid shil-orientation-input-grid">
-            <div className="shil-field"><label>جهت نصب پنل °</label><input className="shil-input" value={installAzimuthDeg} onChange={(event) => setInstallAzimuthDeg(event.target.value)} inputMode="decimal" placeholder="پیش‌فرض 180 جنوب" /><small className="shil-env-hint">0 شمال، 90 شرق، 180 جنوب، 270 غرب؛ این عدد در راندمان و تلفات اعمال می‌شود.</small></div>
-            <div className="shil-field"><label>زاویه نصب پنل °</label><input className="shil-input" value={installTiltDeg} onChange={(event) => setInstallTiltDeg(event.target.value)} inputMode="decimal" placeholder={`پیشنهادی ${assessment.recommendedTiltDeg}°`} /><small className="shil-env-hint">عدد دستی کاربر جایگزین زاویه پیشنهادی و وارد موتور محاسبات می‌شود.</small></div>
-          </div>
-          <div className="shil-climate-grid shil-orientation-factor-grid"><div className="shil-climate-box"><span>افت جهت</span><strong>{assessment.orientationLossPercent}%</strong></div><div className="shil-climate-box"><span>افت زاویه</span><strong>{assessment.tiltLossPercent}%</strong></div><div className="shil-climate-box"><span>ضریب جهت/زاویه</span><strong>{Math.round((assessment.orientationEfficiency || 1) * 100)}%</strong></div><div className="shil-climate-box"><span>راندمان نهایی محیطی</span><strong>{Math.round((assessment.effectiveEfficiency || 1) * 100)}%</strong></div></div>
+          {domain === "solar" ? (
+            <div className="shil-installation-mode-switch" role="group" aria-label="نوع چیدمان پنل‌ها">
+              <button type="button" className={installationMode === "single" ? "active" : ""} onClick={() => setInstallationMode("single")}>یک جهت</button>
+              <button type="button" className={installationMode === "multi" ? "active" : ""} onClick={() => setInstallationMode("multi")}>چند جهت</button>
+            </div>
+          ) : null}
+
+          {installationMode === "single" ? (
+            <>
+              <div className="shil-manual-climate-grid shil-orientation-input-grid">
+                <div className="shil-field"><label>جهت نصب پنل °</label><input className="shil-input" value={installAzimuthDeg} onChange={(event) => setInstallAzimuthDeg(event.target.value)} inputMode="decimal" placeholder="پیش‌فرض 180 جنوب" /><small className="shil-env-hint">0 شمال، 90 شرق، 180 جنوب، 270 غرب؛ این عدد در راندمان و تلفات اعمال می‌شود.</small></div>
+                <div className="shil-field"><label>زاویه نصب پنل °</label><input className="shil-input" value={installTiltDeg} onChange={(event) => setInstallTiltDeg(event.target.value)} inputMode="decimal" placeholder={`پیشنهادی ${assessment.recommendedTiltDeg}°`} /><small className="shil-env-hint">عدد دستی کاربر جایگزین زاویه پیشنهادی و وارد موتور محاسبات می‌شود.</small></div>
+              </div>
+            </>
+          ) : (
+            <div className="shil-installation-arrays">
+              {installationArrayResults.map((item, index) => (
+                <article className="shil-installation-array-card" key={item.id}>
+                  <div className="shil-installation-array-head">
+                    <input className="shil-input" value={item.title} onChange={(event) => updateInstallationArray(item.id, { title: event.target.value })} aria-label={`نام آرایه ${index + 1}`} />
+                    <button type="button" className="shil-array-remove" onClick={() => removeInstallationArray(item.id)} disabled={installationArrays.length <= 1}>حذف</button>
+                  </div>
+                  <div className="shil-array-fields">
+                    <label>تعداد پنل<input className="shil-input" inputMode="numeric" min="1" value={item.panelCount} onChange={(event) => updateInstallationArray(item.id, { panelCount: event.target.value })} /></label>
+                    <label>توان هر پنل W<input className="shil-input" inputMode="numeric" min="1" value={item.panelPower} onChange={(event) => updateInstallationArray(item.id, { panelPower: event.target.value })} /></label>
+                    <label>جهت °<input className="shil-input" inputMode="decimal" value={item.azimuth} onChange={(event) => updateInstallationArray(item.id, { azimuth: event.target.value })} /></label>
+                    <label>زاویه °<input className="shil-input" inputMode="decimal" value={item.tilt} onChange={(event) => updateInstallationArray(item.id, { tilt: event.target.value })} /></label>
+                  </div>
+                  <div className="shil-array-result-row">
+                    <span>افت جهت <strong>{item.assessment.orientationLossPercent}%</strong></span>
+                    <span>افت زاویه <strong>{item.assessment.tiltLossPercent}%</strong></span>
+                    <span>راندمان <strong>{Math.round((item.assessment.effectiveEfficiency || 1) * 100)}%</strong></span>
+                  </div>
+                </article>
+              ))}
+              <button type="button" className="shil-add-array-button" onClick={addInstallationArray} disabled={installationArrays.length >= 4}>+ افزودن آرایه نصب</button>
+              <small className="shil-env-hint">در این نسخه هر آرایه با همان موتور فعلی جداگانه محاسبه می‌شود و نتیجه کل بر اساس توان نصب‌شده وزن‌دهی می‌شود. تخصیص MPPT تغییری نکرده است.</small>
+            </div>
+          )}
+          <div className="shil-climate-grid shil-orientation-factor-grid"><div className="shil-climate-box"><span>{installationMode === "multi" ? "افت ترکیبی جهت" : "افت جهت"}</span><strong>{assessment.orientationLossPercent}%</strong></div><div className="shil-climate-box"><span>{installationMode === "multi" ? "افت ترکیبی زاویه" : "افت زاویه"}</span><strong>{assessment.tiltLossPercent}%</strong></div><div className="shil-climate-box"><span>ضریب جهت/زاویه</span><strong>{Math.round((assessment.orientationEfficiency || 1) * 100)}%</strong></div><div className="shil-climate-box"><span>راندمان نهایی محیطی</span><strong>{Math.round((assessment.effectiveEfficiency || 1) * 100)}%</strong></div></div>
+          {installationMode === "multi" ? <div className="shil-array-summary"><span>تعداد آرایه: <strong>{multiArrayAssessment.summary.arrayCount}</strong></span><span>تعداد کل پنل: <strong>{multiArrayAssessment.summary.totalPanelCount}</strong></span><span>توان نصب‌شده: <strong>{(multiArrayAssessment.summary.totalInstalledPowerW / 1000).toFixed(2)} kW</strong></span></div> : null}
 
           <div className="shil-upload-grid shil-install-upload-grid">
             <div className="shil-upload-box shil-smart-upload-box">
