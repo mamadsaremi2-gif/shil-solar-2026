@@ -116,10 +116,40 @@ export default function Environment() {
 const navigate = useNavigate();
   const { domain = localStorage.getItem("shil:scenarioDomain") || "solar" } = useParams();
 
+  const environmentDraftKey = useMemo(() => {
+    const projectKey = localStorage.getItem("shil:activeProjectKey") || "active-draft";
+    return `shil:environment-state:v3:${projectKey}:${domain}`;
+  }, [domain]);
+
   const persistedEnvironment = useMemo(() => {
-    try { return JSON.parse(localStorage.getItem("shil:environmentDraft") || "null") || {}; }
-    catch { return {}; }
-  }, []);
+    try {
+      const raw = JSON.parse(
+        localStorage.getItem(environmentDraftKey) ||
+        localStorage.getItem("shil:environmentDraft") ||
+        "null"
+      ) || {};
+
+      const normalizedClimate = raw.climate || {
+        temperature: raw.temperatureAverageC ?? raw.temperature ?? defaultClimate.temperature,
+        temperatureMinC: raw.temperatureMinC ?? defaultClimate.temperatureMinC,
+        temperatureMaxC: raw.temperatureMaxC ?? defaultClimate.temperatureMaxC,
+        altitude: raw.altitude ?? defaultClimate.altitude,
+        humidity: raw.humidity ?? defaultClimate.humidity,
+        peakSunHours: raw.peakSunHours ?? defaultClimate.peakSunHours,
+        latitude: raw.latitude ?? defaultClimate.latitude,
+        longitude: raw.longitude ?? defaultClimate.longitude,
+      };
+
+      return {
+        ...raw,
+        climate: normalizedClimate,
+        installTiltDeg: raw.installTiltDeg ?? raw.selectedTiltDeg ?? raw.recommendedTiltDeg,
+        installAzimuthDeg: raw.installAzimuthDeg ?? raw.selectedAzimuthDeg ?? raw.recommendedAzimuthDeg,
+      };
+    } catch {
+      return {};
+    }
+  }, [environmentDraftKey]);
   const [city, setCity] = useState(persistedEnvironment.city || isfahan?.name || "اصفهان");
   const [selectedCity, setSelectedCity] = useState(() => findIranCityByName(persistedEnvironment.city) || isfahan || null);
   const [manualOverride, setManualOverride] = useState(Boolean(persistedEnvironment.manualOverride));
@@ -218,6 +248,7 @@ const navigate = useNavigate();
       installTiltDeg, installAzimuthDeg, directionSlots, manualOverride,
       savedAt: new Date().toISOString(),
     };
+    localStorage.setItem(environmentDraftKey, JSON.stringify(payload));
     localStorage.setItem("shil:environmentDraft", JSON.stringify(payload));
   }, [domain, city, selectedCity, address, gpsMode, latitude, longitude, installType,
       manualClimate, installTiltDeg, installAzimuthDeg, directionSlots, manualOverride]);
@@ -430,7 +461,25 @@ const navigate = useNavigate();
       source: selectedCity ? "iran-city-smart-catalog-with-manual-override" : "manual-entry",
     };
 
-    localStorage.setItem("shil:environmentDraft", JSON.stringify(environmentDraft));
+    const persistentEnvironmentDraft = {
+      ...environmentDraft,
+      climate: {
+        temperature: climate.temperature,
+        temperatureMinC: climate.temperatureMinC,
+        temperatureMaxC: climate.temperatureMaxC,
+        altitude: climate.altitude,
+        humidity: climate.humidity,
+        peakSunHours: climate.peakSunHours,
+        latitude: lat,
+        longitude: lng,
+      },
+      installTiltDeg: assessment.selectedTiltDeg,
+      installAzimuthDeg: assessment.selectedAzimuthDeg,
+      savedAt: new Date().toISOString(),
+    };
+
+    localStorage.setItem(environmentDraftKey, JSON.stringify(persistentEnvironmentDraft));
+    localStorage.setItem("shil:environmentDraft", JSON.stringify(persistentEnvironmentDraft));
     approveProjectStep("environment");
     localStorage.setItem("shil:environmentAssessment", JSON.stringify(assessment));
 

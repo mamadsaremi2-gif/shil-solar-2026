@@ -137,3 +137,6 @@ import './appearance/styles/shil-scroll-viewport-v5-28-final.css';
 
 /* SHIL V5.29 - focused cleanup: Contact, Projects and Education only */
 import './appearance/styles/contact-projects-education-v5-29.css';
+
+/* SHIL V5.34 - environment persistence and header title unification */
+import "./appearance/styles/shil-v5-34-environment-persistence-header.css";
