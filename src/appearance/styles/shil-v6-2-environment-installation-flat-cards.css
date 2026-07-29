@@ -1,0 +1,297 @@
+/* SHIL V6.2 — Installation section aligned with Project Location visual language.
+   Cards and fields sit directly on the engineering background; no nested gray panels. */
+
+html body.shil-environment-unified-screen #shil-environment-unified-root {
+  --install-card: rgba(255, 255, 255, 0.97);
+  --install-card-soft: rgba(248, 250, 252, 0.98);
+  --install-border: rgba(207, 226, 249, 0.96);
+  --install-green: #32d583;
+  --install-purple: #6557f5;
+  --install-muted: #4b6178;
+}
+
+/* Remove the extra background/container behind single- and multi-direction content. */
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-installation-layout-panel,
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-installation-arrays,
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-installation-arrays--accordion {
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: grid !important;
+  gap: 12px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Single / multi selector: one clean white card directly on page background. */
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-installation-mode-switch {
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 6px !important;
+  gap: 6px !important;
+  border: 1px solid var(--install-border) !important;
+  border-radius: 22px !important;
+  background: var(--install-card) !important;
+  box-shadow: none !important;
+}
+
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-installation-mode-switch button {
+  min-height: 48px !important;
+  height: 48px !important;
+  border-radius: 16px !important;
+  font-size: 15px !important;
+}
+
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-installation-mode-switch button.active {
+  background: linear-gradient(135deg, #574cf2 0%, #7464ff 100%) !important;
+  color: #fff !important;
+}
+
+/* Every array is its own standalone white card. */
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-single-orientation-card,
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-installation-array-card,
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-installation-summary-card {
+  width: 100% !important;
+  margin: 0 !important;
+  border: 1px solid var(--install-border) !important;
+  border-radius: 22px !important;
+  background: var(--install-card) !important;
+  box-shadow: none !important;
+}
+
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-installation-array-card {
+  overflow: hidden !important;
+}
+
+/* Header stays white; no tinted strip behind it. */
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-installation-array-head--accordion,
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-compact-card-head {
+  min-height: 62px !important;
+  padding: 8px 10px !important;
+  gap: 8px !important;
+  background: var(--install-card) !important;
+  border: 0 !important;
+  border-bottom: 1px solid rgba(224, 234, 247, 0.9) !important;
+}
+
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-installation-array-card.is-collapsed .shil-installation-array-head--accordion {
+  border-bottom: 0 !important;
+}
+
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-array-toggle {
+  min-height: 48px !important;
+  padding: 4px 5px !important;
+  grid-template-columns: 34px minmax(0, 1fr) auto !important;
+  gap: 8px !important;
+  background: transparent !important;
+}
+
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-array-toggle-icon {
+  width: 34px !important;
+  height: 34px !important;
+  border: 1px solid var(--install-border) !important;
+  border-radius: 11px !important;
+  background: #fff !important;
+  color: #111827 !important;
+}
+
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-array-title-wrap strong {
+  font-size: 15px !important;
+  color: #111827 !important;
+}
+
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-array-title-wrap small {
+  margin-top: 3px !important;
+  font-size: 11.5px !important;
+  color: #26384b !important;
+}
+
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-efficiency-badge {
+  min-width: 58px !important;
+  height: 38px !important;
+  border: 1px solid #bdeefe !important;
+  border-radius: 999px !important;
+  background: #fff !important;
+  color: #111827 !important;
+  font-size: 15px !important;
+}
+
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-array-remove {
+  min-width: 64px !important;
+  height: 48px !important;
+  min-height: 48px !important;
+  border: 1px solid #fecaca !important;
+  border-radius: 14px !important;
+  background: #fff !important;
+  color: #111827 !important;
+}
+
+/* Expanded content has no second panel behind the fields. */
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-array-expanded-content {
+  padding: 12px !important;
+  gap: 12px !important;
+  border: 0 !important;
+  background: transparent !important;
+}
+
+/* Each field is a Project Location-style white card; no colored parent layer. */
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-array-name-row,
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-array-fields--compact > label,
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-field--compact {
+  margin: 0 !important;
+  padding: 10px !important;
+  gap: 8px !important;
+  border: 1px solid var(--install-border) !important;
+  border-radius: 18px !important;
+  background: var(--install-card) !important;
+  box-shadow: none !important;
+}
+
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-array-name-row {
+  grid-template-columns: 110px minmax(0, 1fr) !important;
+}
+
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-array-fields--compact,
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-orientation-input-grid--compact {
+  margin: 0 !important;
+  padding: 0 !important;
+  gap: 12px !important;
+  background: transparent !important;
+}
+
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-array-name-row label,
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-array-fields--compact > label,
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-field--compact label {
+  color: #111827 !important;
+  font-size: 13px !important;
+  text-align: center !important;
+}
+
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-array-name-row .shil-input,
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-array-fields--compact .shil-input,
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-field--compact .shil-input {
+  min-height: 48px !important;
+  height: 48px !important;
+  padding: 8px 12px !important;
+  border: 1px solid var(--install-border) !important;
+  border-radius: 15px !important;
+  background: #fff !important;
+  color: #111827 !important;
+  box-shadow: none !important;
+}
+
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-array-fields--compact small,
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-field--compact small {
+  color: #111827 !important;
+  font-size: 10px !important;
+  text-align: center !important;
+}
+
+/* Compact metrics remain inside the array card, without a colored band. */
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-array-result-row--compact {
+  margin: 0 !important;
+  padding: 0 !important;
+  gap: 8px !important;
+  border: 0 !important;
+  background: transparent !important;
+}
+
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-array-result-row--compact span {
+  min-height: 58px !important;
+  padding: 8px 5px !important;
+  border: 1px solid var(--install-border) !important;
+  border-radius: 15px !important;
+  background: var(--install-card) !important;
+  color: #111827 !important;
+}
+
+/* Add button is also a standalone white card on the page background. */
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-add-array-button {
+  min-height: 58px !important;
+  height: 58px !important;
+  margin: 0 !important;
+  border: 1px dashed var(--install-purple) !important;
+  border-radius: 20px !important;
+  background: var(--install-card) !important;
+  color: #111827 !important;
+  font-size: 14px !important;
+}
+
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-array-engine-note {
+  margin: 0 !important;
+  padding: 0 10px !important;
+  background: transparent !important;
+  color: #111827 !important;
+  text-align: center !important;
+}
+
+/* Summary uses the same standalone card language as Project Location. */
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-installation-summary-card {
+  padding: 14px !important;
+  gap: 12px !important;
+  background: var(--install-card) !important;
+}
+
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-installation-summary-metrics {
+  gap: 10px !important;
+}
+
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-installation-summary-metrics span,
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-array-summary--geometry {
+  border: 1px solid var(--install-border) !important;
+  background: #fff !important;
+}
+
+/* The installation section itself must not paint a large backing card. */
+html body.shil-environment-unified-screen #shil-environment-unified-root > .shil-env-card:has(.shil-installation-layout-panel) {
+  padding-inline: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html body.shil-environment-unified-screen #shil-environment-unified-root > .shil-env-card:has(.shil-installation-layout-panel) > .shil-section-title,
+html body.shil-environment-unified-screen #shil-environment-unified-root > .shil-env-card:has(.shil-installation-layout-panel) > .shil-install-scroll,
+html body.shil-environment-unified-screen #shil-environment-unified-root > .shil-env-card:has(.shil-installation-layout-panel) > .shil-env-hint,
+html body.shil-environment-unified-screen #shil-environment-unified-root > .shil-env-card:has(.shil-installation-layout-panel) > .shil-installation-layout-panel,
+html body.shil-environment-unified-screen #shil-environment-unified-root > .shil-env-card:has(.shil-installation-layout-panel) > .shil-install-upload-grid,
+html body.shil-environment-unified-screen #shil-environment-unified-root > .shil-env-card:has(.shil-installation-layout-panel) > .shil-orientation-frame,
+html body.shil-environment-unified-screen #shil-environment-unified-root > .shil-env-card:has(.shil-installation-layout-panel) > .shil-site-preview-grid,
+html body.shil-environment-unified-screen #shil-environment-unified-root > .shil-env-card:has(.shil-installation-layout-panel) > .shil-env-error {
+  width: calc(100% - 24px) !important;
+  margin-inline: auto !important;
+}
+
+@media (max-width: 640px) {
+  html body.shil-environment-unified-screen #shil-environment-unified-root .shil-array-expanded-content {
+    padding: 10px !important;
+    gap: 10px !important;
+  }
+
+  html body.shil-environment-unified-screen #shil-environment-unified-root .shil-array-name-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  html body.shil-environment-unified-screen #shil-environment-unified-root .shil-array-fields--compact,
+  html body.shil-environment-unified-screen #shil-environment-unified-root .shil-orientation-input-grid--compact {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 380px) {
+  html body.shil-environment-unified-screen #shil-environment-unified-root .shil-array-fields--compact,
+  html body.shil-environment-unified-screen #shil-environment-unified-root .shil-orientation-input-grid--compact {
+    grid-template-columns: 1fr !important;
+  }
+
+  html body.shil-environment-unified-screen #shil-environment-unified-root .shil-array-toggle {
+    grid-template-columns: 32px minmax(0, 1fr) !important;
+  }
+}

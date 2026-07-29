@@ -154,12 +154,3 @@ import "./appearance/styles/shil-v6-4-global-engineering-semantic-ui.css";
 
 /* SHIL V6.6 - semantic colors and flat cards for Project Path only */
 import "./appearance/styles/shil-v6-6-project-path-only.css";
-
-/* SHIL V6.7 - final H2/title-card override; keep as the last stylesheet import */
-import "./appearance/styles/shil-final-section-title-cards-v6-7.css";
-
-/* SHIL V6.8 - one title-card law across all pages; must remain the final CSS import */
-import "./appearance/styles/shil-global-title-cards-v6-8.css";
-
-/* SHIL V7 - final unified engineering design system; must remain last */
-import "./appearance/styles/shil-unified-engineering-design-system-v7.css";

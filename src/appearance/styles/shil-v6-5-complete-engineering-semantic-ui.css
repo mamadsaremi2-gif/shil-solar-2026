@@ -1,0 +1,329 @@
+/* SHIL V6.5 FINAL — complete semantic UI for the engineering workflow.
+   Meaning of surfaces:
+   - blue: fixed/reference/system data
+   - green: user editable/selectable data
+   - red: calculated/derived/output data
+   Every visible divider and outline is black for a unified engineering drawing language.
+   Loaded after every legacy stylesheet. */
+
+.shil-engineering-shell {
+  --shil-v65-line: #000;
+  --shil-v65-static: #eaf4ff;
+  --shil-v65-input: #eafaf1;
+  --shil-v65-result: #fff0f0;
+  --shil-v65-action: #f5f5f5;
+  --shil-v65-title-a: #35c3ea;
+  --shil-v65-title-b: #765ff5;
+  --shil-v65-radius: 22px;
+  --shil-v65-inner-radius: 16px;
+  --shil-v65-border: 2px solid var(--shil-v65-line);
+}
+
+/* --------------------------------------------------------------------------
+   1. GLOBAL BLACK ENGINEERING LINE SYSTEM
+   -------------------------------------------------------------------------- */
+.shil-engineering-shell :is(
+  .shil-section-card,.shil-env-card,.shil-config-block,.shil-summary-section,
+  .shil-final-sheet-block,.shil-field-card,.shil-upload-box,.shil-panel,
+  .shil-big-route-card,.shil-project-path-card,.shil-nav-card,
+  .shil-method-card-engine,.shil-method-card-minimal,.shil-large-choice,
+  .shil-field,.shil-input-card,.shil-equipment-card,.shil-equipment-picker-card,
+  .shil-equipment-results-card,.shil-bank-smart-card,.shil-bank-select,
+  .shil-final-readonly-block,.shil-final-result-block,.shil-final-compact-row,
+  .shil-summary-kv-card,.shil-summary-modern-item,.shil-summary-detail-item,
+  .shil-metric,.shil-result-grid>*,.shil-result-field-grid>*,.shil-result-partitions>*,
+  .shil-array-name-row,.shil-array-fields>label,.shil-array-result-row>*,
+  .shil-installation-array-head,.shil-installation-summary-card,
+  .shil-installation-summary-metrics>*,.shil-efficiency-badge,
+  .shil-climate-box,.shil-site-preview-card,.shil-site-upload-box,
+  .shil-smart-upload-box,.shil-warning,.shil-floating-warning,.shil-inline-warning,
+  .shil-check-row,.shil-soft-button,.shil-soft-link-button,.shil-primary-action,
+  .shil-primary-wide,.shil-secondary-wide,.shil-inline-confirm-button,
+  .shil-project-path-confirm,.shil-calculation-method-confirm,
+  .shil-env-content-confirm-button,.shil-confirm-config-button,
+  .shil-flow-content-confirm-button,.shil-add-array-button,.shil-array-remove,
+  button,input,select,textarea,table,th,td
+) {
+  border-color: var(--shil-v65-line) !important;
+}
+
+.shil-engineering-shell :is(
+  .shil-section-card,.shil-env-card,.shil-config-block,.shil-summary-section,
+  .shil-final-sheet-block,.shil-field-card,.shil-upload-box,.shil-panel,
+  .shil-big-route-card,.shil-project-path-card,.shil-nav-card,
+  .shil-method-card-engine,.shil-method-card-minimal,.shil-large-choice,
+  .shil-field,.shil-equipment-card,.shil-equipment-picker-card,
+  .shil-equipment-results-card,.shil-bank-smart-card,.shil-bank-select,
+  .shil-final-readonly-block,.shil-final-result-block,.shil-final-compact-row,
+  .shil-summary-kv-card,.shil-summary-modern-item,.shil-summary-detail-item,
+  .shil-metric,.shil-array-name-row,.shil-array-fields>label,
+  .shil-installation-array-head,.shil-installation-summary-card,
+  .shil-climate-box,.shil-site-preview-card,.shil-site-upload-box,
+  .shil-smart-upload-box,.shil-warning,.shil-floating-warning,.shil-inline-warning
+) {
+  border-width: 2px !important;
+  border-style: solid !important;
+}
+
+.shil-engineering-shell :is(
+  .shil-section-head,.shil-clean-section-head,.shil-summary-section-title,
+  .shil-compact-card-head,.shil-selected-equipment-head,.shil-equipment-bank-title,
+  .shil-final-sheet-block>h3,.shil-panel-title,.shil-section-title
+) {
+  border-bottom: 2px solid #000 !important;
+}
+
+.shil-engineering-shell table {
+  border-collapse: collapse !important;
+  border: 2px solid #000 !important;
+}
+.shil-engineering-shell :is(th,td) { border: 1.5px solid #000 !important; }
+
+/* Remove legacy colored outlines/shadows without removing hierarchy. */
+.shil-engineering-shell * { outline-color: #000; }
+.shil-engineering-shell :is(input,select,textarea,button):focus-visible {
+  outline: 3px solid rgba(0,0,0,.22) !important;
+  outline-offset: 2px !important;
+}
+
+/* --------------------------------------------------------------------------
+   2. TITLE / SECTION HEADERS (not data)
+   -------------------------------------------------------------------------- */
+.shil-engineering-shell :is(
+  .shil-page-title,.shil-section-title,.shil-panel-title,.shil-equipment-bank-title,
+  .shil-summary-section-title,.shil-clean-section-head,.shil-section-head,
+  .shil-compact-card-head,.shil-selected-equipment-head,
+  .shil-final-sheet-hero,.shil-final-sheet-block>h3
+) {
+  background: linear-gradient(135deg,var(--shil-v65-title-a),var(--shil-v65-title-b)) !important;
+  color: #000 !important;
+  border: 2px solid #000 !important;
+  border-radius: var(--shil-v65-inner-radius) !important;
+}
+
+/* --------------------------------------------------------------------------
+   3. STATIC / REFERENCE DATA — BLUE
+   -------------------------------------------------------------------------- */
+.shil-engineering-shell :is(
+  input[readonly],input:disabled,select:disabled,textarea:disabled,
+  .shil-env-hint,.shil-muted-note,.shil-muted-line,.shil-muted-text,
+  .shil-load-kind-note,.shil-bank-smart-note,.shil-section-note,
+  .shil-ds-kicker,.shil-method-badge,.shil-online-chip,
+  .shil-map-label,.shil-array-engine-note,.shil-array-summary,
+  .shil-method-context-strip,.shil-method-context-clean,
+  .shil-summary-kv-label,.shil-summary-detail-chip,.shil-summary-accordion-chip,
+  .shil-path-strip,.shil-climate-box,.shil-site-preview-card,
+  .shil-orientation-image-shell,.shil-bank-datasheet-grid,
+  .shil-equipment-bank-sheet,.shil-equipment-bank-table,
+  .shil-equipment-bank-chip,.shil-final-path-block,
+  .shil-project-path-two-cards .shil-big-route-card,
+  .shil-calculation-method-page .shil-method-card-engine,
+  .shil-calculation-method-page .shil-method-card-minimal,
+  .shil-calculation-method-page .shil-large-choice,
+  .shil-system-settings-page .shil-large-choice,
+  .shil-system-settings-page .shil-bank-select,
+  .shil-system-settings-page .shil-equipment-picker-card,
+  .shil-final-equipment-table th,
+  table th
+) {
+  background: var(--shil-v65-static) !important;
+  color: #000 !important;
+  border: var(--shil-v65-border) !important;
+}
+
+/* Static information cards in environment and workflow context. */
+#shil-environment-unified-root :is(
+  .shil-climate-grid>*,.shil-manual-climate-grid>*,.shil-expert-mini,
+  .shil-installation-array-head,.shil-array-engine-note,
+  .shil-field--compact small,.shil-array-fields small
+),
+#shil-calculation-inputs-root :is(
+  .shil-method-context-clean,.shil-method-context-strip,.shil-load-kind-note
+),
+#shil-system-settings-unified-root :is(
+  .shil-method-context-clean,.shil-bank-datasheet-grid,.shil-equipment-bank-table th
+) {
+  background: var(--shil-v65-static) !important;
+  color: #000 !important;
+  border: var(--shil-v65-border) !important;
+}
+
+/* --------------------------------------------------------------------------
+   4. USER INPUT / USER CHOICE — GREEN
+   -------------------------------------------------------------------------- */
+.shil-engineering-shell :is(
+  input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([readonly]):not(:disabled),
+  select:not(:disabled),textarea:not(:disabled),.shil-input:not([readonly]):not(:disabled),
+  .shil-textarea,.shil-field-card,.shil-equipment-field,.shil-admin-field,
+  .shil-gps-manual-grid>*,.shil-orientation-input-grid>*,
+  .shil-upload-choice-row,.shil-site-upload-box,.shil-smart-upload-box,
+  .shil-check-row,.shil-choice-card,.shil-project-info-screen .shil-field-card,
+  .shil-project-description-clean
+) {
+  background: var(--shil-v65-input) !important;
+  color: #000 !important;
+  border: var(--shil-v65-border) !important;
+}
+
+/* Input parent cards: paint the whole editable unit, not only the inner control. */
+.shil-engineering-shell :is(
+  .shil-form-grid>label,.shil-form-grid-clean>label,.shil-form>label,
+  .shil-field,.shil-array-name-row,.shil-array-fields>label,
+  .shil-orientation-input-grid>label,.shil-equipment-controls>label,
+  .shil-param-grid>label
+):has(:is(input:not([readonly]):not(:disabled),select:not(:disabled),textarea:not(:disabled))) {
+  background: var(--shil-v65-input) !important;
+  color: #000 !important;
+  border: var(--shil-v65-border) !important;
+  border-radius: var(--shil-v65-inner-radius) !important;
+}
+
+/* User-selectable cards remain green; selected cards use the existing purple action identity. */
+.shil-engineering-shell :is(
+  .shil-project-path-card,.shil-big-route-card,.shil-nav-card,
+  .shil-method-card-engine,.shil-method-card-minimal,.shil-large-choice,
+  .shil-choice-card,.shil-equipment-picker-card,.shil-bank-select
+) {
+  background: var(--shil-v65-input) !important;
+  color: #000 !important;
+  border: var(--shil-v65-border) !important;
+}
+.shil-engineering-shell :is(
+  .active,.is-selected,[aria-selected="true"],[aria-pressed="true"]
+):is(
+  .shil-project-path-card,.shil-big-route-card,.shil-nav-card,
+  .shil-method-card-engine,.shil-method-card-minimal,.shil-large-choice,
+  .shil-choice-card,.shil-equipment-picker-card,.shil-bank-select,button
+) {
+  background: linear-gradient(135deg,#6253f3,#7b65f6) !important;
+  color: #000 !important;
+  border: 2px solid #000 !important;
+}
+
+/* --------------------------------------------------------------------------
+   5. CALCULATED / DERIVED / OUTPUT DATA — RED
+   -------------------------------------------------------------------------- */
+.shil-engineering-shell :is(
+  .shil-result-grid>*,.shil-result-field-grid>*,.shil-result-partitions>*,
+  .shil-equipment-results-card,.shil-solar-sizing-preview,
+  .shil-array-result-row>*,.shil-installation-summary-card,
+  .shil-installation-summary-metrics>*,.shil-efficiency-badge,
+  .shil-summary-grid>*,.shil-summary-kv-card,.shil-summary-modern-item,
+  .shil-summary-detail-item,.shil-summary-data,.shil-summary-table-card,
+  .shil-summary-details-grid>*,.shil-metric,
+  .shil-final-readonly-block,.shil-final-result-block,.shil-final-compact-row,
+  .shil-final-sheet-grid>*,.shil-final-two-column-grid>*,
+  .shil-final-protection-detail,.shil-execution-check,.shil-execution-grid>*,
+  .shil-utility-scale-summary .shil-result-grid>*,
+  .shil-system-banks-grid .shil-bank-smart-card,
+  .shil-system-banks-grid-final .shil-bank-smart-card,
+  .shil-selected-equipment-list>*,.shil-equipment-bank-table td,
+  .shil-final-equipment-table td
+) {
+  background: var(--shil-v65-result) !important;
+  color: #000 !important;
+  border: var(--shil-v65-border) !important;
+}
+
+/* Entire summary and final delivery are generated output. */
+#shil-summary-page-root :is(
+  .shil-summary-section,.shil-summary-data,.shil-summary-kv-card,
+  .shil-summary-modern-item,.shil-summary-table-card,.shil-summary-detail-item
+),
+#shil-execution-output-root :is(
+  .shil-final-one-page-sheet,.shil-final-sheet-block,.shil-final-readonly-block,
+  .shil-final-result-block,.shil-final-compact-row,.shil-final-sheet-grid>*,
+  .shil-final-two-column-grid>*,.shil-final-protection-detail,.shil-final-equipment-table
+),
+.shil-run-page :is(
+  .shil-final-one-page-sheet,.shil-final-sheet-block,.shil-final-readonly-block,
+  .shil-final-result-block,.shil-final-compact-row,.shil-final-sheet-grid>*,
+  .shil-final-two-column-grid>*,.shil-final-protection-detail,.shil-final-equipment-table
+) {
+  background: var(--shil-v65-result) !important;
+  color: #000 !important;
+  border: var(--shil-v65-border) !important;
+}
+
+/* Calculated numbers stay black: color communicates role through surface, not text. */
+.shil-engineering-shell :is(
+  .shil-summary-kv-value,.shil-efficiency-badge,.shil-result-grid strong,
+  .shil-result-field-grid strong,.shil-array-result-row strong,
+  .shil-installation-summary-card strong,.shil-final-result-block strong,
+  .shil-summary-grid strong,.shil-metric b
+) { color:#000 !important; }
+
+/* --------------------------------------------------------------------------
+   6. PAGE-BY-PAGE COMPLETENESS RULES
+   -------------------------------------------------------------------------- */
+/* Project path */
+.shil-project-path-page :is(.shil-big-route-card,.shil-project-path-card,.shil-nav-card),
+.shil-project-path-two-cards>* { background:var(--shil-v65-input)!important;border:var(--shil-v65-border)!important;color:#000!important; }
+
+/* Project information */
+.shil-project-info-screen :is(.shil-field-card,.shil-project-description-clean,.shil-form-grid>label) { background:var(--shil-v65-input)!important;border:var(--shil-v65-border)!important; }
+.shil-project-info-screen input[readonly] { background:var(--shil-v65-static)!important; }
+
+/* Environment */
+#shil-environment-unified-root :is(.shil-field,.shil-array-name-row,.shil-array-fields>label,.shil-site-upload-box) { background:var(--shil-v65-input)!important;border:var(--shil-v65-border)!important; }
+#shil-environment-unified-root :is(.shil-climate-grid>*,.shil-manual-climate-grid>*,.shil-expert-mini,.shil-env-hint,.shil-array-engine-note) { background:var(--shil-v65-static)!important;border:var(--shil-v65-border)!important; }
+#shil-environment-unified-root :is(.shil-array-result-row>*,.shil-installation-summary-card,.shil-installation-summary-metrics>*,.shil-efficiency-badge,.shil-result-grid>*) { background:var(--shil-v65-result)!important;border:var(--shil-v65-border)!important; }
+
+/* Calculation method */
+.shil-calculation-method-page :is(.shil-method-card-engine,.shil-method-card-minimal,.shil-large-choice,.shil-method-context-clean) { border:var(--shil-v65-border)!important; }
+.shil-calculation-method-page :is(.shil-method-card-engine,.shil-method-card-minimal,.shil-large-choice) { background:var(--shil-v65-input)!important; }
+.shil-calculation-method-page .shil-method-context-clean { background:var(--shil-v65-static)!important; }
+
+/* Calculation inputs */
+#shil-calculation-inputs-root :is(.shil-form-grid>label,.shil-input-card,.shil-check-row) { background:var(--shil-v65-input)!important;border:var(--shil-v65-border)!important; }
+#shil-calculation-inputs-root :is(.shil-method-context-clean,.shil-load-kind-note,.shil-muted-note) { background:var(--shil-v65-static)!important;border:var(--shil-v65-border)!important; }
+#shil-calculation-inputs-root :is(.shil-result-grid>*,.shil-result-field-grid>*,.shil-solar-sizing-preview,.shil-equipment-results-card) { background:var(--shil-v65-result)!important;border:var(--shil-v65-border)!important; }
+
+/* System settings */
+#shil-system-settings-unified-root :is(.shil-form-grid>label,.shil-check-row,.shil-choice-card,.shil-equipment-picker-card) { background:var(--shil-v65-input)!important;border:var(--shil-v65-border)!important; }
+#shil-system-settings-unified-root :is(.shil-bank-datasheet-grid,.shil-equipment-bank-title,.shil-equipment-bank-table th,.shil-muted-note) { background:var(--shil-v65-static)!important;border:var(--shil-v65-border)!important; }
+#shil-system-settings-unified-root :is(.shil-summary-grid>*,.shil-result-grid>*,.shil-bank-smart-card,.shil-equipment-bank-table td,.shil-selected-equipment-list>*) { background:var(--shil-v65-result)!important;border:var(--shil-v65-border)!important; }
+
+/* Summary */
+#shil-summary-page-root :is(.shil-summary-section,.shil-summary-grid>*,.shil-summary-kv-card,.shil-summary-modern-item,.shil-summary-data,.shil-summary-table-card) { background:var(--shil-v65-result)!important;border:var(--shil-v65-border)!important;color:#000!important; }
+
+/* Run / final output */
+#shil-execution-output-root :is(.shil-final-one-page-sheet,.shil-final-sheet-block,.shil-final-sheet-grid>*,.shil-final-two-column-grid>*,.shil-final-readonly-block,.shil-final-result-block,.shil-final-compact-row,.shil-final-equipment-table,.shil-final-protection-detail),
+.shil-run-page :is(.shil-final-one-page-sheet,.shil-final-sheet-block,.shil-final-sheet-grid>*,.shil-final-two-column-grid>*,.shil-final-readonly-block,.shil-final-result-block,.shil-final-compact-row,.shil-final-equipment-table,.shil-final-protection-detail) { background:var(--shil-v65-result)!important;border:var(--shil-v65-border)!important;color:#000!important; }
+
+/* --------------------------------------------------------------------------
+   7. ACTIONS AND WARNINGS
+   -------------------------------------------------------------------------- */
+.shil-engineering-shell :is(
+  .shil-primary-action,.shil-primary-wide,.shil-inline-confirm-button,
+  .shil-project-path-confirm,.shil-calculation-method-confirm,
+  .shil-env-content-confirm-button,.shil-confirm-config-button,
+  .shil-flow-content-confirm-button,.shil-add-array-button
+) {
+  background: linear-gradient(135deg,#35c3ea,#765ff5) !important;
+  color:#000 !important;
+  border:2px solid #000 !important;
+}
+.shil-engineering-shell :is(.shil-array-remove,.danger) {
+  background:#ffe9e9 !important;
+  color:#000 !important;
+  border:2px solid #000 !important;
+}
+.shil-engineering-shell :is(.shil-warning,.shil-floating-warning,.shil-inline-warning,.warning,.warn) {
+  background:#fff5cf !important;
+  color:#000 !important;
+  border:2px solid #000 !important;
+}
+
+/* Keep cards directly on the shared page background. */
+.shil-engineering-shell :is(
+  .shil-engineering-content,.shil-page-scroll,.shil-env-page,
+  .shil-equipment-page,.shil-system-settings-page,.shil-summary-page,
+  .shil-final-delivery-page,.shil-calculation-inputs-page,
+  .shil-calculation-method-page,.shil-run-page
+) { background:transparent !important; box-shadow:none !important; }
+
+@media (max-width:640px) {
+  .shil-engineering-shell { --shil-v65-radius:18px; --shil-v65-inner-radius:14px; }
+  .shil-engineering-shell :is(.shil-form-grid,.shil-summary-grid,.shil-choice-grid,.shil-result-field-grid) { gap:9px !important; }
+}

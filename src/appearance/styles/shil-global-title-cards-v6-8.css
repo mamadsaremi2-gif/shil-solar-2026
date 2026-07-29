@@ -1,0 +1,179 @@
+/* SHIL V6.8 - one title-card law for every application page.
+   This stylesheet is loaded last and deliberately excludes the fixed top header title.
+*/
+
+:root {
+  --shil-global-title-bg: rgba(231, 240, 249, 0.93);
+  --shil-global-title-text: #0b1f3d;
+  --shil-global-title-border: rgba(148, 163, 184, 0.58);
+  --shil-global-title-shadow: 0 8px 22px rgba(15, 23, 42, 0.12);
+  --shil-global-title-radius: 18px;
+  --shil-global-title-height: 48px;
+  --shil-global-title-padding: 10px 16px;
+  --shil-global-title-size: clamp(17px, 4.4vw, 24px);
+}
+
+/* Explicit section-title components used throughout the application. */
+html body :is(
+  .shil-section-title,
+  .shil-ds-section-title,
+  .shil-summary-section-title,
+  .shil-final-compact-title,
+  .shil-panel-title,
+  .section-title-v15,
+  .summary-block-title-v15,
+  .result-title-v15,
+  .metric-title-v15,
+  .shil-array-title-wrap,
+  .shil-equipment-bank-title,
+  .eq-bank-title
+):not(.shil-header-title) {
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-height: var(--shil-global-title-height) !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: var(--shil-global-title-padding) !important;
+  color: var(--shil-global-title-text) !important;
+  -webkit-text-fill-color: var(--shil-global-title-text) !important;
+  background: var(--shil-global-title-bg) !important;
+  background-image: none !important;
+  border: 1px solid var(--shil-global-title-border) !important;
+  border-radius: var(--shil-global-title-radius) !important;
+  box-shadow: var(--shil-global-title-shadow) !important;
+  font-family: inherit !important;
+  font-size: var(--shil-global-title-size) !important;
+  font-weight: 900 !important;
+  line-height: 1.35 !important;
+  text-align: center !important;
+  direction: rtl !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/* Wrapper pattern used by pages such as Project Path. */
+html body .shil-clean-section-head {
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-height: var(--shil-global-title-height) !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: var(--shil-global-title-padding) !important;
+  background: var(--shil-global-title-bg) !important;
+  background-image: none !important;
+  border: 1px solid var(--shil-global-title-border) !important;
+  border-radius: var(--shil-global-title-radius) !important;
+  box-shadow: var(--shil-global-title-shadow) !important;
+}
+
+html body .shil-clean-section-head > :is(h2, h3) {
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: var(--shil-global-title-text) !important;
+  -webkit-text-fill-color: var(--shil-global-title-text) !important;
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  font-family: inherit !important;
+  font-size: var(--shil-global-title-size) !important;
+  font-weight: 900 !important;
+  line-height: 1.35 !important;
+  text-align: center !important;
+  direction: rtl !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  text-shadow: none !important;
+}
+
+/* English helper labels beside Persian section headings must not shift centering. */
+html body .shil-clean-section-head > span {
+  display: none !important;
+}
+
+html body :is(
+  .shil-section-title,
+  .shil-ds-section-title,
+  .shil-summary-section-title,
+  .shil-final-compact-title,
+  .shil-panel-title,
+  .section-title-v15,
+  .summary-block-title-v15,
+  .result-title-v15,
+  .metric-title-v15,
+  .shil-array-title-wrap,
+  .shil-equipment-bank-title,
+  .eq-bank-title,
+  .shil-clean-section-head
+)::before,
+html body :is(
+  .shil-section-title,
+  .shil-ds-section-title,
+  .shil-summary-section-title,
+  .shil-final-compact-title,
+  .shil-panel-title,
+  .section-title-v15,
+  .summary-block-title-v15,
+  .result-title-v15,
+  .metric-title-v15,
+  .shil-array-title-wrap,
+  .shil-equipment-bank-title,
+  .eq-bank-title,
+  .shil-clean-section-head
+)::after {
+  content: none !important;
+  display: none !important;
+}
+
+@media (max-width: 520px) {
+  :root {
+    --shil-global-title-height: 38px;
+    --shil-global-title-padding: 6px 10px;
+    --shil-global-title-radius: 13px;
+    --shil-global-title-size: 15px;
+    --shil-global-title-shadow: none;
+  }
+
+  html body :is(
+    .shil-section-title,
+    .shil-ds-section-title,
+    .shil-summary-section-title,
+    .shil-final-compact-title,
+    .shil-panel-title,
+    .section-title-v15,
+    .summary-block-title-v15,
+    .result-title-v15,
+    .metric-title-v15,
+    .shil-array-title-wrap,
+    .shil-equipment-bank-title,
+    .eq-bank-title
+  ):not(.shil-header-title),
+  html body .shil-clean-section-head {
+    line-height: 1.25 !important;
+  }
+
+  html body .shil-clean-section-head > :is(h2, h3) {
+    font-size: 15px !important;
+    line-height: 1.25 !important;
+  }
+}

@@ -1,0 +1,132 @@
+/* SHIL V6.6 — Project Path only
+   Semantic roles:
+   blue = fixed/reference, green = user choice, red = calculated result.
+   This page contains choices and reference text; no calculated-result cards.
+*/
+
+html body.shil-project-path-screen .shil-engineering-content {
+  --shil-line: #000000;
+  --shil-static-bg: #eaf4ff;
+  --shil-input-bg: #eafaf1;
+  --shil-input-active-bg: #d8f7e6;
+  --shil-action-start: #30c7ee;
+  --shil-action-end: #7760f6;
+}
+
+/* Remove the extra grey parent/wrapper behind the two route cards. */
+html body.shil-project-path-screen .shil-project-path-two-cards,
+html body.shil-project-path-screen .shil-execution-grid.shil-project-path-two-cards {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin-inline: 0 !important;
+  overflow: visible !important;
+}
+
+/* The section instruction is fixed/reference information. */
+html body.shil-project-path-screen .shil-clean-section-head {
+  background: var(--shil-static-bg) !important;
+  background-image: none !important;
+  border: 2px solid var(--shil-line) !important;
+  box-shadow: none !important;
+}
+html body.shil-project-path-screen .shil-clean-section-head h2,
+html body.shil-project-path-screen .shil-clean-section-head span {
+  color: #000 !important;
+}
+
+/* Route cards are direct user choices. */
+html body.shil-project-path-screen .shil-project-path-card,
+html body.shil-project-path-screen button.shil-project-path-card {
+  background: var(--shil-input-bg) !important;
+  background-image: none !important;
+  border: 2px solid var(--shil-line) !important;
+  box-shadow: none !important;
+  color: #000 !important;
+}
+html body.shil-project-path-screen .shil-project-path-card.active,
+html body.shil-project-path-screen button.shil-project-path-card.active {
+  background: var(--shil-input-active-bg) !important;
+  border: 3px solid var(--shil-line) !important;
+  box-shadow: 0 0 0 4px rgba(61, 210, 137, 0.22) !important;
+}
+html body.shil-project-path-screen .shil-project-path-card h3,
+html body.shil-project-path-screen .shil-project-path-card p {
+  color: #000 !important;
+}
+
+/* Selection indicator uses the same black line system. */
+html body.shil-project-path-screen .shil-project-path-card .shil-execution-check {
+  background: #fff !important;
+  border: 2px solid var(--shil-line) !important;
+  color: #000 !important;
+  box-shadow: none !important;
+}
+html body.shil-project-path-screen .shil-project-path-card.active .shil-execution-check {
+  background: #55dda0 !important;
+  color: #000 !important;
+}
+
+/* Image frame is also consistently black. */
+html body.shil-project-path-screen .shil-project-path-card .shil-execution-image {
+  border: 2px solid var(--shil-line) !important;
+  box-shadow: none !important;
+}
+
+/* Utility/plant route: fixed summary is blue; its selectable row is green. */
+html body.shil-project-path-screen .shil-utility-path-field {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+html body.shil-project-path-screen .shil-utility-path-field > summary {
+  background: var(--shil-static-bg) !important;
+  background-image: none !important;
+  border: 2px solid var(--shil-line) !important;
+  color: #000 !important;
+  box-shadow: none !important;
+}
+html body.shil-project-path-screen .shil-utility-path-field > summary * {
+  color: #000 !important;
+}
+html body.shil-project-path-screen .shil-utility-select-button {
+  background: var(--shil-input-bg) !important;
+  background-image: none !important;
+  border: 2px solid var(--shil-line) !important;
+  color: #000 !important;
+  box-shadow: none !important;
+}
+html body.shil-project-path-screen .shil-utility-select-button.active {
+  background: var(--shil-input-active-bg) !important;
+  border-width: 3px !important;
+}
+html body.shil-project-path-screen .shil-utility-select-button * {
+  color: #000 !important;
+}
+html body.shil-project-path-screen .shil-utility-select-button img {
+  border: 2px solid var(--shil-line) !important;
+  box-shadow: none !important;
+}
+
+/* Main action remains the established blue-purple action color, with black line. */
+html body.shil-project-path-screen .shil-project-path-confirm,
+html body.shil-project-path-screen button.shil-project-path-confirm {
+  background: linear-gradient(135deg, var(--shil-action-start), var(--shil-action-end)) !important;
+  border: 2px solid var(--shil-line) !important;
+  color: #000 !important;
+  box-shadow: none !important;
+}
+html body.shil-project-path-screen .shil-project-path-confirm:disabled,
+html body.shil-project-path-screen button.shil-project-path-confirm:disabled {
+  background: #d7dde4 !important;
+  color: #4b5563 !important;
+  opacity: 1 !important;
+}
+
+@media (max-width: 760px) {
+  html body.shil-project-path-screen .shil-project-path-two-cards {
+    gap: 12px !important;
+  }
+}

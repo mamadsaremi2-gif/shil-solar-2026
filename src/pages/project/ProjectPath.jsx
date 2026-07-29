@@ -172,7 +172,7 @@ export default function ProjectPath() {
     <EngineeringPageShell title="مسیر پروژه">
       <>
         <div className="shil-clean-section-head">
-          <h2>مسیر پروژه را انتخاب کنید</h2>
+          <h2 className="shil-section-title">مسیر پروژه را انتخاب کنید</h2>
           <span>Project Path</span>
         </div>
 

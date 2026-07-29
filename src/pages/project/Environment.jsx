@@ -172,6 +172,7 @@ const navigate = useNavigate();
   const [installTiltDeg, setInstallTiltDeg] = useState(String(persistedEnvironment.installTiltDeg ?? estimateRecommendedTilt(defaultClimate.latitude)));
   const [installAzimuthDeg, setInstallAzimuthDeg] = useState(String(persistedEnvironment.installAzimuthDeg ?? 180));
   const [installationMode, setInstallationMode] = useState(persistedEnvironment.installationMode === "multi" ? "multi" : "single");
+  const [openInstallationArrayId, setOpenInstallationArrayId] = useState("array-1");
   const [installationArrays, setInstallationArrays] = useState(() => {
     const saved = Array.isArray(persistedEnvironment.installationArrays) ? persistedEnvironment.installationArrays : [];
     const normalizeArray = (item, index) => ({
@@ -681,44 +682,83 @@ const navigate = useNavigate();
           <small className="shil-env-hint">{activeInstallType.description}</small>
 
           {domain === "solar" ? (
-            <div className="shil-installation-mode-switch" role="group" aria-label="نوع چیدمان پنل‌ها">
-              <button type="button" className={installationMode === "single" ? "active" : ""} onClick={() => setInstallationMode("single")}>یک جهت</button>
-              <button type="button" className={installationMode === "multi" ? "active" : ""} onClick={() => setInstallationMode("multi")}>چند جهت</button>
-            </div>
-          ) : null}
-
-          {installationMode === "single" ? (
-            <>
-              <div className="shil-manual-climate-grid shil-orientation-input-grid">
-                <div className="shil-field"><label>جهت نصب پنل °</label><input className="shil-input" value={installAzimuthDeg} onChange={(event) => setInstallAzimuthDeg(event.target.value)} inputMode="decimal" placeholder="پیش‌فرض 180 جنوب" /><small className="shil-env-hint">0 شمال، 90 شرق، 180 جنوب، 270 غرب؛ این عدد در راندمان و تلفات اعمال می‌شود.</small></div>
-                <div className="shil-field"><label>زاویه نصب پنل °</label><input className="shil-input" value={installTiltDeg} onChange={(event) => setInstallTiltDeg(event.target.value)} inputMode="decimal" placeholder={`پیشنهادی ${assessment.recommendedTiltDeg}°`} /><small className="shil-env-hint">عدد دستی کاربر جایگزین زاویه پیشنهادی و وارد موتور محاسبات می‌شود.</small></div>
+            <div className="shil-installation-layout-panel">
+              <div className="shil-installation-mode-switch" role="group" aria-label="نوع چیدمان پنل‌ها">
+                <button type="button" className={installationMode === "single" ? "active" : ""} onClick={() => setInstallationMode("single")}>یک جهت</button>
+                <button type="button" className={installationMode === "multi" ? "active" : ""} onClick={() => setInstallationMode("multi")}>چند جهت</button>
               </div>
-            </>
-          ) : (
-            <div className="shil-installation-arrays">
-              {installationArrayResults.map((item, index) => (
-                <article className="shil-installation-array-card" key={item.id}>
-                  <div className="shil-installation-array-head">
-                    <input className="shil-input" value={item.title} onChange={(event) => updateInstallationArray(item.id, { title: event.target.value })} aria-label={`نام آرایه ${index + 1}`} />
-                    <button type="button" className="shil-array-remove" onClick={() => removeInstallationArray(item.id)} disabled={installationArrays.length <= 1}>حذف</button>
+
+              {installationMode === "single" ? (
+                <article className="shil-single-orientation-card">
+                  <div className="shil-compact-card-head">
+                    <div>
+                      <strong>آرایه نصب اصلی</strong>
+                      <small>جهت و زاویه سطح نصب</small>
+                    </div>
+                    <span className="shil-efficiency-badge">{Math.round((assessment.effectiveEfficiency || 1) * 100)}٪</span>
                   </div>
-                  <div className="shil-array-fields shil-array-fields--geometry-only">
-                    <label>جهت نصب °<input className="shil-input" inputMode="decimal" value={item.azimuth} onChange={(event) => updateInstallationArray(item.id, { azimuth: event.target.value })} /><small>۰ شمال، ۹۰ شرق، ۱۸۰ جنوب، ۲۷۰ غرب</small></label>
-                    <label>زاویه نصب °<input className="shil-input" inputMode="decimal" value={item.tilt} onChange={(event) => updateInstallationArray(item.id, { tilt: event.target.value })} /><small>زاویه هر سطح نصب را جداگانه وارد کنید.</small></label>
-                  </div>
-                  <div className="shil-array-result-row">
-                    <span>افت جهت <strong>{item.assessment.orientationLossPercent}%</strong></span>
-                    <span>افت زاویه <strong>{item.assessment.tiltLossPercent}%</strong></span>
-                    <span>راندمان <strong>{Math.round((item.assessment.effectiveEfficiency || 1) * 100)}%</strong></span>
+                  <div className="shil-orientation-input-grid shil-orientation-input-grid--compact">
+                    <div className="shil-field shil-field--compact"><label>جهت نصب °</label><input className="shil-input" value={installAzimuthDeg} onChange={(event) => setInstallAzimuthDeg(event.target.value)} inputMode="decimal" placeholder="۱۸۰" /><small className="shil-env-hint">۰ شمال · ۹۰ شرق · ۱۸۰ جنوب · ۲۷۰ غرب</small></div>
+                    <div className="shil-field shil-field--compact"><label>زاویه نصب °</label><input className="shil-input" value={installTiltDeg} onChange={(event) => setInstallTiltDeg(event.target.value)} inputMode="decimal" placeholder={`${assessment.recommendedTiltDeg}`} /><small className="shil-env-hint">زاویه پیشنهادی: {assessment.recommendedTiltDeg}°</small></div>
                   </div>
                 </article>
-              ))}
-              <button type="button" className="shil-add-array-button" onClick={addInstallationArray} disabled={installationArrays.length >= 4}>+ افزودن آرایه نصب</button>
-              <small className="shil-env-hint">در این مرحله فقط هندسه نصب ثبت می‌شود. مدل پنل، توان پنل و تعداد پنل بعد از انتخاب روش طراحی توسط موتور محاسبات تعیین می‌شوند.</small>
+              ) : (
+                <div className="shil-installation-arrays shil-installation-arrays--accordion">
+                  {installationArrayResults.map((item, index) => {
+                    const isOpen = openInstallationArrayId === item.id;
+                    const efficiency = Math.round((item.assessment.effectiveEfficiency || 1) * 100);
+                    return (
+                      <article className={`shil-installation-array-card ${isOpen ? "is-open" : "is-collapsed"}`} key={item.id}>
+                        <div className="shil-installation-array-head shil-installation-array-head--accordion">
+                          <button type="button" className="shil-array-toggle" onClick={() => setOpenInstallationArrayId(isOpen ? "" : item.id)} aria-expanded={isOpen}>
+                            <span className="shil-array-toggle-icon">{isOpen ? "−" : "+"}</span>
+                            <span className="shil-array-title-wrap">
+                              <strong>{item.title || `آرایه نصب ${index + 1}`}</strong>
+                              <small>جهت {normalizeDeg(item.azimuth)}° · زاویه {toNumberInput(item.tilt, 0)}°</small>
+                            </span>
+                            <span className="shil-efficiency-badge">{efficiency}٪</span>
+                          </button>
+                          <button type="button" className="shil-array-remove" onClick={() => removeInstallationArray(item.id)} disabled={installationArrays.length <= 1}>حذف</button>
+                        </div>
+                        {isOpen ? (
+                          <div className="shil-array-expanded-content">
+                            <div className="shil-array-name-row">
+                              <label>نام آرایه</label>
+                              <input className="shil-input" value={item.title} onChange={(event) => updateInstallationArray(item.id, { title: event.target.value })} aria-label={`نام آرایه ${index + 1}`} />
+                            </div>
+                            <div className="shil-array-fields shil-array-fields--geometry-only shil-array-fields--compact">
+                              <label>جهت نصب °<input className="shil-input" inputMode="decimal" value={item.azimuth} onChange={(event) => updateInstallationArray(item.id, { azimuth: event.target.value })} /><small>۰ شمال · ۹۰ شرق · ۱۸۰ جنوب · ۲۷۰ غرب</small></label>
+                              <label>زاویه نصب °<input className="shil-input" inputMode="decimal" value={item.tilt} onChange={(event) => updateInstallationArray(item.id, { tilt: event.target.value })} /><small>زاویه سطح نصب را وارد کنید.</small></label>
+                            </div>
+                            <div className="shil-array-result-row shil-array-result-row--compact">
+                              <span>افت جهت <strong>{item.assessment.orientationLossPercent}٪</strong></span>
+                              <span>افت زاویه <strong>{item.assessment.tiltLossPercent}٪</strong></span>
+                              <span>راندمان <strong>{efficiency}٪</strong></span>
+                            </div>
+                          </div>
+                        ) : null}
+                      </article>
+                    );
+                  })}
+                  <button type="button" className="shil-add-array-button" onClick={addInstallationArray} disabled={installationArrays.length >= 4}>+ افزودن آرایه نصب</button>
+                  <small className="shil-env-hint shil-array-engine-note">در این مرحله فقط جهت و زاویه ثبت می‌شود؛ توان و تعداد پنل پس از انتخاب روش طراحی محاسبه می‌شود.</small>
+                </div>
+              )}
+
+              <div className="shil-installation-summary-card">
+                <div className="shil-installation-summary-main">
+                  <span>راندمان نهایی محیطی</span>
+                  <strong>{Math.round((assessment.effectiveEfficiency || 1) * 100)}٪</strong>
+                </div>
+                <div className="shil-installation-summary-metrics">
+                  <span>{installationMode === "multi" ? "افت ترکیبی جهت" : "افت جهت"}<strong>{assessment.orientationLossPercent}٪</strong></span>
+                  <span>{installationMode === "multi" ? "افت ترکیبی زاویه" : "افت زاویه"}<strong>{assessment.tiltLossPercent}٪</strong></span>
+                  <span>ضریب جهت/زاویه<strong>{Math.round((assessment.orientationEfficiency || 1) * 100)}٪</strong></span>
+                </div>
+                {installationMode === "multi" ? <div className="shil-array-summary shil-array-summary--geometry"><span>{multiArrayAssessment.summary.arrayCount} آرایه نصب</span><span>سایزینگ پس از روش طراحی</span></div> : null}
+              </div>
             </div>
-          )}
-          <div className="shil-climate-grid shil-orientation-factor-grid"><div className="shil-climate-box"><span>{installationMode === "multi" ? "افت ترکیبی جهت" : "افت جهت"}</span><strong>{assessment.orientationLossPercent}%</strong></div><div className="shil-climate-box"><span>{installationMode === "multi" ? "افت ترکیبی زاویه" : "افت زاویه"}</span><strong>{assessment.tiltLossPercent}%</strong></div><div className="shil-climate-box"><span>ضریب جهت/زاویه</span><strong>{Math.round((assessment.orientationEfficiency || 1) * 100)}%</strong></div><div className="shil-climate-box"><span>راندمان نهایی محیطی</span><strong>{Math.round((assessment.effectiveEfficiency || 1) * 100)}%</strong></div></div>
-          {installationMode === "multi" ? <div className="shil-array-summary shil-array-summary--geometry"><span>تعداد آرایه نصب: <strong>{multiArrayAssessment.summary.arrayCount}</strong></span><span>وضعیت سایزینگ: <strong>در انتظار روش طراحی</strong></span></div> : null}
+          ) : null}
 
           <div className="shil-upload-grid shil-install-upload-grid">
             <div className="shil-upload-box shil-smart-upload-box">

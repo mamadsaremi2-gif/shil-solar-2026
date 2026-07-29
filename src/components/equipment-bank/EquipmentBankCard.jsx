@@ -1,6 +1,5 @@
 
 import React, { useState } from "react";
-import "./EquipmentBankCard.css";
 
 export default function EquipmentBankCard({
   title,

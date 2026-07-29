@@ -1,0 +1,239 @@
+/* SHIL V6.4 — unified semantic visual language for all engineering pages.
+   Blue = fixed/reference data, Green = user-editable data, Red = calculated/output data.
+   Scope: project path through final execution output. */
+
+.shil-engineering-shell{
+  --shil-sem-fixed-bg:#eef6ff;
+  --shil-sem-fixed-border:#b9d8f4;
+  --shil-sem-fixed-text:#294b69;
+  --shil-sem-input-bg:#effbf5;
+  --shil-sem-input-border:#8eddb7;
+  --shil-sem-input-text:#174936;
+  --shil-sem-input-focus:#35bd82;
+  --shil-sem-result-bg:#fff1f1;
+  --shil-sem-result-border:#efb8b8;
+  --shil-sem-result-text:#7a3030;
+  --shil-sem-neutral-border:#d8e2ec;
+  --shil-sem-card-radius:22px;
+  --shil-sem-inner-radius:16px;
+}
+
+/* One background only: remove painted section wrappers while keeping layout. */
+.shil-engineering-shell .shil-engineering-content,
+.shil-engineering-shell .shil-page-scroll,
+.shil-engineering-shell .shil-env-page,
+.shil-engineering-shell .shil-equipment-page,
+.shil-engineering-shell .shil-system-settings-page,
+.shil-engineering-shell .shil-summary-page,
+.shil-engineering-shell .shil-final-delivery-page{
+  background:transparent !important;
+  box-shadow:none !important;
+}
+
+.shil-engineering-shell .shil-section-card,
+.shil-engineering-shell .shil-env-card,
+.shil-engineering-shell .shil-config-block,
+.shil-engineering-shell .shil-summary-section,
+.shil-engineering-shell .shil-final-sheet-block,
+.shil-engineering-shell .shil-field-card,
+.shil-engineering-shell .shil-upload-box{
+  border:1.5px solid var(--shil-sem-neutral-border) !important;
+  border-radius:var(--shil-sem-card-radius) !important;
+  box-shadow:0 8px 22px rgba(15,23,42,.08) !important;
+}
+
+/* FIXED / REFERENCE DATA — blue. */
+.shil-engineering-shell input[readonly],
+.shil-engineering-shell input:disabled,
+.shil-engineering-shell select:disabled,
+.shil-engineering-shell textarea:disabled,
+.shil-engineering-shell .shil-env-hint,
+.shil-engineering-shell .shil-muted-note,
+.shil-engineering-shell .shil-load-kind-note,
+.shil-engineering-shell .shil-bank-smart-note,
+.shil-engineering-shell .shil-summary-kv-label,
+.shil-engineering-shell .shil-section-head > span,
+.shil-engineering-shell .shil-clean-section-head > span,
+.shil-engineering-shell .shil-ds-kicker{
+  background:var(--shil-sem-fixed-bg) !important;
+  border:1.5px solid var(--shil-sem-fixed-border) !important;
+  color:var(--shil-sem-fixed-text) !important;
+  border-radius:var(--shil-sem-inner-radius) !important;
+}
+
+.shil-engineering-shell .shil-env-hint,
+.shil-engineering-shell .shil-muted-note,
+.shil-engineering-shell .shil-load-kind-note,
+.shil-engineering-shell .shil-bank-smart-note{
+  display:block;
+  padding:8px 10px !important;
+  line-height:1.65 !important;
+}
+
+/* USER INPUT — green. */
+.shil-engineering-shell input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([readonly]):not(:disabled),
+.shil-engineering-shell select:not(:disabled),
+.shil-engineering-shell textarea:not(:disabled),
+.shil-engineering-shell .shil-input:not([readonly]):not(:disabled){
+  background:var(--shil-sem-input-bg) !important;
+  border:2px solid var(--shil-sem-input-border) !important;
+  color:var(--shil-sem-input-text) !important;
+  border-radius:var(--shil-sem-inner-radius) !important;
+  box-shadow:none !important;
+  transition:border-color .18s ease,box-shadow .18s ease,background .18s ease !important;
+}
+
+.shil-engineering-shell input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([readonly]):not(:disabled):focus,
+.shil-engineering-shell select:not(:disabled):focus,
+.shil-engineering-shell textarea:not(:disabled):focus,
+.shil-engineering-shell .shil-input:not([readonly]):not(:disabled):focus{
+  outline:none !important;
+  background:#f7fffb !important;
+  border-color:var(--shil-sem-input-focus) !important;
+  box-shadow:0 0 0 4px rgba(53,189,130,.14) !important;
+}
+
+/* Input containers inherit a soft green identity, but do not add another background layer. */
+.shil-project-info-screen .shil-field-card,
+#shil-environment-unified-root .shil-field,
+#shil-environment-unified-root .shil-array-name-row,
+#shil-environment-unified-root .shil-array-fields > label,
+#shil-calculation-inputs-root .shil-form-grid > label,
+#shil-calculation-inputs-root .shil-input-card,
+#shil-system-settings-unified-root .shil-form-grid > label{
+  background:rgba(239,251,245,.86) !important;
+  border-color:var(--shil-sem-input-border) !important;
+}
+
+/* CALCULATED / OUTPUT DATA — red. */
+.shil-engineering-shell .shil-summary-grid > *,
+.shil-engineering-shell .shil-summary-kv-card,
+.shil-engineering-shell .shil-summary-modern-item,
+.shil-engineering-shell .shil-result-field-grid > *,
+.shil-engineering-shell .shil-result-partitions > *,
+.shil-engineering-shell .shil-final-compact-row,
+.shil-engineering-shell .shil-array-result-row > *,
+.shil-engineering-shell .shil-installation-summary-metrics > *,
+.shil-engineering-shell .shil-efficiency-badge,
+.shil-engineering-shell .shil-equipment-results-card,
+.shil-engineering-shell .shil-summary-data,
+.shil-engineering-shell .shil-final-result-block,
+.shil-engineering-shell .shil-final-readonly-block{
+  background:var(--shil-sem-result-bg) !important;
+  border:1.5px solid var(--shil-sem-result-border) !important;
+  color:var(--shil-sem-result-text) !important;
+  border-radius:var(--shil-sem-inner-radius) !important;
+}
+
+.shil-engineering-shell .shil-summary-grid strong,
+.shil-engineering-shell .shil-summary-kv-value,
+.shil-engineering-shell .shil-result-field-grid strong,
+.shil-engineering-shell .shil-array-result-row strong,
+.shil-engineering-shell .shil-installation-summary-card strong,
+.shil-engineering-shell .shil-final-result-block strong,
+.shil-engineering-shell .shil-efficiency-badge{
+  color:#a03b3b !important;
+  font-weight:900 !important;
+}
+
+/* Project path and calculation-method choices are fixed choices: blue; active stays purple. */
+.shil-engineering-shell .shil-project-path-card,
+.shil-calculation-method-screen .shil-method-card,
+.shil-calculation-method-screen .shil-choice-card,
+#shil-system-settings-unified-root .shil-choice-card{
+  background:var(--shil-sem-fixed-bg) !important;
+  border:1.5px solid var(--shil-sem-fixed-border) !important;
+  color:var(--shil-sem-fixed-text) !important;
+}
+
+.shil-engineering-shell .shil-project-path-card.active,
+.shil-calculation-method-screen .shil-method-card.active,
+.shil-calculation-method-screen .shil-choice-card.is-selected,
+#shil-system-settings-unified-root .shil-choice-card.is-selected,
+.shil-engineering-shell button.active{
+  background:linear-gradient(135deg,#6154f5,#7b68f7) !important;
+  border-color:#9b90ff !important;
+  color:#fff !important;
+}
+
+/* Environment-specific correction: use the requested semantic palette everywhere. */
+#shil-environment-unified-root .shil-array-fields small,
+#shil-environment-unified-root .shil-field--compact small,
+#shil-environment-unified-root .shil-array-engine-note,
+#shil-environment-unified-root .shil-installation-array-head,
+#shil-environment-unified-root .shil-compact-card-head{
+  background:var(--shil-sem-fixed-bg) !important;
+  border-color:var(--shil-sem-fixed-border) !important;
+  color:var(--shil-sem-fixed-text) !important;
+}
+
+#shil-environment-unified-root .shil-array-name-row,
+#shil-environment-unified-root .shil-array-fields > label,
+#shil-environment-unified-root .shil-field--compact{
+  background:var(--shil-sem-input-bg) !important;
+  border-color:var(--shil-sem-input-border) !important;
+}
+
+#shil-environment-unified-root .shil-array-result-row > span,
+#shil-environment-unified-root .shil-installation-summary-card,
+#shil-environment-unified-root .shil-installation-summary-metrics > span,
+#shil-environment-unified-root .shil-array-summary,
+#shil-environment-unified-root .shil-efficiency-badge{
+  background:var(--shil-sem-result-bg) !important;
+  border-color:var(--shil-sem-result-border) !important;
+  color:var(--shil-sem-result-text) !important;
+}
+
+/* Summary and final output are entirely generated data: consistent red result surfaces. */
+#shil-summary-page-root .shil-summary-section,
+#shil-summary-page-root .shil-summary-data,
+#shil-summary-page-root .shil-summary-kv-card,
+#shil-execution-output-root .shil-final-one-page-sheet,
+#shil-execution-output-root .shil-final-sheet-block{
+  background:rgba(255,241,241,.96) !important;
+  border-color:var(--shil-sem-result-border) !important;
+}
+
+/* Keep actions visually separate from data roles. */
+.shil-engineering-shell .shil-array-remove,
+.shil-engineering-shell .warning,
+.shil-engineering-shell .shil-floating-warning{
+  background:#fff1f1 !important;
+  border-color:#efaaaa !important;
+  color:#a12626 !important;
+}
+
+.shil-engineering-shell .shil-add-array-button,
+.shil-engineering-shell .shil-env-content-confirm-button,
+.shil-engineering-shell .shil-project-path-confirm{
+  background:linear-gradient(135deg,#6154f5,#7b68f7) !important;
+  border-color:#9b90ff !important;
+  color:#fff !important;
+}
+
+/* Compact spacing and consistent dividers across the full engineering flow. */
+.shil-engineering-shell .shil-form-grid,
+.shil-engineering-shell .shil-summary-grid,
+.shil-engineering-shell .shil-choice-grid,
+.shil-engineering-shell .shil-result-field-grid{
+  gap:12px !important;
+}
+
+.shil-engineering-shell .shil-section-head,
+.shil-engineering-shell .shil-clean-section-head,
+.shil-engineering-shell .shil-summary-section-title,
+.shil-engineering-shell .shil-final-sheet-block > h3{
+  border-bottom:1px solid var(--shil-sem-neutral-border) !important;
+  padding-bottom:10px !important;
+  margin-bottom:12px !important;
+}
+
+@media (max-width:640px){
+  .shil-engineering-shell{--shil-sem-card-radius:18px;--shil-sem-inner-radius:14px;}
+  .shil-engineering-shell .shil-form-grid,
+  .shil-engineering-shell .shil-summary-grid,
+  .shil-engineering-shell .shil-choice-grid,
+  .shil-engineering-shell .shil-result-field-grid{gap:9px !important;}
+  .shil-engineering-shell .shil-env-hint,
+  .shil-engineering-shell .shil-muted-note{padding:6px 8px !important;font-size:10px !important;}
+}
