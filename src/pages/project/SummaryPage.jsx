@@ -316,7 +316,7 @@ function SolarSummary({ handoff, draft }) {
           ["تولید روزانه تخمینی", `${faNumber(design?.pvArray?.estimatedDailyKWh, 2)} kWh`],
           ["اعتبارسنجی", design?.valid ? "قابل اجرا" : "نیازمند بازبینی"],
         ]} />
-        <ShilWarningOverlay messages={design?.warnings} />
+        <ShilWarningOverlay messages={design?.warnings} inline />
       </SummarySection>
     </>
   );
@@ -373,7 +373,7 @@ export default function SummaryPage() {
       className="shil-summary-clear-engineering"
     >
       <SummaryPageStyle />
-      <div id="shil-summary-page-root" className="shil-page-scroll shil-summary-page">
+      <div id="shil-summary-page-root" className={`shil-page-scroll shil-summary-page ${domain === "emergency" ? "shil-emergency-parity-page" : ""}`}>
         {domain === "solar" ? (
           <SolarSummary
             handoff={handoff}
@@ -393,7 +393,7 @@ export default function SummaryPage() {
           <ShilPrimaryButton
             className="shil-env-content-confirm-button"
             onClick={run}
-            label="تأیید چکیده"
+            label={domain === "emergency" ? "تأیید" : "تأیید چکیده"}
           />
         </div>
       </div>

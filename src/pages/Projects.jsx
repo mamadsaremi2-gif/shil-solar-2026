@@ -88,7 +88,7 @@ function ProjectList({ type }) {
   }, [type]);
 
   return (
-    <ShilPageShell title={title}>
+    <ShilPageShell title={title} className={`shil-project-manager-page shil-project-manager-page--${type}`}>
       <section className="shil-project-manager-list">
         {rows.map((row) => <ProjectCard key={row.projectKey || row.id} row={row} type={type} onRefresh={refresh} />)}
         {!rows.length ? (

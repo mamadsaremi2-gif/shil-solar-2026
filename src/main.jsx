@@ -163,3 +163,80 @@ import "./appearance/styles/shil-global-title-cards-v6-8.css";
 
 /* SHIL V7 - final unified engineering design system; must remain last */
 import "./appearance/styles/shil-unified-engineering-design-system-v7.css";
+
+/* Project Path = Calculation Inputs visual parity; keep last */
+import "./appearance/styles/project-path-match-calculation-inputs-final.css";
+
+/* Project Info = Calculation Inputs visual parity; keep last */
+import "./appearance/styles/project-info-match-calculation-inputs-final.css";
+
+/* Environment = Calculation Inputs visual parity; dedicated final page override */
+import "./appearance/styles/environment-match-calculation-inputs-final.css";
+
+/* Calculation Method = Calculation Inputs visual parity; dedicated final page override */
+import "./appearance/styles/calculation-method-match-calculation-inputs-final.css";
+
+import "./appearance/styles/calculation-inputs-unified-final.css";
+
+/* Summary = Calculation Inputs visual parity; dedicated final page override */
+import "./appearance/styles/summary-match-calculation-inputs-final.css";
+
+/* Run Output = Calculation Inputs visual parity; keep last */
+import "./appearance/styles/run-output-match-calculation-inputs-final.css";
+
+/* Projects / Project Manager = Calculation Inputs visual parity; keep last */
+import "./appearance/styles/projects-match-calculation-inputs-final.css";
+
+/* Contact = Calculation Inputs visual parity; keep last */
+import "./appearance/styles/contact-match-calculation-inputs-final.css";
+
+/* Ready Scenarios and every nested scenario page = Calculation Inputs visual parity; keep last */
+import "./appearance/styles/scenarios-match-calculation-inputs-final.css";
+
+/* Education hub and all nested education pages = Calculation Inputs visual parity; keep last */
+import "./appearance/styles/education-match-calculation-inputs-final.css";
+
+/* Development page = Calculation Inputs visual parity; keep last */
+import "./appearance/styles/development-match-calculation-inputs-final.css";
+
+/* Smart Assistant = Calculation Inputs visual parity; keep last */
+import "./appearance/styles/assistant-match-calculation-inputs-final.css";
+
+/* Environment visibility rescue - must remain the absolute final CSS import */
+import "./appearance/styles/environment-visibility-rescue-final.css";
+
+/* Environment visual parity v2 - keep after visibility rescue */
+import "./appearance/styles/environment-calculation-inputs-parity-v2.css";
+
+/* Environment exact Calculation Inputs parity - absolute final visual layer */
+import './appearance/styles/environment-calculation-inputs-exact-final.css';
+
+/* Environment structural parity - absolute last import */
+import "./appearance/styles/environment-calculation-structural-parity-final.css";
+
+/* Environment compact responsive layout - absolute final override */
+import "./appearance/styles/environment-compact-layout-final.css";
+
+// Final focused alignment and typography fix for Environment installation block
+import "./appearance/styles/environment-installation-alignment-final.css";
+
+/* Emergency branch, Project Info through Execution = Calculation Inputs visual parity. */
+import "./appearance/styles/emergency-flow-calculation-inputs-parity-final.css";
+
+/* Emergency settings confirm button - absolute final isolated override. */
+import "./appearance/styles/emergency-settings-confirm-final.css";
+
+/* Project Info requested update - absolute final isolated override. */
+import "./appearance/styles/project-info-requested-update-final.css";
+
+/* Solar System Settings = Solar Calculation Inputs exact visual parity; absolute final isolated layer. */
+import "./appearance/styles/system-settings-match-calculation-inputs-final.css";
+
+/* Solar final output inverter subsystem accordion - absolute final isolated layer. */
+import "./appearance/styles/run-solar-inverter-accordion-final.css";
+
+/* Solar run output results accordion - absolute final isolated layer. */
+import "./appearance/styles/run-solar-results-accordion-final.css";
+
+/* Solar run output accordion parity with upper blocks - absolute final isolated layer. */
+import "./appearance/styles/run-solar-accordions-upper-block-parity-final.css";

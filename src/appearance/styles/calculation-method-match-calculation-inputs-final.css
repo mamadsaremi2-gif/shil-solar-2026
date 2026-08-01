@@ -1,0 +1,322 @@
+/* Calculation Method = Calculation Inputs visual parity.
+   Final dedicated override, scoped to the real method page root. */
+html:has(.shil-page--calculation-method),
+html:has(.shil-page--calculation-method) body,
+html:has(.shil-page--calculation-method) #root,
+.shil-page--calculation-method {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.shil-page--calculation-method main.shil-page-content.shil-ds-page-root {
+  position: absolute !important;
+  inset: 55px 0 40px !important;
+  width: auto !important;
+  height: auto !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+  scroll-padding-top: 102px !important;
+}
+
+.shil-page--calculation-method main.shil-page-content > .shil-project-mini-rail {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 3500 !important;
+  width: 100% !important;
+  max-width: none !important;
+  min-height: 0 !important;
+  height: auto !important;
+  margin: 0 0 7px !important;
+  padding: 5px 7px !important;
+  border-radius: 0 0 18px 18px !important;
+  background: rgba(241,251,255,.98) !important;
+  border: 1px solid rgba(198,220,235,.96) !important;
+  box-shadow: 0 7px 16px rgba(5,22,44,.16) !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  isolation: isolate !important;
+}
+.shil-page--calculation-method main.shil-page-content > .shil-project-mini-rail .project-mini-rail-grid {
+  min-width: 460px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  gap: 5px !important;
+}
+.shil-page--calculation-method main.shil-page-content > .shil-project-mini-rail :is(a,button,.shil-step-item,.ios-icon-item) {
+  min-height: 60px !important;
+  height: auto !important;
+  padding: 3px 4px !important;
+  gap: 3px !important;
+}
+.shil-page--calculation-method main.shil-page-content > .shil-project-mini-rail :is(img,svg,.ios-icon,.shil-step-icon) {
+  width: 35px !important;
+  height: 35px !important;
+  min-width: 35px !important;
+  min-height: 35px !important;
+}
+.shil-page--calculation-method main.shil-page-content > .shil-project-mini-rail :is(span,strong,p) {
+  margin: 0 !important;
+  font-size: 10px !important;
+  line-height: 1.15 !important;
+}
+
+.shil-page--calculation-method :is(.shil-engineering-content,.shil-ds-engineering-content,.shil-engineering-content > div) {
+  position: relative !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  contain: none !important;
+}
+
+#shil-calculation-method-root {
+  display: flex !important;
+  flex-direction: column !important;
+  width: min(100%,980px) !important;
+  max-width: 980px !important;
+  min-height: 0 !important;
+  margin: 0 auto !important;
+  padding: 0 6px calc(76px + env(safe-area-inset-bottom,0px)) !important;
+  gap: 7px !important;
+  color: #0b2a3d !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+#shil-calculation-method-root .shil-clean-section-head {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  min-height: 38px !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 6px 10px !important;
+  color: #0b2a3d !important;
+  background: #eaf4ff !important;
+  background-image: none !important;
+  border: 1px solid #c8dceb !important;
+  border-radius: 13px !important;
+  box-shadow: none !important;
+  text-align: center !important;
+}
+#shil-calculation-method-root .shil-clean-section-head h2 {
+  margin: 0 !important;
+  color: inherit !important;
+  font-size: 16px !important;
+  font-weight: 900 !important;
+  line-height: 1.25 !important;
+}
+#shil-calculation-method-root .shil-clean-section-head > span { display: none !important; }
+#shil-calculation-method-root .shil-clean-section-head::before,
+#shil-calculation-method-root .shil-clean-section-head::after { content:none !important; display:none !important; }
+
+#shil-calculation-method-root .shil-method-context-strip {
+  display: grid !important;
+  grid-template-columns: repeat(2,minmax(0,1fr)) !important;
+  align-items: stretch !important;
+  width: 100% !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  gap: 6px !important;
+  color: #0b2a3d !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+#shil-calculation-method-root .shil-method-context-strip > :is(span,strong) {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 0 !important;
+  min-height: 54px !important;
+  margin: 0 !important;
+  padding: 7px 9px !important;
+  color: #0b2a3d !important;
+  background: rgba(249,252,255,.95) !important;
+  border: 1px solid #c8dceb !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  font-size: 12px !important;
+  font-weight: 900 !important;
+  line-height: 1.35 !important;
+  text-align: center !important;
+  white-space: normal !important;
+}
+#shil-calculation-method-root .shil-method-context-strip > span {
+  background: #e8fff0 !important;
+  border-color: #7edbb0 !important;
+}
+
+#shil-calculation-method-root .shil-method-grid-five {
+  display: grid !important;
+  grid-template-columns: repeat(2,minmax(0,1fr)) !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  gap: 6px !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+#shil-calculation-method-root .shil-large-choice {
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 0 !important;
+  min-height: 118px !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 9px 8px !important;
+  gap: 4px !important;
+  color: #0b2a3d !important;
+  background: rgba(249,252,255,.95) !important;
+  background-image: none !important;
+  border: 1px solid #c8dceb !important;
+  border-radius: 13px !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  transform: none !important;
+  text-align: center !important;
+  overflow: hidden !important;
+  cursor: pointer !important;
+}
+#shil-calculation-method-root .shil-large-choice:hover,
+#shil-calculation-method-root .shil-large-choice:focus-visible {
+  border-color: #8fc6e8 !important;
+  background: #f4fbff !important;
+  box-shadow: 0 0 0 2px rgba(18,169,238,.10) !important;
+  outline: none !important;
+}
+#shil-calculation-method-root .shil-large-choice.active {
+  color: #07583f !important;
+  background: #e8fff0 !important;
+  border-color: #55cf96 !important;
+  box-shadow: 0 0 0 2px rgba(50,213,131,.12) !important;
+}
+#shil-calculation-method-root .shil-large-choice.active::after {
+  content: "✓" !important;
+  position: absolute !important;
+  top: 6px !important;
+  left: 7px !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 21px !important;
+  height: 21px !important;
+  color: #fff !important;
+  background: #32b979 !important;
+  border-radius: 50% !important;
+  font-size: 13px !important;
+  font-weight: 950 !important;
+}
+
+#shil-calculation-method-root .shil-method-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 58px !important;
+  min-height: 26px !important;
+  margin: 0 !important;
+  padding: 4px 8px !important;
+  color: #0b5167 !important;
+  background: #e6fbfa !important;
+  border: 1px solid #9fe3dd !important;
+  border-radius: 999px !important;
+  font-size: 11px !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+}
+#shil-calculation-method-root .shil-large-choice > small {
+  margin: 0 !important;
+  color: #71879a !important;
+  font-size: 9px !important;
+  font-weight: 750 !important;
+  line-height: 1.15 !important;
+}
+#shil-calculation-method-root .shil-large-choice > h2 {
+  margin: 0 !important;
+  color: inherit !important;
+  font-size: 15px !important;
+  font-weight: 950 !important;
+  line-height: 1.25 !important;
+}
+#shil-calculation-method-root .shil-large-choice > p {
+  display: block !important;
+  margin: 0 !important;
+  color: #547083 !important;
+  font-size: 9px !important;
+  font-weight: 700 !important;
+  line-height: 1.4 !important;
+  text-align: center !important;
+}
+#shil-calculation-method-root .shil-large-choice.active > p { color: #27745b !important; }
+
+#shil-calculation-method-root .shil-muted-note {
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 7px 9px !important;
+  color: #765b00 !important;
+  background: #fff9da !important;
+  border: 1px solid #edcf57 !important;
+  border-radius: 11px !important;
+  box-shadow: none !important;
+  font-size: 10px !important;
+  font-weight: 750 !important;
+  line-height: 1.5 !important;
+  text-align: center !important;
+}
+
+#shil-calculation-method-root .shil-calculation-method-confirm {
+  align-self: center !important;
+  width: min(100%,460px) !important;
+  min-height: 44px !important;
+  height: 44px !important;
+  margin: 2px auto 0 !important;
+  padding: 7px 16px !important;
+  color: #fff !important;
+  background: linear-gradient(135deg,#2abde7 0%,#6964e8 100%) !important;
+  border: 1px solid rgba(255,255,255,.48) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 7px 15px rgba(25,80,135,.18) !important;
+  font-size: 15px !important;
+  font-weight: 950 !important;
+}
+#shil-calculation-method-root .shil-calculation-method-confirm:disabled {
+  color: #536576 !important;
+  background: #dbe4ec !important;
+  border-color: #c7d3dd !important;
+  box-shadow: none !important;
+  opacity: 1 !important;
+}
+
+@media (max-width:560px) {
+  #shil-calculation-method-root { padding-inline: 5px !important; gap: 6px !important; }
+  #shil-calculation-method-root .shil-method-context-strip { grid-template-columns: 1fr !important; gap: 5px !important; }
+  #shil-calculation-method-root .shil-method-context-strip > :is(span,strong) { min-height: 42px !important; }
+  #shil-calculation-method-root .shil-large-choice { min-height: 112px !important; padding: 8px 6px !important; }
+  #shil-calculation-method-root .shil-large-choice > h2 { font-size: 14px !important; }
+  #shil-calculation-method-root .shil-large-choice > p { font-size: 8.5px !important; }
+}
+
+@media (max-width:370px) {
+  #shil-calculation-method-root .shil-method-grid-five { gap: 5px !important; }
+  #shil-calculation-method-root .shil-large-choice { min-height: 108px !important; }
+  #shil-calculation-method-root .shil-method-badge { min-width: 48px !important; font-size: 10px !important; }
+}

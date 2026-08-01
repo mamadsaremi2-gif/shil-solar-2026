@@ -1,0 +1,310 @@
+/* Project Path final skin: intentionally mirrors Calculation Inputs. */
+html:has(.shil-page--project-path),
+html:has(.shil-page--project-path) body,
+html:has(.shil-page--project-path) #root,
+.shil-page--project-path {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.shil-page--project-path main.shil-page-content.shil-ds-page-root {
+  position: absolute !important;
+  top: 55px !important;
+  right: 0 !important;
+  bottom: 40px !important;
+  left: 0 !important;
+  width: auto !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+  scroll-padding-top: 102px !important;
+}
+
+.shil-page--project-path main.shil-page-content > .shil-project-mini-rail {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 3500 !important;
+  width: 100% !important;
+  max-width: none !important;
+  min-height: 0 !important;
+  height: auto !important;
+  margin: 0 0 7px !important;
+  padding: 5px 7px !important;
+  border-radius: 0 0 18px 18px !important;
+  background: rgba(241, 251, 255, 0.98) !important;
+  border: 1px solid rgba(198, 220, 235, 0.96) !important;
+  box-shadow: 0 7px 16px rgba(5, 22, 44, 0.16) !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+}
+
+.shil-page--project-path main.shil-page-content > .shil-project-mini-rail .project-mini-rail-grid {
+  min-width: 460px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  gap: 5px !important;
+}
+
+.shil-page--project-path main.shil-page-content > .shil-project-mini-rail :is(a, button, .shil-step-item, .ios-icon-item) {
+  min-height: 60px !important;
+  height: auto !important;
+  padding: 3px 4px !important;
+  gap: 3px !important;
+}
+
+.shil-page--project-path main.shil-page-content > .shil-project-mini-rail :is(img, svg, .ios-icon, .shil-step-icon) {
+  width: 35px !important;
+  height: 35px !important;
+  min-width: 35px !important;
+  min-height: 35px !important;
+}
+
+.shil-page--project-path main.shil-page-content > .shil-project-mini-rail :is(span, strong, p) {
+  margin: 0 !important;
+  font-size: 10px !important;
+  line-height: 1.15 !important;
+}
+
+.shil-page--project-path .shil-engineering-content,
+.shil-page--project-path .shil-engineering-content.shil-ds-engineering-content,
+.shil-page--project-path .shil-engineering-content > div {
+  position: relative !important;
+  width: 100% !important;
+  max-width: none !important;
+  height: auto !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+#shil-project-path-root {
+  display: flex !important;
+  flex-direction: column !important;
+  width: min(100%, 980px) !important;
+  margin: 0 auto !important;
+  padding: 0 6px calc(76px + env(safe-area-inset-bottom, 0px)) !important;
+  gap: 7px !important;
+}
+
+#shil-project-path-root > section,
+#shil-project-path-root > details {
+  width: 100% !important;
+  min-height: 0 !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  gap: 6px !important;
+  overflow: visible !important;
+  background: rgba(255, 255, 255, 0.92) !important;
+  border: 1px solid rgba(199, 216, 229, 0.96) !important;
+  border-radius: 14px !important;
+  box-shadow: none !important;
+}
+
+#shil-project-path-root .shil-section-title {
+  min-height: 38px !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 6px 10px !important;
+  border-radius: 13px !important;
+  font-size: 16px !important;
+  line-height: 1.25 !important;
+  color: #0b2a3d !important;
+  background: #eaf4ff !important;
+  border: 1px solid #c8dceb !important;
+  box-shadow: none !important;
+}
+
+#shil-project-path-root .shil-project-path-options-card {
+  padding: 7px !important;
+}
+
+#shil-project-path-root .shil-project-path-two-cards {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 6px !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+#shil-project-path-root .shil-project-path-card {
+  display: grid !important;
+  grid-template-columns: 66px minmax(0, 1fr) 28px !important;
+  grid-template-areas: "image title check" "image description check" !important;
+  align-items: center !important;
+  min-height: 112px !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 8px !important;
+  gap: 3px 8px !important;
+  text-align: right !important;
+  color: #0b2a3d !important;
+  background: #f8fbfd !important;
+  border: 1px solid #c8dceb !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+}
+
+#shil-project-path-root .shil-project-path-card.active {
+  background: #e8fff0 !important;
+  border: 2px solid #32d583 !important;
+  box-shadow: none !important;
+}
+
+#shil-project-path-root .shil-project-path-card .shil-execution-image {
+  grid-area: image !important;
+  width: 62px !important;
+  height: 62px !important;
+  min-width: 62px !important;
+  object-fit: cover !important;
+  margin: 0 !important;
+  border: 1px solid #c8dceb !important;
+  border-radius: 11px !important;
+  box-shadow: none !important;
+}
+
+#shil-project-path-root .shil-project-path-card h3 {
+  grid-area: title !important;
+  margin: 0 !important;
+  font-size: 14px !important;
+  line-height: 1.25 !important;
+  color: #0b2a3d !important;
+}
+
+#shil-project-path-root .shil-project-path-card p {
+  grid-area: description !important;
+  margin: 0 !important;
+  font-size: 10px !important;
+  line-height: 1.45 !important;
+  color: #547083 !important;
+}
+
+#shil-project-path-root .shil-execution-check {
+  grid-area: check !important;
+  position: static !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 26px !important;
+  height: 26px !important;
+  margin: 0 !important;
+  border-radius: 50% !important;
+  background: #fff !important;
+  border: 1px solid #9fb8ca !important;
+  color: #087443 !important;
+  font-size: 15px !important;
+  box-shadow: none !important;
+}
+
+#shil-project-path-root .shil-project-path-card.active .shil-execution-check {
+  background: #d8f7e6 !important;
+  border-color: #32d583 !important;
+}
+
+#shil-project-path-root .shil-utility-path-field {
+  padding: 7px !important;
+}
+
+#shil-project-path-root .shil-utility-path-field > summary {
+  min-height: 54px !important;
+  padding: 7px 10px !important;
+  border-radius: 12px !important;
+  background: #eaf4ff !important;
+  border: 1px solid #c8dceb !important;
+  color: #0b2a3d !important;
+  box-shadow: none !important;
+}
+
+#shil-project-path-root .shil-utility-path-field > summary span {
+  font-size: 14px !important;
+}
+
+#shil-project-path-root .shil-utility-path-field > summary small {
+  font-size: 10px !important;
+  color: #547083 !important;
+}
+
+#shil-project-path-root .shil-utility-select-button {
+  min-height: 66px !important;
+  margin-top: 6px !important;
+  padding: 6px !important;
+  border-radius: 12px !important;
+  background: #f8fbfd !important;
+  border: 1px solid #c8dceb !important;
+  color: #0b2a3d !important;
+  box-shadow: none !important;
+}
+
+#shil-project-path-root .shil-utility-select-button.active {
+  background: #e8fff0 !important;
+  border: 2px solid #32d583 !important;
+}
+
+#shil-project-path-root .shil-utility-select-button img {
+  width: 52px !important;
+  height: 52px !important;
+  border: 1px solid #c8dceb !important;
+  border-radius: 10px !important;
+}
+
+#shil-project-path-root .shil-project-path-confirm,
+#shil-project-path-root > .shil-primary-wide {
+  position: relative !important;
+  inset: auto !important;
+  display: block !important;
+  width: 220px !important;
+  min-width: 220px !important;
+  max-width: 220px !important;
+  height: 46px !important;
+  min-height: 46px !important;
+  max-height: 46px !important;
+  margin: 6px auto 18px !important;
+  padding: 0 18px !important;
+  transform: none !important;
+  border-radius: 14px !important;
+  border: 1px solid #9fb8ca !important;
+  color: #0b2a3d !important;
+  background: linear-gradient(135deg, #30c7ee, #7760f6) !important;
+  box-shadow: none !important;
+}
+
+#shil-project-path-root .shil-project-path-confirm:disabled {
+  background: #d7e0e8 !important;
+  color: #6b7c89 !important;
+  opacity: 1 !important;
+}
+
+@media (max-width: 520px) {
+  #shil-project-path-root {
+    padding-inline: 5px !important;
+    gap: 6px !important;
+  }
+
+  .shil-page--project-path main.shil-page-content > .shil-project-mini-rail {
+    padding: 4px !important;
+    border-radius: 0 0 15px 15px !important;
+  }
+
+  #shil-project-path-root .shil-section-title {
+    font-size: 15px !important;
+  }
+
+  #shil-project-path-root .shil-project-path-two-cards {
+    grid-template-columns: 1fr !important;
+  }
+}

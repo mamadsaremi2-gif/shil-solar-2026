@@ -170,12 +170,12 @@ export default function ProjectPath() {
 
   return (
     <EngineeringPageShell title="مسیر پروژه">
-      <>
-        <div className="shil-clean-section-head">
-          <h2 className="shil-section-title">مسیر پروژه را انتخاب کنید</h2>
-          <span>Project Path</span>
-        </div>
+      <div id="shil-project-path-root" className="shil-equipment-page shil-calculation-inputs-page shil-project-path-inputs-skin">
+        <section className="shil-env-card shil-project-path-intro-card">
+          <h3 className="shil-section-title">مسیر پروژه را انتخاب کنید</h3>
+        </section>
 
+        <section className="shil-env-card shil-project-path-options-card">
         <div className="shil-execution-grid shil-project-path-two-cards">
           {mainOptions.map((option) => (
             <button
@@ -191,6 +191,7 @@ export default function ProjectPath() {
             </button>
           ))}
         </div>
+        </section>
 
         {utilityOption ? (
           <details className={`shil-utility-path-field ${selected === utilityOption.key ? "active" : ""}`}>
@@ -217,7 +218,7 @@ export default function ProjectPath() {
 
         <ShilPrimaryButton className="shil-project-path-confirm" disabled={!selectedOption}
           onClick={confirm} label="تأیید مسیر" />
-      </>
+      </div>
     </EngineeringPageShell>
   );
 }

@@ -1,0 +1,45 @@
+/* Emergency settings confirmation button: final isolated override.
+   Keep functional disabled state, but preserve the same visual system as the
+   Project Path confirmation button. */
+html body:not(.login-page):not(.welcome-page)
+#shil-emergency-settings-root
+button.shil-primary-wide.shil-flow-content-confirm-button.shil-confirm-config-button.shil-inline-confirm-button,
+html body:not(.login-page):not(.welcome-page)
+#shil-emergency-settings-root
+button.shil-primary-wide.shil-flow-content-confirm-button.shil-confirm-config-button.shil-inline-confirm-button:disabled {
+  position: relative !important;
+  inset: auto !important;
+  left: auto !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: auto !important;
+  transform: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 220px !important;
+  min-width: 220px !important;
+  max-width: 220px !important;
+  height: 46px !important;
+  min-height: 46px !important;
+  max-height: 46px !important;
+  margin: 6px auto 18px !important;
+  padding: 0 18px !important;
+  float: none !important;
+  box-sizing: border-box !important;
+  white-space: nowrap !important;
+  text-align: center !important;
+  font-size: 15px !important;
+  font-weight: 950 !important;
+  line-height: 1 !important;
+  color: #0b2a3d !important;
+  -webkit-text-fill-color: #0b2a3d !important;
+  background: linear-gradient(135deg, #30c7ee, #7760f6) !important;
+  background-color: #30c7ee !important;
+  background-image: linear-gradient(135deg, #30c7ee, #7760f6) !important;
+  border: 1px solid #9fb8ca !important;
+  border-radius: 14px !important;
+  box-shadow: none !important;
+  opacity: 1 !important;
+  filter: none !important;
+}

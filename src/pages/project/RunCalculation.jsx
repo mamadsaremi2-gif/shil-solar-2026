@@ -48,6 +48,23 @@ function readCalculationInput() {
 
 function runCore(domain) {
   if (domain === "emergency") {
+    const settingsDraft = readDraft("shil:systemSettingsDraft", {});
+    const emergencyDesign = readDraft("shil:emergencySystemDesign", null)
+      || settingsDraft?.design
+      || readDraft("shil:emergencySystemDesign:live", null);
+    if (emergencyDesign?.domain === "emergency" || emergencyDesign?.calculationModel === "ups_like_battery_inverter") {
+      return {
+        result: {
+          status: emergencyDesign.valid ? "success" : "needs-review",
+          valid: emergencyDesign.valid !== false,
+          mode: "UPS_LIKE_EMERGENCY_DESIGN",
+          emergencyDesign,
+          values: { emergencyDesign },
+          warnings: emergencyDesign.warnings || [],
+          explanations: ["خروجی نهایی از طراحی اختصاصی برق اضطراری، بانک باتری و اینورتر خوانده شد."],
+        },
+      };
+    }
     const form = { ...makeFallbackForm("emergency"), load: readDraft("shil:loadEngineResult", {}), settings: readDraft("shil:emergencyPowerSettings", {}), designDomain: "emergency" };
     return { result: runEngineeringDesign(form, { domain: "emergency", mode: "final-core", stopOnValidationError: false }) };
   }
@@ -227,6 +244,47 @@ function ReadOnlyBlock({ title, badge, rows = [], children }) {
 }
 
 function buildExecutionContext({ domain, project, summary, result, solarDesign, systemSettings, methodSummary, methodKey, calculationInput, emergency }) {
+  if (emergency) {
+    const design = result?.emergencyDesign || result?.values?.emergencyDesign || systemSettings?.design
+      || readDraft("shil:emergencySystemDesign", {}) || readDraft("shil:emergencySystemDesign:live", {});
+    const load = design?.load || readDraft("shil:loadEngineResult", {});
+    const settings = design?.settings || {};
+    const inverter = design?.inverter || {};
+    const battery = design?.battery || {};
+    const protection = design?.protection || { protections: [], cables: [] };
+    const selectedPath = readDraft("shil:selectedProjectPath", {});
+    return {
+      emergency: true,
+      projectPathTitle: localStorage.getItem("shil:projectPathTitle") || selectedPath?.title || "برق اضطراری",
+      methodTitle: methodSummary?.title || design?.sourceMethod || methodKey || "لیست تجهیزات",
+      coreTitle: "موتور اختصاصی UPS / برق اضطراری",
+      designType: "باتری + اینورتر، مستقل از PV",
+      calculationModel: design?.calculationModel || "ups_like_battery_inverter",
+      city: project?.city || readDraft("shil:environmentDraft", {})?.city || "-",
+      valid: design?.valid !== false,
+      loadPowerW: pick(load?.totalPowerW, load?.loadPowerW, 0),
+      surgePowerW: pick(load?.surgePowerW, load?.peakLoadW, 0),
+      voltageAC: pick(load?.voltageAC, 220),
+      phaseAC: load?.phaseAC || (Number(load?.voltageAC) >= 380 ? "three" : "single"),
+      backupHours: pick(settings?.backupHours, battery?.runtimeHours, 0),
+      reserveFactor: pick(settings?.reserveFactor, 1.25),
+      dodPercent: pick(settings?.dodPercent, 80),
+      inverter, battery, batteryBank: battery, protection,
+      inverterCount: pick(inverter?.count, 1),
+      inverterDesignPowerW: pick(inverter?.designPowerW, 0),
+      inverterRatedPowerW: pick(inverter?.ratedPowerW, inverter?.powerW, 0),
+      dcVoltage: pick(inverter?.dcVoltage, inverter?.batteryVoltage, battery?.packVoltage, 48),
+      batteryVoltage: pick(battery?.nominalVoltage, 0),
+      batteryCurrent: pick(battery?.capacityAh, 0),
+      batteryEnergyKWh: pick(battery?.unitEnergyKWh, 0),
+      batteryCount: pick(battery?.count, 0),
+      batterySeriesCount: pick(battery?.seriesCount, 0),
+      batteryParallelCount: pick(battery?.parallelCount, 0),
+      batteryTotalKWh: pick(battery?.usableEnergyKWh, 0),
+      requiredStorageKWh: pick(battery?.requiredRawKWh, 0),
+      runtimeHours: pick(battery?.runtimeHours, settings?.backupHours, 0),
+    };
+  }
   const environment = readDraft("shil:environmentDraft", {});
   const environmentAssessment = readDraft("shil:environmentAssessment", {});
   const selectedPath = readDraft("shil:selectedProjectPath", {});
@@ -310,18 +368,44 @@ function SubsystemProtectionTable({ ctx }) {
   const panelCount = Number(ctx.panelCount) || 0;
   const perInverterPanels = inverterCount ? Math.ceil(panelCount / inverterCount) : panelCount;
   const perMpptPanels = Math.max(1, Math.ceil((perInverterPanels || 1) / mpptEach));
-  const rows = Array.from({ length: inverterCount }).flatMap((_, inverterIndex) =>
-    Array.from({ length: mpptEach }).map((__, mpptIndex) => ({ inverterIndex, mpptIndex }))
-  );
+  const dcBreaker = safeText(ctx?.protection?.pvDc?.breakerA || ctx?.protection?.pvDc?.currentA, "-");
+  const acBreaker = safeText(ctx?.protection?.ac?.breakerA || ctx?.protection?.ac?.currentA, "-");
+  const dcCable = safeText(ctx?.protection?.pvDc?.cable || ctx?.protection?.dcCable, "PV Cable");
+  const acCable = safeText(ctx?.protection?.ac?.cable || ctx?.protection?.acCable, "AC Cable");
+  const batteryCable = safeText(ctx?.protection?.batteryDc?.cable || ctx?.protection?.batteryCable, "Battery Cable");
+
   return (
-    <div className="shil-final-equipment-table">
-      <div className="head"><span>زیرسیستم</span><span>پنل / استرینگ</span><span>حفاظت و کابل مستقل</span></div>
-      {rows.map(({ inverterIndex, mpptIndex }) => (
-        <div key={`inv-${inverterIndex}-mppt-${mpptIndex}`}>
-          <span>{`Inverter-${inverterIndex + 1} / MPPT-${mpptIndex + 1}`}</span>
-          <strong>{`${perMpptPanels} پنل / آرایش سری`}</strong>
-          <small>{`SHIL DC MCB + PV Cable مستقل برای این شاخه`}</small>
-        </div>
+    <div className="shil-inverter-accordion-list">
+      {Array.from({ length: inverterCount }).map((_, inverterIndex) => (
+        <details className="shil-inverter-accordion" key={`inv-${inverterIndex}`}>
+          <summary>
+            <span className="shil-inverter-accordion-title">{`اینورتر ${inverterIndex + 1}`}</span>
+            <span className="shil-inverter-accordion-meta">{`${perInverterPanels} پنل · ${mpptEach} MPPT`}</span>
+            <span className="shil-inverter-accordion-arrow" aria-hidden="true">⌄</span>
+          </summary>
+
+          <div className="shil-inverter-accordion-body">
+            <div className="shil-inverter-mini-grid">
+              <div><span>پنل تخصیص‌یافته</span><strong>{perInverterPanels} عدد</strong></div>
+              <div><span>تعداد MPPT</span><strong>{mpptEach} کانال</strong></div>
+              <div><span>حفاظت AC</span><strong>{acBreaker}A</strong></div>
+              <div><span>کابل خروجی</span><strong>{acCable}</strong></div>
+              <div><span>کابل باتری</span><strong>{batteryCable}</strong></div>
+              <div><span>فضای نگهداری</span><strong>مستقل</strong></div>
+            </div>
+
+            <div className="shil-mppt-compact-list">
+              {Array.from({ length: mpptEach }).map((__, mpptIndex) => (
+                <div className="shil-mppt-compact-row" key={`inv-${inverterIndex}-mppt-${mpptIndex}`}>
+                  <strong>{`MPPT ${mpptIndex + 1}`}</strong>
+                  <span>{`${perMpptPanels} پنل سری`}</span>
+                  <span>{`MCB DC ${dcBreaker}A`}</span>
+                  <span>{dcCable}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </details>
       ))}
     </div>
   );
@@ -337,6 +421,9 @@ function panelLayoutNote(ctx) {
 }
 
 export default function RunCalculation() {
+  const [resultsOpen, setResultsOpen] = React.useState(false);
+  const [finalOutputOpen, setFinalOutputOpen] = React.useState(false);
+
   const { domain = "solar" } = useParams();
   const emergency = domain === "emergency";
   const [exporting, setExporting] = useState("");
@@ -389,7 +476,23 @@ export default function RunCalculation() {
     emergency,
   });
 
-  const projectInfoRows = [
+  const projectInfoRows = emergency ? [
+    { label: "مسیر انتخاب شده", value: runContext.projectPathTitle },
+    { label: "نام پروژه", value: project.projectName || project.name || projectTitle },
+    { label: "نام کارفرما", value: project.clientName || project.customerName || project.employerName || "SHIL CO" },
+    { label: "تاریخ ثبت", value: project.registrationDate || project.date || project.createdAt || "-" },
+    { label: "شهر پروژه", value: runContext.city },
+    { label: "روش ورود اطلاعات", value: runContext.methodTitle },
+    { label: "هسته محاسبات", value: runContext.coreTitle },
+    { label: "مدل طراحی", value: runContext.designType },
+    { label: "توان بار ضروری", value: `${runContext.loadPowerW} W` },
+    { label: "توان پیک / راه‌اندازی", value: `${runContext.surgePowerW} W` },
+    { label: "خروجی AC", value: runContext.phaseAC === "three" ? `${runContext.voltageAC} V سه‌فاز` : `${runContext.voltageAC} V تک‌فاز` },
+    { label: "مدت پشتیبانی هدف", value: `${runContext.backupHours} ساعت` },
+    { label: "ضریب اطمینان اینورتر", value: runContext.reserveFactor },
+    { label: "عمق دشارژ مجاز", value: `${runContext.dodPercent}%` },
+    { label: "وضعیت طراحی", value: runContext.valid ? "قابل اجرا" : "نیازمند بازبینی" },
+  ] : [
     { label: "مسیر انتخاب شده", value: runContext.projectPathTitle },
     { label: "نام پروژه", value: project.projectName || project.name || projectTitle },
     { label: "نام کارفرما", value: project.clientName || project.customerName || project.employerName || "SHIL CO" },
@@ -407,7 +510,20 @@ export default function RunCalculation() {
     { label: "نوع طراحی", value: runContext.designType },
   ];
 
-  const projectEquipmentRows = [
+  const projectEquipmentRows = emergency ? [
+    { label: "اینورتر برق اضطراری", value: runContext.inverter?.title || runContext.inverter?.model || runContext.inverter?.name || "ثبت نشده" },
+    { label: "تعداد اینورتر", value: `${runContext.inverterCount} عدد` },
+    { label: "توان طراحی اینورتر", value: `${runContext.inverterDesignPowerW} W` },
+    { label: "توان نامی اینورتر", value: `${runContext.inverterRatedPowerW} W` },
+    { label: "باس DC باتری", value: `${runContext.dcVoltage} V` },
+    { label: "باتری انتخابی", value: runContext.battery?.title || runContext.battery?.model || runContext.battery?.name || "ثبت نشده" },
+    { label: "مشخصات هر باتری", value: `${runContext.batteryVoltage} V / ${runContext.batteryCurrent} Ah / ${runContext.batteryEnergyKWh} kWh` },
+    { label: "آرایش بانک باتری", value: `${runContext.batterySeriesCount} سری × ${runContext.batteryParallelCount} موازی` },
+    { label: "تعداد کل باتری", value: `${runContext.batteryCount} عدد` },
+    { label: "انرژی خام مورد نیاز", value: `${runContext.requiredStorageKWh} kWh` },
+    { label: "انرژی قابل استفاده بانک", value: `${runContext.batteryTotalKWh} kWh` },
+    { label: "زمان پشتیبانی واقعی", value: `${runContext.runtimeHours} ساعت` },
+  ] : [
     { label: "اینورتر خورشیدی", value: runContext.inverter?.title || runContext.inverter?.name || "ثبت نشده" },
     { label: "تعداد اینورتر خورشیدی", value: `${runContext.inverterCount} عدد` },
     { label: "تعداد MPPT هر یک از اینورترها", value: `${runContext.mpptEach} عدد` },
@@ -424,7 +540,14 @@ export default function RunCalculation() {
     { label: "ظرفیت ذخیره‌سازی مورد نیاز برای روزهای خودکفایی", value: `${runContext.requiredStorageKWh} kWh` },
   ];
 
-  const protectionRows = buildProtectionRows(runContext);
+  const protectionRows = emergency ? [
+    { label: "حفاظت مسیر باتری DC", value: "فیوز یا MCCB DC متناسب با جریان بانک", note: "بین بانک باتری و اینورتر UPS" },
+    { label: "ایزولاتور DC", value: "کلید قطع DC باتری", note: `متناسب با باس ${runContext.dcVoltage}V` },
+    { label: "حفاظت خروجی AC", value: "کلید حفاظتی خروجی اینورتر", note: `${runContext.voltageAC}V / مسیر بارهای ضروری` },
+    { label: "کابل باتری", value: "کابل DC باتری با سطح مقطع محاسبه‌شده", note: "براساس توان اینورتر، ولتاژ باس و طول مسیر" },
+    { label: "کابل خروجی AC", value: "کابل AC بار اضطراری", note: "براساس جریان خروجی و افت ولتاژ مجاز" },
+    { label: "ارت و هم‌بندی", value: "ارت بدنه اینورتر و تابلو UPS", note: "مطابق الزامات ایمنی محل نصب" },
+  ] : buildProtectionRows(runContext);
   const finalizationRef = useRef(false);
 
   useEffect(() => {
@@ -474,7 +597,7 @@ export default function RunCalculation() {
 
   return (
     <EngineeringPageShell title="اجرا و خروجی نهایی">
-      <section id="shil-execution-output-root" className="shil-final-delivery-page shil-final-delivery-compact shil-execution-output-page">
+      <section id="shil-execution-output-root" className={`shil-final-delivery-page shil-final-delivery-compact shil-execution-output-page ${emergency ? "shil-emergency-run-output" : ""}`}>
         <div className="shil-final-one-page-sheet" ref={exportSheetRef}>
           <div className="shil-final-sheet-hero shil-final-sheet-hero-centered shil-ds-center">
             <div className="shil-ds-full-width">
@@ -486,33 +609,76 @@ export default function RunCalculation() {
           <ReadOnlyBlock title="اطلاعات پروژه" badge="Project Data" rows={projectInfoRows} />
           <ReadOnlyBlock title="تجهیزات اجرای پروژه" badge="Execution Equipment" rows={projectEquipmentRows} />
 
-          <ReadOnlyBlock title="سیستم حفاظتی" badge="Protection System" rows={protectionRows}>
-            <div className="shil-final-sheet-block shil-final-protection-detail shil-ds-mt-3">
-              <h3>تقسیم زیرسیستم‌ها برای هر اینورتر</h3>
-              <SubsystemProtectionTable ctx={runContext} />
-              <div className="shil-engineering-list shil-ds-mt-3">
-                <p>{panelLayoutNote(runContext)}</p>
-                <p>فضای نصب پنل‌ها باید بر اساس دیتاشیت پنل انتخابی، تعداد پنل، تعداد استرینگ و فاصله اجرایی بین استرینگ‌ها محاسبه و در نقشه اجرایی تفکیک شود.</p>
+          <ReadOnlyBlock title="سیستم حفاظتی" badge={emergency ? "UPS Protection" : "Protection System"} rows={protectionRows}>
+            {!emergency ? (
+              <div className="shil-final-sheet-block shil-final-protection-detail shil-ds-mt-3">
+                <h3>تقسیم زیرسیستم‌ها برای هر اینورتر</h3>
+                <SubsystemProtectionTable ctx={runContext} />
               </div>
-            </div>
+            ) : (
+              <div className="shil-engineering-list shil-emergency-execution-note">
+                <p>این خروجی صرفاً متعلق به مسیر برق اضطراری و منطق UPS است؛ هیچ پنل، استرینگ، MPPT یا تولید خورشیدی در محاسبات این صفحه استفاده نشده است.</p>
+              </div>
+            )}
           </ReadOnlyBlock>
 
-          <div className="shil-final-sheet-block shil-final-result-block">
-            <h3>نتایج و نکات مهم</h3>
-            <ul>
-              {importantNotes.map((item, index) => <li key={safeKey(item, index)}>{safeText(item)}</li>)}
-              {warnings.map((item, index) => <li className="warning" key={safeKey(item, index)}>هشدار: {safeText(item)}</li>)}
-              {!warnings.length ? <li>طراحی برای ارائه خروجی نهایی آماده است.</li> : null}
-            </ul>
-          </div>
+          {!emergency ? (
+            <div className={`shil-results-accordion ${resultsOpen ? "is-open" : ""}`}>
+              <button
+                type="button"
+                className="shil-results-accordion__header"
+                aria-expanded={resultsOpen}
+                onClick={() => setResultsOpen((open) => !open)}
+              >
+                <span>نتایج و نکات مهم</span>
+                <span className="shil-results-accordion__chevron" aria-hidden="true">{resultsOpen ? "▲" : "▼"}</span>
+              </button>
+
+              {resultsOpen ? (
+                <div className="shil-results-accordion__content">
+                  <section className="shil-results-accordion__section">
+                    <h4>آرایش و جانمایی پنل‌ها</h4>
+                    <div className="shil-results-accordion__grid">
+                      <p>{panelLayoutNote(runContext)}</p>
+                      <p>فضای نصب پنل‌ها باید بر اساس دیتاشیت پنل انتخابی، تعداد پنل، تعداد استرینگ و فاصله اجرایی بین استرینگ‌ها محاسبه و در نقشه اجرایی تفکیک شود.</p>
+                    </div>
+                  </section>
+
+                  <section className="shil-results-accordion__section">
+                    <h4>جمع‌بندی نهایی</h4>
+                    <ul className="shil-results-accordion__notes">
+                      {importantNotes.map((item, index) => <li key={safeKey(item, index)}>{safeText(item)}</li>)}
+                      {warnings.map((item, index) => <li className="warning" key={safeKey(item, index)}>هشدار: {safeText(item)}</li>)}
+                      {!warnings.length ? <li>طراحی برای ارائه خروجی نهایی آماده است.</li> : null}
+                    </ul>
+                  </section>
+                </div>
+              ) : null}
+            </div>
+          ) : (
+            <div className="shil-final-sheet-block shil-final-result-block">
+              <h3>نتایج و نکات مهم</h3>
+              <ul>
+                {importantNotes.map((item, index) => <li key={safeKey(item, index)}>{safeText(item)}</li>)}
+                {warnings.map((item, index) => <li className="warning" key={safeKey(item, index)}>هشدار: {safeText(item)}</li>)}
+                {!warnings.length ? <li>طراحی برای ارائه خروجی نهایی آماده است.</li> : null}
+              </ul>
+            </div>
+          )}
         </div>
 
-        <div className="shil-final-action-area">
-          <div className="shil-output-actions shil-output-actions-three">
-            <button type="button" onClick={saveProjectImage} disabled={Boolean(exporting)}>{exporting === "png" ? "در حال ساخت تصویر..." : "خروجی تصویر"}</button>
-            <button type="button" onClick={exportPdf} disabled={Boolean(exporting)}>{exporting === "pdf" ? "در حال ساخت PDF..." : "خروجی PDF"}</button>
-            <button type="button" onClick={shareProject}>اشتراک‌گذاری خروجی</button>
-          </div>
+        <div className={`shil-accordion-card shil-final-output-accordion ${finalOutputOpen ? "is-open" : ""}`}>
+          <button type="button" className="shil-accordion-header shil-final-output-accordion__header" onClick={()=>setFinalOutputOpen(!finalOutputOpen)}>
+            <span>خروجی نهایی</span><span>{finalOutputOpen ? "▲":"▼"}</span>
+          </button>
+          {finalOutputOpen && (
+          <div className="shil-final-action-area">
+            <div className="shil-output-actions shil-output-actions-three">
+              <button type="button" onClick={saveProjectImage} disabled={Boolean(exporting)}>{exporting === "png" ? "در حال ساخت تصویر..." : "خروجی تصویر"}</button>
+              <button type="button" onClick={exportPdf} disabled={Boolean(exporting)}>{exporting === "pdf" ? "در حال ساخت PDF..." : "خروجی PDF"}</button>
+              <button type="button" onClick={shareProject}>اشتراک‌گذاری خروجی</button>
+            </div>
+          </div>)}
         </div>
 
         <Link className="shil-soft-link-button" to="/projects/final">مشاهده پروژه‌های نهایی</Link>

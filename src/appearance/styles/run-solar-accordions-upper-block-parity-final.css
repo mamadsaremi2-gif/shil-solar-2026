@@ -1,0 +1,177 @@
+/* Solar run output: accordions exactly match the upper result blocks. */
+body:not(.login-page):not(.welcome-page)
+.shil-execution-output-page:not(.shil-emergency-run-output)
+:is(.shil-results-accordion,.shil-final-output-accordion){
+  width:100%!important;
+  max-width:none!important;
+  margin:12px 0 0!important;
+  padding:0!important;
+  border:1px solid rgba(159,190,216,.96)!important;
+  border-radius:24px!important;
+  overflow:hidden!important;
+  background:rgba(239,246,252,.94)!important;
+  box-shadow:0 6px 18px rgba(7,35,61,.12)!important;
+}
+
+body:not(.login-page):not(.welcome-page)
+.shil-execution-output-page:not(.shil-emergency-run-output)
+:is(.shil-results-accordion__header,.shil-final-output-accordion__header){
+  box-sizing:border-box!important;
+  width:100%!important;
+  min-height:82px!important;
+  margin:0!important;
+  padding:14px 24px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:rgba(221,237,249,.98)!important;
+  color:#081d35!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:16px!important;
+  font-family:inherit!important;
+  font-size:clamp(1.35rem,3.1vw,2rem)!important;
+  font-weight:900!important;
+  line-height:1.35!important;
+  text-align:center!important;
+  cursor:pointer!important;
+  box-shadow:none!important;
+}
+
+body:not(.login-page):not(.welcome-page)
+.shil-execution-output-page:not(.shil-emergency-run-output)
+:is(.shil-results-accordion__chevron,.shil-final-output-accordion__header > span:last-child){
+  flex:0 0 auto!important;
+  font-size:.72em!important;
+  color:#081d35!important;
+  line-height:1!important;
+}
+
+body:not(.login-page):not(.welcome-page)
+.shil-execution-output-page:not(.shil-emergency-run-output)
+.shil-results-accordion__content,
+body:not(.login-page):not(.welcome-page)
+.shil-execution-output-page:not(.shil-emergency-run-output)
+.shil-final-output-accordion .shil-final-action-area{
+  box-sizing:border-box!important;
+  width:100%!important;
+  margin:0!important;
+  padding:12px!important;
+  background:rgba(239,246,252,.94)!important;
+  display:grid!important;
+  gap:10px!important;
+}
+
+body:not(.login-page):not(.welcome-page)
+.shil-execution-output-page:not(.shil-emergency-run-output)
+.shil-results-accordion__section{
+  margin:0!important;
+  padding:12px!important;
+  border:1px solid rgba(178,204,225,.9)!important;
+  border-radius:18px!important;
+  background:rgba(255,255,255,.84)!important;
+  box-shadow:none!important;
+}
+
+body:not(.login-page):not(.welcome-page)
+.shil-execution-output-page:not(.shil-emergency-run-output)
+.shil-results-accordion__section h4{
+  margin:0 0 9px!important;
+  color:#0b2440!important;
+  text-align:center!important;
+  font-size:clamp(1rem,2.35vw,1.3rem)!important;
+  font-weight:900!important;
+  line-height:1.4!important;
+}
+
+body:not(.login-page):not(.welcome-page)
+.shil-execution-output-page:not(.shil-emergency-run-output)
+:is(.shil-results-accordion__grid,.shil-results-accordion__notes){
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:10px!important;
+  margin:0!important;
+  padding:0!important;
+}
+
+body:not(.login-page):not(.welcome-page)
+.shil-execution-output-page:not(.shil-emergency-run-output)
+.shil-results-accordion__grid p,
+body:not(.login-page):not(.welcome-page)
+.shil-execution-output-page:not(.shil-emergency-run-output)
+.shil-results-accordion__notes li,
+body:not(.login-page):not(.welcome-page)
+.shil-execution-output-page:not(.shil-emergency-run-output)
+.shil-final-output-accordion .shil-output-actions button{
+  box-sizing:border-box!important;
+  min-height:96px!important;
+  margin:0!important;
+  padding:13px 15px!important;
+  border:1px solid rgba(178,204,225,.92)!important;
+  border-radius:20px!important;
+  background:rgba(255,255,255,.86)!important;
+  color:#081d35!important;
+  font-family:inherit!important;
+  font-size:clamp(.95rem,2.2vw,1.2rem)!important;
+  font-weight:800!important;
+  line-height:1.65!important;
+  text-align:center!important;
+  box-shadow:none!important;
+}
+
+body:not(.login-page):not(.welcome-page)
+.shil-execution-output-page:not(.shil-emergency-run-output)
+.shil-final-output-accordion .shil-output-actions{
+  width:100%!important;
+  margin:0!important;
+  padding:0!important;
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:10px!important;
+}
+
+body:not(.login-page):not(.welcome-page)
+.shil-execution-output-page:not(.shil-emergency-run-output)
+.shil-results-accordion__notes li.warning{
+  border-color:rgba(226,177,49,.8)!important;
+  background:rgba(255,247,214,.95)!important;
+}
+
+@media (max-width:720px){
+  body:not(.login-page):not(.welcome-page)
+  .shil-execution-output-page:not(.shil-emergency-run-output)
+  :is(.shil-results-accordion,.shil-final-output-accordion){border-radius:22px!important;margin-top:10px!important;}
+
+  body:not(.login-page):not(.welcome-page)
+  .shil-execution-output-page:not(.shil-emergency-run-output)
+  :is(.shil-results-accordion__header,.shil-final-output-accordion__header){
+    min-height:74px!important;
+    padding:12px 18px!important;
+    font-size:clamp(1.25rem,5.2vw,1.7rem)!important;
+  }
+
+  body:not(.login-page):not(.welcome-page)
+  .shil-execution-output-page:not(.shil-emergency-run-output)
+  :is(.shil-results-accordion__grid,.shil-results-accordion__notes){
+    grid-template-columns:1fr!important;
+  }
+
+  body:not(.login-page):not(.welcome-page)
+  .shil-execution-output-page:not(.shil-emergency-run-output)
+  .shil-final-output-accordion .shil-output-actions{
+    grid-template-columns:1fr!important;
+  }
+
+  body:not(.login-page):not(.welcome-page)
+  .shil-execution-output-page:not(.shil-emergency-run-output)
+  .shil-results-accordion__grid p,
+  body:not(.login-page):not(.welcome-page)
+  .shil-execution-output-page:not(.shil-emergency-run-output)
+  .shil-results-accordion__notes li,
+  body:not(.login-page):not(.welcome-page)
+  .shil-execution-output-page:not(.shil-emergency-run-output)
+  .shil-final-output-accordion .shil-output-actions button{
+    min-height:78px!important;
+    padding:11px 13px!important;
+  }
+}

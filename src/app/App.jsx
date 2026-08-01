@@ -85,6 +85,8 @@ export default function App() {
           <Route path="/scenarios/:domain/:level" element={<Scenarios />} />
           <Route path="/assistant" element={<Assistant />} />
           <Route path="/education" element={<Education />} />
+          <Route path="/education/:moduleSlug" element={<Education />} />
+          <Route path="/education/:moduleSlug/:topicSlug" element={<Education />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Suspense>

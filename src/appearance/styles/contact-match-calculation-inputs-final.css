@@ -1,0 +1,268 @@
+/* Contact = Calculation Inputs visual parity.
+   Final page-scoped override. Keep after all former contact layers. */
+
+html:has(.shil-contact-page-v529),
+html:has(.shil-contact-page-v529) body,
+html:has(.shil-contact-page-v529) #root,
+.shil-contact-page-v529 {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.shil-contact-page-v529 main.shil-page-content {
+  position: absolute !important;
+  inset: 55px 0 40px !important;
+  width: auto !important;
+  max-width: none !important;
+  height: auto !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 8px 6px calc(72px + env(safe-area-inset-bottom,0px)) !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+  text-align: right !important;
+}
+
+.shil-contact-page-v529 .shil-contact-data,
+.shil-contact-page-v529 .shil-contact-qrs {
+  display: flex !important;
+  flex-direction: column !important;
+  width: min(100%,980px) !important;
+  min-width: 0 !important;
+  margin: 0 auto 8px !important;
+  padding: 0 !important;
+  gap: 7px !important;
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.shil-contact-page-v529 .shil-contact-data + .shil-contact-qrs {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+  border-top: 0 !important;
+}
+
+.shil-contact-page-v529 .shil-contact-data-head {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-wrap: nowrap !important;
+  width: 100% !important;
+  min-height: 40px !important;
+  margin: 0 !important;
+  padding: 6px 10px !important;
+  gap: 8px !important;
+  color: #0b2a3d !important;
+  background: #eaf4ff !important;
+  background-image: none !important;
+  border: 1px solid #c8dceb !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+}
+
+.shil-contact-page-v529 .shil-contact-data-head h2 {
+  margin: 0 !important;
+  color: #0b2a3d !important;
+  font-size: 16px !important;
+  font-weight: 950 !important;
+  line-height: 1.25 !important;
+  text-align: right !important;
+}
+
+.shil-contact-page-v529 .shil-contact-data-head span {
+  flex: 0 0 auto !important;
+  margin: 0 !important;
+  padding: 4px 8px !important;
+  color: #07583f !important;
+  background: #e8fff0 !important;
+  border: 1px solid #67d59e !important;
+  border-radius: 999px !important;
+  box-shadow: none !important;
+  font-size: 9px !important;
+  font-weight: 950 !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+}
+
+.shil-contact-page-v529 .shil-contact-data-list {
+  display: grid !important;
+  grid-template-columns: repeat(2,minmax(0,1fr)) !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  gap: 7px !important;
+}
+
+.shil-contact-page-v529 .shil-contact-data-row {
+  display: grid !important;
+  grid-template-columns: minmax(64px,84px) minmax(0,1fr) !important;
+  align-items: center !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 52px !important;
+  margin: 0 !important;
+  padding: 8px 10px !important;
+  gap: 7px !important;
+  color: #0b2a3d !important;
+  background: rgba(249,252,255,.96) !important;
+  background-image: none !important;
+  border: 1px solid #c8dceb !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  text-align: right !important;
+}
+
+.shil-contact-page-v529 .shil-contact-data-row:first-child {
+  grid-column: 1 / -1 !important;
+  min-height: 64px !important;
+}
+
+.shil-contact-page-v529 .shil-contact-data-row strong {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 30px !important;
+  padding: 4px 6px !important;
+  color: #07583f !important;
+  background: #e8fff0 !important;
+  border: 1px solid #67d59e !important;
+  border-radius: 9px !important;
+  font-size: 10px !important;
+  font-weight: 950 !important;
+  line-height: 1.3 !important;
+  text-align: center !important;
+}
+
+.shil-contact-page-v529 .shil-contact-data-row span,
+.shil-contact-page-v529 .shil-contact-data-row a {
+  min-width: 0 !important;
+  margin: 0 !important;
+  color: #0b2a3d !important;
+  font-size: 11px !important;
+  font-weight: 850 !important;
+  line-height: 1.65 !important;
+  text-align: right !important;
+  text-decoration: none !important;
+  overflow-wrap: anywhere !important;
+}
+
+.shil-contact-page-v529 .shil-contact-data-row a:is(:hover,:focus-visible) {
+  color: #0879ad !important;
+  text-decoration: underline !important;
+}
+
+.shil-contact-page-v529 .shil-contact-qrs-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2,minmax(0,1fr)) !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  gap: 7px !important;
+}
+
+.shil-contact-page-v529 .shil-contact-qr-item {
+  display: grid !important;
+  grid-template-columns: 96px minmax(0,1fr) !important;
+  grid-template-rows: auto auto !important;
+  align-items: center !important;
+  align-content: center !important;
+  justify-items: start !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 112px !important;
+  margin: 0 !important;
+  padding: 8px !important;
+  gap: 3px 9px !important;
+  color: #0b2a3d !important;
+  background: rgba(249,252,255,.96) !important;
+  background-image: none !important;
+  border: 1px solid #c8dceb !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  text-align: right !important;
+}
+
+.shil-contact-page-v529 .shil-contact-qr-item img {
+  grid-row: 1 / span 2 !important;
+  width: 96px !important;
+  height: 96px !important;
+  max-width: none !important;
+  aspect-ratio: 1 !important;
+  margin: 0 !important;
+  padding: 5px !important;
+  object-fit: contain !important;
+  background: #fff !important;
+  border: 1px solid #d8e6f0 !important;
+  border-radius: 10px !important;
+  box-shadow: none !important;
+}
+
+.shil-contact-page-v529 .shil-contact-qr-item strong {
+  align-self: end !important;
+  margin: 0 !important;
+  color: #0b2a3d !important;
+  font-size: 12px !important;
+  font-weight: 950 !important;
+  line-height: 1.35 !important;
+  text-align: right !important;
+}
+
+.shil-contact-page-v529 .shil-contact-qr-item span {
+  align-self: start !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 4px 7px !important;
+  direction: ltr !important;
+  unicode-bidi: plaintext !important;
+  color: #60798a !important;
+  background: #f4faff !important;
+  border: 1px solid #d5e4ee !important;
+  border-radius: 8px !important;
+  font-size: 9px !important;
+  font-weight: 850 !important;
+  line-height: 1.25 !important;
+  text-align: left !important;
+  overflow-wrap: anywhere !important;
+}
+
+@media (max-width: 620px) {
+  .shil-contact-page-v529 .shil-contact-data-list,
+  .shil-contact-page-v529 .shil-contact-qrs-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .shil-contact-page-v529 .shil-contact-data-row:first-child {
+    grid-column: auto !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .shil-contact-page-v529 main.shil-page-content {
+    padding-inline: 5px !important;
+  }
+
+  .shil-contact-page-v529 .shil-contact-data-head h2 {
+    font-size: 14px !important;
+  }
+
+  .shil-contact-page-v529 .shil-contact-data-row {
+    grid-template-columns: 72px minmax(0,1fr) !important;
+    padding: 7px !important;
+  }
+
+  .shil-contact-page-v529 .shil-contact-qr-item {
+    grid-template-columns: 82px minmax(0,1fr) !important;
+    min-height: 98px !important;
+  }
+
+  .shil-contact-page-v529 .shil-contact-qr-item img {
+    width: 82px !important;
+    height: 82px !important;
+  }
+}

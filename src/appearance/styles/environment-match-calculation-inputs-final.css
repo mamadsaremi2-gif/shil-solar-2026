@@ -1,0 +1,402 @@
+/* Environment page final skin: exact visual language of Calculation Inputs.
+   Scoped to the dedicated environment root so behavior and other pages remain untouched. */
+html:has(.shil-page--environment),
+html:has(.shil-page--environment) body,
+html:has(.shil-page--environment) #root,
+.shil-page--environment {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.shil-page--environment main.shil-page-content.shil-ds-page-root {
+  position: absolute !important;
+  inset: 55px 0 40px !important;
+  width: auto !important;
+  height: auto !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+  scroll-padding-top: 102px !important;
+}
+
+.shil-page--environment main.shil-page-content > .shil-project-mini-rail {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 3500 !important;
+  width: 100% !important;
+  max-width: none !important;
+  min-height: 0 !important;
+  height: auto !important;
+  margin: 0 0 7px !important;
+  padding: 5px 7px !important;
+  border-radius: 0 0 18px 18px !important;
+  background: rgba(241, 251, 255, .98) !important;
+  border: 1px solid rgba(198, 220, 235, .96) !important;
+  box-shadow: 0 7px 16px rgba(5, 22, 44, .16) !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  isolation: isolate !important;
+}
+.shil-page--environment main.shil-page-content > .shil-project-mini-rail .project-mini-rail-grid {
+  min-width: 460px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  gap: 5px !important;
+}
+.shil-page--environment main.shil-page-content > .shil-project-mini-rail :is(a,button,.shil-step-item,.ios-icon-item) {
+  min-height: 60px !important;
+  height: auto !important;
+  padding: 3px 4px !important;
+  gap: 3px !important;
+}
+.shil-page--environment main.shil-page-content > .shil-project-mini-rail :is(img,svg,.ios-icon,.shil-step-icon) {
+  width: 35px !important;
+  height: 35px !important;
+  min-width: 35px !important;
+  min-height: 35px !important;
+}
+.shil-page--environment main.shil-page-content > .shil-project-mini-rail :is(span,strong,p) {
+  margin: 0 !important;
+  font-size: 10px !important;
+  line-height: 1.15 !important;
+}
+
+#shil-environment-unified-root {
+  display: flex !important;
+  flex-direction: column !important;
+  width: min(100%, 980px) !important;
+  max-width: 980px !important;
+  min-height: 0 !important;
+  margin: 0 auto !important;
+  padding: 0 6px calc(76px + env(safe-area-inset-bottom,0px)) !important;
+  gap: 7px !important;
+  color: #0b2a3d !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+#shil-environment-unified-root > .shil-env-card {
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100% !important;
+  min-height: 0 !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  gap: 6px !important;
+  color: inherit !important;
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  overflow: visible !important;
+}
+
+#shil-environment-unified-root .shil-section-title {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  min-height: 38px !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 6px 10px !important;
+  color: #0b2a3d !important;
+  background: #eaf4ff !important;
+  background-image: none !important;
+  border: 1px solid #c8dceb !important;
+  border-radius: 13px !important;
+  box-shadow: none !important;
+  font-size: 16px !important;
+  font-weight: 900 !important;
+  line-height: 1.25 !important;
+  text-align: center !important;
+}
+#shil-environment-unified-root .shil-section-title::before,
+#shil-environment-unified-root .shil-section-title::after { content:none !important; display:none !important; }
+
+#shil-environment-unified-root .shil-form-grid,
+#shil-environment-unified-root .shil-manual-climate-grid,
+#shil-environment-unified-root .shil-climate-grid,
+#shil-environment-unified-root .shil-upload-grid,
+#shil-environment-unified-root .shil-orientation-input-grid,
+#shil-environment-unified-root .shil-array-fields {
+  display: grid !important;
+  grid-template-columns: repeat(2,minmax(0,1fr)) !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  gap: 6px !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+#shil-environment-unified-root .shil-form-grid > .shil-field:nth-child(3) { grid-column: 1 / -1 !important; }
+
+#shil-environment-unified-root .shil-field,
+#shil-environment-unified-root .shil-upload-box,
+#shil-environment-unified-root .shil-single-orientation-card,
+#shil-environment-unified-root .shil-installation-array-card,
+#shil-environment-unified-root .shil-installation-summary-card,
+#shil-environment-unified-root .shil-climate-box,
+#shil-environment-unified-root .shil-warning-list,
+#shil-environment-unified-root .shil-installation-layout-panel {
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 7px !important;
+  color: #0b2a3d !important;
+  background: rgba(249,252,255,.94) !important;
+  background-image: none !important;
+  border: 1px solid #c8dceb !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+#shil-environment-unified-root .shil-field {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 5px !important;
+  min-height: 78px !important;
+  text-align: center !important;
+}
+#shil-environment-unified-root :is(.shil-field > label,.shil-upload-box > span,.shil-array-name-row > label) {
+  margin: 0 !important;
+  color: #0b2a3d !important;
+  font-size: 11px !important;
+  font-weight: 900 !important;
+  line-height: 1.2 !important;
+  text-align: center !important;
+}
+
+#shil-environment-unified-root :is(input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),select,textarea,.shil-input) {
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 36px !important;
+  height: 36px !important;
+  margin: 0 !important;
+  padding: 5px 8px !important;
+  color: #07182e !important;
+  background: #fff !important;
+  border: 1px solid #b7d8ee !important;
+  border-radius: 10px !important;
+  box-shadow: none !important;
+  font: 750 13px/1.3 inherit !important;
+  text-align: center !important;
+  outline: none !important;
+}
+#shil-environment-unified-root :is(input:not([type="file"]),select,textarea):focus {
+  background: #e8fff0 !important;
+  border-color: #7edbb0 !important;
+  box-shadow: 0 0 0 1px rgba(50,213,131,.14) !important;
+}
+#shil-environment-unified-root input[type="file"] {
+  width: 100% !important;
+  min-height: 38px !important;
+  padding: 5px !important;
+  color: #405b73 !important;
+  background: #fff !important;
+  border: 1px dashed #9fc7df !important;
+  border-radius: 10px !important;
+  font-size: 10px !important;
+}
+#shil-environment-unified-root .shil-env-hint,
+#shil-environment-unified-root small {
+  margin: 0 !important;
+  color: #547083 !important;
+  font-size: 9px !important;
+  font-weight: 700 !important;
+  line-height: 1.45 !important;
+  text-align: center !important;
+}
+
+#shil-environment-unified-root .shil-gps-toggle,
+#shil-environment-unified-root .shil-upload-choice-row,
+#shil-environment-unified-root .shil-installation-mode-switch,
+#shil-environment-unified-root .shil-install-scroll {
+  display: grid !important;
+  grid-template-columns: repeat(3,minmax(0,1fr)) !important;
+  width: 100% !important;
+  gap: 5px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+}
+#shil-environment-unified-root .shil-upload-choice-row,
+#shil-environment-unified-root .shil-installation-mode-switch { grid-template-columns: repeat(2,minmax(0,1fr)) !important; }
+#shil-environment-unified-root .shil-install-scroll { grid-template-columns: repeat(5,minmax(0,1fr)) !important; }
+#shil-environment-unified-root :is(.shil-gps-toggle button,.shil-upload-choice-row button,.shil-installation-mode-switch button,.shil-install-chip) {
+  min-width: 0 !important;
+  min-height: 34px !important;
+  margin: 0 !important;
+  padding: 5px 6px !important;
+  color: #0b2a3d !important;
+  background: #f7fbff !important;
+  border: 1px solid #c8dceb !important;
+  border-radius: 10px !important;
+  box-shadow: none !important;
+  font-size: 10px !important;
+  font-weight: 900 !important;
+  white-space: normal !important;
+}
+#shil-environment-unified-root :is(.shil-gps-toggle button,.shil-upload-choice-row button,.shil-installation-mode-switch button,.shil-install-chip).active {
+  color: #07583f !important;
+  background: #e8fff0 !important;
+  border-color: #7edbb0 !important;
+  box-shadow: 0 0 0 1px rgba(50,213,131,.12) !important;
+}
+#shil-environment-unified-root .shil-gps-manual-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2,minmax(0,1fr)) !important;
+  gap: 5px !important;
+}
+
+#shil-environment-unified-root .shil-map-container {
+  position: relative !important;
+  width: 100% !important;
+  height: 170px !important;
+  min-height: 170px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  background: rgba(249,252,255,.94) !important;
+  border: 1px solid #c8dceb !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+}
+#shil-environment-unified-root .shil-map-container > img { width:100% !important; height:100% !important; object-fit:cover !important; opacity:.88 !important; }
+
+#shil-environment-unified-root .shil-installation-layout-panel {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  padding: 7px !important;
+}
+#shil-environment-unified-root .shil-single-orientation-card,
+#shil-environment-unified-root .shil-installation-array-card,
+#shil-environment-unified-root .shil-installation-summary-card { padding: 7px !important; }
+#shil-environment-unified-root .shil-compact-card-head,
+#shil-environment-unified-root .shil-array-toggle,
+#shil-environment-unified-root .shil-installation-summary-main {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 6px !important;
+}
+#shil-environment-unified-root .shil-efficiency-badge {
+  flex: 0 0 auto !important;
+  min-width: 44px !important;
+  padding: 4px 7px !important;
+  color: #07583f !important;
+  background: #e8fff0 !important;
+  border: 1px solid #7edbb0 !important;
+  border-radius: 999px !important;
+  font-size: 11px !important;
+  font-weight: 900 !important;
+}
+#shil-environment-unified-root .shil-installation-arrays { display:flex !important; flex-direction:column !important; gap:5px !important; }
+#shil-environment-unified-root .shil-array-toggle { width:100% !important; padding:0 !important; color:#0b2a3d !important; background:transparent !important; border:0 !important; box-shadow:none !important; }
+#shil-environment-unified-root .shil-array-expanded-content { display:flex !important; flex-direction:column !important; gap:5px !important; padding-top:6px !important; }
+#shil-environment-unified-root .shil-array-name-row { display:grid !important; grid-template-columns:90px minmax(0,1fr) !important; gap:5px !important; align-items:center !important; }
+#shil-environment-unified-root .shil-array-result-row,
+#shil-environment-unified-root .shil-installation-summary-metrics,
+#shil-environment-unified-root .shil-array-summary {
+  display: grid !important;
+  grid-template-columns: repeat(3,minmax(0,1fr)) !important;
+  gap: 5px !important;
+  margin-top: 5px !important;
+}
+#shil-environment-unified-root :is(.shil-array-result-row,.shil-installation-summary-metrics,.shil-array-summary) > span {
+  display:flex !important; flex-direction:column !important; align-items:center !important; justify-content:center !important;
+  min-height:42px !important; padding:5px !important; color:#405b73 !important; background:#f7fbff !important;
+  border:1px solid #d8e6f0 !important; border-radius:9px !important; font-size:9px !important; font-weight:800 !important;
+}
+#shil-environment-unified-root :is(.shil-add-array-button,.shil-array-remove,.shil-mini-action) {
+  min-height: 36px !important;
+  padding: 6px 10px !important;
+  color: #0b2a3d !important;
+  background: #eaf4ff !important;
+  border: 1px solid #b8cddd !important;
+  border-radius: 10px !important;
+  box-shadow: none !important;
+  font-size: 11px !important;
+  font-weight: 900 !important;
+}
+#shil-environment-unified-root .shil-array-remove { min-height:30px !important; color:#9b2c2c !important; background:#fff4f4 !important; border-color:#efc4c4 !important; }
+
+#shil-environment-unified-root .shil-upload-box { display:flex !important; flex-direction:column !important; gap:6px !important; min-height:90px !important; }
+#shil-environment-unified-root .shil-site-preview-grid { display:grid !important; grid-template-columns:repeat(3,minmax(0,1fr)) !important; gap:5px !important; }
+#shil-environment-unified-root .shil-site-preview-card { margin:0 !important; padding:4px !important; background:#fff !important; border:1px solid #d8e6f0 !important; border-radius:9px !important; }
+#shil-environment-unified-root .shil-site-preview-card img { width:100% !important; height:70px !important; object-fit:contain !important; }
+
+#shil-environment-unified-root .shil-manual-climate-grid > .shil-field { min-height:68px !important; }
+#shil-environment-unified-root .shil-climate-grid { grid-template-columns:repeat(3,minmax(0,1fr)) !important; }
+#shil-environment-unified-root .shil-climate-box {
+  display:flex !important; flex-direction:column !important; align-items:center !important; justify-content:center !important;
+  min-height:58px !important; gap:2px !important; padding:7px !important; text-align:center !important;
+}
+#shil-environment-unified-root .shil-climate-box span { color:#405b73 !important; font-size:9px !important; font-weight:800 !important; }
+#shil-environment-unified-root .shil-climate-box strong { color:#07182e !important; font-size:13px !important; font-weight:950 !important; }
+#shil-environment-unified-root .shil-warning-list { padding:7px !important; background:#fff9df !important; border-color:#efd167 !important; }
+#shil-environment-unified-root .shil-warning-list p { margin:0 0 4px !important; color:#6b5411 !important; font-size:10px !important; line-height:1.5 !important; }
+
+#shil-environment-unified-root .shil-env-content-confirm-slot {
+  display:flex !important;
+  justify-content:center !important;
+  width:100% !important;
+  margin:0 !important;
+  padding:0 !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+}
+#shil-environment-unified-root .shil-env-content-confirm-button {
+  width:min(100%,460px) !important;
+  min-height:46px !important;
+  height:auto !important;
+  margin:1px auto 0 !important;
+  padding:8px 16px !important;
+  color:#0b2a3d !important;
+  background:#dce8f3 !important;
+  border:1px solid #b8cddd !important;
+  border-radius:14px !important;
+  box-shadow:none !important;
+  font-size:15px !important;
+  font-weight:900 !important;
+}
+#shil-environment-unified-root .shil-env-content-confirm-button:not(:disabled) { background:#e8fff0 !important; border-color:#7edbb0 !important; color:#07583f !important; }
+#shil-environment-unified-root .shil-env-content-confirm-button:disabled { opacity:.68 !important; }
+#shil-environment-unified-root .shil-env-error { padding:7px 10px !important; color:#8b1e1e !important; background:#fff1f1 !important; border:1px solid #efb5b5 !important; border-radius:10px !important; font-size:10px !important; font-weight:800 !important; }
+
+@media (max-width: 560px) {
+  #shil-environment-unified-root { padding-inline:5px !important; gap:6px !important; }
+  #shil-environment-unified-root .shil-form-grid,
+  #shil-environment-unified-root .shil-manual-climate-grid,
+  #shil-environment-unified-root .shil-upload-grid,
+  #shil-environment-unified-root .shil-orientation-input-grid,
+  #shil-environment-unified-root .shil-array-fields { grid-template-columns:repeat(2,minmax(0,1fr)) !important; }
+  #shil-environment-unified-root .shil-form-grid > .shil-field:nth-child(3),
+  #shil-environment-unified-root .shil-upload-grid > * { grid-column:1 / -1 !important; }
+  #shil-environment-unified-root .shil-install-scroll { grid-template-columns:repeat(5,minmax(64px,1fr)) !important; overflow-x:auto !important; }
+  #shil-environment-unified-root .shil-climate-grid { grid-template-columns:repeat(2,minmax(0,1fr)) !important; }
+  #shil-environment-unified-root .shil-section-title { min-height:36px !important; font-size:15px !important; }
+  #shil-environment-unified-root .shil-map-container { height:145px !important; min-height:145px !important; }
+}
+
+@media (max-width: 390px) {
+  #shil-environment-unified-root .shil-gps-toggle { grid-template-columns:1fr !important; }
+  #shil-environment-unified-root .shil-array-result-row,
+  #shil-environment-unified-root .shil-installation-summary-metrics { grid-template-columns:1fr !important; }
+  #shil-environment-unified-root .shil-climate-grid { grid-template-columns:repeat(2,minmax(0,1fr)) !important; }
+}

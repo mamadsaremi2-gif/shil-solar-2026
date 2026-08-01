@@ -1122,7 +1122,7 @@ export default function CalculationInputs() {
           <ShilPrimaryButton
             className="shil-env-content-confirm-button"
             onClick={confirmLoad}
-            label="تأیید توان"
+            label={domain === "emergency" ? "تأیید" : "تأیید توان"}
             style={{
               position: "static",
               left: "auto",

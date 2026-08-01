@@ -1,5 +1,5 @@
 import ShilPrimaryButton from "../../components/project/ShilPrimaryButton";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ShilPageShell from "../../components/ShilPageShell";
 import ProjectMiniRail from "../../components/ProjectMiniRail.jsx";
@@ -89,6 +89,45 @@ function fileToAttachment(file, type, latitude, longitude) {
 }
 
 export default function Environment() {
+  useLayoutEffect(() => {
+    const shell = document.querySelector(".shil-page--environment");
+    const main = shell?.querySelector("main.shil-page-content");
+    const rail = main?.querySelector(":scope > .shil-project-mini-rail");
+    const root = main?.querySelector("#shil-calculation-inputs-root");
+
+    const forceVisible = (element, styles) => {
+      if (!element) return;
+      Object.entries(styles).forEach(([property, value]) => {
+        element.style.setProperty(property, value, "important");
+      });
+    };
+
+    forceVisible(shell, {
+      position: "relative", display: "flex", width: "100%", height: "100dvh",
+      overflow: "hidden", opacity: "1", visibility: "visible", transform: "none"
+    });
+    forceVisible(main, {
+      position: "absolute", inset: "55px 0 68px", display: "block", width: "auto",
+      height: "auto", "min-height": "0", overflow: "auto", opacity: "1",
+      visibility: "visible", transform: "none", filter: "none", "clip-path": "none",
+      "content-visibility": "visible", contain: "none", "z-index": "50"
+    });
+    forceVisible(rail, {
+      position: "sticky", top: "0", display: "block", width: "100%", height: "auto",
+      opacity: "1", visibility: "visible", transform: "none", "z-index": "60"
+    });
+    forceVisible(root, {
+      position: "relative", display: "flex", width: "min(100%, 980px)", height: "auto",
+      "min-height": "1px", opacity: "1", visibility: "visible", transform: "none",
+      filter: "none", "clip-path": "none", "content-visibility": "visible", contain: "none",
+      overflow: "visible", "z-index": "55"
+    });
+
+    return () => {
+      [shell, main, rail, root].forEach((element) => element?.removeAttribute("style"));
+    };
+  }, []);
+
   useEffect(() => {
     document.body.classList.add("shil-environment-unified-screen");
 
@@ -599,9 +638,10 @@ const navigate = useNavigate();
       prevLabel="مرحله قبل"
       draftLabel="ذخیره"
       scrollXVisible
+      className="shil-page--calculation-inputs shil-environment-calculation-parity"
     >
       <ProjectMiniRail />
-      <div id="shil-environment-unified-root" className="shil-env-page shil-env-page--unified">
+      <div id="shil-calculation-inputs-root" className="shil-env-page shil-env-page--unified shil-equipment-page shil-calculation-inputs-page">
         <section className="shil-env-card">
           <h3 className="shil-section-title">موقعیت پروژه</h3>
 
@@ -838,11 +878,19 @@ const navigate = useNavigate();
             <div className="shil-climate-box"><span>درجه حفاظت</span><strong>{assessment.recommendedIngressProtection}</strong></div>
             <div className="shil-climate-box"><span>وضعیت مسیر</span><strong>{routeStatusLabel}</strong></div>
           </div>
-          {assessment.warnings.length ? (
-            <div className="shil-warning-list">
-              {assessment.warnings.map((item, index) => <p key={index}>{item}</p>)}
+          <details className="shil-env-notes-accordion">
+            <summary>
+              <span>توضیحات و نکات فنی</span>
+              <small>{assessment.warnings.length ? `${assessment.warnings.length} نکته برای بررسی` : "بدون هشدار جدی"}</small>
+            </summary>
+            <div className="shil-env-notes-content">
+              {assessment.warnings.length ? (
+                <div className="shil-warning-list">
+                  {assessment.warnings.map((item, index) => <p key={index}>{item}</p>)}
+                </div>
+              ) : <small className="shil-env-hint">هیچ هشدار محیطی جدی ثبت نشده است.</small>}
             </div>
-          ) : <small className="shil-env-hint">هیچ هشدار محیطی جدی ثبت نشده است.</small>}
+          </details>
         </section>
 
         {activeSitePreview ? (

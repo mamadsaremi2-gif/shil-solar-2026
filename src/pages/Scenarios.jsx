@@ -56,8 +56,8 @@ export default function Scenarios() {
 
   if (!domain) {
     return (
-      <ShilPageShell title="سناریوهای آماده">
-        <div className="shil-scenario-hub">
+      <ShilPageShell title="سناریوهای آماده" className="shil-scenarios-shell shil-scenarios-shell--hub">
+        <div id="shil-scenarios-root" className="shil-scenario-hub shil-scenario-hub--domains">
           <button onClick={() => navigate("/scenarios/solar")} className="shil-big-route-card">
             سناریوهای آماده انرژی های خورشیدی
           </button>
@@ -72,8 +72,8 @@ export default function Scenarios() {
 
   if (domain && !level) {
     return (
-      <ShilPageShell title={domainLabels[domain] || "سناریوهای آماده"}>
-        <div className="shil-scenario-hub">
+      <ShilPageShell title={domainLabels[domain] || "سناریوهای آماده"} className="shil-scenarios-shell shil-scenarios-shell--levels">
+        <div id="shil-scenarios-root" className="shil-scenario-hub shil-scenario-hub--levels">
           <button onClick={() => navigate(`/scenarios/${domain}/light`)} className="shil-big-route-card">
             سبک<br /><small>100 سناریوی اختصاصی</small>
           </button>
@@ -91,7 +91,8 @@ export default function Scenarios() {
   }
 
   return (
-    <ShilPageShell title={`${domainLabels[domain]} - ${levelLabels[level] || levelMeta[level]?.fa || ""}`}>
+    <ShilPageShell title={`${domainLabels[domain]} - ${levelLabels[level] || levelMeta[level]?.fa || ""}`} className="shil-scenarios-shell shil-scenarios-shell--list">
+      <div id="shil-scenarios-root" className="shil-scenario-list-root" dir="rtl">
       <div className="shil-scenario-search-card" dir="auto">
         <label htmlFor="scenario-search">جستجوی سناریو</label>
         <input
@@ -131,6 +132,7 @@ export default function Scenarios() {
             </button>
           </article>
         ))}
+      </div>
       </div>
     </ShilPageShell>
   );

@@ -1,0 +1,254 @@
+/* Education hub and all nested education pages = Calculation Inputs visual parity. */
+html:has(.shil-education-page-unified),
+html:has(.shil-education-page-unified) body,
+html:has(.shil-education-page-unified) #root,
+.shil-education-page-unified {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.shil-education-page-unified main.shil-page-content {
+  position: absolute !important;
+  inset: 55px 0 40px !important;
+  width: auto !important;
+  height: auto !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 7px 0 0 !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+#shil-education-root {
+  display: flex !important;
+  flex-direction: column !important;
+  width: min(100%, 980px) !important;
+  min-height: 0 !important;
+  margin: 0 auto !important;
+  padding: 0 7px calc(76px + env(safe-area-inset-bottom, 0px)) !important;
+  gap: 7px !important;
+  direction: rtl !important;
+  color: #0b2a3d !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+#shil-education-root :is(.shil-education-section,.shil-education-content-card) {
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 7px !important;
+  color: #0b2a3d !important;
+  background: rgba(249,252,255,.95) !important;
+  background-image: none !important;
+  border: 1px solid #c8dceb !important;
+  border-radius: 13px !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+#shil-education-root .shil-education-section-title {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  min-height: 38px !important;
+  margin: 0 0 6px !important;
+  padding: 6px 10px !important;
+  color: #0b2a3d !important;
+  background: #eaf4ff !important;
+  background-image: none !important;
+  border: 1px solid #c8dceb !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  font-size: 16px !important;
+  font-weight: 950 !important;
+  line-height: 1.3 !important;
+  text-align: center !important;
+}
+
+#shil-education-root .shil-education-intro-card > p,
+#shil-education-root .shil-education-lead {
+  margin: 0 !important;
+  padding: 5px 8px 7px !important;
+  color: #60798a !important;
+  font-size: 11.5px !important;
+  font-weight: 750 !important;
+  line-height: 1.8 !important;
+  text-align: center !important;
+}
+
+#shil-education-root .shil-education-grid,
+#shil-education-root .shil-education-topic-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2,minmax(0,1fr)) !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  gap: 7px !important;
+}
+
+#shil-education-root .shil-education-card {
+  display: grid !important;
+  grid-template-columns: 34px minmax(0,1fr) !important;
+  grid-template-rows: auto auto auto !important;
+  align-items: center !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 104px !important;
+  margin: 0 !important;
+  padding: 9px !important;
+  gap: 2px 8px !important;
+  color: #0b2a3d !important;
+  background: #f9fcff !important;
+  border: 1px solid #c8dceb !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  text-decoration: none !important;
+  text-align: right !important;
+}
+
+#shil-education-root .shil-education-card:hover,
+#shil-education-root .shil-education-card:focus-visible,
+#shil-education-root .shil-education-topic-card:hover,
+#shil-education-root .shil-education-topic-card:focus-visible {
+  background: #e8fff0 !important;
+  border-color: #55cf96 !important;
+  outline: none !important;
+}
+
+#shil-education-root .shil-education-card-index,
+#shil-education-root .shil-education-topic-number {
+  display: grid !important;
+  place-items: center !important;
+  grid-row: 1 / span 3 !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 10px !important;
+  color: #07583f !important;
+  background: #e8fff0 !important;
+  border: 1px solid #67d59e !important;
+  font-size: 11px !important;
+  font-weight: 950 !important;
+}
+
+#shil-education-root .shil-education-card strong {
+  color: #0b2a3d !important;
+  font-size: 13px !important;
+  font-weight: 950 !important;
+  line-height: 1.45 !important;
+}
+#shil-education-root .shil-education-card > span:not(.shil-education-card-index) {
+  color: #60798a !important;
+  font-size: 10.5px !important;
+  font-weight: 750 !important;
+  line-height: 1.55 !important;
+}
+#shil-education-root .shil-education-card small {
+  color: #07835f !important;
+  font-size: 9.5px !important;
+  font-weight: 900 !important;
+}
+
+#shil-education-root .shil-education-topic-card {
+  display: grid !important;
+  grid-template-columns: 34px minmax(0,1fr) auto !important;
+  align-items: center !important;
+  min-height: 76px !important;
+  padding: 8px !important;
+  gap: 8px !important;
+  color: #0b2a3d !important;
+  background: #f9fcff !important;
+  border: 1px solid #c8dceb !important;
+  border-radius: 12px !important;
+  text-decoration: none !important;
+}
+#shil-education-root .shil-education-topic-number { grid-row: auto !important; }
+#shil-education-root .shil-education-topic-card > div { display:grid !important; gap:3px !important; min-width:0 !important; }
+#shil-education-root .shil-education-topic-card strong { font-size:12.5px !important; font-weight:950 !important; line-height:1.4 !important; }
+#shil-education-root .shil-education-topic-card div span { color:#60798a !important; font-size:10px !important; font-weight:750 !important; line-height:1.55 !important; }
+#shil-education-root .shil-education-open-label {
+  padding: 5px 8px !important;
+  border-radius: 999px !important;
+  color: #07583f !important;
+  background: #e8fff0 !important;
+  border: 1px solid #67d59e !important;
+  font-size: 9px !important;
+  font-weight: 900 !important;
+}
+
+#shil-education-root .shil-education-breadcrumb {
+  display: block !important;
+  margin: 0 0 5px !important;
+  color: #07835f !important;
+  font-size: 10px !important;
+  font-weight: 900 !important;
+  text-align: center !important;
+}
+
+#shil-education-root .shil-education-content-card { display:grid !important; gap:7px !important; }
+#shil-education-root .shil-education-content-status {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  min-height: 46px !important;
+  padding: 7px 10px !important;
+  gap: 8px !important;
+  background: #e8fff0 !important;
+  border: 1px solid #67d59e !important;
+  border-radius: 11px !important;
+}
+#shil-education-root .shil-education-content-status strong { color:#07583f !important; font-size:12px !important; font-weight:950 !important; }
+#shil-education-root .shil-education-content-status span { color:#2f6e5a !important; font-size:9.5px !important; font-weight:800 !important; }
+#shil-education-root .shil-education-content-placeholder {
+  min-height: 190px !important;
+  padding: 18px 14px !important;
+  background: #fff !important;
+  border: 1px solid #c8dceb !important;
+  border-radius: 11px !important;
+  text-align: center !important;
+}
+#shil-education-root .shil-education-content-placeholder strong { display:block !important; margin-bottom:8px !important; font-size:14px !important; font-weight:950 !important; }
+#shil-education-root .shil-education-content-placeholder p { margin:0 !important; color:#60798a !important; font-size:11px !important; font-weight:750 !important; line-height:1.9 !important; }
+
+#shil-education-root .shil-education-topic-actions {
+  display: grid !important;
+  grid-template-columns: repeat(2,minmax(0,1fr)) !important;
+  gap: 7px !important;
+}
+#shil-education-root :is(.shil-education-back-link,.shil-education-home-link) {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 44px !important;
+  margin: 0 !important;
+  padding: 7px 12px !important;
+  color: #0b2a3d !important;
+  background: #eaf4ff !important;
+  border: 1px solid #c8dceb !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  font: inherit !important;
+  font-size: 11px !important;
+  font-weight: 950 !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+}
+#shil-education-root .shil-education-home-link { background:#e8fff0 !important; border-color:#67d59e !important; color:#07583f !important; }
+
+@media (max-width: 620px) {
+  #shil-education-root .shil-education-grid,
+  #shil-education-root .shil-education-topic-grid { grid-template-columns: 1fr !important; }
+}
+
+@media (max-width: 390px) {
+  #shil-education-root { padding-inline: 5px !important; }
+  #shil-education-root .shil-education-section-title { font-size: 14px !important; }
+  #shil-education-root .shil-education-topic-card { grid-template-columns: 30px minmax(0,1fr) !important; }
+  #shil-education-root .shil-education-open-label { display:none !important; }
+  #shil-education-root .shil-education-topic-actions { grid-template-columns: 1fr !important; }
+}

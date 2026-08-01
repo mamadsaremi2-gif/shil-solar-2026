@@ -175,7 +175,7 @@ export default function EmergencySystemSettings() {
 
   return (
     <EngineeringPageShell title="تنظیمات برق اضطراری">
-      <section className="shil-card-stack shil-system-final-page">
+      <section id="shil-emergency-settings-root" className="shil-card-stack shil-system-final-page shil-calculation-inputs-page shil-emergency-settings-calc-skin">
         <div className="shil-section-card shil-config-block">
           <div className="shil-section-head"><h2>موتور اختصاصی برق اضطراری</h2><span>Battery + Inverter</span></div>
           <p className="shil-muted-line">این مسیر کاملاً مستقل از مسیر PV است. بانک خام اینورتر، باتری، حفاظت و کابل از Registry مشترک خوانده می‌شود، اما فیلتر و منطق انتخاب آن اختصاصی برق اضطراری است.</p>
@@ -220,7 +220,7 @@ export default function EmergencySystemSettings() {
         </div>
 
         <ShilWarningOverlay messages={design.warnings} />
-        <ShilPrimaryButton className="shil-flow-content-confirm-button shil-confirm-config-button shil-inline-confirm-button" disabled={!design.valid} onClick={confirm} label="تأیید انرژی"  />
+        <ShilPrimaryButton className="shil-flow-content-confirm-button shil-confirm-config-button shil-inline-confirm-button" disabled={!design.valid} onClick={confirm} label="تأیید"  />
       </section>
     </EngineeringPageShell>
   );

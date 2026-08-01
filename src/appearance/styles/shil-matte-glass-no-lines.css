@@ -262,3 +262,47 @@ body:not(.login-page):not(.welcome-page) b { color: var(--shil-text-main) !impor
     z-index:4000 !important;
 }
 
+
+/* SHIL FINAL: emergency settings confirm button parity */
+html body .shil-page-shell:not(.shil-page--auth) .shil-emergency-settings-page > button.shil-emergency-confirm-button,
+html body .shil-page-shell:not(.shil-page--auth) .shil-emergency-settings-page > button.shil-emergency-confirm-button:disabled {
+  display: inline-flex !important;
+  position: relative !important;
+  inset: auto !important;
+  transform: none !important;
+  float: none !important;
+  place-self: center !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 220px !important;
+  min-width: 220px !important;
+  max-width: 220px !important;
+  height: 46px !important;
+  min-height: 46px !important;
+  max-height: 46px !important;
+  margin: 22px auto calc(56px + env(safe-area-inset-bottom, 0px)) !important;
+  padding: 0 18px !important;
+  box-sizing: border-box !important;
+  border: 1px solid rgba(255,255,255,.72) !important;
+  border-radius: 18px !important;
+  background: linear-gradient(100deg, #31bce8 0%, #6670ed 100%) !important;
+  background-image: linear-gradient(100deg, #31bce8 0%, #6670ed 100%) !important;
+  box-shadow: 0 8px 18px rgba(18,48,82,.22), inset 0 1px 0 rgba(255,255,255,.55) !important;
+  color: #09213f !important;
+  font-size: 20px !important;
+  line-height: 1 !important;
+  font-weight: 900 !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+  opacity: 1 !important;
+  filter: none !important;
+  z-index: 20 !important;
+}
+html body .shil-emergency-settings-page > button.shil-emergency-confirm-button::before,
+html body .shil-emergency-settings-page > button.shil-emergency-confirm-button::after {
+  content: none !important;
+  display: none !important;
+}
+html body .shil-emergency-settings-page > button.shil-emergency-confirm-button:disabled {
+  cursor: not-allowed !important;
+}

@@ -1,0 +1,407 @@
+/* Calculation Inputs unified visual layer.
+   Scoped to the real page root and loaded last to neutralize legacy overrides. */
+html:has(.shil-page--calculation-inputs),
+html:has(.shil-page--calculation-inputs) body,
+html:has(.shil-page--calculation-inputs) #root,
+.shil-page--calculation-inputs {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.shil-page--calculation-inputs main.shil-page-content.shil-ds-page-root {
+  position: absolute !important;
+  inset: 55px 0 40px !important;
+  width: auto !important;
+  height: auto !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+  scroll-padding-top: 102px !important;
+}
+
+.shil-page--calculation-inputs main.shil-page-content > .shil-project-mini-rail {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 3500 !important;
+  width: 100% !important;
+  max-width: none !important;
+  min-height: 0 !important;
+  height: auto !important;
+  margin: 0 0 7px !important;
+  padding: 5px 7px !important;
+  border-radius: 0 0 18px 18px !important;
+  background: rgba(241,251,255,.98) !important;
+  border: 1px solid rgba(198,220,235,.96) !important;
+  box-shadow: 0 7px 16px rgba(5,22,44,.16) !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  isolation: isolate !important;
+}
+.shil-page--calculation-inputs main.shil-page-content > .shil-project-mini-rail .project-mini-rail-grid {
+  min-width: 460px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  gap: 5px !important;
+}
+.shil-page--calculation-inputs main.shil-page-content > .shil-project-mini-rail :is(a,button,.shil-step-item,.ios-icon-item) {
+  min-height: 60px !important;
+  height: auto !important;
+  padding: 3px 4px !important;
+  gap: 3px !important;
+}
+.shil-page--calculation-inputs main.shil-page-content > .shil-project-mini-rail :is(img,svg,.ios-icon,.shil-step-icon) {
+  width: 35px !important;
+  height: 35px !important;
+  min-width: 35px !important;
+  min-height: 35px !important;
+}
+.shil-page--calculation-inputs main.shil-page-content > .shil-project-mini-rail :is(span,strong,p) {
+  margin: 0 !important;
+  font-size: 10px !important;
+  line-height: 1.15 !important;
+}
+
+#shil-calculation-inputs-root {
+  display: flex !important;
+  flex-direction: column !important;
+  width: min(100%,980px) !important;
+  max-width: 980px !important;
+  min-height: 0 !important;
+  margin: 0 auto !important;
+  padding: 0 6px calc(76px + env(safe-area-inset-bottom,0px)) !important;
+  gap: 7px !important;
+  color: #0b2a3d !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+#shil-calculation-inputs-root :is(.shil-env-card,.shil-selected-equipment-list) {
+  width: 100% !important;
+  min-width: 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 7px !important;
+  gap: 6px !important;
+  color: #0b2a3d !important;
+  background: rgba(249,252,255,.95) !important;
+  background-image: none !important;
+  border: 1px solid #c8dceb !important;
+  border-radius: 13px !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  overflow: visible !important;
+}
+
+#shil-calculation-inputs-root .shil-section-title {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  min-height: 38px !important;
+  margin: 0 0 6px !important;
+  padding: 6px 10px !important;
+  color: #0b2a3d !important;
+  background: #eaf4ff !important;
+  background-image: none !important;
+  border: 1px solid #c8dceb !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  font-size: 16px !important;
+  font-weight: 950 !important;
+  line-height: 1.25 !important;
+  text-align: center !important;
+}
+#shil-calculation-inputs-root .shil-section-title::before,
+#shil-calculation-inputs-root .shil-section-title::after { content:none !important; display:none !important; }
+
+#shil-calculation-inputs-root .shil-summary-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2,minmax(0,1fr)) !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  gap: 6px !important;
+}
+#shil-calculation-inputs-root .shil-summary-grid > div {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 0 !important;
+  min-height: 56px !important;
+  margin: 0 !important;
+  padding: 7px 8px !important;
+  gap: 2px !important;
+  background: #f9fcff !important;
+  border: 1px solid #c8dceb !important;
+  border-radius: 11px !important;
+  box-shadow: none !important;
+  text-align: center !important;
+}
+#shil-calculation-inputs-root .shil-summary-grid > div > span {
+  color: #60798a !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  line-height: 1.2 !important;
+}
+#shil-calculation-inputs-root .shil-summary-grid > div > strong {
+  color: #0b2a3d !important;
+  font-size: 13px !important;
+  font-weight: 950 !important;
+  line-height: 1.25 !important;
+  overflow-wrap: anywhere !important;
+}
+
+#shil-calculation-inputs-root .shil-equipment-field {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  min-height: 52px !important;
+  margin: 0 !important;
+  padding: 8px 11px !important;
+  gap: 8px !important;
+  color: #0b2a3d !important;
+  background: #e8fff0 !important;
+  border: 1px solid #67d59e !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  font-size: 12px !important;
+  font-weight: 900 !important;
+  text-align: right !important;
+}
+#shil-calculation-inputs-root .shil-equipment-field strong { font-size: 11px !important; color:#07583f !important; }
+
+#shil-calculation-inputs-root .shil-equipment-picker-panel {
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100% !important;
+  margin: 6px 0 0 !important;
+  padding: 7px !important;
+  gap: 6px !important;
+  background: #f4faff !important;
+  border: 1px solid #c8dceb !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+}
+#shil-calculation-inputs-root .shil-equipment-scroll-list {
+  display: grid !important;
+  grid-template-columns: repeat(2,minmax(0,1fr)) !important;
+  max-height: 270px !important;
+  padding: 2px !important;
+  gap: 5px !important;
+  overflow-y: auto !important;
+}
+#shil-calculation-inputs-root .shil-equipment-option {
+  min-height: 52px !important;
+  margin: 0 !important;
+  padding: 7px 8px !important;
+  color: #0b2a3d !important;
+  background: #fff !important;
+  border: 1px solid #c8dceb !important;
+  border-radius: 10px !important;
+  box-shadow: none !important;
+  text-align: right !important;
+}
+#shil-calculation-inputs-root .shil-equipment-option.active {
+  background: #e8fff0 !important;
+  border-color: #55cf96 !important;
+  box-shadow: 0 0 0 2px rgba(50,213,131,.10) !important;
+}
+#shil-calculation-inputs-root .shil-equipment-option strong { display:block !important; font-size:11px !important; line-height:1.25 !important; }
+#shil-calculation-inputs-root .shil-equipment-option span { display:block !important; margin-top:2px !important; color:#71879a !important; font-size:9px !important; line-height:1.2 !important; }
+
+#shil-calculation-inputs-root .shil-equipment-actions {
+  display: grid !important;
+  grid-template-columns: repeat(2,minmax(0,1fr)) !important;
+  width: 100% !important;
+  gap: 6px !important;
+}
+#shil-calculation-inputs-root :is(.shil-secondary-wide,.shil-soft-button,.shil-soft-link-button) {
+  min-height: 42px !important;
+  margin: 0 !important;
+  padding: 7px 9px !important;
+  color: #0b2a3d !important;
+  background: #edf6fd !important;
+  border: 1px solid #bfd5e5 !important;
+  border-radius: 11px !important;
+  box-shadow: none !important;
+  font-size: 12px !important;
+  font-weight: 900 !important;
+}
+
+#shil-calculation-inputs-root .shil-form-grid,
+#shil-calculation-inputs-root .shil-equipment-controls {
+  display: grid !important;
+  grid-template-columns: repeat(2,minmax(0,1fr)) !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  gap: 6px !important;
+}
+#shil-calculation-inputs-root :is(.shil-form-grid,.shil-equipment-controls) > label {
+  display: flex !important;
+  flex-direction: column !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 6px !important;
+  gap: 5px !important;
+  color: #0b2a3d !important;
+  background: #f8fbfe !important;
+  border: 1px solid #c8dceb !important;
+  border-radius: 11px !important;
+  font-size: 10px !important;
+  font-weight: 900 !important;
+}
+#shil-calculation-inputs-root .shil-input {
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 40px !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 7px 9px !important;
+  color: #0b2a3d !important;
+  background: #fff !important;
+  border: 1px solid #b9d2e5 !important;
+  border-radius: 10px !important;
+  box-shadow: none !important;
+  font-size: 12px !important;
+  font-weight: 850 !important;
+  outline: none !important;
+}
+#shil-calculation-inputs-root .shil-input:focus {
+  border-color: #55cf96 !important;
+  box-shadow: 0 0 0 2px rgba(50,213,131,.12) !important;
+  background: #f7fffa !important;
+}
+
+#shil-calculation-inputs-root .shil-muted-note,
+#shil-calculation-inputs-root .shil-empty-selection,
+#shil-calculation-inputs-root .shil-load-kind-note {
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 7px 9px !important;
+  color: #506b7d !important;
+  background: #f3f8fc !important;
+  border: 1px solid #d4e2ec !important;
+  border-radius: 10px !important;
+  font-size: 10px !important;
+  font-weight: 750 !important;
+  line-height: 1.55 !important;
+  text-align: center !important;
+}
+
+#shil-calculation-inputs-root .shil-equipment-card {
+  width: 100% !important;
+  margin: 0 0 6px !important;
+  padding: 7px !important;
+  background: #fff !important;
+  border: 1px solid #c8dceb !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+}
+#shil-calculation-inputs-root .shil-equipment-card.active { border-color:#72d7aa !important; background:#f7fffa !important; }
+#shil-calculation-inputs-root .shil-selected-equipment-head {
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  gap:8px !important;
+  margin:0 0 6px !important;
+}
+#shil-calculation-inputs-root .shil-selected-equipment-head strong { font-size:12px !important; color:#0b2a3d !important; }
+#shil-calculation-inputs-root .shil-selected-equipment-head span { display:block !important; margin-top:2px !important; color:#708697 !important; font-size:9px !important; }
+#shil-calculation-inputs-root .shil-remove-equipment {
+  min-height:32px !important;
+  padding:5px 10px !important;
+  color:#9b2f3f !important;
+  background:#fff2f3 !important;
+  border:1px solid #efb6bd !important;
+  border-radius:9px !important;
+  font-size:10px !important;
+  font-weight:900 !important;
+}
+
+#shil-calculation-inputs-root .shil-check-row {
+  grid-column: 1 / -1 !important;
+  display:flex !important;
+  flex-direction:row !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  min-height:42px !important;
+  background:#e8fff0 !important;
+  border-color:#7edbb0 !important;
+}
+#shil-calculation-inputs-root .shil-check-row input { width:18px !important; height:18px !important; margin:0 0 0 7px !important; accent-color:#32b979 !important; }
+
+#shil-calculation-inputs-root :is(.shil-expert-box,.shil-expert-mini) {
+  width:100% !important;
+  margin:6px 0 0 !important;
+  padding:7px 9px !important;
+  background:#eef8ff !important;
+  border:1px solid #c4deef !important;
+  border-radius:10px !important;
+  color:#35566a !important;
+  font-size:10px !important;
+  line-height:1.5 !important;
+}
+#shil-calculation-inputs-root .shil-warning-list {
+  margin:6px 0 0 !important;
+  padding:7px 24px 7px 8px !important;
+  color:#755600 !important;
+  background:#fff9df !important;
+  border:1px solid #e9cb63 !important;
+  border-radius:10px !important;
+  font-size:10px !important;
+  line-height:1.5 !important;
+}
+
+#shil-calculation-inputs-root .shil-input-content-confirm-slot {
+  display:flex !important;
+  justify-content:center !important;
+  width:100% !important;
+  margin:8px 0 calc(52px + env(safe-area-inset-bottom,0px)) !important;
+  padding:0 !important;
+}
+#shil-calculation-inputs-root .shil-env-content-confirm-button {
+  position:static !important;
+  width:min(100%,460px) !important;
+  min-width:0 !important;
+  min-height:48px !important;
+  margin:0 auto !important;
+  padding:8px 18px !important;
+  color:#fff !important;
+  background:linear-gradient(135deg,#22b8d8 0%,#6f55dc 100%) !important;
+  border:1px solid rgba(255,255,255,.55) !important;
+  border-radius:999px !important;
+  box-shadow:0 7px 15px rgba(14,70,105,.18) !important;
+  font-size:15px !important;
+  font-weight:950 !important;
+  white-space:nowrap !important;
+}
+
+@media (max-width: 560px) {
+  #shil-calculation-inputs-root { padding-inline:5px !important; gap:6px !important; }
+  #shil-calculation-inputs-root :is(.shil-env-card,.shil-selected-equipment-list) { padding:6px !important; }
+  #shil-calculation-inputs-root .shil-section-title { min-height:36px !important; font-size:14px !important; }
+  #shil-calculation-inputs-root .shil-summary-grid { grid-template-columns:repeat(2,minmax(0,1fr)) !important; gap:5px !important; }
+  #shil-calculation-inputs-root .shil-summary-grid > div { min-height:52px !important; padding:6px !important; }
+  #shil-calculation-inputs-root .shil-form-grid,
+  #shil-calculation-inputs-root .shil-equipment-controls { grid-template-columns:repeat(2,minmax(0,1fr)) !important; gap:5px !important; }
+  #shil-calculation-inputs-root .shil-equipment-scroll-list { grid-template-columns:1fr !important; }
+}
+
+@media (max-width: 380px) {
+  #shil-calculation-inputs-root .shil-form-grid,
+  #shil-calculation-inputs-root .shil-equipment-controls,
+  #shil-calculation-inputs-root .shil-equipment-actions { grid-template-columns:1fr !important; }
+  #shil-calculation-inputs-root .shil-summary-grid > div > strong { font-size:12px !important; }
+}

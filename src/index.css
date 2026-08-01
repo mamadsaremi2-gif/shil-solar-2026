@@ -582,3 +582,334 @@ html body.shil-project-path-screen .shil-project-path-confirm:last-child {
 .shil-array-fields--geometry-only small{font-size:12px;line-height:1.7;opacity:.78}
 .shil-array-summary--geometry{grid-template-columns:repeat(2,minmax(0,1fr))}
 @media (max-width:700px){.shil-array-fields--geometry-only,.shil-array-summary--geometry{grid-template-columns:1fr}}
+
+/* SHIL EMERGENCY FLOW - CALCULATION INPUTS VISUAL UNIFICATION V8 */
+html body:not(.login-page):not(.welcome-page) :is(
+  #shil-project-info-root.shil-project-info-emergency,
+  #shil-emergency-settings-root,
+  #shil-execution-output-root.shil-emergency-run-output
+){
+  width:min(100%, 920px) !important;
+  margin:0 auto !important;
+  padding:12px 12px 76px !important;
+  background:transparent !important;
+  border:0 !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+  color:#102542 !important;
+  direction:rtl !important;
+  box-sizing:border-box !important;
+}
+
+/* remove legacy colored parent layers */
+html body:not(.login-page):not(.welcome-page) #shil-emergency-settings-root > *,
+html body:not(.login-page):not(.welcome-page) #shil-execution-output-root.shil-emergency-run-output > *,
+html body:not(.login-page):not(.welcome-page) #shil-project-info-root.shil-project-info-emergency > *{
+  box-sizing:border-box !important;
+}
+
+html body:not(.login-page):not(.welcome-page) :is(
+  #shil-project-info-root.shil-project-info-emergency .shil-project-info-calc-card,
+  #shil-emergency-settings-root .shil-section-card,
+  #shil-emergency-settings-root .shil-system-banks-grid,
+  #shil-execution-output-root.shil-emergency-run-output .shil-final-one-page-sheet,
+  #shil-execution-output-root.shil-emergency-run-output .shil-final-sheet-block,
+  #shil-execution-output-root.shil-emergency-run-output .shil-final-action-area
+){
+  margin:0 0 12px !important;
+  padding:12px !important;
+  background:rgba(239,247,255,.94) !important;
+  border:1px solid #b8d4ec !important;
+  border-radius:22px !important;
+  box-shadow:0 6px 18px rgba(15,35,64,.10) !important;
+}
+
+/* settings: bank wrappers must not create a giant purple parent */
+html body:not(.login-page):not(.welcome-page) #shil-emergency-settings-root .shil-system-banks-grid{
+  display:grid !important;
+  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  gap:12px !important;
+}
+html body:not(.login-page):not(.welcome-page) #shil-emergency-settings-root .shil-system-banks-grid > *{
+  min-width:0 !important;
+  margin:0 !important;
+}
+
+/* calculation-input-like section headers */
+html body:not(.login-page):not(.welcome-page) :is(
+  #shil-project-info-root.shil-project-info-emergency .shil-clean-section-head,
+  #shil-emergency-settings-root .shil-section-head,
+  #shil-execution-output-root.shil-emergency-run-output .shil-final-sheet-hero,
+  #shil-execution-output-root.shil-emergency-run-output .shil-final-sheet-block > h3
+){
+  min-height:52px !important;
+  height:auto !important;
+  margin:0 0 12px !important;
+  padding:9px 14px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:8px !important;
+  text-align:center !important;
+  background:#e8f2fc !important;
+  border:1px solid #adc8e2 !important;
+  border-radius:17px !important;
+  box-shadow:none !important;
+}
+html body:not(.login-page):not(.welcome-page) :is(
+  #shil-project-info-root.shil-project-info-emergency .shil-clean-section-head h2,
+  #shil-emergency-settings-root .shil-section-head h2,
+  #shil-execution-output-root.shil-emergency-run-output .shil-final-sheet-hero h2,
+  #shil-execution-output-root.shil-emergency-run-output .shil-final-sheet-block > h3
+){
+  margin:0 !important;
+  font-size:clamp(17px,2.3vw,22px) !important;
+  line-height:1.45 !important;
+  font-weight:900 !important;
+  color:#102542 !important;
+  text-align:center !important;
+}
+html body:not(.login-page):not(.welcome-page) :is(
+  #shil-project-info-root.shil-project-info-emergency .shil-clean-section-head span,
+  #shil-emergency-settings-root .shil-section-head span,
+  #shil-execution-output-root.shil-emergency-run-output .shil-ds-kicker
+){
+  font-size:12px !important;
+  line-height:1.3 !important;
+  font-weight:800 !important;
+  color:#49657f !important;
+  background:#f8fbff !important;
+  border:1px solid #bdd5ea !important;
+  border-radius:999px !important;
+  padding:5px 9px !important;
+  white-space:normal !important;
+}
+
+/* shared compact grids */
+html body:not(.login-page):not(.welcome-page) :is(
+  #shil-project-info-root.shil-project-info-emergency .shil-form-grid,
+  #shil-emergency-settings-root .shil-form-grid,
+  #shil-emergency-settings-root .shil-summary-grid,
+  #shil-execution-output-root.shil-emergency-run-output .shil-final-sheet-grid,
+  #shil-execution-output-root.shil-emergency-run-output .shil-summary-grid
+){
+  display:grid !important;
+  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  gap:10px !important;
+  margin:0 !important;
+}
+html body:not(.login-page):not(.welcome-page) #shil-project-info-root.shil-project-info-emergency .shil-form-grid{
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+}
+
+/* cards and fields */
+html body:not(.login-page):not(.welcome-page) :is(
+  #shil-project-info-root.shil-project-info-emergency .shil-field-card,
+  #shil-emergency-settings-root .shil-form-grid > label,
+  #shil-emergency-settings-root .shil-summary-grid > div,
+  #shil-emergency-settings-root .shil-bank-select,
+  #shil-execution-output-root.shil-emergency-run-output .shil-final-sheet-grid > div,
+  #shil-execution-output-root.shil-emergency-run-output .shil-final-sheet-block li
+){
+  min-width:0 !important;
+  min-height:82px !important;
+  margin:0 !important;
+  padding:10px !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:7px !important;
+  text-align:center !important;
+  background:#f9fcff !important;
+  border:1px solid #bdd6eb !important;
+  border-radius:17px !important;
+  box-shadow:none !important;
+  color:#102542 !important;
+}
+html body:not(.login-page):not(.welcome-page) :is(
+  #shil-project-info-root.shil-project-info-emergency label > span,
+  #shil-emergency-settings-root label > span,
+  #shil-emergency-settings-root .shil-summary-grid span,
+  #shil-execution-output-root.shil-emergency-run-output .shil-final-sheet-grid span
+){
+  font-size:13px !important;
+  line-height:1.5 !important;
+  font-weight:800 !important;
+  text-align:center !important;
+  color:#233c57 !important;
+}
+html body:not(.login-page):not(.welcome-page) :is(
+  #shil-emergency-settings-root .shil-summary-grid strong,
+  #shil-execution-output-root.shil-emergency-run-output .shil-final-sheet-grid strong
+){
+  font-size:15px !important;
+  line-height:1.45 !important;
+  font-weight:900 !important;
+  text-align:center !important;
+  color:#102542 !important;
+  overflow-wrap:anywhere !important;
+}
+
+html body:not(.login-page):not(.welcome-page) :is(
+  #shil-project-info-root.shil-project-info-emergency input,
+  #shil-project-info-root.shil-project-info-emergency textarea,
+  #shil-emergency-settings-root input,
+  #shil-emergency-settings-root select
+){
+  width:100% !important;
+  min-height:46px !important;
+  margin:0 !important;
+  padding:9px 11px !important;
+  text-align:center !important;
+  font-size:15px !important;
+  font-weight:850 !important;
+  color:#102542 !important;
+  background:#fff !important;
+  border:1px solid #abc8e1 !important;
+  border-radius:14px !important;
+  box-shadow:none !important;
+  outline:none !important;
+}
+html body:not(.login-page):not(.welcome-page) #shil-project-info-root.shil-project-info-emergency textarea{
+  min-height:112px !important;
+  resize:vertical !important;
+  text-align:right !important;
+}
+
+/* neutral explanatory lines, no giant legacy panels */
+html body:not(.login-page):not(.welcome-page) :is(
+  #shil-emergency-settings-root .shil-muted-line,
+  #shil-execution-output-root.shil-emergency-run-output .shil-emergency-execution-note,
+  #shil-execution-output-root.shil-emergency-run-output .shil-engineering-list
+){
+  margin:10px 0 0 !important;
+  padding:10px 12px !important;
+  font-size:13px !important;
+  line-height:1.75 !important;
+  font-weight:700 !important;
+  text-align:center !important;
+  color:#29435f !important;
+  background:#fff9df !important;
+  border:1px solid #e7c956 !important;
+  border-radius:14px !important;
+  box-shadow:none !important;
+}
+
+/* all emergency flow actions match calculation-input actions */
+html body:not(.login-page):not(.welcome-page) :is(
+  #shil-project-info-root.shil-project-info-emergency .shil-primary-wide,
+  #shil-emergency-settings-root button,
+  #shil-execution-output-root.shil-emergency-run-output button,
+  #shil-execution-output-root.shil-emergency-run-output .shil-soft-link-button
+){
+  position:static !important;
+  inset:auto !important;
+  transform:none !important;
+  width:auto !important;
+  min-width:150px !important;
+  min-height:46px !important;
+  max-height:none !important;
+  margin:10px auto 0 !important;
+  padding:9px 18px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  font-size:14px !important;
+  line-height:1.45 !important;
+  font-weight:900 !important;
+  color:#102542 !important;
+  background:#e8f2fc !important;
+  border:1px solid #adc8e2 !important;
+  border-radius:15px !important;
+  box-shadow:none !important;
+  text-decoration:none !important;
+}
+html body:not(.login-page):not(.welcome-page) :is(
+  #shil-project-info-root.shil-project-info-emergency .shil-primary-wide,
+  #shil-emergency-settings-root .shil-confirm-config-button,
+  #shil-execution-output-root.shil-emergency-run-output .shil-output-actions button:first-child
+){
+  color:#06351e !important;
+  background:#e7faef !important;
+  border-color:#51cc88 !important;
+}
+html body:not(.login-page):not(.welcome-page) #shil-emergency-settings-root button:disabled{
+  opacity:.55 !important;
+  filter:none !important;
+}
+html body:not(.login-page):not(.welcome-page) #shil-emergency-settings-root .shil-soft-button.active{
+  background:#e7faef !important;
+  border-color:#51cc88 !important;
+}
+
+html body:not(.login-page):not(.welcome-page) #shil-execution-output-root.shil-emergency-run-output .shil-output-actions{
+  display:grid !important;
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  gap:10px !important;
+}
+html body:not(.login-page):not(.welcome-page) #shil-execution-output-root.shil-emergency-run-output .shil-output-actions button{
+  width:100% !important;
+  min-width:0 !important;
+  margin:0 !important;
+}
+
+/* final output: eliminate duplicated outer frame and normalize result list */
+html body:not(.login-page):not(.welcome-page) #shil-execution-output-root.shil-emergency-run-output .shil-final-one-page-sheet{
+  padding:12px !important;
+}
+html body:not(.login-page):not(.welcome-page) #shil-execution-output-root.shil-emergency-run-output .shil-final-sheet-block{
+  background:#f7fbff !important;
+}
+html body:not(.login-page):not(.welcome-page) #shil-execution-output-root.shil-emergency-run-output .shil-final-result-block ul{
+  display:grid !important;
+  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  gap:8px !important;
+  margin:0 !important;
+  padding:0 !important;
+  list-style:none !important;
+}
+html body:not(.login-page):not(.welcome-page) #shil-execution-output-root.shil-emergency-run-output .shil-final-result-block li{
+  min-height:64px !important;
+  font-size:13px !important;
+  line-height:1.65 !important;
+}
+
+@media (max-width:760px){
+  html body:not(.login-page):not(.welcome-page) :is(
+    #shil-project-info-root.shil-project-info-emergency,
+    #shil-emergency-settings-root,
+    #shil-execution-output-root.shil-emergency-run-output
+  ){
+    padding:8px 8px 68px !important;
+  }
+  html body:not(.login-page):not(.welcome-page) #shil-project-info-root.shil-project-info-emergency .shil-form-grid,
+  html body:not(.login-page):not(.welcome-page) #shil-emergency-settings-root .shil-system-banks-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  }
+}
+
+@media (max-width:520px){
+  html body:not(.login-page):not(.welcome-page) :is(
+    #shil-project-info-root.shil-project-info-emergency .shil-form-grid,
+    #shil-emergency-settings-root .shil-form-grid,
+    #shil-emergency-settings-root .shil-summary-grid,
+    #shil-emergency-settings-root .shil-system-banks-grid,
+    #shil-execution-output-root.shil-emergency-run-output .shil-final-sheet-grid,
+    #shil-execution-output-root.shil-emergency-run-output .shil-summary-grid,
+    #shil-execution-output-root.shil-emergency-run-output .shil-final-result-block ul
+  ){
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  }
+  html body:not(.login-page):not(.welcome-page) #shil-execution-output-root.shil-emergency-run-output .shil-output-actions{
+    grid-template-columns:1fr !important;
+  }
+  html body:not(.login-page):not(.welcome-page) :is(
+    #shil-project-info-root.shil-project-info-emergency .shil-clean-section-head,
+    #shil-emergency-settings-root .shil-section-head
+  ){
+    flex-direction:column !important;
+  }
+}
+/* SHIL EMERGENCY FLOW - CALCULATION INPUTS VISUAL UNIFICATION V8 END */

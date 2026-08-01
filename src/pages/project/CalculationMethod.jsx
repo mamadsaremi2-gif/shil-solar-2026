@@ -118,6 +118,7 @@ export default function CalculationMethod() {
 
   return (
     <EngineeringPageShell title={title}>
+      <div id="shil-calculation-method-root" className={`shil-calculation-method-page ${domain === "emergency" ? "shil-emergency-parity-page" : ""}`}>
       <div className="shil-clean-section-head">
         <h2>انتخاب روش طراحی</h2>
         <span>{DOMAIN_LABELS[domain]}</span>
@@ -151,7 +152,8 @@ export default function CalculationMethod() {
       ) : null}
 
       <ShilPrimaryButton className="shil-calculation-method-confirm" disabled={!selectedMethod}
-        onClick={handleConfirm} label="تأیید روش" />
+        onClick={handleConfirm} label={domain === "emergency" ? "تأیید" : "تأیید روش"} />
+      </div>
     </EngineeringPageShell>
   );
 }

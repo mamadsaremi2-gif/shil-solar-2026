@@ -23,21 +23,6 @@ function readProjectDomain() {
   }
 }
 
-function getTodayPersianDateEnglish() {
-  try {
-    const parts = new Intl.DateTimeFormat("en-US-u-ca-persian", {
-      year: "numeric",
-      month: "numeric",
-      day: "numeric",
-    }).formatToParts(new Date());
-
-    const values = Object.fromEntries(parts.map(({ type, value }) => [type, value]));
-    return `${values.year}/${values.month}/${values.day}`;
-  } catch {
-    return new Date().toLocaleDateString("en-US");
-  }
-}
-
 export default function ProjectInfo() {
   React.useEffect(() => {
     document.body.classList.add("shil-project-info-screen");
@@ -65,8 +50,9 @@ export default function ProjectInfo() {
     ? "/new-project/method"
     : "/new-project/environment";
 
-  const nextLabel = "تأیید";
-  const registrationDate = getTodayPersianDateEnglish();
+  const nextLabel = domain === PROJECT_PATHS.EMERGENCY
+    ? "تأیید مرحله و ورود به روش طراحی"
+    : "تأیید اطلاعات";
 
   useEffect(() => {
     startManualProjectFlow(domain);
@@ -74,14 +60,13 @@ export default function ProjectInfo() {
 
   return (
     <EngineeringPageShell title="اطلاعات پروژه">
-      <div id="shil-project-info-root" className={`shil-project-info-page shil-equipment-page shil-calculation-inputs-page ${domain === PROJECT_PATHS.EMERGENCY ? "shil-project-info-emergency" : ""}`}>
-        <section className="shil-project-info-calc-card">
-          <div className="shil-clean-section-head">
-            <h2>مشخصات اولیه پروژه</h2>
-            <span>مرحله 1</span>
-          </div>
+      <div id="shil-project-info-root" className="shil-project-info-page">
+        <div className="shil-clean-section-head">
+          <h2>مشخصات اولیه پروژه</h2>
+          <span>مرحله 1</span>
+        </div>
 
-          <div className="shil-form-grid shil-form-grid-clean">
+        <div className="shil-form-grid shil-form-grid-clean">
           <label className="shil-field-card">
             <span>نام پروژه</span>
             <input defaultValue="X" placeholder="نام پروژه را وارد کنید" data-required="true" />
@@ -92,25 +77,22 @@ export default function ProjectInfo() {
             <input defaultValue="SHIL CO" placeholder="نام کارفرما" />
           </label>
 
-          <label className="shil-field-card shil-registration-date-field">
+          <label className="shil-field-card">
             <span>تاریخ ثبت</span>
-            <input className="shil-registration-date-input" value={registrationDate} readOnly dir="ltr" />
+            <input value={new Date().toLocaleDateString("en-US")} readOnly />
           </label>
-          </div>
-        </section>
+        </div>
 
-        <section className="shil-project-info-calc-card shil-project-info-description-card">
-          <div className="shil-clean-section-head">
-            <h2>توضیحات پروژه</h2>
-            <span>اختیاری</span>
-          </div>
+        <div className="shil-clean-section-head">
+          <h2>توضیحات پروژه</h2>
+          <span>اختیاری</span>
+        </div>
 
-          <textarea
+        <textarea
           className="shil-textarea shil-field-card shil-project-description-clean"
           rows="5"
-            placeholder="نیاز پروژه، محدودیت‌ها، توضیحات اجرایی یا نکات مهم را وارد کنید..."
-          />
-        </section>
+          placeholder="نیاز پروژه، محدودیت‌ها، توضیحات اجرایی یا نکات مهم را وارد کنید..."
+        />
 
         <StepConfirmLink to={nextRoute}>
           {nextLabel}
