@@ -102,17 +102,35 @@ export default function Environment() {
       });
     };
 
+    const isMobileViewport = window.matchMedia("(max-width: 760px)").matches;
+
     forceVisible(shell, {
       position: "relative", display: "flex", width: "100%", height: "100dvh",
       overflow: "hidden", opacity: "1", visibility: "visible", transform: "none"
     });
-    forceVisible(main, {
+    forceVisible(main, isMobileViewport ? {
+      position: "fixed",
+      top: "var(--shil-mobile-header-total)",
+      right: "0",
+      bottom: "var(--shil-mobile-footer-total)",
+      left: "0",
+      inset: "var(--shil-mobile-header-total) 0 var(--shil-mobile-footer-total) 0",
+      display: "block", width: "auto", height: "auto", "min-height": "0",
+      overflow: "auto", opacity: "1", visibility: "visible", transform: "none",
+      filter: "none", "clip-path": "none", "content-visibility": "visible",
+      contain: "none", "z-index": "1"
+    } : {
       position: "absolute", inset: "55px 0 68px", display: "block", width: "auto",
       height: "auto", "min-height": "0", overflow: "auto", opacity: "1",
       visibility: "visible", transform: "none", filter: "none", "clip-path": "none",
       "content-visibility": "visible", contain: "none", "z-index": "50"
     });
-    forceVisible(rail, {
+    forceVisible(rail, isMobileViewport ? {
+      position: "relative", top: "auto", right: "auto", bottom: "auto", left: "auto",
+      inset: "auto", display: "block", width: "100%", height: "auto",
+      "margin-top": "0", opacity: "1", visibility: "visible", transform: "none",
+      "z-index": "2"
+    } : {
       position: "sticky", top: "0", display: "block", width: "100%", height: "auto",
       opacity: "1", visibility: "visible", transform: "none", "z-index": "60"
     });
