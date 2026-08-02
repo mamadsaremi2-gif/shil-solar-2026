@@ -1,0 +1,184 @@
+/*
+ * SHIL V6.9 - Mobile fixed header / project rail order
+ *
+ * Contract on mobile project pages:
+ *   safe area -> fixed header -> scroll viewport -> project rail -> page data
+ *
+ * The rail deliberately remains in normal document flow. It scrolls with the
+ * page and can pass underneath the fixed header, while the header always stays
+ * visible above it. This file is imported last to neutralize older page-level
+ * position/top/z-index overrides without changing desktop layout.
+ */
+
+@media (max-width: 760px) {
+  :root {
+    --shil-mobile-safe-top: env(safe-area-inset-top, 0px);
+    --shil-mobile-header-bar: 55px;
+    --shil-mobile-header-total: calc(
+      var(--shil-mobile-safe-top) + var(--shil-mobile-header-bar)
+    );
+    --shil-mobile-safe-bottom: env(safe-area-inset-bottom, 0px);
+    --shil-mobile-footer-bar: 68px;
+    --shil-mobile-footer-total: calc(
+      var(--shil-mobile-safe-bottom) + var(--shil-mobile-footer-bar)
+    );
+  }
+
+  html,
+  body,
+  #root {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 100% !important;
+  }
+
+  body:not(.login-page):not(.welcome-page) {
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    overflow: hidden !important;
+  }
+
+  body:not(.login-page):not(.welcome-page)
+    .shil-page-shell:not(.shil-page--auth) {
+    position: relative !important;
+    width: 100% !important;
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    max-height: 100dvh !important;
+    overflow: hidden !important;
+  }
+
+  /* Header always owns the safe area and stays above rail/content. */
+  body:not(.login-page):not(.welcome-page)
+    .shil-page-shell:not(.shil-page--auth)
+    > .shil-fixed-header {
+    position: fixed !important;
+    inset: 0 0 auto 0 !important;
+    top: 0 !important;
+    right: 0 !important;
+    left: 0 !important;
+    bottom: auto !important;
+    width: 100% !important;
+    height: var(--shil-mobile-header-total) !important;
+    min-height: var(--shil-mobile-header-total) !important;
+    max-height: var(--shil-mobile-header-total) !important;
+    margin: 0 !important;
+    padding-top: var(--shil-mobile-safe-top) !important;
+    padding-right: clamp(8px, 2.5vw, 14px) !important;
+    padding-bottom: 0 !important;
+    padding-left: clamp(8px, 2.5vw, 14px) !important;
+    transform: none !important;
+    z-index: 10000 !important;
+    box-sizing: border-box !important;
+  }
+
+  /* The only scroll viewport starts after the full fixed header. */
+  body:not(.login-page):not(.welcome-page)
+    .shil-page-shell:not(.shil-page--auth)
+    > main.shil-page-content,
+  body:not(.login-page):not(.welcome-page)
+    .shil-page-shell:not(.shil-page--auth)
+    > .shil-page-content {
+    position: fixed !important;
+    top: var(--shil-mobile-header-total) !important;
+    right: 0 !important;
+    bottom: var(--shil-mobile-footer-total) !important;
+    left: 0 !important;
+    inset-block-start: var(--shil-mobile-header-total) !important;
+    inset-block-end: var(--shil-mobile-footer-total) !important;
+    width: auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding-top: 0 !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior-y: contain !important;
+    -webkit-overflow-scrolling: touch !important;
+    scroll-padding-top: 0 !important;
+    transform: none !important;
+    z-index: 1 !important;
+    box-sizing: border-box !important;
+  }
+
+  /* The rail is data, not a second fixed/sticky header. */
+  body:not(.login-page):not(.welcome-page)
+    .shil-page-shell:not(.shil-page--auth)
+    .shil-project-mini-rail,
+  body:not(.login-page):not(.welcome-page)
+    .shil-page-shell:not(.shil-page--auth)
+    main.shil-page-content
+    > .shil-project-mini-rail,
+  body:not(.login-page):not(.welcome-page)
+    .shil-page-shell:not(.shil-page--auth)
+    .shil-engineering-content
+    > .shil-project-mini-rail {
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+    inset: auto !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin-top: 0 !important;
+    margin-right: auto !important;
+    margin-bottom: 6px !important;
+    margin-left: auto !important;
+    transform: none !important;
+    z-index: 2 !important;
+  }
+
+  /* EngineeringPageShell wraps data once more; keep that wrapper in flow. */
+  body:not(.login-page):not(.welcome-page)
+    .shil-page-shell:not(.shil-page--auth)
+    > .shil-page-content
+    > .shil-engineering-content {
+    position: relative !important;
+    top: auto !important;
+    inset: auto !important;
+    min-height: 0 !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    transform: none !important;
+    z-index: auto !important;
+  }
+
+  /* Footer remains the lower viewport boundary. */
+  body:not(.login-page):not(.welcome-page)
+    .shil-page-shell:not(.shil-page--auth)
+    > .shil-fixed-footer {
+    position: fixed !important;
+    inset: auto 0 0 0 !important;
+    width: 100% !important;
+    height: var(--shil-mobile-footer-total) !important;
+    min-height: var(--shil-mobile-footer-total) !important;
+    max-height: var(--shil-mobile-footer-total) !important;
+    z-index: 10000 !important;
+  }
+
+  .shil-page-shell.shil-no-header:not(.shil-page--auth)
+    > .shil-page-content {
+    top: 0 !important;
+    inset-block-start: 0 !important;
+  }
+
+  .shil-page-shell.shil-no-footer:not(.shil-page--auth)
+    > .shil-page-content {
+    bottom: 0 !important;
+    inset-block-end: 0 !important;
+  }
+}
+
+@supports not (height: 100dvh) {
+  @media (max-width: 760px) {
+    body:not(.login-page):not(.welcome-page),
+    body:not(.login-page):not(.welcome-page)
+      .shil-page-shell:not(.shil-page--auth) {
+      height: 100vh !important;
+      min-height: 100vh !important;
+      max-height: 100vh !important;
+    }
+  }
+}

@@ -238,5 +238,5 @@ import "./appearance/styles/run-solar-inverter-accordion-final.css";
 /* Solar run output results accordion - absolute final isolated layer. */
 import "./appearance/styles/run-solar-results-accordion-final.css";
 
-/* Solar run output accordion parity with upper blocks - absolute final isolated layer. */
-import "./appearance/styles/run-solar-accordions-upper-block-parity-final.css";
+// V6.9: final mobile shell contract; keep this import last.
+import "./appearance/styles/shil-mobile-header-rail-order-v6-9-final.css";

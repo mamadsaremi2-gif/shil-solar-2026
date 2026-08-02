@@ -667,8 +667,8 @@ export default function RunCalculation() {
           )}
         </div>
 
-        <div className={`shil-accordion-card shil-final-output-accordion ${finalOutputOpen ? "is-open" : ""}`}>
-          <button type="button" className="shil-accordion-header shil-final-output-accordion__header" onClick={()=>setFinalOutputOpen(!finalOutputOpen)}>
+        <div className="shil-accordion-card">
+          <button type="button" className="shil-accordion-header" onClick={()=>setFinalOutputOpen(!finalOutputOpen)}>
             <span>خروجی نهایی</span><span>{finalOutputOpen ? "▲":"▼"}</span>
           </button>
           {finalOutputOpen && (
