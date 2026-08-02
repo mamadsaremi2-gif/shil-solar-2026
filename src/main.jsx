@@ -240,3 +240,6 @@ import "./appearance/styles/run-solar-results-accordion-final.css";
 
 // V6.9: final mobile shell contract; keep this import last.
 import "./appearance/styles/shil-mobile-header-rail-order-v6-9-final.css";
+
+/* V6.11: unified minimal mobile footer; absolute final stylesheet. */
+import "./appearance/styles/shil-mobile-footer-minimal-v6-11-final.css";
