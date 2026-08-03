@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { startManualProjectFlow, PROJECT_PATHS } from "../../workflow/flowIsolation.js";
 import EngineeringPageShell from "../../components/EngineeringPageShell.jsx";
 import StepConfirmLink from "../../components/StepConfirmLink.jsx";
@@ -67,6 +67,16 @@ export default function ProjectInfo() {
 
   const nextLabel = "تأیید";
   const registrationDate = getTodayPersianDateEnglish();
+  const previousProject = (() => { try { return JSON.parse(localStorage.getItem("shil:projectInfoDraft") || "null") || {}; } catch { return {}; } })();
+  const [projectName, setProjectName] = useState(previousProject.projectName || "");
+  const [clientName, setClientName] = useState(previousProject.clientName || "");
+  const [description, setDescription] = useState(previousProject.description || "");
+
+  const persistProjectInfo = () => {
+    localStorage.setItem("shil:projectInfoDraft", JSON.stringify({
+      projectName: projectName.trim(), clientName: clientName.trim(), registrationDate, description: description.trim(), domain,
+    }));
+  };
 
   useEffect(() => {
     startManualProjectFlow(domain);
@@ -84,12 +94,12 @@ export default function ProjectInfo() {
           <div className="shil-form-grid shil-form-grid-clean">
           <label className="shil-field-card">
             <span>نام پروژه</span>
-            <input defaultValue="X" placeholder="نام پروژه را وارد کنید" data-required="true" />
+            <input value={projectName} onChange={(e) => setProjectName(e.target.value)} placeholder="نام پروژه را وارد کنید" data-required="true" />
           </label>
 
           <label className="shil-field-card">
             <span>نام کارفرما</span>
-            <input defaultValue="SHIL CO" placeholder="نام کارفرما" />
+            <input value={clientName} onChange={(e) => setClientName(e.target.value)} placeholder="نام کارفرما" />
           </label>
 
           <label className="shil-field-card shil-registration-date-field">
@@ -107,14 +117,14 @@ export default function ProjectInfo() {
 
           <textarea
           className="shil-textarea shil-field-card shil-project-description-clean"
-          rows="5"
+          rows="5" value={description} onChange={(e) => setDescription(e.target.value)}
             placeholder="نیاز پروژه، محدودیت‌ها، توضیحات اجرایی یا نکات مهم را وارد کنید..."
           />
         </section>
 
-        <StepConfirmLink to={nextRoute}>
+        <div onClick={persistProjectInfo}><StepConfirmLink to={nextRoute}>
           {nextLabel}
-        </StepConfirmLink>
+        </StepConfirmLink></div>
       </div>
     </EngineeringPageShell>
   );

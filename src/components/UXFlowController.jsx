@@ -153,26 +153,8 @@ function restoreEngineeringPageDraft(pathname) {
 export default function UXFlowController() {
   const location = useLocation();
   const [toast, setToast] = useState(null);
-  const lastSavedPath = useRef("");
-  const debounceRef = useRef(null);
-  const draftDebounceRef = useRef(null);
   const activePathRef = useRef(location.pathname);
 
-  function softSave(pathname = window.location.pathname, showToast = false) {
-    if (isProjectLandingPath(pathname)) return null;
-    const isFinalRoute = pathname.includes("/new-project/run/");
-    const record = isFinalRoute ? markCurrentProjectFinal() : captureCurrentProjectSnapshot(pathname);
-    if (record && showToast && lastSavedPath.current !== pathname) {
-      lastSavedPath.current = pathname;
-      setToast({ text: "پروژه در بخش در حال اجرا ذخیره شد", type: "success" });
-      window.setTimeout(() => setToast(null), 1600);
-    }
-    return record;
-  }
-
-  useEffect(() => {
-    softSave(location.pathname, true);
-  }, [location.pathname]);
 
   useEffect(() => {
     // Never save the previous route here: at effect time React may already have
@@ -188,69 +170,27 @@ export default function UXFlowController() {
   }, [location.pathname]);
 
   useEffect(() => {
-    const saveNow = () => {
-      captureEngineeringPageDraft(activePathRef.current || window.location.pathname);
-      softSave(window.location.pathname, false);
+    const confirmedHandler = (event) => {
+      const pathname = event.detail?.pathname || activePathRef.current || window.location.pathname;
+      captureEngineeringPageDraft(pathname);
+      window.setTimeout(() => {
+        const isFinal = ["summary", "run"].includes(event.detail?.stepKey) || pathname.includes("/new-project/run/");
+        if (isFinal) markCurrentProjectFinal();
+        else captureCurrentProjectSnapshot(pathname, "running");
+        setToast({ text: isFinal ? "پروژه در پروژه‌های نهایی ذخیره شد" : "مرحله تأیید و در پروژه‌های در حال اجرا ذخیره شد", type: "success" });
+        window.setTimeout(() => setToast(null), 1800);
+      }, 0);
     };
-    const debouncedSave = () => {
-      window.clearTimeout(debounceRef.current);
-      debounceRef.current = window.setTimeout(() => softSave(window.location.pathname, false), 700);
-      window.clearTimeout(draftDebounceRef.current);
-      draftDebounceRef.current = window.setTimeout(() => {
-        captureEngineeringPageDraft(activePathRef.current || window.location.pathname);
-      }, 180);
-    };
-    const choiceSave = (event) => {
-      const activePath = activePathRef.current || window.location.pathname;
-      if (!isEngineeringPath(activePath)) return;
 
-      // This listener runs in capture phase, before React navigation handlers.
-      // Save the current page DOM synchronously so the old page is not already
-      // unmounted when a confirm/back/rail button changes the route.
-      const navigationTarget = event.target?.closest?.(
-        "a[href], button, [role='button'], .shil-choice-card, .shil-method-card, [role='radio']"
-      );
-      if (!navigationTarget) return;
-
-      captureEngineeringPageDraft(activePath);
-
-      // A choice click can update React state after the capture-phase snapshot.
-      // Take one second snapshot in the same route only; cancel it naturally if
-      // navigation has already changed the active route.
-      window.clearTimeout(draftDebounceRef.current);
-      draftDebounceRef.current = window.setTimeout(() => {
-        const currentPath = activePathRef.current || window.location.pathname;
-        if (currentPath === activePath) captureEngineeringPageDraft(activePath);
-      }, 60);
-    };
     const toastHandler = (event) => {
       setToast({ text: event.detail?.message || "انجام شد", type: event.detail?.type || "info" });
       window.setTimeout(() => setToast(null), 1800);
     };
-    const saveOnVisibilityChange = () => {
-      if (document.visibilityState === "hidden") saveNow();
-    };
-    const saveBeforeHistoryNavigation = () => {
-      captureEngineeringPageDraft(activePathRef.current || window.location.pathname);
-    };
-    window.addEventListener("beforeunload", saveNow);
-    window.addEventListener("pagehide", saveNow);
-    window.addEventListener("popstate", saveBeforeHistoryNavigation, true);
-    window.addEventListener("visibilitychange", saveOnVisibilityChange);
-    window.addEventListener("input", debouncedSave, true);
-    window.addEventListener("change", debouncedSave, true);
-    window.addEventListener("click", choiceSave, true);
+
+    window.addEventListener("shil-project-step-confirmed", confirmedHandler);
     window.addEventListener("shil-ux-toast", toastHandler);
     return () => {
-      window.clearTimeout(debounceRef.current);
-      window.clearTimeout(draftDebounceRef.current);
-      window.removeEventListener("beforeunload", saveNow);
-      window.removeEventListener("pagehide", saveNow);
-      window.removeEventListener("popstate", saveBeforeHistoryNavigation, true);
-      window.removeEventListener("visibilitychange", saveOnVisibilityChange);
-      window.removeEventListener("input", debouncedSave, true);
-      window.removeEventListener("change", debouncedSave, true);
-      window.removeEventListener("click", choiceSave, true);
+      window.removeEventListener("shil-project-step-confirmed", confirmedHandler);
       window.removeEventListener("shil-ux-toast", toastHandler);
     };
   }, []);

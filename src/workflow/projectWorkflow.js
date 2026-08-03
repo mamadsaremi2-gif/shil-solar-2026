@@ -1,4 +1,5 @@
 import { upsertUserRecord } from "../auth/session.js";
+import { captureProjectLocalState, ensureActiveProjectKey } from "./projectSessionPersistence.js";
 
 export const PROJECT_PATHS = Object.freeze({
   SOLAR: "solar",
@@ -55,7 +56,7 @@ export function writeWorkflowState(nextState) {
   window.dispatchEvent(new CustomEvent("shil-workflow-updated", { detail: nextState }));
 }
 
-function saveRunningProjectSnapshot(stepKey) {
+export function saveRunningProjectSnapshot(stepKey) {
   const project = safeJson("shil:projectInfoDraft", {});
   const selectedPath = safeJson("shil:selectedProjectPath", {}) || safeJson("shil:projectPath", {});
   const domain = readProjectPathDomain();
@@ -64,32 +65,62 @@ function saveRunningProjectSnapshot(stepKey) {
     domain === PROJECT_PATHS.UTILITY ? "پروژه نیروگاه خورشیدی" :
     "پروژه پنل خورشیدی"
   );
+  const projectKey = ensureActiveProjectKey();
+  const isFinal = stepKey === "summary" || stepKey === "run";
+  const now = new Date().toISOString();
   const baseRoute = PROJECT_STEP_ORDER.find((step) => step.key === stepKey)?.route || "/new-project/path";
-  const resumeUrl = stepKey === "system" ? systemRouteForDomain(domain) : stepKey === "summary" ? summaryRouteForDomain(domain) : stepKey === "run" ? runRouteForDomain(domain) : baseRoute;
-  const projectKey = localStorage.getItem("shil:activeProjectKey") || `draft-${Date.now()}`;
-  localStorage.setItem("shil:activeProjectKey", projectKey);
-  upsertUserRecord("shil-projects", (item) => item.projectKey === projectKey, {
+  const resumeUrl = isFinal
+    ? runRouteForDomain(domain)
+    : stepKey === "system"
+      ? systemRouteForDomain(domain)
+      : baseRoute;
+
+  const patch = {
     projectKey,
     title,
-    status: "running",
+    status: isFinal ? "final" : "running",
     domain,
     projectPath: selectedPath,
-    currentStep: stepKey,
+    currentStep: isFinal ? "run" : stepKey,
     resumeUrl,
+    updatedAt: now,
+    lastVisitedAt: now,
+    ...(isFinal ? { completedAt: now, finalizedAt: now } : {}),
     snapshot: {
       project,
       selectedPath,
+      environment: safeJson("shil:environmentDraft", null),
+      calculationInputs: safeJson("shil:calculationInputsDraft", null),
       handoff: safeJson("shil:systemSetupHandoff", null),
       systemSettings: safeJson("shil:systemSettingsDraft", null),
+      summary: safeJson("shil:summaryDraft", null),
+      finalOutput: safeJson("shil:finalEngineeringOutput", null),
       workflow: readWorkflowState(),
+      localState: captureProjectLocalState(),
     },
-  });
+  };
+
+  upsertUserRecord("shil-projects", (item) => item.projectKey === projectKey, patch);
+  window.dispatchEvent(new CustomEvent("shil-project-record-updated", {
+    detail: { projectKey, status: patch.status, domain, currentStep: patch.currentStep },
+  }));
+  return patch;
 }
 
 export function approveProjectStep(stepKey) {
+  const approvedAt = new Date().toISOString();
   const state = readWorkflowState();
-  writeWorkflowState({ ...state, [stepKey]: { approved: true, approvedAt: new Date().toISOString() } });
-  saveRunningProjectSnapshot(stepKey);
+  writeWorkflowState({ ...state, [stepKey]: { approved: true, approvedAt } });
+
+  window.dispatchEvent(new CustomEvent("shil-project-step-confirmed", {
+    detail: { stepKey, approvedAt, pathname: window.location.pathname },
+  }));
+
+  // فرم‌ها ممکن است مقادیر نهایی را بلافاصله بعد از تأیید در localStorage بنویسند.
+  // ثبت فوری + ثبت تثبیتی باعث می‌شود جابه‌جایی سریع بین صفحات، مخصوصاً در مسیر خورشیدی،
+  // باعث از دست رفتن آخرین مرحله تأییدشده نشود.
+  window.setTimeout(() => saveRunningProjectSnapshot(stepKey), 0);
+  window.setTimeout(() => saveRunningProjectSnapshot(stepKey), 120);
 }
 
 export function resetProjectWorkflow() {

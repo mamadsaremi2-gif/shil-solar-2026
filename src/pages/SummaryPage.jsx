@@ -3,90 +3,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import EngineeringPageShell from "../components/EngineeringPageShell.jsx";
 import { ActionBar, DataGrid, DataSection, PageStack, StatusMessage } from "../components/ShilDesignSystem.jsx";
 import { approveProjectStep } from "../workflow/projectWorkflow.js";
-import { getProjectPath, getSystemSettingsDraft, getSystemSetupHandoff, normalizeProjectDomain } from "../engines/projectFlowData.js";
-
-const faNumber = (value, digits = 0) => Number(value || 0).toLocaleString("en-US", { maximumFractionDigits: digits });
-const titleOf = (item) => item?.label || item?.title || item?.name || item?.model || "-";
-
-const DOMAIN_TITLE = {
-  solar: "چکیده طراحی",
-  emergency: "چکیده طراحی برق اضطراری",
-  utility: "چکیده طراحی نیروگاه خورشیدی",
-};
-
-function SummaryGrid({ rows = [] }) {
-  return <DataGrid rows={rows} />;
-}
-
-function SolarSummary({ handoff, draft }) {
-  const design = draft?.designResult || draft?.design || draft;
-  return <>
-    <DataSection title="چکیده ورودی محاسبات" meta={handoff?.methodSummary?.title || handoff?.source?.method || "solar"}>
-      <SummaryGrid rows={[
-        ["روش ورود", handoff?.methodSummary?.title || handoff?.source?.method],
-        ["توان مبنا", `${faNumber(handoff?.normalizedLoad?.totalPowerW || design?.load?.basePowerW)} W`],
-        ["انرژی روزانه", `${faNumber(handoff?.normalizedLoad?.dailyEnergyKWh || design?.load?.baseEnergyKWh, 2)} kWh`],
-        ["مبنای طراحی", handoff?.methodSummary?.basis || "load_consumption"],
-      ]} />
-    </DataSection>
-    <DataSection title="چکیده تنظیمات" meta="تجهیزات انتخابی">
-      <SummaryGrid rows={[
-        ["پنل", `${titleOf(design?.panel)} / ${faNumber(design?.pvArray?.panelCount)} عدد`],
-        ["توان آرایه", `${faNumber(design?.pvArray?.arrayPowerKW, 2)} kW`],
-        ["اینورتر", `${titleOf(design?.inverter)} / ${faNumber(design?.inverter?.count || 1)} عدد`],
-        ["باتری", design?.system?.needsBattery ? `${titleOf(design?.battery?.item)} / ${faNumber(design?.battery?.grossEnergyKWh, 2)} kWh` : "غیرفعال"],
-        ["تولید روزانه تخمینی", `${faNumber(design?.pvArray?.estimatedDailyKWh, 2)} kWh`],
-        ["اعتبارسنجی", design?.valid ? "قابل اجرا" : "نیازمند بازبینی"],
-      ]} />
-      {(design?.warnings || []).map((item) => <StatusMessage key={item}>{item}</StatusMessage>)}
-    </DataSection>
-  </>;
-}
-
-function EmergencySummary({ draft }) {
-  return <DataSection title="چکیده برق اضطراری" meta="مسیر مستقل باتری و اینورتر">
-    <SummaryGrid rows={[
-      ["توان بار ضروری", `${faNumber(draft?.designResult?.loadPowerW || draft?.loadPowerW)} W`],
-      ["زمان پشتیبانی", `${faNumber(draft?.designResult?.backupHours || draft?.backupHours)} ساعت`],
-      ["باتری", titleOf(draft?.designResult?.battery || draft?.battery)],
-      ["اینورتر", titleOf(draft?.designResult?.inverter || draft?.inverter)],
-    ]} />
-  </DataSection>;
-}
-
-function UtilitySummary({ draft }) {
-  return <DataSection title="چکیده نیروگاه خورشیدی" meta="مسیر Utility مستقل">
-    <SummaryGrid rows={[
-      ["ظرفیت هدف", `${faNumber(draft?.designResult?.targetPowerMW || draft?.targetPowerMW, 2)} MW`],
-      ["پنل نیروگاهی", titleOf(draft?.designResult?.panel || draft?.panel)],
-      ["اینورتر صنعتی", titleOf(draft?.designResult?.inverter || draft?.inverter)],
-      ["تولید سالانه", `${faNumber(draft?.designResult?.annualEnergyKWh || draft?.annualEnergyKWh)} kWh`],
-    ]} />
-  </DataSection>;
-}
-
-export default function SummaryPage() {
-  const navigate = useNavigate();
-  const params = useParams();
-  const projectPath = useMemo(() => getProjectPath(), []);
-  const handoff = useMemo(() => getSystemSetupHandoff(), []);
-  const draft = useMemo(() => getSystemSettingsDraft(), []);
-  const domain = normalizeProjectDomain({ ...handoff, domain: params.domain || draft?.domain || projectPath.domain });
-
-  const run = () => {
-    approveProjectStep("summary");
-    navigate(`/new-project/run/${domain}`);
-  };
-
-  return <EngineeringPageShell title={DOMAIN_TITLE[domain] || DOMAIN_TITLE.solar} activeStep="summary" backTo={`/new-project/system/${domain}`} className="shil-summary-clear-engineering">
-    <PageStack className="shil-page-scroll shil-summary-page">
-      {domain === "solar" ? <SolarSummary handoff={handoff} draft={draft} /> : null}
-      {domain === "emergency" ? <EmergencySummary draft={draft || {}} /> : null}
-      {domain === "utility" ? <UtilitySummary draft={draft || {}} /> : null}
-      <DataSection title="آماده اجرا" meta={domain}>
-        <p className="shil-muted-line">در مرحله بعد خروجی مهندسی نهایی، تجهیزات، هشدارها و داده قابل گزارش ساخته می‌شود.</p>
-        <ActionBar><button type="button" className="shil-primary-wide" onClick={run}>اجرا نهایی</button></ActionBar>
-      </DataSection>
-    </PageStack>
-  </EngineeringPageShell>;
-}
+import { getProjectPath, getSystemSettingsDraft, getSystemSetupHandoff, normalizeProjectDomain, writeJson } from "../engines/projectFlowData.js";
+const fmt=(v,d=0)=>v===null||v===undefined||v===""||!Number.isFinite(Number(v))?"—":Number(v).toLocaleString("en-US",{maximumFractionDigits:d}); const name=x=>x?.title||x?.model||x?.name||x?.id||"تجهیز انتخاب‌شده";
+function EmergencySummary({handoff,draft}){const d=draft?.designResult||draft?.design||draft||{}; const b=d.battery||{},i=d.inverter||{},l=d.load||handoff?.normalizedLoad||{}; return <>
+ <DataSection title="چکیده ورودی محاسبات" meta={handoff?.methodSummary?.title||"برق اضطراری"}><DataGrid rows={[["روش ورود",handoff?.methodSummary?.title||d.sourceMethod||"ورودی بار ضروری"],["توان بار ضروری",`${fmt(l.totalPowerW)} W`],["پیک راه‌اندازی",`${fmt(l.surgePowerW ?? l.totalPowerW)} W`],["ولتاژ خروجی",l.phaseAC==="three"?"380 V سه‌فاز":"220 V تک‌فاز"],["زمان پشتیبانی هدف",`${fmt(d.settings?.backupHours ?? handoff?.autonomy?.backupHours ?? handoff?.autonomy?.hours ?? 3,2)} ساعت`]]}/></DataSection>
+ <DataSection title="چکیده تجهیزات و محاسبات" meta="UPS / Battery + Inverter"><DataGrid rows={[["اینورتر پیشنهادی",name(i)],["توان نامی اینورتر",`${fmt(i.ratedPowerW||i.powerW)} W`],["توان طراحی اینورتر",`${fmt(i.designPowerW)} W`],["ولتاژ DC اینورتر",`${fmt(i.dcVoltage ?? i.batteryVoltage ?? 48)} V`],["باتری پیشنهادی",name(b)],["ولتاژ و ظرفیت هر باتری",`${fmt(b.nominalVoltage,1)} V / ${fmt(b.capacityAh)} Ah`],["تعداد باتری",`${fmt(b.count)} عدد`],["آرایش باتری",`${fmt(b.seriesCount)} سری × ${fmt(b.parallelCount)} موازی`],["ولتاژ پک",`${fmt(b.packVoltage,1)} V`],["ظرفیت بانک",`${fmt(b.bankCapacityAh,1)} Ah`],["انرژی خام بانک",`${fmt(b.grossEnergyKWh,2)} kWh`],["انرژی قابل استفاده",`${fmt(b.usableEnergyKWh,2)} kWh`],["پشتیبانی واقعی",`${fmt(b.runtimeHours,2)} ساعت`],["جریان DC تقریبی",`${fmt(d.electrical?.estimatedDcCurrentA,1)} A`]]}/></DataSection>
+ <DataSection title="الزامات اجرایی" meta="حفاظت"><DataGrid rows={[["حفاظت باتری","کلید یا فیوز DC متناسب با جریان طراحی"],["حفاظت خروجی","کلید AC متناسب با توان اینورتر"],["کابل باتری",`متناسب با باس ${fmt(d.electrical?.dcBusVoltage ?? i.dcVoltage ?? 48)} V DC`],["ارت و هم‌بندی","الزامی"],["بای‌پس تعمیراتی","پیشنهاد می‌شود"],["تهویه محل باتری و اینورتر","الزامی مطابق دیتاشیت"]]}/></DataSection></>}
+function SolarSummary({handoff,draft}){const d=draft?.designResult||draft?.design||draft||{}; return <DataSection title="چکیده طراحی خورشیدی" meta={handoff?.methodSummary?.title||"خورشیدی"}><DataGrid rows={[["توان مبنا",`${fmt(handoff?.normalizedLoad?.totalPowerW||d?.load?.finalPowerW)} W`],["انرژی روزانه",`${fmt(handoff?.normalizedLoad?.dailyEnergyKWh||d?.load?.finalEnergyKWh,2)} kWh`],["پنل",`${name(d.panel)} × ${fmt(d?.pvArray?.panelCount)} عدد`],["اینورتر",`${name(d.inverter)} × ${fmt(d?.inverter?.count||1)} عدد`],["وضعیت","آماده اجرا"]]}/></DataSection>}
+export default function SummaryPage(){const navigate=useNavigate(),params=useParams(); const path=useMemo(()=>getProjectPath(),[]),handoff=useMemo(()=>getSystemSetupHandoff(),[]),draft=useMemo(()=>getSystemSettingsDraft(),[]); const domain=normalizeProjectDomain({...handoff,domain:params.domain||draft?.domain||path.domain}); const run=()=>{const snapshot={domain,handoff,draft,confirmedAt:new Date().toISOString()}; writeJson("shil:summaryDraft",snapshot); writeJson("shil:finalEngineeringOutput",snapshot); approveProjectStep("summary"); navigate(`/new-project/run/${domain}`)}; return <EngineeringPageShell title={domain==="emergency"?"چکیده طراحی برق اضطراری":"چکیده طراحی"} activeStep="summary" backTo={`/new-project/system/${domain}`}><PageStack className="shil-page-scroll shil-summary-page">{domain==="emergency"?<EmergencySummary handoff={handoff} draft={draft}/>:<SolarSummary handoff={handoff} draft={draft}/>} {(draft?.designResult?.warnings||draft?.design?.warnings||[]).map(x=><StatusMessage key={String(x)}>{String(x)}</StatusMessage>)}<DataSection title="آماده اجرا" meta={domain}><p className="shil-muted-line">تمام داده‌های ورودی، محاسبات و تجهیزات انتخابی ثبت شده‌اند.</p><ActionBar><button type="button" className="shil-primary-wide" onClick={run}>اجرای نهایی</button></ActionBar></DataSection></PageStack></EngineeringPageShell>}

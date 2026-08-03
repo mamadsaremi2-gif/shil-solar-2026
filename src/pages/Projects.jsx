@@ -9,6 +9,7 @@ import {
   listManagedProjects,
   restoreManagedProject,
 } from "../workflow/projectManagement100.js";
+import { activateManagedProject } from "../workflow/projectSessionPersistence.js";
 
 const STEP_TITLES = {
   info: "اطلاعات پروژه",
@@ -46,9 +47,16 @@ function ProjectCard({ row, type, onRefresh }) {
     onRefresh();
   }
 
+  function openProject(event) {
+    event?.preventDefault?.();
+    const restored = activateManagedProject(row.projectKey);
+    if (!restored) return;
+    navigate(row.resumeUrl || "/new-project/info");
+  }
+
   return (
     <article className={`shil-project-manager-card ${isFinal ? "is-final" : "is-running"}`}>
-      <Link className="shil-project-manager-main" to={row.resumeUrl || "/new-project/info"}>
+      <Link className="shil-project-manager-main" to={row.resumeUrl || "/new-project/info"} onClick={openProject}>
         <div className="shil-project-manager-topline">
           <strong>{row.title || "پروژه بدون عنوان"}</strong>
           <span>{isFinal ? "نهایی" : isArchived ? "آرشیو" : "در حال اجرا"}</span>
@@ -61,7 +69,7 @@ function ProjectCard({ row, type, onRefresh }) {
         <p>{isFinal ? "پروژه تکمیل شده و آماده خروجی مهندسی است." : "از آخرین مرحله ذخیره‌شده ادامه بده."}</p>
       </Link>
       <div className="shil-project-manager-actions">
-        <button type="button" onClick={() => navigate(row.resumeUrl || "/new-project/info")}>{isFinal ? "مشاهده خروجی" : "ادامه پروژه"}</button>
+        <button type="button" onClick={openProject}>{isFinal ? "مشاهده خروجی" : "ادامه پروژه"}</button>
         <button type="button" onClick={(event) => runAction(event, () => exportManagedProject(row))}><Download size={16} /> خروجی JSON</button>
         {!isFinal && !isArchived ? <button type="button" onClick={(event) => runAction(event, () => archiveManagedProject(row.projectKey))}><Archive size={16} /> آرشیو</button> : null}
         {isArchived ? <button type="button" onClick={(event) => runAction(event, () => restoreManagedProject(row.projectKey))}><RotateCcw size={16} /> بازگردانی</button> : null}

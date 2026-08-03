@@ -110,7 +110,7 @@ export function runLoadEngine(input = {}) {
   const selectedItems = (input.selectedItems || []).map(normalizeLoadItem);
   const scenario = input.scenario || null;
   const fallbackPowerW = Number(scenario?.loadEstimate ?? input.manualPowerW ?? 1000) || 1000;
-  const fallbackHours = Number(scenario?.backupHours ?? input.manualHours ?? (domain === "emergency" ? 6 : 5)) || 5;
+  const fallbackHours = Number(scenario?.backupHours ?? input.manualHours ?? (domain === "emergency" ? 3 : 5)) || 5;
 
   const equipmentPowerW = selectedItems.reduce((sum, item) => sum + item.effectivePowerW, 0);
   const equipmentEnergyWh = selectedItems.reduce((sum, item) => sum + item.dailyEnergyWh, 0);

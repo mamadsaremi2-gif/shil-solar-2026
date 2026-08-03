@@ -323,15 +323,41 @@ function SolarSummary({ handoff, draft }) {
 }
 
 function EmergencySummary({ draft }) {
+  const design = draft?.designResult || draft?.design || draft || {};
+  const load = design.load || {};
+  const inverter = design.inverter || {};
+  const battery = design.battery || {};
+  const settings = design.settings || {};
+  const electrical = design.electrical || {};
+  const protection = design.protection || {};
   return (
-    <SummarySection title="چکیده برق اضطراری" meta="مسیر مستقل باتری و اینورتر">
-      <SummaryGrid rows={[
-        ["توان بار ضروری", `${faNumber(draft?.designResult?.loadPowerW || draft?.loadPowerW)} W`],
-        ["زمان پشتیبانی", `${faNumber(draft?.designResult?.backupHours || draft?.backupHours)} ساعت`],
-        ["باتری", titleOf(draft?.designResult?.battery || draft?.battery)],
-        ["اینورتر", titleOf(draft?.designResult?.inverter || draft?.inverter)],
-      ]} />
-    </SummarySection>
+    <>
+      <SummarySection title="چکیده برق اضطراری" meta="مسیر مستقل باتری و اینورتر">
+        <SummaryGrid rows={[
+          ["توان بار ضروری", `${faNumber(load.totalPowerW)} W`],
+          ["پیک راه‌اندازی", `${faNumber(load.surgePowerW)} W`],
+          ["زمان پشتیبانی هدف", `${faNumber(settings.backupHours, 2)} ساعت`],
+          ["زمان پشتیبانی واقعی", `${faNumber(battery.runtimeHours, 2)} ساعت`],
+          ["اینورتر", titleOf(inverter)],
+          ["توان نامی اینورتر", `${faNumber(inverter.ratedPowerW)} W`],
+          ["تعداد اینورتر", `${faNumber(inverter.count || 1)} عدد`],
+          ["باس DC", `${faNumber(electrical.dcBusVoltage || inverter.batteryVoltage, 1)} V`],
+          ["باتری", titleOf(battery)],
+          ["تعداد کل باتری", `${faNumber(battery.count)} عدد`],
+          ["آرایش بانک", `${faNumber(battery.seriesCount)} سری × ${faNumber(battery.parallelCount)} موازی`],
+          ["ظرفیت بانک", `${faNumber(battery.bankCapacityAh)} Ah`],
+          ["انرژی خام بانک", `${faNumber(battery.grossBankEnergyKWh || (Number(battery.count||0) * Number(battery.unitEnergyKWh||0)), 2)} kWh`],
+          ["انرژی قابل استفاده", `${faNumber(battery.usableEnergyKWh, 2)} kWh`],
+          ["جریان DC طراحی", `${faNumber(electrical.dcCurrentA || ((Number(inverter.designPowerW||inverter.ratedPowerW||0))/(Number(electrical.dcBusVoltage||inverter.dcVoltage||inverter.batteryVoltage||48)*0.93)), 1)} A`],
+          ["حفاظت DC", `${faNumber(protection.dcBreakerA)} A`],
+          ["کابل DC", `${faNumber(protection.dcCableMm2,1)} mm²`],
+          ["حفاظت AC", `${faNumber(protection.acBreakerA)} A`],
+          ["کابل AC", `${faNumber(protection.acCableMm2,1)} mm²`],
+          ["وضعیت طراحی", design.valid ? "قابل اجرا" : "نیازمند بازبینی"],
+        ]} />
+        <ShilWarningOverlay messages={design.warnings} inline />
+      </SummarySection>
+    </>
   );
 }
 
@@ -355,6 +381,15 @@ export default function SummaryPage() {
   const handoff = useMemo(() => getSystemSetupHandoff(), []);
   const centralState = useMemo(() => getProjectDesignState(), []);
   const draft = useMemo(() => getSystemSettingsDraft(), []);
+  const emergencyDesign = useMemo(() => {
+    try {
+      return JSON.parse(localStorage.getItem("shil:emergencySystemDesign") || "null")
+        || JSON.parse(localStorage.getItem("shil:emergencySystemDesign:live") || "null")
+        || {};
+    } catch {
+      return {};
+    }
+  }, []);
   const domain = normalizeProjectDomain({
     ...handoff,
     domain: params.domain || centralState?.domain || draft?.domain || projectPath.domain,
@@ -380,7 +415,7 @@ export default function SummaryPage() {
             draft={centralState?.design ? { designResult: centralState.design } : draft}
           />
         ) : null}
-        {domain === "emergency" ? <EmergencySummary draft={draft || {}} /> : null}
+        {domain === "emergency" ? <EmergencySummary draft={draft?.design ? draft : { design: emergencyDesign }} /> : null}
         {domain === "utility" ? <UtilitySummary draft={draft || {}} /> : null}
 
         <SummarySection title="آماده اجرا" meta={domain}>

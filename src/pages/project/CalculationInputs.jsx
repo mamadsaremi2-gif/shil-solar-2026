@@ -73,15 +73,15 @@ function resolveEffectiveDomain({ domain, method, effectivePanelPowerW, projectP
 }
 
 function buildAutonomySnapshot({ domain, method, manualHours, autonomyHours, autonomyDays, forceAutonomyBattery }) {
-  const inputHours = Math.max(0, toNumber(autonomyHours, 0));
-  const inputDays = Math.max(0, toNumber(autonomyDays, 0));
-  const manualBackupHours = domain === "emergency" ? Math.max(0, toNumber(manualHours, 0)) : 0;
-  const effectiveHours = domain === "emergency" ? Math.max(inputHours, manualBackupHours) : inputHours;
-  const totalHours = Number((effectiveHours + inputDays * 24).toFixed(2));
-  const isRequired = Boolean(forceAutonomyBattery) || effectiveHours > 0 || inputDays > 0 || domain === "emergency";
+  // In the emergency route, the confirmed autonomy field is the single source of truth.
+  // manualHours may belong to another calculation method and must never override it.
+  const hours = Math.max(0, toNumber(autonomyHours, domain === "emergency" ? 3 : 0));
+  const days = domain === "emergency" ? 0 : Math.max(0, toNumber(autonomyDays, 0));
+  const totalHours = Number((domain === "emergency" ? (hours || 3) : Math.max(hours, days * 24)).toFixed(2));
+  const isRequired = domain === "emergency" || Boolean(forceAutonomyBattery) || totalHours > 0;
   const reason = domain === "emergency"
     ? "emergency_backup_required"
-    : effectiveHours > 0 || inputDays > 0
+    : totalHours > 0
       ? "autonomy_required"
       : forceAutonomyBattery
         ? "user_requested_storage"
@@ -89,12 +89,11 @@ function buildAutonomySnapshot({ domain, method, manualHours, autonomyHours, aut
   return {
     required: isRequired,
     reason,
-    hours: Number(effectiveHours.toFixed(2)),
-    days: Number(inputDays.toFixed(2)),
-    totalHours,
-    inputHours,
-    inputDays,
-    backupHours: manualBackupHours,
+    hours: totalHours,
+    days: domain === "emergency" ? 0 : Number((totalHours / 24).toFixed(2)),
+    inputHours: hours,
+    inputDays: days,
+    backupHours: totalHours,
     source: method === "solar_panel_power" ? "pv_generation_route" : "load_route",
   };
 }
@@ -211,7 +210,7 @@ export default function CalculationInputs() {
   const [manualPowerW, setManualPowerW] = React.useState(persistedInputDraft.manualPowerW ?? "");
   const [manualCurrentA, setManualCurrentA] = React.useState(persistedInputDraft.manualCurrentA ?? "");
   const [manualVoltage, setManualVoltage] = React.useState(persistedInputDraft.manualVoltage ?? "220");
-  const [manualHours, setManualHours] = React.useState(persistedInputDraft.manualHours ?? (domain === "emergency" ? "6" : "5"));
+  const [manualHours, setManualHours] = React.useState(persistedInputDraft.manualHours ?? (domain === "emergency" ? "3" : "5"));
   const [profileVoltage, setProfileVoltage] = React.useState(persistedInputDraft.profileVoltage ?? "220");
   const [profilePowerW, setProfilePowerW] = React.useState(persistedInputDraft.profilePowerW ?? "1000");
   const [profileMorningKWh, setProfileMorningKWh] = React.useState(persistedInputDraft.profileMorningKWh ?? "1");
@@ -232,7 +231,7 @@ export default function CalculationInputs() {
   const [acVoltageRoute, setAcVoltageRoute] = React.useState(persistedInputDraft.acVoltageRoute ?? "220");
   const [inverterSplitCount, setInverterSplitCount] = React.useState(persistedInputDraft.inverterSplitCount ?? "1");
   const [forceAutonomyBattery, setForceAutonomyBattery] = React.useState(persistedInputDraft.forceAutonomyBattery ?? (domain === "emergency"));
-  const [autonomyHours, setAutonomyHours] = React.useState(persistedInputDraft.autonomyHours ?? (domain === "emergency" ? "6" : ""));
+  const [autonomyHours, setAutonomyHours] = React.useState(persistedInputDraft.autonomyHours ?? (domain === "emergency" ? "3" : ""));
   const [autonomyDays, setAutonomyDays] = React.useState(persistedInputDraft.autonomyDays ?? "");
 
   const items = React.useMemo(() => {
@@ -1078,15 +1077,19 @@ export default function CalculationInputs() {
           <section className="shil-env-card">
             <h3 className="shil-section-title">خودکفایی و الزام باتری</h3>
             <div className="shil-form-grid">
-              <label>ساعت خودکفایی / بکاپ<input className="shil-input" value={autonomyHours} onChange={(e) => setAutonomyHours(e.target.value)} placeholder={effectiveDomain === "emergency" ? "مثلاً 6" : "اختیاری"} inputMode="decimal" /></label>
-              <label>روز خودکفایی<input className="shil-input" value={autonomyDays} onChange={(e) => setAutonomyDays(e.target.value)} placeholder="مثلاً 1" inputMode="decimal" /></label>
-              <label className="shil-check-row">
-                <input type="checkbox" checked={forceAutonomyBattery} onChange={(e) => setForceAutonomyBattery(e.target.checked)} />
-                باتری در طراحی سیستم الزام شود
-              </label>
+              <label>ساعت پشتیبانی برق اضطراری<input className="shil-input" value={autonomyHours} onChange={(e) => setAutonomyHours(e.target.value)} placeholder={effectiveDomain === "emergency" ? "3" : "اختیاری"} inputMode="decimal" /></label>
+              {effectiveDomain !== "emergency" ? <label>روز خودکفایی<input className="shil-input" value={autonomyDays} onChange={(e) => setAutonomyDays(e.target.value)} placeholder="مثلاً 1" inputMode="decimal" /></label> : null}
+              {effectiveDomain === "emergency" ? (
+                <div className="shil-check-row shil-required-battery-note" role="status">✓ باتری و ذخیره‌ساز انرژی در طراحی برق اضطراری الزامی است.</div>
+              ) : (
+                <label className="shil-check-row">
+                  <input type="checkbox" checked={forceAutonomyBattery} onChange={(e) => setForceAutonomyBattery(e.target.checked)} />
+                  باتری در طراحی سیستم الزام شود
+                </label>
+              )}
             </div>
             <p className="shil-muted-note">
-              {autonomySnapshot.required ? `باتری الزامی است؛ دلیل: ${autonomySnapshot.reason === "emergency_backup_required" ? "مسیر برق اضطراری" : autonomySnapshot.reason === "autonomy_required" ? "ثبت زمان خودکفایی" : "درخواست کاربر"}. زمان مبنا: ${autonomySnapshot.hours} ساعت.` : "اگر ساعت یا روز خودکفایی وارد شود، صفحه تنظیمات باتری را اجباری در نظر می‌گیرد."}
+              {effectiveDomain === "emergency" ? `باتری و اینورتر در این مسیر الزامی هستند. زمان پشتیبانی هدف: ${autonomySnapshot.hours || 3} ساعت. ظرفیت باتری دقیقاً بر اساس همین مقدار محاسبه می‌شود.` : autonomySnapshot.required ? `باتری الزامی است؛ زمان پشتیبانی هدف: ${autonomySnapshot.hours} ساعت.` : "اگر ساعت یا روز خودکفایی وارد شود، صفحه تنظیمات باتری را اجباری در نظر می‌گیرد."}
             </p>
           </section>
         ) : (

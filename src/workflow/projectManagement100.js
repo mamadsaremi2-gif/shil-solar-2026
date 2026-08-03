@@ -1,6 +1,7 @@
 
 import { readUserRecords, upsertUserRecord, updateUserRecord, deleteUserRecord } from "../auth/session.js";
 import { getStepKeyFromPath, readWorkflowState } from "./projectWorkflow.js";
+import { captureProjectLocalState, ensureActiveProjectKey } from "./projectSessionPersistence.js";
 
 const PROJECTS_KEY = "shil-projects";
 const ACTIVE_KEY = "shil:activeProjectKey";
@@ -14,11 +15,7 @@ function safeParse(key, fallback = {}) {
 }
 
 function makeProjectKey() {
-  const current = localStorage.getItem(ACTIVE_KEY);
-  if (current) return current;
-  const next = `draft-${Date.now()}`;
-  localStorage.setItem(ACTIVE_KEY, next);
-  return next;
+  return ensureActiveProjectKey();
 }
 
 function getDomain() {
@@ -65,6 +62,7 @@ export function buildProjectSnapshot(pathname = window.location.pathname, status
     aiPreview: safeParse("shil:aiInstallationPreview", {}),
     finalOutput: safeParse("shil:finalEngineeringOutput", {}),
     workflow: readWorkflowState(),
+    localState: captureProjectLocalState(),
     lastRoute: pathname,
   };
   return {

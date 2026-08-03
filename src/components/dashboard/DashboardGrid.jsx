@@ -12,7 +12,7 @@ const dashboardItems = [
     tone: "cyan",
   },
   {
-    to: "/new-project/path",
+    to: "/new-project/path?new=1",
     icon: <img src={SHIL_ASSETS.icons.dashboard.newProject} alt="" loading="lazy" decoding="async" />,
     title: "پروژه جدید",
     subtitle: "مسیر ۸ مرحله‌ای",

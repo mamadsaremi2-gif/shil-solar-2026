@@ -913,3 +913,49 @@ html body:not(.login-page):not(.welcome-page) #shil-execution-output-root.shil-e
   }
 }
 /* SHIL EMERGENCY FLOW - CALCULATION INPUTS VISUAL UNIFICATION V8 END */
+
+/* EMERGENCY_SETTINGS_MINIMAL_V2_START */
+html body:not(.login-page):not(.welcome-page) #shil-emergency-settings-root{
+  width:min(100%,980px); margin:0 auto; padding:8px 10px 92px; direction:rtl;
+}
+html body:not(.login-page):not(.welcome-page) #shil-emergency-settings-root .shil-emergency-card{
+  margin:10px 0; padding:10px; border:1px solid rgba(120,230,255,.85); border-radius:18px;
+  background:rgba(215,235,255,.35); box-shadow:0 8px 22px rgba(0,0,0,.16), inset 0 0 18px rgba(160,235,255,.24);
+}
+#shil-emergency-settings-root .shil-emergency-card>h3{
+  margin:0 0 9px; min-height:34px; display:flex; align-items:center; justify-content:center; border-radius:17px;
+  background:linear-gradient(180deg,#fff 0%,#e9ffff 42%,#aeeeff 100%); color:#071827; font-size:14px; font-weight:900;
+}
+#shil-emergency-settings-root .shil-emergency-fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+#shil-emergency-settings-root .shil-emergency-fields label{display:flex;flex-direction:column;gap:5px;padding:8px;border-radius:12px;background:rgba(255,255,255,.72);border:1px solid rgba(143,221,241,.75)}
+#shil-emergency-settings-root .shil-emergency-fields span,#shil-emergency-settings-root .shil-compact-data-grid span{font-size:11px;font-weight:800;opacity:.76}
+#shil-emergency-settings-root input,#shil-emergency-settings-root select{min-height:38px;border:1px solid #a9ddea;border-radius:10px;background:#fff;padding:6px 9px;font-family:inherit}
+#shil-emergency-settings-root input[readonly]{background:#eef8fb;font-weight:900}
+#shil-emergency-settings-root .shil-compact-data-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin-top:8px}
+#shil-emergency-settings-root .shil-compact-data-grid>div{min-height:54px;display:flex;flex-direction:column;justify-content:center;gap:4px;padding:7px;border:1px solid rgba(149,221,239,.8);border-radius:11px;background:rgba(255,255,255,.74)}
+#shil-emergency-settings-root .shil-compact-data-grid strong{font-size:12px;line-height:1.55;color:#071827}
+#shil-emergency-settings-root .shil-emergency-equipment-line{padding:8px 0;border-bottom:1px solid rgba(110,190,215,.4)}
+#shil-emergency-settings-root .shil-emergency-equipment-line:last-child{border-bottom:0}
+#shil-emergency-settings-root .shil-emergency-equipment-summary{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 10px;border:1px solid rgba(149,221,239,.8);border-radius:12px;background:rgba(255,255,255,.8)}
+#shil-emergency-settings-root .shil-emergency-equipment-summary>div{display:flex;flex-direction:column;gap:3px;min-width:0}
+#shil-emergency-settings-root .shil-emergency-equipment-summary strong{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#shil-emergency-settings-root .shil-emergency-equipment-summary small{font-size:11px;opacity:.72}
+#shil-emergency-settings-root .shil-auto-badge{flex:0 0 auto;padding:4px 8px;border-radius:999px;background:#e8f4ff;color:#315c86;font-size:10px;font-weight:900}
+#shil-emergency-settings-root .shil-compact-details{margin-top:7px;border:1px solid rgba(149,221,239,.68);border-radius:11px;background:rgba(255,255,255,.62);overflow:hidden}
+#shil-emergency-settings-root .shil-compact-details>summary{cursor:pointer;list-style:none;padding:9px 11px;font-size:12px;font-weight:900;color:#163b55}
+#shil-emergency-settings-root .shil-compact-details>summary::-webkit-details-marker{display:none}
+#shil-emergency-settings-root .shil-compact-details>summary::before{content:'+';display:inline-grid;place-items:center;width:18px;height:18px;margin-left:6px;border-radius:50%;background:#dff5fb}
+#shil-emergency-settings-root .shil-compact-details[open]>summary::before{content:'−'}
+#shil-emergency-settings-root .shil-details-body{padding:8px 10px;border-top:1px solid rgba(149,221,239,.55);font-size:12px;line-height:1.8}
+#shil-emergency-settings-root .shil-details-body select{width:100%;margin-bottom:7px}
+#shil-emergency-settings-root .shil-warning-details{border-color:#f1bf7b;background:#fff8ec}
+#shil-emergency-settings-root .shil-emergency-confirm-button{margin-top:12px}
+@media(max-width:760px){
+ #shil-emergency-settings-root .shil-emergency-fields{grid-template-columns:1fr 1fr}
+ #shil-emergency-settings-root .shil-compact-data-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:480px){
+ #shil-emergency-settings-root .shil-emergency-fields{grid-template-columns:1fr}
+ #shil-emergency-settings-root .shil-emergency-equipment-summary{align-items:flex-start}
+}
+/* EMERGENCY_SETTINGS_MINIMAL_V2_END */

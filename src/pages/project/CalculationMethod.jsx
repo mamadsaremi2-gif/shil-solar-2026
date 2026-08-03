@@ -73,9 +73,10 @@ export default function CalculationMethod() {
 
   const methodCards = React.useMemo(() => getCardsForDomain(domain), [domain]);
 
-  const [selectedMethod, setSelectedMethod] = React.useState(
-    localStorage.getItem("shil:calculationMethod") || ""
-  );
+  // A fresh visit to the method page must never inherit the previous project's choice.
+  // Resumed projects are restored to their confirmed route by project persistence and do not
+  // need an implicit selection here.
+  const [selectedMethod, setSelectedMethod] = React.useState("");
 
   const context = React.useMemo(
     () => ({

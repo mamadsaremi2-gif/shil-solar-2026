@@ -228,18 +228,18 @@ function pick(...values) {
   return values.find((value) => value === 0 || value === "0") ?? "-";
 }
 
-function ReadOnlyBlock({ title, badge, rows = [], children }) {
+function ReadOnlyBlock({ title, badge, rows = [], children, defaultOpen = false }) {
   const visibleRows = rows.filter((row) => row && row.label);
   return (
-    <div className="shil-final-sheet-block shil-final-readonly-block">
-      <div className="shil-section-head"><h3>{title}</h3>{badge ? <span>{badge}</span> : null}</div>
+    <details className="shil-final-sheet-block shil-final-readonly-block shil-final-collapsible" open={defaultOpen}>
+      <summary className="shil-section-head"><h3>{title}</h3>{badge ? <span>{badge}</span> : null}<b>نمایش جزئیات</b></summary>
       {visibleRows.length ? (
         <div className="shil-final-sheet-grid shil-final-two-column-grid">
           {visibleRows.map((row, index) => <Row key={`${title}-${index}-${row.label}`} label={row.label} value={row.value} note={row.note} />)}
         </div>
       ) : null}
       {children}
-    </div>
+    </details>
   );
 }
 
@@ -257,8 +257,8 @@ function buildExecutionContext({ domain, project, summary, result, solarDesign, 
       emergency: true,
       projectPathTitle: localStorage.getItem("shil:projectPathTitle") || selectedPath?.title || "برق اضطراری",
       methodTitle: methodSummary?.title || design?.sourceMethod || methodKey || "لیست تجهیزات",
-      coreTitle: "موتور اختصاصی UPS / برق اضطراری",
-      designType: "باتری + اینورتر، مستقل از PV",
+      coreTitle: "موتور محاسبات برق اضطراری",
+      designType: "باتری + اینورتر برق اضطراری",
       calculationModel: design?.calculationModel || "ups_like_battery_inverter",
       city: project?.city || readDraft("shil:environmentDraft", {})?.city || "-",
       valid: design?.valid !== false,
@@ -430,7 +430,11 @@ export default function RunCalculation() {
   const exportSheetRef = useRef(null);
   const coreRun = useMemo(() => runCore(domain), [domain]);
   const result = coreRun.result;
-  const project = readDraft("shil:projectInfoDraft", {});
+  const project = {
+    ...readDraft("shil:projectDraft", {}),
+    ...readDraft("shil:projectInfo", {}),
+    ...readDraft("shil:projectInfoDraft", {}),
+  };
   const summary = readDraft("shil:summaryDraft", {});
   const centralState = getProjectDesignState();
   const solarDesign = centralState?.design || readDraft("shil:solarSystemDesign", summary?.solarDesign || {});
@@ -481,7 +485,6 @@ export default function RunCalculation() {
     { label: "نام پروژه", value: project.projectName || project.name || projectTitle },
     { label: "نام کارفرما", value: project.clientName || project.customerName || project.employerName || "SHIL CO" },
     { label: "تاریخ ثبت", value: project.registrationDate || project.date || project.createdAt || "-" },
-    { label: "شهر پروژه", value: runContext.city },
     { label: "روش ورود اطلاعات", value: runContext.methodTitle },
     { label: "هسته محاسبات", value: runContext.coreTitle },
     { label: "مدل طراحی", value: runContext.designType },
@@ -534,7 +537,6 @@ export default function RunCalculation() {
     { label: "توان آرایه پنل", value: `${runContext.arrayPowerW} W` },
     { label: "باتری انتخابی", value: runContext.batteryBank?.title || runContext.batteryBank?.name || "ثبت نشده" },
     { label: "ولتاژ / جریان / انرژی هر باتری", value: `${runContext.batteryVoltage} V / ${runContext.batteryCurrent} Ah / ${runContext.batteryEnergyKWh} kWh` },
-    { label: "روز خودکفایی", value: `${runContext.autonomyDays} روز` },
     { label: "تعداد باتری", value: `${runContext.batteryCount} عدد` },
     { label: "مجموع انرژی بانک باتری", value: `${runContext.batteryTotalKWh} kWh` },
     { label: "ظرفیت ذخیره‌سازی مورد نیاز برای روزهای خودکفایی", value: `${runContext.requiredStorageKWh} kWh` },
@@ -606,7 +608,7 @@ export default function RunCalculation() {
             </div>
           </div>
 
-          <ReadOnlyBlock title="اطلاعات پروژه" badge="Project Data" rows={projectInfoRows} />
+          <ReadOnlyBlock title="اطلاعات پروژه" badge="Project Data" rows={projectInfoRows} defaultOpen />
           <ReadOnlyBlock title="تجهیزات اجرای پروژه" badge="Execution Equipment" rows={projectEquipmentRows} />
 
           <ReadOnlyBlock title="سیستم حفاظتی" badge={emergency ? "UPS Protection" : "Protection System"} rows={protectionRows}>

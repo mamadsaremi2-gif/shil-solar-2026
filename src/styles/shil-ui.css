@@ -11123,3 +11123,29 @@ html body.shil-project-info-screen #shil-project-info-root.shil-project-info-eme
   }
 }
 /* SHIL_EMERGENCY_SETTINGS_MINIMAL_CALC_INPUTS_FINAL_END */
+
+
+/* V8.1 emergency compact unified layout */
+#shil-emergency-settings-root{max-width:900px;margin-inline:auto}
+#shil-emergency-settings-root .shil-section-card,
+#shil-emergency-settings-root .shil-bank-select{background:rgba(247,250,253,.96)!important;border:1px solid #bfd0e2!important;border-radius:24px!important;box-shadow:none!important;padding:16px!important;margin:12px 0!important}
+#shil-emergency-settings-root .shil-param-grid,
+#shil-emergency-settings-root .shil-summary-grid{gap:10px!important}
+#shil-emergency-settings-root .shil-param-grid label,
+#shil-emergency-settings-root .shil-summary-grid>div{min-height:84px!important;padding:12px!important;border-radius:18px!important;background:#f8fbfe!important;border:1px solid #c7d8e8!important;color:#10294b!important}
+#shil-emergency-settings-root input{min-height:48px!important;padding:8px 12px!important;background:#fff!important;border:1px solid #b7cade!important}
+#shil-emergency-settings-root .shil-bank-reference-title{font-size:1.45rem!important;margin:0 0 10px!important}
+#shil-emergency-settings-root .shil-bank-reference-head{display:none!important}
+#shil-emergency-settings-root .shil-bank-reference-row{display:grid!important;grid-template-columns:auto 1fr auto!important;gap:10px!important;align-items:center!important;min-height:58px!important;padding:8px 10px!important;background:#fff!important;border:1px solid #c8d9e8!important;border-radius:16px!important}
+#shil-emergency-settings-root .shil-bank-reference-row .shil-soft-button{order:3!important;min-height:42px!important;padding:6px 14px!important}
+#shil-emergency-settings-root .shil-bank-reference-expanded{margin-top:10px!important;padding:10px!important;border-radius:16px!important;background:#f5f9fd!important}
+#shil-emergency-settings-root .shil-bank-datasheet-grid{margin-top:8px!important}
+#shil-emergency-settings-root .shil-muted-line{font-size:.9rem!important;margin:8px 0 0!important}
+.shil-final-collapsible{padding:0!important;overflow:hidden}
+.shil-final-collapsible>summary{cursor:pointer;list-style:none;padding:16px 18px!important;margin:0!important}
+.shil-final-collapsible>summary::-webkit-details-marker{display:none}
+.shil-final-collapsible>summary b{margin-inline-start:auto;font-size:.85rem;background:#fff;border:1px solid #bfd0e2;border-radius:999px;padding:7px 12px}
+.shil-final-collapsible[open]>summary b{font-size:0}
+.shil-final-collapsible[open]>summary b:after{content:'بستن جزئیات';font-size:.85rem}
+.shil-final-collapsible>.shil-final-sheet-grid,.shil-final-collapsible>div:not(.shil-section-head){padding:12px 16px 18px}
+@media(max-width:640px){#shil-emergency-settings-root .shil-param-grid{grid-template-columns:1fr 1fr!important}#shil-emergency-settings-root .shil-bank-reference-row{grid-template-columns:1fr auto!important}#shil-emergency-settings-root .shil-bank-reference-row strong:last-child{display:none!important}}

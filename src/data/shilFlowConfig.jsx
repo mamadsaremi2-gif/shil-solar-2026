@@ -20,7 +20,7 @@ import {
 import { SHIL_ASSETS } from "../config/shilAssetPaths.js";
 
 export const dashboardItems = [
-  { title: "پروژه جدید", to: "/new-project/path", image: SHIL_ASSETS.icons.dashboard.newProject, icon: <Plus size={42} /> },
+  { title: "پروژه جدید", to: "/new-project/path?new=1", image: SHIL_ASSETS.icons.dashboard.newProject, icon: <Plus size={42} /> },
   { title: "پروژه‌ها", to: "/projects", image: SHIL_ASSETS.icons.dashboard.projects, icon: <FolderOpen size={42} /> },
   { title: "ارتباط با ما", to: "/contact", image: SHIL_ASSETS.icons.dashboard.contact, icon: <Phone size={42} /> },
   { title: "دستیار هوشمند SHIL", to: "/assistant", image: SHIL_ASSETS.icons.dashboard.assistant, icon: <Bot size={42} /> },

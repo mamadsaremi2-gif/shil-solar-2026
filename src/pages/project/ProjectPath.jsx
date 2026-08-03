@@ -3,6 +3,7 @@ import ShilPrimaryButton from "../../components/project/ShilPrimaryButton";
 import { useNavigate } from "react-router-dom";
 import { approveProjectStep } from "../../workflow/projectWorkflow.js";
 import { clearScenarioFlow, startUtilityGateway, setWorkflowMode, FLOW_MODES } from "../../workflow/flowIsolation.js";
+import { beginNewProjectSession } from "../../workflow/projectSessionPersistence.js";
 import EngineeringPageShell from "../../components/EngineeringPageShell.jsx";
 import ShilWarningOverlay from "../../components/ShilWarningOverlay.jsx";
 import { readAdminDefaults, readAdminProjectPathCards } from "../../admin/adminStore.js";
@@ -59,6 +60,14 @@ function normalizeCards(cards) {
 export default function ProjectPath() {
   const navigate = useNavigate();
   const [selected, setSelected] = useState(() => {
+    const params = new URLSearchParams(window.location.search || "");
+    if (params.get("new") === "1") {
+      beginNewProjectSession();
+      params.delete("new");
+      const query = params.toString();
+      window.history.replaceState({}, "", `${window.location.pathname}${query ? `?${query}` : ""}`);
+      return "";
+    }
     try {
       const saved = JSON.parse(localStorage.getItem("shil:selectedProjectPath") || "null");
       return saved?.key || localStorage.getItem("shil:projectPath") || "";
@@ -129,11 +138,11 @@ export default function ProjectPath() {
 
     clearScenarioFlow();
     setWorkflowMode(domain === "utility" ? FLOW_MODES.UTILITY : FLOW_MODES.MANUAL);
-    approveProjectStep("path");
     localStorage.setItem("shil:projectPath", selectedOption.key);
     localStorage.setItem("shil:selectedProjectPath", JSON.stringify(selectedOption));
     localStorage.setItem("shil:executionMethod", selectedOption.key);
     localStorage.setItem("shil:calculationDomain", domain);
+    approveProjectStep("path");
 
     if (domain === "utility") {
       localStorage.setItem("shil:scenarioDomain", "utility");

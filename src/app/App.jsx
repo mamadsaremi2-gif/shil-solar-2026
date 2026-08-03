@@ -49,7 +49,7 @@ export default function App() {
           <Route path="/welcome" element={<WelcomePage />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/new-project" element={<Navigate to="/new-project/path" replace />} />
+          <Route path="/new-project" element={<Navigate to="/new-project/path?new=1" replace />} />
 
           <Route path="/new-project/info" element={<ProjectInfo />} />
           <Route path="/new-project/environment/:domain" element={<Environment />} />
