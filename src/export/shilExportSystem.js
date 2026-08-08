@@ -127,33 +127,93 @@ export function exportDeliveryHtml(delivery) {
   downloadBlob(new Blob([html], { type: "text/html;charset=utf-8" }), `${normalizeFileName(delivery.meta.title)}-shil-report.html`);
 }
 
-export async function exportElementAsPng(element, filename = "shil-output.png") {
+async function renderElementAsA4Canvas(element) {
   if (!element) throw new Error("Export element not found");
-  const canvas = await html2canvas(element, { scale: 2, backgroundColor: "#08101b", useCORS: true, logging: false });
-  const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png", 0.95));
+
+  const host = document.createElement("div");
+  host.id = "shil-execution-output-root";
+  host.className = "shil-a4-export-host";
+  host.setAttribute("aria-hidden", "true");
+
+  const clone = element.cloneNode(true);
+  clone.removeAttribute("ref");
+  clone.style.width = "794px";
+  clone.style.height = "1123px";
+  clone.style.maxWidth = "none";
+  clone.style.minHeight = "0";
+  clone.style.margin = "0";
+  clone.style.transform = "none";
+  clone.style.aspectRatio = "auto";
+
+  host.appendChild(clone);
+  document.body.appendChild(host);
+
+  try {
+    if (document.fonts?.ready) await document.fonts.ready;
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    return await html2canvas(clone, {
+      scale: 2,
+      width: 794,
+      height: 1123,
+      windowWidth: 794,
+      windowHeight: 1123,
+      backgroundColor: "#ffffff",
+      useCORS: true,
+      logging: false,
+      scrollX: 0,
+      scrollY: 0,
+    });
+  } finally {
+    host.remove();
+  }
+}
+
+function canvasToA4Pdf(canvas, delivery) {
+  const imgData = canvas.toDataURL("image/png", 0.96);
+  const pdf = new jsPDF("p", "mm", "a4");
+  const pageWidth = pdf.internal.pageSize.getWidth();
+  const pageHeight = pdf.internal.pageSize.getHeight();
+  pdf.addImage(imgData, "PNG", 0, 0, pageWidth, pageHeight, undefined, "FAST");
+  pdf.setProperties({
+    title: delivery?.meta?.title || "SHIL One Page Output",
+    subject: "SHIL Final A4 Engineering Delivery",
+    creator: "SHIL",
+  });
+  return pdf;
+}
+
+export async function exportElementAsPng(element, filename = "shil-output.png") {
+  const canvas = await renderElementAsA4Canvas(element);
+  const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png", 0.96));
   downloadBlob(blob, filename);
   return canvas;
 }
 
 export async function exportElementAsPdf(element, delivery, filename = "shil-output.pdf") {
-  if (!element) throw new Error("Export element not found");
-  const canvas = await html2canvas(element, { scale: 2, backgroundColor: "#08101b", useCORS: true, logging: false });
-  const imgData = canvas.toDataURL("image/png", 0.96);
-  const pdf = new jsPDF("p", "mm", "a4");
-  const pageWidth = pdf.internal.pageSize.getWidth();
-  const pageHeight = pdf.internal.pageSize.getHeight();
-  const margin = 5;
-  const maxWidth = pageWidth - margin * 2;
-  const maxHeight = pageHeight - margin * 2;
-  const ratio = Math.min(maxWidth / canvas.width, maxHeight / canvas.height);
-  const imgWidth = canvas.width * ratio;
-  const imgHeight = canvas.height * ratio;
-  const x = (pageWidth - imgWidth) / 2;
-  const y = (pageHeight - imgHeight) / 2;
-
-  pdf.addImage(imgData, "PNG", x, y, imgWidth, imgHeight, undefined, "FAST");
-  pdf.setProperties({ title: delivery?.meta?.title || "SHIL One Page Output", subject: "SHIL One Page Engineering Delivery", creator: "SHIL" });
+  const canvas = await renderElementAsA4Canvas(element);
+  const pdf = canvasToA4Pdf(canvas, delivery);
   pdf.save(filename);
+  return pdf;
+}
+
+export async function shareElementAsPdf(element, delivery, filename = "shil-output.pdf") {
+  const canvas = await renderElementAsA4Canvas(element);
+  const pdf = canvasToA4Pdf(canvas, delivery);
+  const blob = pdf.output("blob");
+  const file = new File([blob], filename, { type: "application/pdf" });
+  const text = `خروجی نهایی مهندسی SHIL - ${delivery?.meta?.title || "پروژه"}`;
+
+  if (navigator.share && (!navigator.canShare || navigator.canShare({ files: [file] }))) {
+    await navigator.share({
+      title: delivery?.meta?.title || "SHIL Final Engineering Delivery",
+      text,
+      files: [file],
+    });
+    return "shared-pdf";
+  }
+
+  downloadBlob(blob, filename);
+  return "downloaded-pdf";
 }
 
 export async function shareDelivery(delivery) {

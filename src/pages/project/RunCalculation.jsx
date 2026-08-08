@@ -2,6 +2,7 @@ import ShilPrimaryButton from "../../components/project/ShilPrimaryButton";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import EngineeringPageShell from "../../components/EngineeringPageShell.jsx";
+import shilMainLogo from "../../assets/logos/shil-main-logo.png";
 import { approveProjectStep } from "../../workflow/projectWorkflow.js";
 import { markCurrentProjectFinal, showUxToast } from "../../workflow/uxFlowController.js";
 import { runEngineeringDesign } from "../../runEngineeringDesign.js";
@@ -14,6 +15,7 @@ import {
   exportElementAsPdf,
   exportElementAsPng,
   shareDelivery,
+  shareElementAsPdf,
 } from "../../export/shilExportSystem.js";
 
 function readDraft(key, fallback = {}) {
@@ -72,24 +74,23 @@ function runCore(domain) {
     const centralState = readDraft("shil:projectDesignState", null);
     const solarDesign = centralState?.design || readDraft("shil:solarSystemDesign", null);
     if (solarDesign?.version) {
+      const calculationInput = readCalculationInput();
+      const form = calculationInput?.form || makeFallbackForm(domain);
+      const centralResult = runEngineeringDesign(form, { domain: "solar", mode: "final-core", stopOnValidationError: false });
       return {
-        input: readCalculationInput(),
+        input: calculationInput,
         result: {
-          status: solarDesign.valid ? "success" : "needs-review",
-          valid: solarDesign.valid !== false,
-          mode: "UNIFIED_SOLAR_DESIGN_FROM_SYSTEM_SETTINGS",
+          ...centralResult,
+          status: solarDesign.valid && centralResult?.valid !== false ? "success" : "needs-review",
+          valid: solarDesign.valid !== false && centralResult?.valid !== false,
+          mode: "UNIFIED_SOLAR_FINAL_CORE",
           solarDesign,
-          values: { solarDesign },
-          summary: {
-            resultFields: {
-              inverterCount: solarDesign.inverter?.count || 1,
-              panelCount: solarDesign.pvArray?.panelCount || 0,
-              batteryCount: solarDesign.battery?.count || 0,
-              mpptCount: solarDesign.inverter?.mpptCount || 1,
-            },
-          },
-          warnings: solarDesign.warnings || [],
-          explanations: ["خروجی نهایی از طراحی تاییدشده صفحه تنظیمات خوانده شد."],
+          values: { ...(centralResult?.values || {}), solarDesign },
+          warnings: [...new Set([...(centralResult?.warnings || []), ...(solarDesign.warnings || [])])],
+          explanations: [
+            ...(centralResult?.explanations || []),
+            "تجهیزات، حفاظت و کابل‌های خروجی نهایی مستقیماً از موتور مرکزی محاسبات خوانده شدند.",
+          ],
         },
       };
     }
@@ -125,13 +126,13 @@ function FinalResultFields({ result = {}, solarDesign = {} }) {
         <div><span>ØªØ¹Ø¯Ø§Ø¯ Ù¾Ù†Ù„</span><MixedValue fa>{fields.panelCount || values.panelCount || 0} Ø¹Ø¯Ø¯</MixedValue></div>
         <div><span>ØªØ¹Ø¯Ø§Ø¯ Ø¨Ø§ØªØ±ÛŒ</span><MixedValue fa>{fields.batteryCount || values.batteryCount || 0} Ø¹Ø¯Ø¯</MixedValue></div>
         <div><span>ØªØ¹Ø¯Ø§Ø¯ MPPT</span><MixedValue fa>{fields.mpptCount || values.mpptCount || values.inverterMpptCount || 1} Ú©Ø§Ù†Ø§Ù„</MixedValue></div>
-        <div><span>ØªÙˆØ§Ù† Ù†ØµØ¨â€ŒØ´Ø¯Ù‡ PV</span><MixedValue>{values.installedPvPowerKW || summary.pv?.installedPowerKW || 0} kW</MixedValue></div>
+        <div><span>ØªÙˆØ§Ù† Ù†ØµØ¨â€ŒØ´Ø¯Ù‡ PV</span><MixedValue>{values.installedPvPowerKW || summary.pv?.installedPowerKW || 0} KW</MixedValue></div>
         <div><span>ÙØ¶Ø§ÛŒ Ù†ØµØ¨ Ú©Ù„</span><MixedValue fa>{fields.installationAreaM2 || values.installationAreaM2 || bom.space?.requiredInstallationAreaM2 || 0} Ù…ØªØ± Ù…Ø±Ø¨Ø¹</MixedValue></div>
       </div>
       <div className="shil-result-partitions">
-        <section><h4>ØªØ¬Ù‡ÛŒØ²Ø§Øª Ø­ÙØ§Ø¸ØªÛŒ PV</h4><p>{safeText(protection.pvDc?.breaker)} / {safeText(protection.pvDc?.spd)} / {safeText(protection.pvDc?.poles)}</p><small>ÙˆÙ„ØªØ§Ú˜: {safeText(protection.pvDc?.designVoltageV)}V | Ø¬Ø±ÛŒØ§Ù†: {safeText(protection.pvDc?.currentA)}A</small></section>
-        <section><h4>Ø­Ùاظت باتری</h4><p>{safeText(protection.batteryDc?.fuse)}</p><small>ولتاژ: {safeText(protection.batteryDc?.designVoltageV)}V | جریان: {safeText(protection.batteryDc?.currentA)}A</small></section>
-        <section><h4>حفاظت AC</h4><p>{safeText(protection.ac?.breaker)} / {safeText(protection.ac?.poles)}</p><small>ولتاژ: {safeText(protection.ac?.designVoltageV)}V | جریان: {safeText(protection.ac?.currentA)}A</small></section>
+        <section><h4>ØªØ¬Ù‡ÛŒØ²Ø§Øª Ø­ÙØ§Ø¸ØªÛŒ PV</h4><p>{safeText(protection.pvDc?.breaker)} / {safeText(protection.pvDc?.spd)} / {safeText(protection.pvDc?.poles)}</p><small>ÙˆÙ„ØªØ§Ú˜: {safeText(protection.pvDc?.designVoltageV)} V | Ø¬Ø±ÛŒØ§Ù†: {safeText(protection.pvDc?.currentA)} A</small></section>
+        <section><h4>Ø­Ùاظت باتری</h4><p>{safeText(protection.batteryDc?.fuse)}</p><small>ولتاژ: {safeText(protection.batteryDc?.designVoltageV)} V | جریان: {safeText(protection.batteryDc?.currentA)} A</small></section>
+        <section><h4>حفاظت AC</h4><p>{safeText(protection.ac?.breaker)} / {safeText(protection.ac?.poles)}</p><small>ولتاژ: {safeText(protection.ac?.designVoltageV)} V | جریان: {safeText(protection.ac?.currentA)} A</small></section>
         <section><h4>کابل‌ها</h4><p>PV: {safeText(cables.pv)}</p><p>Battery: {safeText(cables.battery)}</p><p>AC: {safeText(cables.ac)}</p></section>
       </div>
     </div>
@@ -178,7 +179,7 @@ function DistributedInverterTable({ systems = [] }) {
           <div key={safeKey(system.id || system.title || system, index)}>
             <span>{safeText(system.title || system.id, `اینورتر ${index + 1}`)}</span>
             <strong>{safeText(system?.pv?.panelCount, "0")} پنل / {safeText(system?.battery?.count, "0")} باتری / {safeText(system?.space?.maintenanceAreaM2)}m²</strong>
-            <small>DC {safeText(system?.protection?.dcBreakerA)}A / AC {safeText(system?.protection?.acBreakerA)}A / کابل {safeText(system?.protection?.dcCable)} و {safeText(system?.protection?.acCable)}</small>
+            <small>DC {safeText(system?.protection?.dcBreakerA)} A / AC {safeText(system?.protection?.acBreakerA)} A / کابل {safeText(system?.protection?.dcCable)} و {safeText(system?.protection?.acCable)}</small>
           </div>
         ))}
       </div>
@@ -190,8 +191,8 @@ function DecisionPath({ methodSummary, result, calculationInput, solarDesign, em
   const scenarioTitle = calculationInput?.scenario?.title || methodSummary.title || (emergency ? "برق اضطراری" : "خورشیدی");
   const designStatus = result?.valid === false ? "نیازمند بازبینی" : "قابل ارائه";
   const keyInputs = [
-    solarDesign?.load?.dailyEnergyWh ? `مصرف روزانه ${safeText(solarDesign.load.dailyEnergyWh)}Wh` : null,
-    solarDesign?.load?.peakLoadW ? `توان پیک ${safeText(solarDesign.load.peakLoadW)}W` : null,
+    solarDesign?.load?.dailyEnergyWh ? `مصرف روزانه ${safeText(solarDesign.load.dailyEnergyWh)} WH` : null,
+    solarDesign?.load?.peakLoadW ? `توان پیک ${safeText(solarDesign.load.peakLoadW)} W` : null,
     solarDesign?.environment?.peakSunHours ? `ساعت آفتابی ${safeText(solarDesign.environment.peakSunHours)}` : null,
   ].filter(Boolean).join(" / ") || "ورودی‌های کلیدی از مراحل قبلی پروژه خوانده شده‌اند";
 
@@ -211,14 +212,76 @@ function DecisionPath({ methodSummary, result, calculationInput, solarDesign, em
 
 function toEnglishDigits(value, fallback = "-") {
   if (value === null || value === undefined || value === "") return fallback;
-  const text = String(value);
-  return text
-    .replace(/[۰-۹]/g, (d) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)))
-    .replace(/[٠-٩]/g, (d) => String("٠١٢٣٤٥٦٧٨٩".indexOf(d)));
+  return String(value)
+    .replace(/[\u06F0-\u06F9]/g, (digit) => String(digit.charCodeAt(0) - 0x06F0))
+    .replace(/[\u0660-\u0669]/g, (digit) => String(digit.charCodeAt(0) - 0x0660))
+    .replace(/٫/g, ".")
+    .replace(/٬/g, ",");
 }
 
 function cleanValue(value, fallback = "ثبت نشده") {
   return toEnglishDigits(safeText(value, fallback), fallback);
+}
+
+function formatNumber(value, maximumFractionDigits = 2, fallback = "-") {
+  const normalized = toEnglishDigits(value, fallback).replace(/,/g, "");
+  const number = Number(normalized);
+  if (!Number.isFinite(number)) return cleanValue(value, fallback);
+  return number.toLocaleString("en-US", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: Math.min(2, Math.max(0, maximumFractionDigits)),
+  });
+}
+
+function formatMetric(value, unit, digits = 2, fallback = "-") {
+  const number = formatNumber(value, digits, fallback);
+  if (number === fallback) return fallback;
+  return `${number} ${String(unit || "").toUpperCase()}`.trim();
+}
+
+function formatPercent(value, digits = 1) {
+  const raw = String(value ?? "").replace("%", "");
+  return formatMetric(raw, "%", digits);
+}
+
+function NativeSection({ index, title, children, className = "" }) {
+  return (
+    <section className={`shil-run-native-section ${className}`.trim()}>
+      <header className="shil-run-native-section-title">
+        <span className="shil-run-section-index">{index}</span>
+        <h2>{title}</h2>
+      </header>
+      <div className="shil-run-native-section-body">{children}</div>
+    </section>
+  );
+}
+
+function NativeMetricGrid({ rows = [] }) {
+  return (
+    <div className="shil-run-native-metric-grid">
+      {rows.filter(Boolean).map((row, index) => (
+        <article className="shil-run-native-metric-card" key={`${row.label}-${index}`}>
+          <span>{row.label}</span>
+          <strong dir={row.ltr === false ? "rtl" : "ltr"} data-engineering-value={row.ltr === false ? undefined : "true"}>{cleanValue(row.value)}</strong>
+          {row.note ? <small>{cleanValue(row.note)}</small> : null}
+        </article>
+      ))}
+    </div>
+  );
+}
+
+function NativeDataTable({ rows = [] }) {
+  return (
+    <div className="shil-run-native-table">
+      {rows.filter(Boolean).map((row, index) => (
+        <article className="shil-run-native-table-row" key={`${row.label}-${index}`}>
+          <span>{row.label}</span>
+          <strong dir="ltr" data-engineering-value="true">{cleanValue(row.value)}</strong>
+          {row.note ? <small>{cleanValue(row.note)}</small> : null}
+        </article>
+      ))}
+    </div>
+  );
 }
 
 function pick(...values) {
@@ -266,7 +329,15 @@ function buildExecutionContext({ domain, project, summary, result, solarDesign, 
       surgePowerW: pick(load?.surgePowerW, load?.peakLoadW, 0),
       voltageAC: pick(load?.voltageAC, 220),
       phaseAC: load?.phaseAC || (Number(load?.voltageAC) >= 380 ? "three" : "single"),
-      backupHours: pick(settings?.backupHours, battery?.runtimeHours, 0),
+      backupHours: pick(
+        settings?.backupHours,
+        readDraft(`shil:systemSetupHandoff:emergency:${design?.sourceMethod || methodKey || localStorage.getItem("shil:calculationMethod") || "equipment"}`, {})?.autonomy?.inputHours,
+        readDraft(`shil:systemSetupHandoff:emergency:${design?.sourceMethod || methodKey || localStorage.getItem("shil:calculationMethod") || "equipment"}`, {})?.autonomy?.hours,
+        readDraft("shil:systemSetupHandoff", {})?.autonomy?.inputHours,
+        readDraft("shil:systemSetupHandoff", {})?.autonomy?.hours,
+        readDraft("shil:calculationInputsDraft", readDraft("shil:calculationInputDraft", {}))?.autonomyHours,
+        0
+      ),
       reserveFactor: pick(settings?.reserveFactor, 1.25),
       dodPercent: pick(settings?.dodPercent, 80),
       inverter, battery, batteryBank: battery, protection,
@@ -296,12 +367,15 @@ function buildExecutionContext({ domain, project, summary, result, solarDesign, 
   const values = result?.values || {};
   const resultSummary = result?.summary || {};
   const fields = resultSummary?.resultFields || {};
-  const panel = design?.panel || solarDesign?.panel || systemSettings?.panel || values?.panel || {};
-  const pvArray = design?.pvArray || solarDesign?.pvArray || systemSettings?.pvArray || values?.pvArray || {};
-  const inverter = design?.inverter || solarDesign?.inverter || systemSettings?.inverter || values?.inverter || {};
-  const battery = design?.battery || solarDesign?.battery || systemSettings?.battery || values?.battery || {};
-  const protection = values?.protection || resultSummary?.protection || systemSettings?.protection || {};
-  const cables = values?.cables || fields?.cables || systemSettings?.cables || {};
+  const engineEquipment = result?.equipment || resultSummary?.equipment || {};
+  const panel = engineEquipment?.panel || values?.panel || design?.panel || solarDesign?.panel || systemSettings?.panel || {};
+  const pvArray = values?.pvArray || design?.pvArray || solarDesign?.pvArray || systemSettings?.pvArray || {};
+  const inverter = engineEquipment?.inverter || values?.inverter || design?.inverter || solarDesign?.inverter || systemSettings?.inverter || {};
+  const battery = engineEquipment?.battery || values?.battery || design?.battery || solarDesign?.battery || systemSettings?.battery || {};
+  const protection = values?.protection || resultSummary?.protection || {};
+  const cables = values?.cables || fields?.cables || {};
+  const cableDetails = values?.cableDetails || resultSummary?.cableDetails || {};
+  const billOfMaterials = resultSummary?.billOfMaterials || {};
   const batteryBank = battery?.item || battery?.battery || battery;
 
   const safetyFactor = pick(solarDesign?.load?.reserveFactor, systemSettings?.systemConfig?.reserveFactor, systemSettings?.safetyFactor, systemSettings?.standardSafetyFactor, finalParams?.safetyFactor, 1.2);
@@ -336,7 +410,7 @@ function buildExecutionContext({ domain, project, summary, result, solarDesign, 
     environment, environmentAssessment, selectedPath, projectPathTitle, methodTitle, coreTitle, designType,
     safetyFactor, autonomyDays, powerAfterFactorW, dailyEnergyWh,
     city, psh, direction, tilt, envEfficiency,
-    panel, pvArray, inverter, battery, batteryBank, protection, cables,
+    panel, pvArray, inverter, battery, batteryBank, protection, cables, cableDetails, billOfMaterials,
     panelPowerW, panelVoltage, panelCurrent, panelCount, arrayPowerW,
     inverterCount, mpptEach, dcVoltage,
     batteryVoltage, batteryCurrent, batteryEnergyKWh, batteryCount, batteryTotalKWh, requiredStorageKWh,
@@ -344,21 +418,48 @@ function buildExecutionContext({ domain, project, summary, result, solarDesign, 
 }
 
 function buildProtectionRows(ctx) {
-  const inverterCount = Math.max(1, Number(ctx.inverterCount) || 1);
-  const mpptEach = Math.max(1, Number(ctx.mpptEach) || 1);
-  const panelCount = Number(ctx.panelCount) || 0;
-  const stringsPerInverter = Math.max(1, Math.ceil((panelCount || 1) / inverterCount / mpptEach));
-  const pvCurrent = pick(ctx.panelCurrent, ctx.protection?.pvDc?.currentA, 15);
-  const pvVoltage = pick(ctx.panelVoltage, ctx.protection?.pvDc?.designVoltageV, ctx.dcVoltage);
-  const batteryCurrent = pick(ctx.protection?.batteryDc?.currentA, ctx.batteryCurrent, "-");
-  const acCurrent = pick(ctx.protection?.ac?.currentA, "-");
+  const protection = ctx?.protection || {};
+  const cableDetails = ctx?.cableDetails || {};
+  const cables = ctx?.cables || {};
+  const pv = protection?.pvDc || {};
+  const battery = protection?.batteryDc || {};
+  const ac = protection?.ac || {};
+  const hasBattery = Number(ctx?.batteryCount || 0) > 0;
+
+  const joinSpecs = (...items) => items.filter((item) => item && item !== "-").map((item) => cleanValue(item)).join(" / ") || "ثبت نشده";
+  const cableValue = (detail, fallback) => cleanValue(detail?.label || fallback || "ثبت نشده");
+  const cableNote = (detail) => {
+    if (!detail || !Object.keys(detail).length) return "خروجی مستقیم موتور مرکزی";
+    return [
+      detail.currentA !== undefined ? `I ${formatMetric(detail.currentA, "A", 2)}` : null,
+      detail.lengthM !== undefined ? `L ${formatMetric(detail.lengthM, "M", 2)}` : null,
+      detail.voltageDropPercent !== undefined ? `ΔV ${formatMetric(detail.voltageDropPercent, "%", 2)}` : null,
+    ].filter(Boolean).join(" / ");
+  };
+
   return [
-    { label: "تجهیزات حفاظتی PV", value: `SHIL DC MCB × ${inverterCount * mpptEach}`, note: `برای ${inverterCount} اینورتر و ${mpptEach} MPPT برای هر اینورتر` },
-    { label: "حفاظت باتری", value: `SHIL Battery Fuse × ${inverterCount}`, note: `برای مسیر DC باتری به اینورتر / جریان ${batteryCurrent}A` },
-    { label: "حفاظت AC", value: `SHIL AC Breaker × ${inverterCount}`, note: `برای خروجی AC هر اینورتر / جریان ${acCurrent}A` },
-    { label: "کابل‌ها - PV", value: `PV Cable برای ${inverterCount * mpptEach} شاخه`, note: `بر اساس ${stringsPerInverter} استرینگ در هر MPPT / حدود ${pvCurrent}A / ${pvVoltage}V` },
-    { label: "کابل‌ها - Battery", value: `Battery Cable برای ${inverterCount} مسیر`, note: `متناسب با ولتاژ DC اینورتر ${ctx.dcVoltage}V و جریان بانک باتری` },
-    { label: "کابل‌ها - AC", value: `AC Cable برای ${inverterCount} خروجی`, note: "متناسب با خروجی اینورترها و مصرف‌کننده AC" },
+    {
+      label: "حفاظت PV / DC",
+      value: joinSpecs(pv.breaker, pv.fuse, pv.spd, pv.isolator),
+      note: `${formatMetric(pv.designVoltageV, "VDC", 2)} / ${formatMetric(pv.currentA, "A", 2)}`,
+    },
+    hasBattery ? {
+      label: "حفاظت باتری",
+      value: joinSpecs(battery.fuse, battery.isolator),
+      note: `${formatMetric(battery.designVoltageV, "VDC", 2)} / ${formatMetric(battery.currentA, "A", 2)}`,
+    } : {
+      label: "حفاظت باتری",
+      value: "در این طراحی باتری الزامی نیست",
+      note: "بر اساس نتیجه موتور مرکزی",
+    },
+    {
+      label: "حفاظت AC",
+      value: joinSpecs(ac.breaker, ac.spd, ac.poles),
+      note: `${formatMetric(ac.designVoltageV, "VAC", 2)} / ${formatMetric(ac.currentA, "A", 2)}`,
+    },
+    { label: "کابل PV / DC", value: cableValue(cableDetails.pv, cables.pv), note: cableNote(cableDetails.pv) },
+    { label: "کابل باتری", value: hasBattery ? cableValue(cableDetails.battery, cables.battery) : "در این طراحی باتری الزامی نیست", note: hasBattery ? cableNote(cableDetails.battery) : "-" },
+    { label: "کابل AC", value: cableValue(cableDetails.ac, cables.ac), note: cableNote(cableDetails.ac) },
   ];
 }
 
@@ -388,7 +489,7 @@ function SubsystemProtectionTable({ ctx }) {
             <div className="shil-inverter-mini-grid">
               <div><span>پنل تخصیص‌یافته</span><strong>{perInverterPanels} عدد</strong></div>
               <div><span>تعداد MPPT</span><strong>{mpptEach} کانال</strong></div>
-              <div><span>حفاظت AC</span><strong>{acBreaker}A</strong></div>
+              <div><span>حفاظت AC</span><strong>{acBreaker} A</strong></div>
               <div><span>کابل خروجی</span><strong>{acCable}</strong></div>
               <div><span>کابل باتری</span><strong>{batteryCable}</strong></div>
               <div><span>فضای نگهداری</span><strong>مستقل</strong></div>
@@ -399,7 +500,7 @@ function SubsystemProtectionTable({ ctx }) {
                 <div className="shil-mppt-compact-row" key={`inv-${inverterIndex}-mppt-${mpptIndex}`}>
                   <strong>{`MPPT ${mpptIndex + 1}`}</strong>
                   <span>{`${perMpptPanels} پنل سری`}</span>
-                  <span>{`MCB DC ${dcBreaker}A`}</span>
+                  <span>{`MCB DC ${dcBreaker} A`}</span>
                   <span>{dcCable}</span>
                 </div>
               ))}
@@ -490,7 +591,7 @@ export default function RunCalculation() {
     { label: "مدل طراحی", value: runContext.designType },
     { label: "توان بار ضروری", value: `${runContext.loadPowerW} W` },
     { label: "توان پیک / راه‌اندازی", value: `${runContext.surgePowerW} W` },
-    { label: "خروجی AC", value: runContext.phaseAC === "three" ? `${runContext.voltageAC} V سه‌فاز` : `${runContext.voltageAC} V تک‌فاز` },
+    { label: "خروجی AC", value: runContext.phaseAC === "three" ? `${formatMetric(runContext.voltageAC, "V", 2)} سه‌فاز` : `${formatMetric(runContext.voltageAC, "V", 2)} تک‌فاز` },
     { label: "مدت پشتیبانی هدف", value: `${runContext.backupHours} ساعت` },
     { label: "ضریب اطمینان اینورتر", value: runContext.reserveFactor },
     { label: "عمق دشارژ مجاز", value: `${runContext.dodPercent}%` },
@@ -509,7 +610,7 @@ export default function RunCalculation() {
     { label: "هسته طراحی", value: runContext.coreTitle },
     { label: "ضریب اطمینان استاندارد", value: runContext.safetyFactor },
     { label: "توان کل پس از ضریب", value: `${runContext.powerAfterFactorW} W` },
-    { label: "انرژی روزانه پس از ضریب", value: `${runContext.dailyEnergyWh} Wh` },
+    { label: "انرژی روزانه پس از ضریب", value: `${runContext.dailyEnergyWh} WH` },
     { label: "نوع طراحی", value: runContext.designType },
   ];
 
@@ -520,11 +621,11 @@ export default function RunCalculation() {
     { label: "توان نامی اینورتر", value: `${runContext.inverterRatedPowerW} W` },
     { label: "باس DC باتری", value: `${runContext.dcVoltage} V` },
     { label: "باتری انتخابی", value: runContext.battery?.title || runContext.battery?.model || runContext.battery?.name || "ثبت نشده" },
-    { label: "مشخصات هر باتری", value: `${runContext.batteryVoltage} V / ${runContext.batteryCurrent} Ah / ${runContext.batteryEnergyKWh} kWh` },
+    { label: "مشخصات هر باتری", value: `${runContext.batteryVoltage} V / ${runContext.batteryCurrent} AH / ${runContext.batteryEnergyKWh} KWH` },
     { label: "آرایش بانک باتری", value: `${runContext.batterySeriesCount} سری × ${runContext.batteryParallelCount} موازی` },
     { label: "تعداد کل باتری", value: `${runContext.batteryCount} عدد` },
-    { label: "انرژی خام مورد نیاز", value: `${runContext.requiredStorageKWh} kWh` },
-    { label: "انرژی قابل استفاده بانک", value: `${runContext.batteryTotalKWh} kWh` },
+    { label: "انرژی خام مورد نیاز", value: `${runContext.requiredStorageKWh} KWH` },
+    { label: "انرژی قابل استفاده بانک", value: `${runContext.batteryTotalKWh} KWH` },
     { label: "زمان پشتیبانی واقعی", value: `${runContext.runtimeHours} ساعت` },
   ] : [
     { label: "اینورتر خورشیدی", value: runContext.inverter?.title || runContext.inverter?.name || "ثبت نشده" },
@@ -536,20 +637,73 @@ export default function RunCalculation() {
     { label: "تعداد پنل", value: `${runContext.panelCount} عدد` },
     { label: "توان آرایه پنل", value: `${runContext.arrayPowerW} W` },
     { label: "باتری انتخابی", value: runContext.batteryBank?.title || runContext.batteryBank?.name || "ثبت نشده" },
-    { label: "ولتاژ / جریان / انرژی هر باتری", value: `${runContext.batteryVoltage} V / ${runContext.batteryCurrent} Ah / ${runContext.batteryEnergyKWh} kWh` },
+    { label: "ولتاژ / جریان / انرژی هر باتری", value: `${runContext.batteryVoltage} V / ${runContext.batteryCurrent} AH / ${runContext.batteryEnergyKWh} KWH` },
     { label: "تعداد باتری", value: `${runContext.batteryCount} عدد` },
-    { label: "مجموع انرژی بانک باتری", value: `${runContext.batteryTotalKWh} kWh` },
-    { label: "ظرفیت ذخیره‌سازی مورد نیاز برای روزهای خودکفایی", value: `${runContext.requiredStorageKWh} kWh` },
+    { label: "مجموع انرژی بانک باتری", value: `${runContext.batteryTotalKWh} KWH` },
+    { label: "ظرفیت ذخیره‌سازی مورد نیاز برای روزهای خودکفایی", value: `${runContext.requiredStorageKWh} KWH` },
   ];
 
-  const protectionRows = emergency ? [
-    { label: "حفاظت مسیر باتری DC", value: "فیوز یا MCCB DC متناسب با جریان بانک", note: "بین بانک باتری و اینورتر UPS" },
-    { label: "ایزولاتور DC", value: "کلید قطع DC باتری", note: `متناسب با باس ${runContext.dcVoltage}V` },
-    { label: "حفاظت خروجی AC", value: "کلید حفاظتی خروجی اینورتر", note: `${runContext.voltageAC}V / مسیر بارهای ضروری` },
-    { label: "کابل باتری", value: "کابل DC باتری با سطح مقطع محاسبه‌شده", note: "براساس توان اینورتر، ولتاژ باس و طول مسیر" },
-    { label: "کابل خروجی AC", value: "کابل AC بار اضطراری", note: "براساس جریان خروجی و افت ولتاژ مجاز" },
-    { label: "ارت و هم‌بندی", value: "ارت بدنه اینورتر و تابلو UPS", note: "مطابق الزامات ایمنی محل نصب" },
-  ] : buildProtectionRows(runContext);
+  const protectionRows = emergency ? (() => {
+    const p = runContext.protection || {};
+    const dcBreaker = pick(p.dcBreaker, p.dcBreakerA, p.batteryDc?.breakerA, p.batteryDc?.currentA, "-");
+    const dcVoltage = pick(p.dcVoltage, p.batteryDc?.designVoltageV, runContext.dcVoltage, "-");
+    const acBreaker = pick(p.acBreaker, p.acBreakerA, p.ac?.breakerA, p.ac?.currentA, "-");
+    const acVoltage = pick(p.acVoltage, p.ac?.designVoltageV, runContext.voltageAC, "-");
+    const dcCable = pick(p.dcCable, p.dcCableMm2, p.batteryDc?.cableMm2, "-");
+    const acCable = pick(p.acCable, p.acCableMm2, p.ac?.cableMm2, "-");
+    const effectiveLength = pick(p.effectiveLength, p.effectiveLengthM, runContext?.protection?.effectiveLengthM, "-");
+    const dcCurrent = pick(p.dcCurrent, p.dcCurrentA, p.batteryDc?.designCurrentA, "-");
+    const acCurrent = pick(p.acCurrent, p.acCurrentA, p.ac?.designCurrentA, "-");
+    return [
+      { label: "حفاظت DC باتری", value: `${formatMetric(dcBreaker, "A", 2)} / ${formatMetric(dcVoltage, "VDC", 2)}`, note: `جریان طراحی ${formatMetric(dcCurrent, "A", 2)}` },
+      { label: "حفاظت خروجی AC", value: `${formatMetric(acBreaker, "A", 2)} / ${formatMetric(acVoltage, "VAC", 2)}`, note: `جریان طراحی ${formatMetric(acCurrent, "A", 2)}` },
+      { label: "کابل باتری", value: formatMetric(dcCable, "MM²", 2), note: "کابل مسی مسیر بانک باتری تا اینورتر" },
+      { label: "کابل خروجی AC", value: formatMetric(acCable, "MM²", 2), note: "کابل مسی خروجی اینورتر تا بارهای ضروری" },
+      { label: "طول مؤثر کابل", value: formatMetric(effectiveLength, "M", 2), note: "شامل ضریب افزایش متراژ ثبت‌شده" },
+      { label: "الزامات ایمنی", value: "ارت، هم‌بندی و بای‌پس تعمیراتی", note: "قدرت قطع تجهیزات مطابق جریان اتصال کوتاه محل نصب" },
+    ];
+  })() : buildProtectionRows(runContext);
+  const nativeProjectRows = emergency ? [
+    { label: "نام پروژه", value: project.projectName || project.name || projectTitle, ltr: false },
+    { label: "کارفرما", value: project.clientName || project.customerName || project.employerName || "ثبت نشده", ltr: false },
+    { label: "مسیر طراحی", value: runContext.projectPathTitle, ltr: false },
+    { label: "روش طراحی", value: runContext.methodTitle, ltr: false },
+  ] : [
+    { label: "نام پروژه", value: project.projectName || project.name || projectTitle, ltr: false },
+    { label: "کارفرما", value: project.clientName || project.customerName || project.employerName || "ثبت نشده", ltr: false },
+    { label: "شهر مبنا", value: runContext.city, ltr: false },
+    { label: "روش طراحی", value: runContext.methodTitle, ltr: false },
+  ];
+
+  const nativeSummaryRows = emergency ? [
+    { label: "توان بار ضروری", value: formatMetric(runContext.loadPowerW, "W", 2) },
+    { label: "پیک راه‌اندازی", value: formatMetric(runContext.surgePowerW, "W", 2) },
+    { label: "پشتیبانی هدف", value: formatMetric(runContext.backupHours, "H", 2) },
+    { label: "پشتیبانی واقعی", value: formatMetric(runContext.runtimeHours, "H", 2) },
+    { label: "ضریب اطمینان اینورتر", value: formatNumber(runContext.reserveFactor, 2) },
+    { label: "عمق دشارژ مجاز", value: formatPercent(runContext.dodPercent, 1) },
+    { label: "خروجی AC", value: `${formatMetric(runContext.voltageAC, "V", 2)} ${runContext.phaseAC === "three" ? "سه‌فاز" : "تک‌فاز"}`, ltr: false },
+    { label: "انرژی خام موردنیاز", value: formatMetric(runContext.requiredStorageKWh, "KWH", 2) },
+  ] : [
+    { label: "توان طراحی نهایی", value: formatMetric(runContext.powerAfterFactorW, "W", 2) },
+    { label: "انرژی روزانه", value: formatMetric(Number(runContext.dailyEnergyWh || 0) / 1000, "KWH", 2) },
+    { label: "PSH", value: formatMetric(runContext.psh, "H", 2) },
+    { label: "راندمان محیطی", value: String(runContext.envEfficiency).includes("%") ? formatPercent(runContext.envEfficiency, 1) : cleanValue(runContext.envEfficiency) },
+    { label: "جهت پیشنهادی", value: runContext.direction, ltr: false },
+    { label: "زاویه پنل", value: formatMetric(runContext.tilt, "DEG", 1) },
+    { label: "ضریب اطمینان", value: formatNumber(runContext.safetyFactor, 2) },
+    { label: "نوع طراحی", value: runContext.designType, ltr: false },
+  ];
+
+  const nativeEquipmentRows = emergency ? [
+    { label: "اینورتر برق اضطراری", value: cleanValue(runContext.inverter?.title || runContext.inverter?.model || runContext.inverter?.name || "ثبت نشده"), note: `${formatNumber(runContext.inverterCount, 0)} عدد / ${formatMetric(runContext.inverterRatedPowerW, "W", 2)} / ${formatMetric(runContext.dcVoltage, "VDC", 2)}` },
+    { label: "بانک باتری", value: cleanValue(runContext.battery?.title || runContext.battery?.model || runContext.battery?.name || "ثبت نشده"), note: `${formatNumber(runContext.batteryCount, 0)} عدد / ${formatNumber(runContext.batterySeriesCount, 0)} سری × ${formatNumber(runContext.batteryParallelCount, 0)} موازی / ${formatMetric(runContext.batteryTotalKWh, "KWH", 2)}` },
+  ] : [
+    { label: "اینورتر خورشیدی", value: cleanValue(runContext.inverter?.title || runContext.inverter?.model || runContext.inverter?.name || "ثبت نشده"), note: `${formatNumber(runContext.inverterCount, 0)} عدد / ${formatNumber(runContext.mpptEach, 0)} MPPT` },
+    { label: "پنل خورشیدی", value: cleanValue(runContext.panel?.title || runContext.panel?.model || runContext.panel?.name || formatMetric(runContext.panelPowerW, "W", 0)), note: `${formatNumber(runContext.panelCount, 0)} عدد / آرایه ${formatMetric(runContext.arrayPowerW, "W", 2)}` },
+    { label: "بانک باتری", value: cleanValue(runContext.batteryBank?.title || runContext.batteryBank?.model || runContext.batteryBank?.name || (Number(runContext.batteryCount) ? "باتری انتخاب‌شده" : "بدون باتری")), note: Number(runContext.batteryCount) ? `${formatNumber(runContext.batteryCount, 0)} عدد / ${formatMetric(runContext.batteryTotalKWh, "KWH", 2)}` : "در این طراحی ذخیره‌ساز الزامی نیست" },
+  ];
+
   const finalizationRef = useRef(false);
 
   useEffect(() => {
@@ -578,10 +732,13 @@ export default function RunCalculation() {
 
   async function shareProject() {
     try {
-      await shareDelivery(delivery);
-      showUxToast("خروجی نهایی برای اشتراک آماده شد", "success");
+      setExporting("share");
+      await shareElementAsPdf(exportSheetRef.current, delivery, `${projectTitle || "shil"}-one-page-summary.pdf`);
+      showUxToast("فایل PDF نهایی برای اشتراک آماده شد", "success");
     } catch {
-      showUxToast("اشتراک‌گذاری انجام نشد", "warning");
+      showUxToast("اشتراک‌گذاری PDF انجام نشد", "warning");
+    } finally {
+      setExporting("");
     }
   }
 
@@ -600,87 +757,118 @@ export default function RunCalculation() {
   return (
     <EngineeringPageShell title="اجرا و خروجی نهایی">
       <section id="shil-execution-output-root" className={`shil-final-delivery-page shil-final-delivery-compact shil-execution-output-page ${emergency ? "shil-emergency-run-output" : ""}`}>
-        <div className="shil-final-one-page-sheet" ref={exportSheetRef}>
-          <div className="shil-final-sheet-hero shil-final-sheet-hero-centered shil-ds-center">
-            <div className="shil-ds-full-width">
-              <span className="shil-ds-kicker shil-ds-center-text">SHIL FINAL SUMMARY</span>
-              <h2 className="shil-ds-center-text shil-ds-mt-1">اطلاعات نهایی اجرای پروژه</h2>
-            </div>
+        <NativeSection index="01" title="مشخصات پروژه">
+          <NativeMetricGrid rows={nativeProjectRows} />
+        </NativeSection>
+
+        <NativeSection index="02" title="چکیده محاسبات">
+          <NativeMetricGrid rows={nativeSummaryRows} />
+        </NativeSection>
+
+        <NativeSection index="03" title="تجهیزات نهایی پروژه">
+          <NativeDataTable rows={nativeEquipmentRows} />
+        </NativeSection>
+
+        <NativeSection index="04" title="حفاظت و الزامات اجرا">
+          <NativeDataTable rows={protectionRows} />
+        </NativeSection>
+
+        <div className="shil-a4-preview-frame shil-a4-export-source" aria-hidden="true">
+          <div className="shil-final-one-page-sheet shil-a4-final-form" ref={exportSheetRef} dir="rtl">
+            <header className="shil-a4-header">
+              <img className="shil-a4-main-logo" src={shilMainLogo} alt="SHIL Iran" />
+              <h1>چکیده طراحی نهایی پروژه</h1>
+            </header>
+
+            <section className="shil-a4-section">
+              <div className="shil-a4-section-title"><span>01</span><h3>مشخصات پروژه</h3></div>
+              <div className="shil-a4-fields shil-a4-fields-project">
+                <div><span>نام پروژه</span><b>{project.projectName || project.name || projectTitle}</b></div>
+                <div><span>کارفرما</span><b>{project.clientName || project.customerName || project.employerName || "ثبت نشده"}</b></div>
+                <div><span>تاریخ ثبت</span><b>{cleanValue(project.registrationDate || project.date || project.createdAt || "-")}</b></div>
+                <div><span>مسیر طراحی</span><b>{runContext.projectPathTitle}</b></div>
+                {!emergency ? <div><span>شهر مبنا</span><b>{runContext.city}</b></div> : <div><span>روش ورود اطلاعات</span><b>{runContext.methodTitle}</b></div>}
+                <div><span>روش طراحی</span><b>{runContext.methodTitle}</b></div>
+              </div>
+            </section>
+
+            <section className="shil-a4-section">
+              <div className="shil-a4-section-title"><span>02</span><h3>چکیده محاسبات</h3></div>
+              <div className="shil-a4-fields shil-a4-fields-design">
+                {emergency ? (<>
+                  <div><span>توان بار ضروری</span><b>{formatMetric(runContext.loadPowerW, "W", 2)}</b></div>
+                  <div><span>پیک راه‌اندازی</span><b>{formatMetric(runContext.surgePowerW, "W", 2)}</b></div>
+                  <div><span>پشتیبانی هدف</span><b>{formatMetric(runContext.backupHours, "H", 2)}</b></div>
+                  <div><span>پشتیبانی واقعی</span><b>{formatMetric(runContext.runtimeHours, "H", 2)}</b></div>
+                  <div><span>ضریب اطمینان اینورتر</span><b>{formatNumber(runContext.reserveFactor, 2)}</b></div>
+                  <div><span>عمق دشارژ مجاز</span><b>{formatPercent(runContext.dodPercent, 1)}</b></div>
+                  <div><span>خروجی AC</span><b>{runContext.phaseAC === "three" ? `${formatMetric(runContext.voltageAC, "V", 2)} سه‌فاز` : `${formatMetric(runContext.voltageAC, "V", 2)} تک‌فاز`}</b></div>
+                  <div><span>انرژی خام موردنیاز</span><b>{formatMetric(runContext.requiredStorageKWh, "KWH", 2)}</b></div>
+                </>) : (<>
+                  <div><span>توان طراحی نهایی</span><b>{formatMetric(runContext.powerAfterFactorW, "W", 2)}</b></div>
+                  <div><span>انرژی روزانه</span><b>{formatMetric(Number(runContext.dailyEnergyWh || 0) / 1000, "KWH", 2)}</b></div>
+                  <div><span>PSH</span><b>{formatMetric(runContext.psh, "H", 2)}</b></div>
+                  <div><span>راندمان محیطی</span><b>{String(runContext.envEfficiency).includes("%") ? formatPercent(runContext.envEfficiency, 1) : cleanValue(runContext.envEfficiency)}</b></div>
+                  <div><span>جهت پیشنهادی</span><b>{runContext.direction}</b></div>
+                  <div><span>زاویه پنل</span><b>{formatMetric(runContext.tilt, "DEG", 1)}</b></div>
+                  <div><span>ضریب اطمینان</span><b>{formatNumber(runContext.safetyFactor, 2)}</b></div>
+                  <div><span>نوع طراحی</span><b>{runContext.designType}</b></div>
+                </>)}
+              </div>
+            </section>
+
+            <section className="shil-a4-section">
+              <div className="shil-a4-section-title"><span>03</span><h3>تجهیزات نهایی پروژه</h3></div>
+              <div className="shil-a4-table">
+                <div className="shil-a4-table-head"><span>تجهیز</span><span>مدل / مشخصات نهایی</span><span>تعداد / آرایش</span></div>
+                {emergency ? (<>
+                  <div><span>اینورتر برق اضطراری</span><b>{cleanValue(runContext.inverter?.title || runContext.inverter?.model || runContext.inverter?.name || "ثبت نشده")}</b><small>{cleanValue(`${runContext.inverterCount} عدد / ${runContext.inverterRatedPowerW} W / ${runContext.dcVoltage} VDC`)}</small></div>
+                  <div><span>بانک باتری</span><b>{cleanValue(runContext.battery?.title || runContext.battery?.model || runContext.battery?.name || "ثبت نشده")}</b><small>{cleanValue(`${runContext.batteryCount} عدد / ${runContext.batterySeriesCount} سری × ${runContext.batteryParallelCount} موازی / ${runContext.batteryTotalKWh} KWH`)}</small></div>
+                </>) : (<>
+                  <div><span>اینورتر خورشیدی</span><b>{cleanValue(runContext.inverter?.title || runContext.inverter?.model || runContext.inverter?.name || "ثبت نشده")}</b><small>{cleanValue(`${runContext.inverterCount} عدد / ${runContext.mpptEach} MPPT`)}</small></div>
+                  <div><span>پنل خورشیدی</span><b>{cleanValue(runContext.panel?.title || runContext.panel?.model || runContext.panel?.name || `${runContext.panelPowerW} W`)}</b><small>{cleanValue(`${runContext.panelCount} عدد / آرایه ${runContext.arrayPowerW} W`)}</small></div>
+                  <div><span>بانک باتری</span><b>{cleanValue(runContext.batteryBank?.title || runContext.batteryBank?.model || runContext.batteryBank?.name || (Number(runContext.batteryCount) ? "باتری انتخاب‌شده" : "بدون باتری"))}</b><small>{Number(runContext.batteryCount) ? cleanValue(`${runContext.batteryCount} عدد / ${runContext.batteryTotalKWh} KWH`) : "در این طراحی ذخیره‌ساز الزامی نیست"}</small></div>
+                </>)}
+              </div>
+            </section>
+
+            <section className="shil-a4-section">
+              <div className="shil-a4-section-title"><span>04</span><h3>حفاظت و الزامات اجرا</h3></div>
+              <div className="shil-a4-execution-grid">
+                {protectionRows.slice(0, 6).map((row, index) => (
+                  <div key={`a4-protection-${index}`}><span>{row.label}</span><b>{safeText(row.value)}</b>{row.note ? <small>{safeText(row.note)}</small> : null}</div>
+                ))}
+              </div>
+            </section>
+
+
           </div>
-
-          <ReadOnlyBlock title="اطلاعات پروژه" badge="Project Data" rows={projectInfoRows} defaultOpen />
-          <ReadOnlyBlock title="تجهیزات اجرای پروژه" badge="Execution Equipment" rows={projectEquipmentRows} />
-
-          <ReadOnlyBlock title="سیستم حفاظتی" badge={emergency ? "UPS Protection" : "Protection System"} rows={protectionRows}>
-            {!emergency ? (
-              <div className="shil-final-sheet-block shil-final-protection-detail shil-ds-mt-3">
-                <h3>تقسیم زیرسیستم‌ها برای هر اینورتر</h3>
-                <SubsystemProtectionTable ctx={runContext} />
-              </div>
-            ) : (
-              <div className="shil-engineering-list shil-emergency-execution-note">
-                <p>این خروجی صرفاً متعلق به مسیر برق اضطراری و منطق UPS است؛ هیچ پنل، استرینگ، MPPT یا تولید خورشیدی در محاسبات این صفحه استفاده نشده است.</p>
-              </div>
-            )}
-          </ReadOnlyBlock>
-
-          {!emergency ? (
-            <div className={`shil-results-accordion ${resultsOpen ? "is-open" : ""}`}>
-              <button
-                type="button"
-                className="shil-results-accordion__header"
-                aria-expanded={resultsOpen}
-                onClick={() => setResultsOpen((open) => !open)}
-              >
-                <span>نتایج و نکات مهم</span>
-                <span className="shil-results-accordion__chevron" aria-hidden="true">{resultsOpen ? "▲" : "▼"}</span>
-              </button>
-
-              {resultsOpen ? (
-                <div className="shil-results-accordion__content">
-                  <section className="shil-results-accordion__section">
-                    <h4>آرایش و جانمایی پنل‌ها</h4>
-                    <div className="shil-results-accordion__grid">
-                      <p>{panelLayoutNote(runContext)}</p>
-                      <p>فضای نصب پنل‌ها باید بر اساس دیتاشیت پنل انتخابی، تعداد پنل، تعداد استرینگ و فاصله اجرایی بین استرینگ‌ها محاسبه و در نقشه اجرایی تفکیک شود.</p>
-                    </div>
-                  </section>
-
-                  <section className="shil-results-accordion__section">
-                    <h4>جمع‌بندی نهایی</h4>
-                    <ul className="shil-results-accordion__notes">
-                      {importantNotes.map((item, index) => <li key={safeKey(item, index)}>{safeText(item)}</li>)}
-                      {warnings.map((item, index) => <li className="warning" key={safeKey(item, index)}>هشدار: {safeText(item)}</li>)}
-                      {!warnings.length ? <li>طراحی برای ارائه خروجی نهایی آماده است.</li> : null}
-                    </ul>
-                  </section>
-                </div>
-              ) : null}
-            </div>
-          ) : (
-            <div className="shil-final-sheet-block shil-final-result-block">
-              <h3>نتایج و نکات مهم</h3>
-              <ul>
-                {importantNotes.map((item, index) => <li key={safeKey(item, index)}>{safeText(item)}</li>)}
-                {warnings.map((item, index) => <li className="warning" key={safeKey(item, index)}>هشدار: {safeText(item)}</li>)}
-                {!warnings.length ? <li>طراحی برای ارائه خروجی نهایی آماده است.</li> : null}
-              </ul>
-            </div>
-          )}
         </div>
 
-        <div className="shil-accordion-card">
-          <button type="button" className="shil-accordion-header" onClick={()=>setFinalOutputOpen(!finalOutputOpen)}>
-            <span>خروجی نهایی</span><span>{finalOutputOpen ? "▲":"▼"}</span>
+        <div className="shil-run-data-accordion shil-run-native-accordion">
+          <button type="button" className="shil-run-data-accordion-header" onClick={() => setResultsOpen(!resultsOpen)} aria-expanded={resultsOpen}>
+            <span>نتایج و هشدارها</span><span aria-hidden="true">{resultsOpen ? "▲" : "▼"}</span>
           </button>
-          {finalOutputOpen && (
-          <div className="shil-final-action-area">
-            <div className="shil-output-actions shil-output-actions-three">
-              <button type="button" onClick={saveProjectImage} disabled={Boolean(exporting)}>{exporting === "png" ? "در حال ساخت تصویر..." : "خروجی تصویر"}</button>
-              <button type="button" onClick={exportPdf} disabled={Boolean(exporting)}>{exporting === "pdf" ? "در حال ساخت PDF..." : "خروجی PDF"}</button>
-              <button type="button" onClick={shareProject}>اشتراک‌گذاری خروجی</button>
+          {resultsOpen ? (
+            <div className="shil-run-data-accordion-body">
+              {importantNotes.map((item, index) => <div className="shil-run-data-card" key={`run-note-${index}`}>{cleanValue(item)}</div>)}
+              {warnings.map((item, index) => <div className="shil-run-data-card shil-run-warning-card" key={`run-warning-${index}`}>{cleanValue(`هشدار: ${item}`)}</div>)}
+              {!importantNotes.length && !warnings.length ? <div className="shil-run-data-card">محاسبات نهایی آماده اجرا است.</div> : null}
             </div>
-          </div>)}
+          ) : null}
+        </div>
+
+        <div className="shil-run-data-accordion shil-final-output-accordion shil-run-native-accordion">
+          <button type="button" className="shil-run-data-accordion-header" onClick={() => setFinalOutputOpen(!finalOutputOpen)} aria-expanded={finalOutputOpen}>
+            <span>خروجی نهایی</span><span aria-hidden="true">{finalOutputOpen ? "▲" : "▼"}</span>
+          </button>
+          {finalOutputOpen ? (
+            <div className="shil-run-data-accordion-body shil-output-actions shil-output-actions-three">
+              <button className="shil-run-data-card shil-run-action-card" type="button" onClick={saveProjectImage} disabled={Boolean(exporting)}>{exporting === "png" ? "در حال ساخت تصویر..." : "دریافت تصویر"}</button>
+              <button className="shil-run-data-card shil-run-action-card" type="button" onClick={exportPdf} disabled={Boolean(exporting)}>{exporting === "pdf" ? "در حال ساخت PDF..." : "دریافت فایل PDF"}</button>
+              <button className="shil-run-data-card shil-run-action-card" type="button" onClick={shareProject} disabled={Boolean(exporting)}>{exporting === "share" ? "در حال آماده‌سازی PDF..." : "اشتراک‌گذاری فایل PDF"}</button>
+            </div>
+          ) : null}
         </div>
 
         <Link className="shil-soft-link-button" to="/projects/final">مشاهده پروژه‌های نهایی</Link>

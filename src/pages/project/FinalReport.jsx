@@ -61,13 +61,13 @@ export default function FinalReport() {
           <ResultCard
             title="????? ?????"
             value={results.batteryCapacity}
-            unit="Ah"
+            unit="AH"
           />
 
           <ResultCard
             title="????? ????????"
             value={results.requiredEnergy}
-            unit="kWh"
+            unit="KWH"
           />
 
         </section>

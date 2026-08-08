@@ -33,7 +33,7 @@ function SummaryGrid({ rows = [] }) {
       {items.map(([label, value], index) => (
         <article className="shil-summary-kv-card" key={`${keyPrefix}-${index}`}>
           <span className="shil-summary-kv-label">{label}</span>
-          <strong className="shil-summary-kv-value" title={`${label}: ${value || "-"}`}>
+          <strong className="shil-summary-kv-value" dir="ltr" data-engineering-value="true" title={`${label}: ${value || "-"}`}>
             {value || "-"}
           </strong>
         </article>
@@ -302,7 +302,7 @@ function SolarSummary({ handoff, draft }) {
         <SummaryGrid rows={[
           ["روش ورود", handoff?.methodSummary?.title || handoff?.source?.method],
           ["توان مبنا", `${faNumber(handoff?.normalizedLoad?.totalPowerW || design?.load?.basePowerW)} W`],
-          ["انرژی روزانه", `${faNumber(handoff?.normalizedLoad?.dailyEnergyKWh || design?.load?.baseEnergyKWh, 2)} kWh`],
+          ["انرژی روزانه", `${faNumber(handoff?.normalizedLoad?.dailyEnergyKWh || design?.load?.baseEnergyKWh, 2)} KWH`],
           ["مبنای طراحی", handoff?.methodSummary?.basis || "load_consumption"],
         ]} />
       </SummarySection>
@@ -310,10 +310,10 @@ function SolarSummary({ handoff, draft }) {
       <SummarySection title="چکیده تنظیمات" meta="تجهیزات انتخابی">
         <SummaryGrid rows={[
           ["پنل", `${titleOf(design?.panel)} / ${faNumber(design?.pvArray?.panelCount)} عدد`],
-          ["توان آرایه", `${faNumber(design?.pvArray?.arrayPowerKW, 2)} kW`],
+          ["توان آرایه", `${faNumber(design?.pvArray?.arrayPowerKW, 2)} KW`],
           ["اینورتر", `${titleOf(design?.inverter)} / ${faNumber(design?.inverter?.count || 1)} عدد`],
-          ["باتری", design?.system?.needsBattery ? `${titleOf(design?.battery?.item)} / ${faNumber(design?.battery?.grossEnergyKWh, 2)} kWh` : "غیرفعال"],
-          ["تولید روزانه تخمینی", `${faNumber(design?.pvArray?.estimatedDailyKWh, 2)} kWh`],
+          ["باتری", design?.system?.needsBattery ? `${titleOf(design?.battery?.item)} / ${faNumber(design?.battery?.grossEnergyKWh, 2)} KWH` : "غیرفعال"],
+          ["تولید روزانه تخمینی", `${faNumber(design?.pvArray?.estimatedDailyKWh, 2)} KWH`],
           ["اعتبارسنجی", design?.valid ? "قابل اجرا" : "نیازمند بازبینی"],
         ]} />
         <ShilWarningOverlay messages={design?.warnings} inline />
@@ -345,9 +345,9 @@ function EmergencySummary({ draft }) {
           ["باتری", titleOf(battery)],
           ["تعداد کل باتری", `${faNumber(battery.count)} عدد`],
           ["آرایش بانک", `${faNumber(battery.seriesCount)} سری × ${faNumber(battery.parallelCount)} موازی`],
-          ["ظرفیت بانک", `${faNumber(battery.bankCapacityAh)} Ah`],
-          ["انرژی خام بانک", `${faNumber(battery.grossBankEnergyKWh || (Number(battery.count||0) * Number(battery.unitEnergyKWh||0)), 2)} kWh`],
-          ["انرژی قابل استفاده", `${faNumber(battery.usableEnergyKWh, 2)} kWh`],
+          ["ظرفیت بانک", `${faNumber(battery.bankCapacityAh)} AH`],
+          ["انرژی خام بانک", `${faNumber(battery.grossBankEnergyKWh || (Number(battery.count||0) * Number(battery.unitEnergyKWh||0)), 2)} KWH`],
+          ["انرژی قابل استفاده", `${faNumber(battery.usableEnergyKWh, 2)} KWH`],
           ["جریان DC طراحی", `${faNumber(electrical.dcCurrentA || ((Number(inverter.designPowerW||inverter.ratedPowerW||0))/(Number(electrical.dcBusVoltage||inverter.dcVoltage||inverter.batteryVoltage||48)*0.93)), 1)} A`],
           ["حفاظت DC", `${faNumber(protection.dcBreakerA)} A`],
           ["کابل DC", `${faNumber(protection.dcCableMm2,1)} mm²`],
@@ -368,7 +368,7 @@ function UtilitySummary({ draft }) {
         ["ظرفیت هدف", `${faNumber(draft?.designResult?.targetPowerMW || draft?.targetPowerMW, 2)} MW`],
         ["پنل نیروگاهی", titleOf(draft?.designResult?.panel || draft?.panel)],
         ["اینورتر صنعتی", titleOf(draft?.designResult?.inverter || draft?.inverter)],
-        ["تولید سالانه", `${faNumber(draft?.designResult?.annualEnergyKWh || draft?.annualEnergyKWh)} kWh`],
+        ["تولید سالانه", `${faNumber(draft?.designResult?.annualEnergyKWh || draft?.annualEnergyKWh)} KWH`],
       ]} />
     </SummarySection>
   );

@@ -509,7 +509,7 @@ export default function CalculationInputs() {
         title: "چکیده مسیر انرژی روزانه",
         basis: "daily_energy",
         keyMetrics: { dailyEnergyKWh, voltageAC: voltage, totalPowerW },
-        nextStepHints: ["سایزبندی پنل بر اساس kWh/day", "بررسی نیاز به ذخیره‌ساز در صورت خودکفایی"],
+        nextStepHints: ["سایزبندی پنل بر اساس KWH/day", "بررسی نیاز به ذخیره‌ساز در صورت خودکفایی"],
       },
       profile: {
         title: "چکیده مسیر پروفایل مصرف",
@@ -834,13 +834,13 @@ export default function CalculationInputs() {
                   <label>توان همزمان/پیک مصرف W<input className="shil-input" value={profilePowerW} onChange={(e) => setProfilePowerW(e.target.value)} placeholder="مثلاً 3500" inputMode="numeric" /></label>
                   <label>ولتاژ AC<select className="shil-input" value={profileVoltage} onChange={(e) => setProfileVoltage(e.target.value)}><option value="220">۲۲۰ ولت تک‌فاز</option><option value="380">۳۸۰ ولت سه‌فاز</option></select></label>
                   <label>ضریب راه‌اندازی/پیک<input className="shil-input" value={profileStartFactor} onChange={(e) => setProfileStartFactor(e.target.value)} placeholder="مثلاً 1.6" inputMode="decimal" /></label>
-                  <label>مصرف صبح kWh<input className="shil-input" value={profileMorningKWh} onChange={(e) => setProfileMorningKWh(e.target.value)} inputMode="decimal" /></label>
-                  <label>مصرف ظهر kWh<input className="shil-input" value={profileNoonKWh} onChange={(e) => setProfileNoonKWh(e.target.value)} inputMode="decimal" /></label>
-                  <label>مصرف عصر kWh<input className="shil-input" value={profileEveningKWh} onChange={(e) => setProfileEveningKWh(e.target.value)} inputMode="decimal" /></label>
-                  <label>مصرف شب kWh<input className="shil-input" value={profileNightKWh} onChange={(e) => setProfileNightKWh(e.target.value)} inputMode="decimal" /></label>
+                  <label>مصرف صبح KWH<input className="shil-input" value={profileMorningKWh} onChange={(e) => setProfileMorningKWh(e.target.value)} inputMode="decimal" /></label>
+                  <label>مصرف ظهر KWH<input className="shil-input" value={profileNoonKWh} onChange={(e) => setProfileNoonKWh(e.target.value)} inputMode="decimal" /></label>
+                  <label>مصرف عصر KWH<input className="shil-input" value={profileEveningKWh} onChange={(e) => setProfileEveningKWh(e.target.value)} inputMode="decimal" /></label>
+                  <label>مصرف شب KWH<input className="shil-input" value={profileNightKWh} onChange={(e) => setProfileNightKWh(e.target.value)} inputMode="decimal" /></label>
                 </div>
                 <div className="shil-summary-grid">
-                  <div><span>مصرف کل روزانه</span><strong>{(profileTotalEnergyWh / 1000).toFixed(2)} kWh</strong></div>
+                  <div><span>مصرف کل روزانه</span><strong>{(profileTotalEnergyWh / 1000).toFixed(2)} KWH</strong></div>
                   <div><span>توان پیک مبنا</span><strong>{Math.round(profilePeakPowerW)} W</strong></div>
                   <div><span>توان راه‌اندازی</span><strong>{profileSurgePowerW} W</strong></div>
                   <div><span>بازه پیک مصرف</span><strong>{profileLoadProfile.peakBucket === "night" ? "شب" : profileLoadProfile.peakBucket === "noon" ? "ظهر" : profileLoadProfile.peakBucket === "morning" ? "صبح" : "عصر"}</strong></div>
@@ -866,8 +866,8 @@ export default function CalculationInputs() {
                 </div>
                 <h3 className="shil-section-title">نتایج توان پنل خورشیدی</h3>
                 <div className="shil-summary-grid">
-                  <div><span>توان کل پنل‌ها</span><strong>{(totalPanelPowerW / 1000).toFixed(2)} kW</strong></div>
-                  <div><span>تولید روزانه بدون تلفات</span><strong>{rawPvDailyKWh} kWh</strong></div>
+                  <div><span>توان کل پنل‌ها</span><strong>{(totalPanelPowerW / 1000).toFixed(2)} KW</strong></div>
+                  <div><span>تولید روزانه بدون تلفات</span><strong>{rawPvDailyKWh} KWH</strong></div>
                   <div><span>منبع PSH و تلفات</span><strong>{contextCityLabel}</strong></div>
                   <div><span>راندمان مؤثر</span><strong>{(100 - toNumber(lossPercent, 0)).toFixed(1)}٪</strong></div>
                   <div><span>جهت و زاویه مطابق شرایط محیطی</span><strong>{envSolarDefaults.orientation.toFixed(1)}٪</strong></div>
@@ -876,7 +876,7 @@ export default function CalculationInputs() {
               </>
             ) : (
               <div className="shil-form-grid">
-                {method === "energy" ? <label>انرژی روزانه kWh<input className="shil-input" value={manualEnergyKWh} onChange={(e) => setManualEnergyKWh(e.target.value)} placeholder="مثلاً 12.5" inputMode="decimal" /></label> : null}
+                {method === "energy" ? <label>انرژی روزانه KWH<input className="shil-input" value={manualEnergyKWh} onChange={(e) => setManualEnergyKWh(e.target.value)} placeholder="مثلاً 12.5" inputMode="decimal" /></label> : null}
                 {method === "power" ? <label>توان مدنظر پروژه W<input className="shil-input" value={manualPowerW} onChange={(e) => setManualPowerW(e.target.value)} placeholder="مثلاً 3500" inputMode="numeric" /></label> : null}
                 {method === "current" ? <label>جریان کل A<input className="shil-input" value={manualCurrentA} onChange={(e) => setManualCurrentA(e.target.value)} placeholder="مثلاً 16" inputMode="decimal" /></label> : null}
                 {(method === "power" || method === "current") ? (
@@ -899,7 +899,7 @@ export default function CalculationInputs() {
             {method === "equipment" ? <div><span>تجهیزات انتخاب‌شده</span><strong>{selectedEquipmentTitles || "ثبت نشده"}</strong></div> : null}
             {method !== "power" && method !== "current" ? <div><span>تعداد تجهیزات</span><strong>{enginePreview.selectedCount || "Auto"}</strong></div> : null}
             {method !== "current" ? <div><span>توان کل</span><strong>{enginePreview.totalPowerW} W</strong></div> : null}
-            {method !== "current" ? <div><span>انرژی روزانه</span><strong>{enginePreview.totalEnergyKWh} kWh</strong></div> : null}
+            {method !== "current" ? <div><span>انرژی روزانه</span><strong>{enginePreview.totalEnergyKWh} KWH</strong></div> : null}
             {method === "current" ? <div><span>جریان کل واردشده</span><strong>{toNumber(manualCurrentA, 0)} A</strong></div> : <div><span>جریان AC</span><strong>{enginePreview.acCurrentA} A</strong></div>}
             {method === "current" ? <div><span>ولتاژ شبکه</span><strong>{manualPhaseLabel}</strong></div> : null}
             {method === "current" ? <div><span>توان محاسبه‌شده</span><strong>{currentDerivedPowerW} W</strong></div> : null}
@@ -926,10 +926,10 @@ export default function CalculationInputs() {
           <section className="shil-env-card">
             <h3 className="shil-section-title">جزئیات نتایج پروفایل مصرف</h3>
             <div className="shil-summary-grid">
-              <div><span>صبح</span><strong>{Math.round(safeLoadBuckets.morning / 1000)} kWh</strong></div>
-              <div><span>ظهر</span><strong>{Math.round(safeLoadBuckets.noon / 1000)} kWh</strong></div>
-              <div><span>عصر</span><strong>{Math.round(safeLoadBuckets.evening / 1000)} kWh</strong></div>
-              <div><span>شب</span><strong>{Math.round(safeLoadBuckets.night / 1000)} kWh</strong></div>
+              <div><span>صبح</span><strong>{Math.round(safeLoadBuckets.morning / 1000)} KWH</strong></div>
+              <div><span>ظهر</span><strong>{Math.round(safeLoadBuckets.noon / 1000)} KWH</strong></div>
+              <div><span>عصر</span><strong>{Math.round(safeLoadBuckets.evening / 1000)} KWH</strong></div>
+              <div><span>شب</span><strong>{Math.round(safeLoadBuckets.night / 1000)} KWH</strong></div>
             </div>
           </section>
         ) : null}
@@ -993,7 +993,7 @@ export default function CalculationInputs() {
               <div><span>تجهیزات موتوری</span><strong>{enValue(equipmentStats.motorCount, "تجهیز")}</strong></div>
               <div><span>تجهیزات دارای سافت‌استارتر</span><strong>{enValue(equipmentStats.softStarterCount, "تجهیز")}</strong></div>
               <div><span>توان کل</span><strong>{enValue(equipmentStats.totalPowerW || enginePreview.totalPowerW, "W")}</strong></div>
-              <div><span>انرژی روزانه</span><strong>{enValue(equipmentStats.totalEnergyKWh || enginePreview.totalEnergyKWh, "kWh", 2)}</strong></div>
+              <div><span>انرژی روزانه</span><strong>{enValue(equipmentStats.totalEnergyKWh || enginePreview.totalEnergyKWh, "KWH", 2)}</strong></div>
               <div><span>جریان AC</span><strong>{enValue(equipmentStats.acCurrentA || enginePreview.acCurrentA, "A", 2)}</strong></div>
               <div><span>جریان راه‌اندازی</span><strong>{enValue(equipmentStats.startCurrentA || enginePreview.startCurrentA, "A", 2)}</strong></div>
               <div><span>پیک توان / پیک استارت</span><strong>{enValue(equipmentStats.surgePowerW || enginePreview.surgePowerW, "W")}</strong></div>

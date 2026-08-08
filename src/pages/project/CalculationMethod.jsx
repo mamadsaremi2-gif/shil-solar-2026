@@ -5,17 +5,17 @@ import { approveProjectStep } from "../../workflow/projectWorkflow.js";
 import EngineeringPageShell from "../../components/EngineeringPageShell.jsx";
 
 const SOLAR_METHOD_CARDS = [
-  { key: "power", title: "توان کل", badge: "W / kW", hint: "مبنای طراحی بر اساس توان مصرفی کل" },
+  { key: "power", title: "توان کل", badge: "W / KW", hint: "مبنای طراحی بر اساس توان مصرفی کل" },
   { key: "current", title: "جریان کل", badge: "A", hint: "تبدیل جریان و ولتاژ به توان مصرفی" },
   { key: "solar_panel_power", title: "توان پنل خورشیدی", badge: "PV W", hint: "فعلاً با وضعیت موجود؛ مسیر تولید PV و انتقال نیروگاهی در توان بالا" },
   { key: "equipment", title: "لیست تجهیزات", badge: "Equipment", hint: "محاسبه مصرف واقعی از بانک تجهیزات" },
   { key: "profile", title: "پروفایل مصرف", badge: "Profile", hint: "تحلیل مصرف صبح، ظهر، عصر و شب" },
-  { key: "energy", title: "انرژی روزانه", badge: "kWh/day", hint: "مبنای طراحی بر اساس انرژی روزانه" },
+  { key: "energy", title: "انرژی روزانه", badge: "KWH/day", hint: "مبنای طراحی بر اساس انرژی روزانه" },
 ];
 
 const EMERGENCY_METHOD_CARDS = [
   { key: "current", title: "جریان کل", badge: "A", hint: "محاسبه بار اضطراری از جریان و ولتاژ" },
-  { key: "power", title: "توان کل", badge: "W / kW", hint: "محاسبه اینورتر و باتری بر اساس توان بار ضروری" },
+  { key: "power", title: "توان کل", badge: "W / KW", hint: "محاسبه اینورتر و باتری بر اساس توان بار ضروری" },
   { key: "equipment", title: "لیست تجهیزات", badge: "Essential", hint: "انتخاب تجهیزات ضروری برای زمان قطعی برق" },
 ];
 

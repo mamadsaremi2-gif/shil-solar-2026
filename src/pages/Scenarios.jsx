@@ -115,7 +115,7 @@ export default function Scenarios() {
               <span>نوع پروژه</span><strong>{scenario.category}</strong>
               <span>سطح</span><strong>{scenario.level}</strong>
               <span>توان تقریبی</span><strong>{scenario.loadEstimate} W</strong>
-              <span>انرژی روزانه</span><strong>{scenario.dailyEnergyWh} Wh</strong>
+              <span>انرژی روزانه</span><strong>{scenario.dailyEnergyWh} WH</strong>
               <span>هسته محاسباتی</span><strong>{scenario.calculationEngine === "solar" ? "Solar Core" : "Emergency Core"}</strong>
               <span>اینورتر</span><strong>{scenario.inverter}</strong>
               <span>نوع باتری</span><strong>{scenario.batteryType}</strong>

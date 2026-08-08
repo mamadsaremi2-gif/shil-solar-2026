@@ -215,13 +215,13 @@ export default function EmergencySystemSettings() {
 
   const emergencyBatteryDetailRows = [
     ["ولتاژ باتری", `${faNumber(design.battery.nominalVoltage, 1)} V`],
-    ["ظرفیت", `${faNumber(design.battery.capacityAh)} Ah`],
-    ["انرژی هر باتری", `${enNumber(design.battery.unitEnergyKWh, 2)} kWh`],
+    ["ظرفیت", `${faNumber(design.battery.capacityAh)} AH`],
+    ["انرژی هر باتری", `${enNumber(design.battery.unitEnergyKWh, 2)} KWH`],
     ["آرایش سری/موازی", `${faNumber(design.battery.seriesCount || 0)} سری × ${faNumber(design.battery.parallelCount || 0)} موازی`],
     ["ولتاژ پک", `${faNumber(design.battery.packVoltage, 1)} V`],
     ["تعداد کل", `${faNumber(design.battery.count)} عدد`],
-    ["ظرفیت بانک", `${faNumber(design.battery.bankCapacityAh)} Ah`],
-    ["انرژی خام بانک", `${enNumber(design.battery.grossBankEnergyKWh, 2)} kWh`],
+    ["ظرفیت بانک", `${faNumber(design.battery.bankCapacityAh)} AH`],
+    ["انرژی خام بانک", `${enNumber(design.battery.grossBankEnergyKWh, 2)} KWH`],
     ["زمان پشتیبانی", `${enNumber(design.battery.runtimeHours, 2)} ساعت`],
   ];
 
@@ -360,8 +360,8 @@ export default function EmergencySystemSettings() {
               ["توان بار اضطراری", `${faNumber(design.load.totalPowerW)} W`],
               ["پیک راه‌اندازی", `${faNumber(design.load.surgePowerW)} W`],
               ["توان طراحی اینورتر", `${faNumber(design.inverter.designPowerW)} W`],
-              ["انرژی خام باتری لازم", `${enNumber(design.battery.requiredRawKWh, 2)} kWh`],
-              ["ظرفیت قابل استفاده", `${enNumber(design.battery.usableEnergyKWh, 2)} kWh`],
+              ["انرژی خام باتری لازم", `${enNumber(design.battery.requiredRawKWh, 2)} KWH`],
+              ["ظرفیت قابل استفاده", `${enNumber(design.battery.usableEnergyKWh, 2)} KWH`],
               ["پشتیبانی واقعی", `${enNumber(design.battery.runtimeHours, 2)} ساعت`],
             ]} />
             <div className="shil-settings-mode-row">
