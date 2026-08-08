@@ -1,0 +1,486 @@
+/* SHIL V15 hard final - supplementary only; critical A4 geometry is inline in JSX. */
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-a4-header,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-header { overflow: hidden !important; box-sizing: border-box !important; }
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-a4-main-logo,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-main-logo { object-fit: contain !important; }
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-a4-section-title,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-section-title { overflow: hidden !important; box-sizing: border-box !important; }
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-run-native-metric-card > span,
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-run-native-table-row > span { color:#7890a6 !important; font-size:10.5px !important; font-weight:650 !important; }
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-run-native-metric-card > strong,
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-run-native-table-row > strong { color:#10253a !important; font-weight:900 !important; }
+
+/* V16 content-only refinement: structured engineering output without changing page shell geometry. */
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-run-native-table-row-structured {
+  align-items: stretch !important;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-engineering-items {
+  min-width: 0;
+  display: grid;
+  gap: 5px;
+  direction: rtl;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-engineering-item {
+  display: grid;
+  grid-template-columns: minmax(72px,.65fr) minmax(0,1.55fr);
+  gap: 3px 8px;
+  align-items: center;
+  padding: 5px 7px;
+  border: 1px solid rgba(136,169,197,.34);
+  border-radius: 9px;
+  background: rgba(255,255,255,.30);
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-engineering-item > span {
+  color: #7890a6 !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-engineering-item > b {
+  min-width: 0;
+  color: #10253a !important;
+  font-size: 11px !important;
+  line-height: 1.35 !important;
+  font-weight: 850 !important;
+  overflow-wrap: anywhere;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-engineering-item > small {
+  grid-column: 1 / -1;
+  color: #667d92 !important;
+  font-size: 9px !important;
+  line-height: 1.35 !important;
+  margin: 0 !important;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-run-message-card {
+  display: grid !important;
+  gap: 5px !important;
+  text-align: right !important;
+  line-height: 1.55 !important;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-run-message-card > strong {
+  font-size: 12px !important;
+  font-weight: 850 !important;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-run-message-card > span {
+  font-size: 11px !important;
+  font-weight: 600 !important;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-a4-execution-card-structured .shil-engineering-items {
+  display: grid;
+  gap: 2px;
+  margin: 2px 0;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-a4-execution-card-structured .shil-engineering-item {
+  display: grid;
+  grid-template-columns: 42px minmax(0,1fr);
+  gap: 1px 4px;
+  padding: 1px 2px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  border-bottom: 1px solid rgba(136,169,197,.18);
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-a4-execution-card-structured .shil-engineering-item > span {
+  font-size: 7px !important;
+  line-height: 1.2 !important;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-a4-execution-card-structured .shil-engineering-item > b {
+  font-size: 7.6px !important;
+  line-height: 1.18 !important;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-a4-execution-card-structured .shil-engineering-item > small {
+  grid-column: 1 / -1;
+  font-size: 6.2px !important;
+  line-height: 1.15 !important;
+}
+@media (max-width: 640px) {
+  #shil-execution-output-root[data-shil-run-output-version="15"] .shil-engineering-item {
+    grid-template-columns: 64px minmax(0,1fr);
+    padding: 4px 6px;
+  }
+}
+
+/* V17 protection UX: compact summaries with expandable technical datasheet tables. */
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-run-native-table-row-structured {
+  grid-template-columns: minmax(94px,.62fr) minmax(0,1.75fr) !important;
+  gap: 6px 10px !important;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-run-native-table-row-structured > small {
+  grid-column: 1 / -1 !important;
+  margin-top: 1px !important;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-protection-device {
+  min-width: 0;
+  margin: 0;
+  border: 1px solid rgba(136,169,197,.34);
+  border-radius: 9px;
+  background: rgba(255,255,255,.34);
+  overflow: hidden;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-protection-device + .shil-protection-device { margin-top: 4px; }
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-protection-device-summary {
+  list-style: none;
+  min-height: 38px;
+  display: grid;
+  grid-template-columns: minmax(70px,.8fr) minmax(0,1.4fr) 18px;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 7px;
+  cursor: pointer;
+  user-select: none;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-protection-device-summary::-webkit-details-marker { display:none; }
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-protection-device-summary > strong {
+  color:#10253a !important;
+  font-size:10.5px !important;
+  line-height:1.25 !important;
+  font-weight:900 !important;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-protection-quick {
+  min-width:0;
+  display:grid;
+  grid-template-columns:repeat(3,minmax(38px,1fr));
+  gap:4px;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-protection-quick > b {
+  display:grid;
+  place-items:center;
+  min-height:26px;
+  padding:2px 4px;
+  border:1px solid rgba(136,169,197,.30);
+  border-radius:7px;
+  background:#f5f9fc;
+  color:#10253a !important;
+  font-size:10px !important;
+  line-height:1 !important;
+  font-weight:900 !important;
+  white-space:nowrap;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-protection-device-summary > i {
+  color:#5e7387;
+  font-size:14px;
+  font-style:normal;
+  text-align:center;
+  transition:transform .16s ease;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-protection-device[open] .shil-protection-device-summary > i { transform:rotate(180deg); }
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-protection-detail-wrap {
+  padding:0 6px 6px;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-protection-detail-table {
+  width:100%;
+  table-layout:fixed;
+  border-collapse:collapse;
+  background:#fbfdff;
+  color:#10253a;
+  font-size:9.5px;
+  line-height:1.3;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-protection-detail-table th,
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-protection-detail-table td {
+  padding:5px 6px;
+  border:1px solid #d7e3ed;
+  vertical-align:middle;
+  overflow-wrap:anywhere;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-protection-detail-table th {
+  width:34%;
+  background:#f1f6fa;
+  color:#10253a;
+  font-weight:900;
+  text-align:right;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-protection-detail-table td {
+  color:#263c50;
+  font-weight:700;
+  text-align:center;
+}
+@media (max-width:640px) {
+  #shil-execution-output-root[data-shil-run-output-version="15"] .shil-run-native-table-row-structured {
+    grid-template-columns:82px minmax(0,1fr) !important;
+  }
+  #shil-execution-output-root[data-shil-run-output-version="15"] .shil-protection-device-summary {
+    grid-template-columns:66px minmax(0,1fr) 16px;
+    padding:4px 5px;
+  }
+  #shil-execution-output-root[data-shil-run-output-version="15"] .shil-protection-quick { gap:3px; }
+  #shil-execution-output-root[data-shil-run-output-version="15"] .shil-protection-quick > b { min-height:24px; font-size:9px !important; }
+}
+
+/* A4 safe-area fixes requested in visual review. */
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-a4-header,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-header {
+  overflow:hidden !important;
+  padding-inline-start:82px !important;
+  padding-inline-end:82px !important;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-a4-main-logo,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-main-logo {
+  inset-inline-start:16px !important;
+  inset-inline-end:auto !important;
+  top:12px !important;
+  transform:none !important;
+  width:50px !important;
+  height:50px !important;
+  max-width:50px !important;
+  max-height:50px !important;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-a4-section-title > span,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-section-title > span {
+  inset-inline-end:10px !important;
+  top:5px !important;
+  transform:none !important;
+  z-index:3 !important;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-a4-fields span,
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-a4-table span,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-fields span,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-table span {
+  color:#10253a !important;
+  font-weight:900 !important;
+}
+
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-a4-execution-card-structured .shil-engineering-item-print {
+  grid-template-columns:minmax(44px,1.25fr) repeat(3,minmax(30px,.7fr)) !important;
+  align-items:center !important;
+  gap:2px !important;
+  padding:2px 3px !important;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-a4-execution-card-structured .shil-engineering-item-print > span {
+  color:#10253a !important;
+  font-size:6.9px !important;
+  font-weight:900 !important;
+  text-align:right !important;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-a4-execution-card-structured .shil-engineering-item-print > b {
+  color:#172b3e !important;
+  font-size:7.2px !important;
+  line-height:1.1 !important;
+  font-weight:780 !important;
+  text-align:center !important;
+  white-space:nowrap !important;
+}
+
+/* V18 protection accordion alignment + cell contrast fix. */
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-run-native-table-row-structured {
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-run-native-table-row-structured > span {
+  align-self: start;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-engineering-items {
+  width: min(100%, 680px) !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  margin-inline: auto !important;
+  box-sizing: border-box !important;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-protection-device {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  margin-inline: auto !important;
+  box-sizing: border-box !important;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-protection-device-summary {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-protection-device-summary > strong {
+  text-align: center !important;
+  overflow-wrap: anywhere !important;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-protection-quick {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  margin-inline: auto !important;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-protection-detail-wrap {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  padding: 5px 7px 8px !important;
+  margin-inline: auto !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-protection-detail-table {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  margin-inline: auto !important;
+  table-layout: fixed !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+  border: 1px solid #c8d9e7 !important;
+  border-radius: 9px !important;
+  background: #f8fbfe !important;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-protection-detail-table th,
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-protection-detail-table td {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+  hyphens: auto;
+  border: 0 !important;
+  border-bottom: 1px solid #d8e4ee !important;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-protection-detail-table th {
+  width: 40% !important;
+  text-align: center !important;
+  background: #e8e4ff !important;
+  color: #13263a !important;
+  font-weight: 900 !important;
+  border-inline-end: 1px solid #d2d9e5 !important;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-protection-detail-table td {
+  width: 60% !important;
+  text-align: center !important;
+  background: #f4f8fc !important;
+  color: #14283b !important;
+  font-weight: 800 !important;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-protection-detail-table tr:nth-child(even) th {
+  background: #ded9ff !important;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-protection-detail-table tr:nth-child(even) td {
+  background: #eaf2f8 !important;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-protection-detail-table tr:last-child th,
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-protection-detail-table tr:last-child td {
+  border-bottom: 0 !important;
+}
+
+@media (max-width: 640px) {
+  #shil-execution-output-root[data-shil-run-output-version="15"] .shil-run-native-table-row-structured {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    justify-items: center !important;
+    align-items: start !important;
+    gap: 7px !important;
+    padding-inline: 9px !important;
+  }
+  #shil-execution-output-root[data-shil-run-output-version="15"] .shil-run-native-table-row-structured > span {
+    width: 100% !important;
+    max-width: 100% !important;
+    text-align: center !important;
+    justify-self: center !important;
+    margin: 0 auto 1px !important;
+    color: #10253a !important;
+    font-weight: 900 !important;
+  }
+  #shil-execution-output-root[data-shil-run-output-version="15"] .shil-engineering-items {
+    width: min(100%, 540px) !important;
+    justify-self: center !important;
+    margin-inline: auto !important;
+  }
+  #shil-execution-output-root[data-shil-run-output-version="15"] .shil-protection-device-summary {
+    grid-template-columns: minmax(72px,.78fr) minmax(0,1.42fr) 18px !important;
+    justify-content: center !important;
+    padding-inline: 7px !important;
+  }
+  #shil-execution-output-root[data-shil-run-output-version="15"] .shil-protection-detail-wrap {
+    padding-inline: 6px !important;
+  }
+  #shil-execution-output-root[data-shil-run-output-version="15"] .shil-protection-detail-table {
+    font-size: 8.8px !important;
+    line-height: 1.34 !important;
+  }
+  #shil-execution-output-root[data-shil-run-output-version="15"] .shil-protection-detail-table th,
+  #shil-execution-output-root[data-shil-run-output-version="15"] .shil-protection-detail-table td {
+    padding: 6px 5px !important;
+  }
+}
+
+/* V19 final visual refinement: warmer alternating protection rows + A4 contrast parity. */
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-protection-device {
+  background: #f7fbfe !important;
+  box-shadow: 0 2px 7px rgba(64, 94, 122, .08) !important;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-protection-device:nth-child(odd) .shil-protection-device-summary {
+  background: linear-gradient(90deg, #f5f1ff 0%, #f8f6ff 48%, #fbfdff 100%) !important;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-protection-device:nth-child(even) .shil-protection-device-summary {
+  background: linear-gradient(90deg, #edf6fd 0%, #f3f9fd 48%, #fbfdff 100%) !important;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-protection-device:nth-child(odd) .shil-protection-quick > b {
+  background: #eee9ff !important;
+  border-color: #d9d0ff !important;
+  box-shadow: 0 2px 4px rgba(91, 76, 150, .08) !important;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-protection-device:nth-child(even) .shil-protection-quick > b {
+  background: #eaf4fb !important;
+  border-color: #d2e4f1 !important;
+  box-shadow: 0 2px 4px rgba(59, 101, 130, .08) !important;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-protection-device[open] {
+  border-color: #aebfd1 !important;
+  box-shadow: 0 4px 11px rgba(55, 84, 111, .11) !important;
+}
+
+/* Export/A4: match the approved app hierarchy without making the one-page sheet visually cold. */
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-a4-execution-grid > div,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-grid > div {
+  border-color: #c4d5e3 !important;
+  box-shadow: 0 2px 6px rgba(54, 84, 111, .045) !important;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-a4-execution-grid > div:nth-child(1),
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-a4-execution-grid > div:nth-child(4),
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-grid > div:nth-child(1),
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-grid > div:nth-child(4) {
+  background: #f6f3ff !important;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-a4-execution-grid > div:nth-child(2),
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-a4-execution-grid > div:nth-child(5),
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-grid > div:nth-child(2),
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-grid > div:nth-child(5) {
+  background: #f0f8fd !important;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-a4-execution-grid > div:nth-child(3),
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-a4-execution-grid > div:nth-child(6),
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-grid > div:nth-child(3),
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-grid > div:nth-child(6) {
+  background: #fff8ee !important;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-a4-execution-card-structured .shil-engineering-item-print:nth-child(odd),
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-card-structured .shil-engineering-item-print:nth-child(odd) {
+  background: rgba(232, 228, 255, .78) !important;
+  border: 1px solid #d9d3f5 !important;
+  border-radius: 5px !important;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-a4-execution-card-structured .shil-engineering-item-print:nth-child(even),
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-card-structured .shil-engineering-item-print:nth-child(even) {
+  background: rgba(230, 242, 250, .84) !important;
+  border: 1px solid #d2e2ed !important;
+  border-radius: 5px !important;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-a4-execution-card-structured .shil-engineering-item-print,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-card-structured .shil-engineering-item-print {
+  margin-block: 2px !important;
+  padding: 3px 4px !important;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-a4-execution-grid small,
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-a4-execution-grid p,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-grid small,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-grid p {
+  color: #344b60 !important;
+  font-weight: 780 !important;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-a4-execution-grid .shil-engineering-item-print > span,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-grid .shil-engineering-item-print > span {
+  color: #10253a !important;
+  font-weight: 950 !important;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-a4-execution-grid .shil-engineering-item-print > b,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-grid .shil-engineering-item-print > b {
+  color: #172b3e !important;
+  font-weight: 850 !important;
+}

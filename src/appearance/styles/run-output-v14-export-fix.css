@@ -1,0 +1,146 @@
+/* SHIL V14 - final A4/export geometry, typography and engineering data polish */
+#shil-execution-output-root .shil-a4-final-form,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-final-form {
+  overflow: hidden !important;
+}
+
+#shil-execution-output-root .shil-a4-header,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-header {
+  position: relative !important;
+  overflow: hidden !important;
+  padding: 12px 82px !important;
+  border: 1px solid #b8cce0 !important;
+  border-radius: 14px !important;
+  background: #edf5fb !important;
+}
+#shil-execution-output-root .shil-a4-main-logo,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-main-logo {
+  position: absolute !important;
+  inset-inline-end: 16px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 52px !important;
+  height: 52px !important;
+  max-width: 52px !important;
+  max-height: 52px !important;
+  object-fit: contain !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+#shil-execution-output-root .shil-a4-header h1,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-header h1 {
+  margin: 0 !important;
+  text-align: center !important;
+  font-size: 22px !important;
+  line-height: 1.25 !important;
+  font-weight: 950 !important;
+  color: #10253a !important;
+}
+
+#shil-execution-output-root .shil-a4-section-title,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-section-title {
+  position: relative !important;
+  overflow: hidden !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 32px !important;
+  padding: 4px 40px !important;
+  border: 1px solid #c8d7e5 !important;
+  border-radius: 10px !important;
+  background: #f1f7fb !important;
+}
+#shil-execution-output-root .shil-a4-section-title > span,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-section-title > span {
+  position: absolute !important;
+  inset-inline-end: 9px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 26px !important;
+  height: 20px !important;
+  margin: 0 !important;
+  border-radius: 7px !important;
+  background: #e4eff7 !important;
+  color: #5b7186 !important;
+  font-size: 8px !important;
+  line-height: 1 !important;
+  font-weight: 900 !important;
+  direction: ltr !important;
+}
+#shil-execution-output-root .shil-a4-section-title h3,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-section-title h3 {
+  width: 100% !important;
+  margin: 0 !important;
+  text-align: center !important;
+  font-size: 14px !important;
+  line-height: 1.2 !important;
+  font-weight: 950 !important;
+  color: #10253a !important;
+}
+
+/* Secondary labels: smaller and muted. Answers: larger, dark and bold. */
+#shil-execution-output-root .shil-a4-fields span,
+#shil-execution-output-root .shil-a4-execution-grid span,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-fields span,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-grid span {
+  font-size: 8px !important;
+  line-height: 1.25 !important;
+  font-weight: 650 !important;
+  color: #7890a6 !important;
+}
+#shil-execution-output-root .shil-a4-fields b,
+#shil-execution-output-root .shil-a4-execution-grid b,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-fields b,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-grid b {
+  max-width: 100% !important;
+  font-size: 11px !important;
+  line-height: 1.3 !important;
+  font-weight: 950 !important;
+  color: #10253a !important;
+  overflow-wrap: anywhere !important;
+}
+#shil-execution-output-root .shil-a4-execution-grid small,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-grid small {
+  font-size: 7px !important;
+  line-height: 1.25 !important;
+  font-weight: 600 !important;
+  color: #71879a !important;
+}
+
+/* Engineering values remain number -> unit even inside RTL PDF/PNG capture. */
+#shil-execution-output-root [data-engineering-value="true"],
+#shil-execution-output-root .shil-a4-fields b,
+#shil-execution-output-root .shil-a4-table small,
+#shil-execution-output-root .shil-a4-execution-grid b,
+#shil-execution-output-root .shil-a4-execution-grid small,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-fields b,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-table small,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-grid b,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-grid small {
+  unicode-bidi: plaintext !important;
+}
+
+/* Native app hierarchy mirrors the A4 hierarchy. */
+#shil-execution-output-root .shil-run-native-metric-card > span,
+#shil-execution-output-root .shil-run-native-table-row > span {
+  color: #7890a6 !important;
+  font-size: 10.5px !important;
+  font-weight: 700 !important;
+}
+#shil-execution-output-root .shil-run-native-metric-card > strong,
+#shil-execution-output-root .shil-run-native-table-row > strong {
+  color: #10253a !important;
+  font-weight: 950 !important;
+}
+
+@media (max-width: 620px) {
+  #shil-execution-output-root .shil-a4-header { padding: 6px 56px !important; }
+  #shil-execution-output-root .shil-a4-main-logo { width: 38px !important; height: 38px !important; max-width: 38px !important; max-height: 38px !important; inset-inline-end: 9px !important; }
+  #shil-execution-output-root .shil-a4-section-title { padding: 2px 30px !important; }
+  #shil-execution-output-root .shil-a4-section-title > span { inset-inline-end: 7px !important; width: 22px !important; height: 18px !important; font-size: 7px !important; }
+}

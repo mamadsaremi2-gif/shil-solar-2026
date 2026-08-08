@@ -1,5 +1,6 @@
 import { buildSolarSystemDesign } from "../solar/solarDesignEngine.js";
 import { runBatteryEngine } from "../battery/batteryEngine.js";
+import { protectionRule } from "../../engine/rules/electrical/protection.rules.js";
 
 function normalizeDomain(form = {}, options = {}) {
   const raw = options.domain || form.designDomain || form.domain || form.project?.scenario || form.project?.domain || form.source?.domain || "solar";
@@ -86,10 +87,27 @@ export function runEngineeringPipeline(form = {}, options = {}) {
     }
   }
 
+  let protectionResult = { values: {}, equipment: {}, warnings: [], explanations: [] };
+  try {
+    protectionResult = protectionRule.run({ ...form, cableDetails: form.cableDetails || solarDesign?.cableDetails || form.values?.cableDetails, cables: form.cables || solarDesign?.cables || form.values?.cables }, {
+      solarDesign,
+      batteryDesign,
+      load: solarDesign?.load || form.load || {},
+      pvArray: solarDesign?.pvArray || {},
+      equipment: { inverter: solarDesign?.inverter || form.inverter || {}, battery: solarDesign?.battery?.item || form.battery || {}, panel: solarDesign?.panel || form.panel || {} },
+      values: { solarDesign },
+    }) || protectionResult;
+  } catch (error) {
+    protectionResult = { values: {}, equipment: {}, warnings: [{ code: "PROTECTION_ENGINE_ERROR", message: error?.message || String(error) }], explanations: [] };
+  }
+  const protection = protectionResult?.values?.protection || protectionResult?.equipment?.protection || null;
+  if (solarDesign && protection) solarDesign = { ...solarDesign, protection };
+
   const warnings = [
     ...normalizeWarnings(gatewayResult?.warnings),
     ...normalizeWarnings(solarDesign?.warnings),
     ...normalizeWarnings(batteryDesign?.warnings),
+    ...normalizeWarnings(protectionResult?.warnings),
   ];
   const errors = [
     ...(Array.isArray(gatewayResult?.errors) ? gatewayResult.errors : []),
@@ -99,6 +117,7 @@ export function runEngineeringPipeline(form = {}, options = {}) {
   const explanations = [
     ...normalizeExplanations(gatewayResult?.explanations),
     ...normalizeExplanations(batteryDesign?.explanations),
+    ...normalizeExplanations(protectionResult?.explanations),
   ];
 
   const valid = gatewayResult?.ok !== false && gatewayResult?.valid !== false && solarDesign?.valid !== false && batteryDesign?.valid !== false && errors.length === 0;
@@ -116,9 +135,11 @@ export function runEngineeringPipeline(form = {}, options = {}) {
       gateway: gatewayResult,
       solarDesign,
       batteryDesign,
-      values: solarDesign ? { solarDesign } : gatewayResult?.values || {},
+      values: solarDesign ? { solarDesign, protection } : { ...(gatewayResult?.values || {}), protection },
+      protection,
     },
-    values: solarDesign ? { solarDesign } : gatewayResult?.values || {},
+    values: solarDesign ? { solarDesign, protection } : { ...(gatewayResult?.values || {}), protection },
+    protection,
     solarDesign: solarDesign || gatewayResult?.solarDesign || null,
     batteryDesign,
     warnings,
