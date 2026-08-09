@@ -26,15 +26,25 @@ const baseItems = [
 export const consumerEquipmentLibrary = Array.from({ length: 250 }, (_, i) => {
   const base = baseItems[i % baseItems.length];
   const group = Math.floor(i / baseItems.length) + 1;
-  const powerScale = [1, 1.15, 1.3, 0.85, 1.5][group % 5];
-  const hoursScale = [1, 0.75, 1.25, 0.5, 1.5][group % 5];
+  const variantProfiles = [
+    { powerScale: 1.00, hoursScale: 1.00, label: "استاندارد" },
+    { powerScale: 1.15, hoursScale: 0.75, label: "پرتوان" },
+    { powerScale: 1.30, hoursScale: 1.25, label: "سنگین" },
+    { powerScale: 0.85, hoursScale: 0.50, label: "کم مصرف" },
+    { powerScale: 1.50, hoursScale: 1.50, label: "صنعتی" },
+  ];
+  const variant = variantProfiles[(group - 1) % variantProfiles.length];
+  const powerScale = variant.powerScale;
+  const hoursScale = variant.hoursScale;
   const ratedPowerW = Math.round(base[1] * powerScale);
   const usageHoursPerDay = Number(Math.min(24, Math.max(0.2, base[2] * hoursScale)).toFixed(1));
   const diversityFactor = base[5] === "heavy" ? 0.75 : base[5] === "medium" ? 0.85 : 0.95;
   const energyDailyWh = Math.round(ratedPowerW * usageHoursPerDay * diversityFactor);
   return {
     id: `eq-${String(i + 1).padStart(3, "0")}`,
-    title: `${base[0]} ${group > 1 ? `مدل ${group}` : ""}`.trim(),
+    title: `${base[0]} - ${variant.label} (${ratedPowerW}W)`,
+    baseTitle: base[0],
+    variantLabel: variant.label,
     category: categories[i % categories.length],
     class: base[5],
     ratedPowerW,
@@ -43,6 +53,7 @@ export const consumerEquipmentLibrary = Array.from({ length: 250 }, (_, i) => {
     diversityFactor,
     simultaneityFactor: diversityFactor,
     powerFactor: base[3] > 1.7 ? 0.82 : base[5] === "heavy" ? 0.88 : 0.95,
+    efficiency: 1,
     startupFactor: base[3],
     surgeFactor: base[3],
     motorStartCurrentFactor: base[3] > 1.7 ? 2.5 : 1,

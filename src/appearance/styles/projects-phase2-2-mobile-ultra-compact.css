@@ -1,0 +1,263 @@
+/* SHIL Phase 2.2 — Projects ultra-compact mobile final override.
+   Goals: engineering-page palette, no purple/dark project cards, readable contrast,
+   smaller closed rows, normal side gutters, small inter-card gaps. */
+
+:root{
+  --shil-pm22-surface: rgba(247,251,254,.965);
+  --shil-pm22-surface-2: rgba(237,246,251,.965);
+  --shil-pm22-border: #bdd6e3;
+  --shil-pm22-text: #102a43;
+  --shil-pm22-muted: #637b8b;
+  --shil-pm22-accent: #1d7fa6;
+  --shil-pm22-success: #148968;
+}
+
+/* Keep the project area away from the phone walls. */
+:is(.shil-projects-phase2,.shil-project-manager-page) main.shil-page-content{
+  padding-inline: 10px !important;
+  padding-top: 5px !important;
+  padding-bottom: calc(12px + env(safe-area-inset-bottom,0px)) !important;
+}
+
+/* Landing: force the three navigation cards to the same light engineering surface. */
+.shil-projects-phase2 .shil-pm-menu{
+  gap: 6px !important;
+  width: 100% !important;
+}
+.shil-projects-phase2 a.shil-pm-menu-card,
+.shil-projects-phase2 a.shil-pm-menu-card:link,
+.shil-projects-phase2 a.shil-pm-menu-card:visited{
+  min-height: 44px !important;
+  padding: 4px 7px !important;
+  gap: 6px !important;
+  border-radius: 10px !important;
+  border: 1px solid var(--shil-pm22-border) !important;
+  background-color: var(--shil-pm22-surface) !important;
+  background-image: linear-gradient(180deg,rgba(255,255,255,.98),rgba(238,247,252,.97)) !important;
+  color: var(--shil-pm22-text) !important;
+  box-shadow: 0 2px 6px rgba(5,31,50,.055) !important;
+  opacity: 1 !important;
+}
+.shil-projects-phase2 a.shil-pm-menu-card *{
+  color: inherit;
+}
+.shil-projects-phase2 .shil-pm-menu-card .icon{
+  width: 27px !important;
+  height: 27px !important;
+  min-width: 27px !important;
+  border-radius: 7px !important;
+  background: #edf7fb !important;
+  border: 1px solid #b9d8e7 !important;
+  color: #17617f !important;
+}
+.shil-projects-phase2 .shil-pm-menu-card--final .icon{
+  background: #ebfbf5 !important;
+  border-color: #9ad8c0 !important;
+  color: #0d7658 !important;
+}
+.shil-projects-phase2 .shil-pm-menu-card .copy strong{
+  font-size: 10px !important;
+  line-height: 1.18 !important;
+  font-weight: 800 !important;
+  color: var(--shil-pm22-text) !important;
+}
+.shil-projects-phase2 .shil-pm-menu-card .copy small{
+  font-size: 7px !important;
+  line-height: 1.2 !important;
+  color: var(--shil-pm22-muted) !important;
+}
+.shil-projects-phase2 .shil-pm-menu-card .count{
+  min-width: 23px !important;
+  height: 21px !important;
+  padding: 0 4px !important;
+  font-size: 8px !important;
+  background: #f8fcfe !important;
+  color: #36576a !important;
+  border: 1px solid #c9dde7 !important;
+}
+.shil-projects-phase2 .shil-pm-menu-title{
+  min-height: 31px !important;
+  padding: 3px 7px !important;
+  border-radius: 9px !important;
+}
+.shil-projects-phase2 .shil-pm-menu-title strong{font-size:10px !important;}
+.shil-projects-phase2 .shil-pm-menu-note{
+  min-height: 26px !important;
+  padding: 3px 7px !important;
+  font-size: 7px !important;
+  color: var(--shil-pm22-text) !important;
+}
+
+/* Compact toolbar without oversized mobile controls. */
+.shil-project-manager-page .shil-pm-workspace{gap:5px !important;}
+.shil-project-manager-page .shil-pm-toolbar{
+  padding: 4px !important;
+  gap: 4px !important;
+  border-radius: 9px !important;
+}
+.shil-project-manager-page .shil-pm-search,
+.shil-project-manager-page .shil-pm-select{
+  min-height: 29px !important;
+  padding: 0 6px !important;
+  border-radius: 7px !important;
+}
+.shil-project-manager-page .shil-pm-search input,
+.shil-project-manager-page .shil-pm-select select{
+  height: 27px !important;
+  font-size: 8px !important;
+}
+.shil-project-manager-page .shil-pm-list-head{
+  min-height: 30px !important;
+  padding: 3px 7px !important;
+  border-radius: 9px !important;
+}
+.shil-project-manager-page .shil-pm-list-head strong{font-size:10px !important;}
+.shil-project-manager-page .shil-pm-list-head span{font-size:7px !important;padding:1px 5px !important;}
+
+/* Project rows: very compact but still touch-safe; small visual separation between cards. */
+.shil-project-manager-page .shil-pm-list{
+  gap: 6px !important;
+  padding-inline: 1px !important;
+}
+.shil-project-manager-page article.shil-pm-card{
+  margin: 0 !important;
+  border-radius: 9px !important;
+  border: 1px solid var(--shil-pm22-border) !important;
+  background-color: var(--shil-pm22-surface) !important;
+  background-image: linear-gradient(180deg,rgba(255,255,255,.985),rgba(239,247,251,.965)) !important;
+  box-shadow: 0 2px 5px rgba(7,35,57,.05) !important;
+  color: var(--shil-pm22-text) !important;
+  overflow: hidden !important;
+}
+.shil-project-manager-page article.shil-pm-card--final{
+  border-color: #9fd8c3 !important;
+  background-image: linear-gradient(180deg,#fbfffd,#effaf6) !important;
+}
+.shil-project-manager-page .shil-pm-card-summary{
+  grid-template-columns: 24px minmax(0,1fr) auto 13px !important;
+  min-height: 39px !important;
+  padding: 3px 6px !important;
+  gap: 4px !important;
+  color: var(--shil-pm22-text) !important;
+  background: transparent !important;
+}
+.shil-project-manager-page .shil-pm-card-summary *{color:inherit;}
+.shil-project-manager-page .shil-pm-domain-icon{
+  width: 24px !important;
+  height: 24px !important;
+  min-width: 24px !important;
+  border-radius: 6px !important;
+  background: #edf7fb !important;
+  border: 1px solid #b9d8e7 !important;
+  color: #17617f !important;
+}
+.shil-project-manager-page .shil-pm-domain-icon svg{width:15px !important;height:15px !important;}
+.shil-project-manager-page .shil-pm-card-copy{
+  min-width:0 !important;
+  gap:0 !important;
+  background: transparent !important;
+}
+.shil-project-manager-page .shil-pm-card-copy strong{
+  font-size: 9px !important;
+  line-height: 1.12 !important;
+  font-weight: 800 !important;
+  color: var(--shil-pm22-text) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+.shil-project-manager-page .shil-pm-card-copy small{
+  font-size: 6.8px !important;
+  line-height: 1.15 !important;
+  color: var(--shil-pm22-muted) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+.shil-project-manager-page .shil-pm-status{
+  padding: 1px 4px !important;
+  min-height: 17px !important;
+  font-size: 6.7px !important;
+  line-height: 1 !important;
+}
+.shil-project-manager-page .shil-pm-chevron{
+  width: 13px !important;
+  height: 13px !important;
+  color:#466273 !important;
+}
+.shil-project-manager-page .shil-pm-progress{
+  height: 2px !important;
+  width: calc(100% - 12px) !important;
+  margin: 0 6px 3px !important;
+  border-radius:999px !important;
+}
+
+/* Accordion details: data density similar to engineering calculation pages. */
+.shil-project-manager-page .shil-pm-card-details{
+  padding: 0 5px 5px !important;
+  gap: 4px !important;
+  color:var(--shil-pm22-text) !important;
+}
+.shil-project-manager-page .shil-pm-detail-grid{
+  gap: 3px !important;
+  padding-top: 4px !important;
+}
+.shil-project-manager-page .shil-pm-detail-grid > div{
+  min-height: 31px !important;
+  padding: 3px 4px !important;
+  border-radius: 6px !important;
+  background:#f5fafc !important;
+  border:1px solid #d8e7ee !important;
+}
+.shil-project-manager-page .shil-pm-detail-grid .shil-pm-detail-wide{min-height:29px !important;}
+.shil-project-manager-page .shil-pm-detail-grid span{font-size:6.5px !important;color:var(--shil-pm22-muted) !important;}
+.shil-project-manager-page .shil-pm-detail-grid strong{font-size:7.8px !important;line-height:1.18 !important;color:var(--shil-pm22-text) !important;}
+.shil-project-manager-page .shil-pm-timeline summary{
+  min-height: 27px !important;
+  padding: 3px 6px !important;
+  font-size: 7.7px !important;
+  color:var(--shil-pm22-text) !important;
+}
+.shil-project-manager-page .shil-pm-timeline-list > div{
+  min-height: 23px !important;
+  padding: 2px 4px !important;
+}
+.shil-project-manager-page .shil-pm-timeline-list strong{font-size:6.7px !important;}
+.shil-project-manager-page .shil-pm-actions button,
+.shil-project-manager-page .shil-pm-load-more,
+.shil-project-manager-page .shil-pm-empty a{
+  min-height: 28px !important;
+  padding: 3px 5px !important;
+  border-radius: 6px !important;
+  font-size: 7.2px !important;
+}
+.shil-project-manager-page .shil-pm-load-more{
+  width: min(70%,320px) !important;
+  margin-inline:auto !important;
+}
+
+/* Do not allow legacy global dark/black rules to override project content text. */
+:is(.shil-projects-phase2,.shil-project-manager-page)
+:is(.shil-pm-menu-title,.shil-pm-menu-note,.shil-pm-menu-card,.shil-pm-list-head,.shil-pm-card,.shil-pm-toolbar,.shil-pm-card-details){
+  -webkit-text-fill-color: currentColor !important;
+}
+
+@media (max-width:560px){
+  .shil-project-manager-page .shil-pm-toolbar{grid-template-columns:1fr 1fr !important;}
+  .shil-project-manager-page .shil-pm-search{grid-column:1/-1 !important;}
+}
+
+@media (max-width:390px){
+  :is(.shil-projects-phase2,.shil-project-manager-page) main.shil-page-content{padding-inline:8px !important;}
+  .shil-project-manager-page .shil-pm-card-summary{
+    grid-template-columns:23px minmax(0,1fr) 13px !important;
+    min-height:38px !important;
+  }
+  .shil-project-manager-page .shil-pm-status{
+    grid-column:2 !important;
+    justify-self:start !important;
+    margin-top:1px !important;
+  }
+  .shil-project-manager-page .shil-pm-chevron{grid-column:3 !important;grid-row:1/span 2 !important;}
+  .shil-project-manager-page .shil-pm-domain-icon{grid-row:1/span 2 !important;}
+}

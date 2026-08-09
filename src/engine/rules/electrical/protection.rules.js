@@ -33,7 +33,8 @@ function rec(item, fallback, ratingA, quantity = 1, extra = {}) {
   return {
     id: item?.id || null,
     brand,
-    label: item?.title || `SHIL ${fallback}`,
+    label: item ? `SHIL ${fallback}` : `ریتینگ پیشنهادی ${fallback} (تطبیق کاتالوگی لازم)`,
+    catalogFamilyTitle: item?.title || null,
     model: item?.model || null,
     engineeringClass: item?.engineeringClass || null,
     deviceType: item?.deviceType || null,
@@ -86,14 +87,18 @@ function selectSpd(side, type, voltageV) {
     || null;
 }
 function spdRecord(item, fallback, quantity, voltageV) {
+  const isDc = normalizeText(fallback).includes('dc');
+  const spdType = item?.spdType || (String(fallback).match(/T1\+T2|T2|T1/i)?.[0] || null);
   return rec(item, fallback, null, quantity, {
-    spdType: item?.spdType || null,
+    spdType,
     ucV: item?.ucV || item?.ratedVoltageV || item?.ucRangeVdc || null,
     upKV: item?.upKV || null,
     inKA: item?.nominalDischargeCurrentKA || item?.inKA || null,
     imaxKA: item?.maxDischargeCurrentKA || item?.imaxKA || null,
     iimpKA: item?.impulseCurrentKA || item?.iimpKA || null,
     systemVoltageV: voltageV,
+    polesRequired: isDc ? '2P / 3P مطابق توپولوژی PV' : '1P+N / 3P+N مطابق فاز سیستم',
+    selectionReason: `SPD ${spdType ? `Type ${spdType}` : ''} با Uc بالاتر از ولتاژ نامی سیستم ${round(voltageV, 2)} V انتخاب شد.`,
   });
 }
 function selectResidualProtection(input = {}, inverter = {}, phase = {}, acRatingA = 0) {
@@ -198,10 +203,10 @@ export const protectionRule = Object.freeze({
         brand: 'SHIL',
         designVoltageV: round(pvVoltage, 2), operatingCurrentA: round(pvOperatingCurrentA, 2), currentA: pvDesignCurrentA, breakerA: pvRatingA,
         breakerType: pvRatingA <= 125 ? 'DC MCB' : 'DC MCCB', breaker: `SHIL ${pvRatingA} A ${pvRatingA <= 125 ? 'DC MCB' : 'DC MCCB'}`,
-        breakerSelection: rec(pvBreaker, `${pvRatingA} A ${pvRatingA <= 125 ? 'DC MCB' : 'DC MCCB'}`, pvRatingA, inverterCount * mpptCount, { requiredBreakingCapacityKA: pvFaultKA, breakingCapacityVerified: pvFaultKA ? Boolean(pvBreaker) : null }),
-        fuseA: stringFuseRatingA, fuse: `SHIL ${stringFuseRatingA} A gPV Fuse`, fuseSelection: rec(pvFuse, `${stringFuseRatingA} A gPV Fuse`, stringFuseRatingA, totalStrings, { requiredBreakingCapacityKA: pvFaultKA }),
+        breakerSelection: rec(pvBreaker, `${pvRatingA} A ${pvRatingA <= 125 ? 'DC MCB' : 'DC MCCB'}`, pvRatingA, inverterCount * mpptCount, { requiredBreakingCapacityKA: pvFaultKA, requiredVoltageV: round(pvVoltage, 2), breakingCapacityVerified: pvFaultKA ? Boolean(pvBreaker) : null, operatingCurrentA: round(pvOperatingCurrentA, 2), designCurrentA: pvDesignCurrentA, designFactor: 1.25, polesRequired: '2P / 4P متناسب با توپولوژی', selectionReason: `جریان کار ${round(pvOperatingCurrentA, 2)} A × ضریب طراحی 1.25 = ${pvDesignCurrentA} A؛ ریتینگ استاندارد بعدی ${pvRatingA} A انتخاب شد.` }),
+        fuseA: stringFuseRatingA, fuse: `SHIL ${stringFuseRatingA} A gPV Fuse`, fuseSelection: rec(pvFuse, `${stringFuseRatingA} A gPV Fuse`, stringFuseRatingA, totalStrings, { requiredBreakingCapacityKA: pvFaultKA, requiredVoltageV: round(pvVoltage, 2), operatingCurrentA: round(panelIsc, 2), designCurrentA: round(panelIsc * 1.25, 2), designFactor: 1.25, polesRequired: 'هر رشته', selectionReason: `Isc پنل ${round(panelIsc, 2)} A × 1.25 = ${round(panelIsc * 1.25, 2)} A؛ فیوز gPV استاندارد ${stringFuseRatingA} A انتخاب شد.` }),
         spd: pvSpd?.title || `SHIL SPD DC ${pvSpdType}`, spdSelection: spdRecord(pvSpd, `SPD DC ${pvSpdType}`, inverterCount, pvVoltage),
-        isolator: `SHIL ${pvRatingA} A DC Isolator`, isolatorSelection: rec(pvIsolator, `${pvRatingA} A DC Isolator`, pvRatingA, inverterCount),
+        isolator: `SHIL ${pvRatingA} A DC Isolator`, isolatorSelection: rec(pvIsolator, `${pvRatingA} A DC Isolator`, pvRatingA, inverterCount, { requiredVoltageV: round(pvVoltage, 2), operatingCurrentA: round(pvOperatingCurrentA, 2), designCurrentA: pvDesignCurrentA, designFactor: 1.25, polesRequired: '2P / 4P متناسب با توپولوژی', selectionReason: `ایزولاتور باید حداقل جریان طراحی ${pvDesignCurrentA} A و ولتاژ DC آرایه ${round(pvVoltage, 2)} V را تحمل کند؛ ریتینگ ${pvRatingA} A انتخاب شد.` }),
         poles: '2P/4P متناسب با توپولوژی', inverterCount, mpptCount, totalStrings, stringsPerMppt,
         cableCoordination: pvCableCoordination,
         standards: ['IEC 62548-1:2023 + AMD1:2025', 'IEC 60364-7-712:2025', 'IEC 60269-6', 'IEC 61643-31:2018'],
@@ -210,10 +215,10 @@ export const protectionRule = Object.freeze({
         required: true,
         brand: 'SHIL',
         designVoltageV: round(batteryVoltage, 2), operatingCurrentA: round(batteryOperatingCurrentA, 2), currentA: batteryDesignCurrentA,
-        fuseA: batteryRatingA, fuse: `SHIL ${batteryRatingA} A Battery DC Fuse`, fuseSelection: rec(batteryFuse, `${batteryRatingA} A Battery DC Fuse`, batteryRatingA, inverterCount, { requiredBreakingCapacityKA: batteryFaultKA }),
+        fuseA: batteryRatingA, fuse: `SHIL ${batteryRatingA} A Battery DC Fuse`, fuseSelection: rec(batteryFuse, `${batteryRatingA} A Battery DC Fuse`, batteryRatingA, inverterCount, { requiredBreakingCapacityKA: batteryFaultKA, requiredVoltageV: round(batteryVoltage, 2), operatingCurrentA: round(batteryOperatingCurrentA, 2), designCurrentA: batteryDesignCurrentA, designFactor: 1.25, polesRequired: 'در مسیر مثبت باتری / مطابق توپولوژی سازنده', selectionReason: `جریان باتری ${round(batteryOperatingCurrentA, 2)} A × 1.25 = ${batteryDesignCurrentA} A؛ ریتینگ استاندارد ${batteryRatingA} A انتخاب شد.` }),
         breakerA: batteryRatingA, breakerType: batteryRatingA <= 125 ? 'DC MCB' : 'DC MCCB', breaker: `SHIL ${batteryRatingA} A ${batteryRatingA <= 125 ? 'DC MCB' : 'DC MCCB'}`,
-        breakerSelection: rec(batteryBreaker, `${batteryRatingA} A ${batteryRatingA <= 125 ? 'DC MCB' : 'DC MCCB'}`, batteryRatingA, inverterCount, { requiredBreakingCapacityKA: batteryFaultKA, breakingCapacityVerified: batteryFaultKA ? Boolean(batteryBreaker) : null }),
-        isolator: `SHIL ${batteryRatingA} A Battery DC Isolator`, isolatorSelection: rec(batteryIsolator, `${batteryRatingA} A Battery DC Isolator`, batteryRatingA, inverterCount),
+        breakerSelection: rec(batteryBreaker, `${batteryRatingA} A ${batteryRatingA <= 125 ? 'DC MCB' : 'DC MCCB'}`, batteryRatingA, inverterCount, { requiredBreakingCapacityKA: batteryFaultKA, requiredVoltageV: round(batteryVoltage, 2), breakingCapacityVerified: batteryFaultKA ? Boolean(batteryBreaker) : null, operatingCurrentA: round(batteryOperatingCurrentA, 2), designCurrentA: batteryDesignCurrentA, designFactor: 1.25, polesRequired: '2P / مطابق توپولوژی باتری', selectionReason: `جریان کار باتری ${round(batteryOperatingCurrentA, 2)} A × 1.25 = ${batteryDesignCurrentA} A؛ کلید استاندارد ${batteryRatingA} A انتخاب شد.` }),
+        isolator: `SHIL ${batteryRatingA} A Battery DC Isolator`, isolatorSelection: rec(batteryIsolator, `${batteryRatingA} A Battery DC Isolator`, batteryRatingA, inverterCount, { requiredVoltageV: round(batteryVoltage, 2), operatingCurrentA: round(batteryOperatingCurrentA, 2), designCurrentA: batteryDesignCurrentA, designFactor: 1.25, polesRequired: '2P / مطابق توپولوژی باتری', selectionReason: `ایزولاتور باتری باید حداقل ${batteryDesignCurrentA} A در ${round(batteryVoltage, 2)} VDC را قطع کند؛ ریتینگ ${batteryRatingA} A انتخاب شد.` }),
         quantity: inverterCount,
         cableCoordination: batteryCableCoordination,
         standards: ['IEC 60364-7-712:2025', 'IEC 60947-2:2024', 'IEC 60947-3', 'IEC 60269'],
@@ -224,7 +229,7 @@ export const protectionRule = Object.freeze({
         designVoltageV: round(phase.voltage, 2), phase: phase.three ? 'سه‌فاز' : 'تک‌فاز', powerFactor: pf,
         operatingCurrentA: round(acOperatingCurrentA, 2), currentA: acDesignCurrentA, breakerA: acRatingA,
         breakerType: acRatingA <= 125 ? 'MCB' : 'MCCB', breaker: `SHIL ${acRatingA} A ${acRatingA <= 125 ? 'MCB' : 'MCCB'}`,
-        breakerSelection: rec(acBreaker, `${acRatingA} A ${acRatingA <= 125 ? 'MCB' : 'MCCB'}`, acRatingA, inverterCount, { requiredBreakingCapacityKA: acFaultKA, breakingCapacityVerified: acFaultKA ? Boolean(acBreaker) : null }),
+        breakerSelection: rec(acBreaker, `${acRatingA} A ${acRatingA <= 125 ? 'MCB' : 'MCCB'}`, acRatingA, inverterCount, { requiredBreakingCapacityKA: acFaultKA, requiredVoltageV: round(phase.voltage, 2), breakingCapacityVerified: acFaultKA ? Boolean(acBreaker) : null, operatingCurrentA: round(acOperatingCurrentA, 2), designCurrentA: acDesignCurrentA, designFactor: 1.25, polesRequired: phase.poles, selectionReason: `جریان خروجی AC ${round(acOperatingCurrentA, 2)} A × 1.25 = ${acDesignCurrentA} A؛ کلید استاندارد ${acRatingA} A انتخاب شد.` }),
         poles: phase.poles,
         spd: acSpd?.title || `SHIL SPD AC ${acSpdType}`, spdSelection: spdRecord(acSpd, `SPD AC ${acSpdType}`, inverterCount, phase.voltage),
         residualProtection: residualSelection,

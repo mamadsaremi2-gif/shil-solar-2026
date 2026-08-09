@@ -37,13 +37,77 @@ function enNumber(value, digits = 0) {
 }
 
 function enValue(value, unit = "", digits = 0) {
-  return `${enNumber(value, digits)}${unit ? ` ${unit}` : ""}`;
+  const numberText = enNumber(value, digits);
+  if (!unit) return <bdi dir="ltr" className="shil-ltr-value">{numberText}</bdi>;
+  const isLatinUnit = /^[A-Za-z%°Ω×/.-]+$/.test(String(unit));
+  if (isLatinUnit) {
+    return <bdi dir="ltr" className="shil-ltr-value">{numberText} {unit}</bdi>;
+  }
+  return <span dir="rtl" className="shil-rtl-value"><bdi dir="ltr">{numberText}</bdi> {unit}</span>;
 }
+
 
 function clampNumber(value, fallback, min, max) {
   const n = toNumber(value, fallback);
   if (!Number.isFinite(n)) return fallback;
   return Math.max(min, Math.min(max, n));
+}
+
+
+function buildEquipmentTrace(item = {}, override = {}, options = {}) {
+  const domain = options.domain || "solar";
+  const voltage = Math.max(1, toNumber(override.voltage ?? item.voltage ?? options.voltage ?? 220, 220));
+  const phase = override.phase ?? item.phase ?? (voltage >= 380 ? "three" : "single");
+  const phaseFactor = phase === "three" ? Math.sqrt(3) : 1;
+  const quantity = Math.max(1, toNumber(override.quantity ?? item.quantity ?? 1, 1));
+  const ratedPowerW = Math.max(0, toNumber(item.ratedPowerW ?? item.powerW ?? item.defaultPowerW ?? 0, 0));
+  const usageHoursPerDay = Math.max(0, toNumber(override.usageHoursPerDay ?? item.usageHoursPerDay ?? item.defaultHours ?? 0, 0));
+  const simultaneityFactor = Math.max(0.05, Math.min(1, toNumber(override.simultaneityFactor ?? item.simultaneityFactor ?? item.diversityFactor ?? 1, 1)));
+  const isMotor = Boolean(override.isMotor ?? item.isMotor) || item.type === "inductive" || Number(item.surgeFactor || item.startupFactor || 1) > 1.7 || /موتور|پمپ|کمپرسور|فن|کولر|آسانسور|یخچال|فریزر/i.test(String(`${item.title || ""} ${item.category || ""}`));
+  const powerFactor = Math.max(0.1, Math.min(1, toNumber(override.powerFactor ?? item.powerFactor ?? (isMotor ? 0.82 : 0.95), isMotor ? 0.82 : 0.95)));
+  const efficiency = Math.max(0.1, Math.min(1, toNumber(override.efficiency ?? item.efficiency ?? 1, 1)));
+  const hasSoftStarter = Boolean(override.hasSoftStarter ?? item.hasSoftStarter ?? false);
+  const normalStartFactor = isMotor ? Math.max(1, toNumber(item.motorStartCurrentFactor ?? item.startupFactor ?? item.surgeFactor ?? 2.5, 2.5)) : 1;
+  const softStarterFactor = isMotor ? Math.max(1, toNumber(item.softStarterFactor ?? 1.2, 1.2)) : 1;
+  const currentStartFactor = isMotor ? (hasSoftStarter ? softStarterFactor : normalStartFactor) : 1;
+  const ratedTotalPowerW = ratedPowerW * quantity;
+  const effectivePowerW = ratedTotalPowerW * simultaneityFactor;
+  const nominalCurrentA = ratedPowerW / Math.max(1, voltage * phaseFactor * powerFactor);
+  const runningCurrentA = nominalCurrentA * quantity * simultaneityFactor;
+  const startCurrentA = nominalCurrentA * quantity * currentStartFactor;
+  const surgePowerW = voltage * phaseFactor * powerFactor * startCurrentA;
+  const backupHours = Math.max(0, toNumber(options.backupHours, 0));
+  const effectiveEnergyHours = domain === "emergency" && backupHours > 0
+    ? Math.min(usageHoursPerDay || backupHours, backupHours)
+    : usageHoursPerDay;
+  const energyWh = effectivePowerW * effectiveEnergyHours;
+  return {
+    id: item.id,
+    domain,
+    quantity,
+    ratedPowerW,
+    ratedTotalPowerW,
+    usageHoursPerDay,
+    effectiveEnergyHours,
+    backupHours,
+    simultaneityFactor,
+    powerFactor,
+    efficiency,
+    voltage,
+    phase,
+    isMotor,
+    hasSoftStarter,
+    normalStartFactor,
+    softStarterFactor,
+    currentStartFactor,
+    effectivePowerW,
+    nominalCurrentA,
+    runningCurrentA,
+    startCurrentA,
+    surgePowerW,
+    energyWh,
+    energyKWh: energyWh / 1000,
+  };
 }
 
 function getEnvironmentSolarDefaults(environment = {}, assessment = {}) {
@@ -385,31 +449,29 @@ export default function CalculationInputs() {
   const manualPhaseLabel = manualVoltageNumber >= 380 ? "380 ولت سه‌فاز" : "220 ولت تک‌فاز";
   const currentDerivedPowerW = Math.round(toNumber(manualCurrentA, 0) * manualVoltageNumber * (manualVoltageNumber >= 380 ? Math.sqrt(3) : 1));
   const selectedEquipmentTitles = selectedItems.map((item) => item.title).filter(Boolean).join("، ");
-  const equipmentStats = React.useMemo(() => {
+  const equipmentTraces = React.useMemo(() => {
     const voltage = toNumber(manualVoltage || 220, 220) || 220;
-    return selectedItems.reduce((acc, item) => {
-      const override = itemOverrides[item.id] || {};
-      const qty = Math.max(1, toNumber(override.quantity ?? item.quantity ?? 1, 1));
-      const powerW = Math.max(0, toNumber(item.ratedPowerW || item.powerW || 0, 0));
-      const hours = Math.max(0, toNumber(override.usageHoursPerDay ?? item.usageHoursPerDay ?? 0, 0));
-      const pf = Math.max(0.1, toNumber(override.powerFactor ?? item.powerFactor ?? 0.9, 0.9));
-      const isMotor = Boolean(override.isMotor ?? item.isMotor) || item.type === "inductive" || Number(item.surgeFactor || item.startupFactor || 1) > 1.7 || /موتور|پمپ|کمپرسور|فن|کولر|آسانسور/i.test(String(`${item.title || ""} ${item.category || ""}`));
-      const hasSoftStarter = Boolean(override.hasSoftStarter ?? item.hasSoftStarter ?? false);
-      const startFactor = isMotor ? (hasSoftStarter ? 1.2 : Math.max(2.5, toNumber(item.startupFactor || item.surgeFactor || 2.5, 2.5))) : 1;
-      const nominalCurrentA = voltage > 0 ? (powerW / Math.max(1, voltage * pf)) : 0;
-      const runningCurrentA = nominalCurrentA * qty;
-      const startCurrentA = nominalCurrentA * startFactor * qty;
-      acc.selectedCount += qty;
-      acc.totalPowerW += powerW * qty;
-      acc.totalEnergyKWh += (powerW * qty * hours) / 1000;
-      acc.acCurrentA += runningCurrentA;
-      acc.startCurrentA += startCurrentA;
-      acc.surgePowerW += powerW * qty * startFactor;
-      if (isMotor) acc.motorCount += qty;
-      if (hasSoftStarter) acc.softStarterCount += qty;
-      return acc;
-    }, { selectedCount: 0, totalPowerW: 0, totalEnergyKWh: 0, acCurrentA: 0, startCurrentA: 0, surgePowerW: 0, motorCount: 0, softStarterCount: 0 });
-  }, [selectedItems, itemOverrides, manualVoltage]);
+    const equipmentDomain = domain === "emergency" ? "emergency" : "solar";
+    const backupHours = equipmentDomain === "emergency" ? Math.max(0, toNumber(autonomyHours, 3)) : 0;
+    return selectedItems.map((item) => buildEquipmentTrace(item, itemOverrides[item.id] || {}, {
+      domain: equipmentDomain,
+      voltage,
+      backupHours,
+    }));
+  }, [selectedItems, itemOverrides, manualVoltage, domain, autonomyHours]);
+
+  const equipmentStats = React.useMemo(() => equipmentTraces.reduce((acc, trace) => {
+    acc.selectedCount += trace.quantity;
+    acc.totalPowerW += trace.effectivePowerW;
+    acc.ratedPowerW += trace.ratedTotalPowerW;
+    acc.totalEnergyKWh += trace.energyKWh;
+    acc.acCurrentA += trace.runningCurrentA;
+    acc.startCurrentA += trace.startCurrentA;
+    acc.surgePowerW += Math.max(trace.surgePowerW, trace.effectivePowerW);
+    if (trace.isMotor) acc.motorCount += trace.quantity;
+    if (trace.hasSoftStarter) acc.softStarterCount += trace.quantity;
+    return acc;
+  }, { selectedCount: 0, ratedPowerW: 0, totalPowerW: 0, totalEnergyKWh: 0, acCurrentA: 0, startCurrentA: 0, surgePowerW: 0, motorCount: 0, softStarterCount: 0 }), [equipmentTraces]);
   const methodResultTitle = method === "equipment" ? "نتایج لیست تجهیزات" : method === "energy" ? "نتایج انرژی روزانه" : method === "power" ? "نتایج توان کل" : method === "profile" ? "نتایج پروفایل مصرف" : method === "solar_panel_power" ? "نتایج توان پنل خورشیدی" : method === "current" ? "نتایج جریان کل" : "نتایج محاسبات";
   const safeLoadBuckets = enginePreview?.loadProfile?.buckets || profileBucketsWh;
 
@@ -1007,8 +1069,8 @@ export default function CalculationInputs() {
               <div className="shil-empty-selection">هنوز تجهیزی انتخاب نشده است.</div>
             ) : selectedItems.map((item) => {
               const override = itemOverrides[item.id] || {};
-              const preview = enginePreview.selectedItems?.find((x) => x.id === item.id);
-              const isMotor = item.type === "inductive" || Number(item.surgeFactor || item.startupFactor || 1) > 1.7;
+              const trace = equipmentTraces.find((x) => x.id === item.id) || buildEquipmentTrace(item, override, { domain: effectiveDomain, voltage: toNumber(manualVoltage || 220, 220), backupHours: toNumber(autonomyHours, 3) });
+              const isMotor = trace.isMotor;
               return (
                 <article key={item.id} className="shil-equipment-card active">
                   <div className="shil-selected-equipment-head">
@@ -1030,20 +1092,52 @@ export default function CalculationInputs() {
                     {isMotor ? (
                       <label className="shil-check-row">
                         <input type="checkbox" checked={Boolean(override.hasSoftStarter)} onChange={(e) => patchOverride(item.id, { hasSoftStarter: e.target.checked })} />
-                        سافت‌استارتر دارد؛ جریان راه‌اندازی از 2.5× به 1.2× جریان نامی کاهش یابد
+                        <span dir="rtl">سافت‌استارتر دارد؛ جریان راه‌اندازی از <bdi dir="ltr" className="shil-ltr-value">2.5×</bdi> به <bdi dir="ltr" className="shil-ltr-value">1.2×</bdi> جریان نامی کاهش یابد</span>
                       </label>
                     ) : showExpert ? (
                       <div className="shil-load-kind-note">نوع بار: مقاومتی/الکترونیکی</div>
                     ) : null}
-                    {showExpert && preview ? (
-                      <div className="shil-expert-mini">
-                        <span>جریان نامی: {preview.nominalCurrentA} A</span>
-                        <span>جریان کارکرد: {preview.runningCurrentA} A</span>
-                        <span>جریان راه‌اندازی: {preview.startCurrentA} A</span>
-                        <span>ضریب استارت: ×{preview.currentStartFactor}</span>
-                        <small>{preview.expertReason}</small>
+                    <details className={`shil-equipment-calc-accordion ${effectiveDomain === "emergency" ? "is-emergency" : "is-solar"}`}>
+                      <summary>جزئیات محاسبات این تجهیز</summary>
+                      <div className="shil-equipment-calc-domain-note">
+                        {effectiveDomain === "emergency"
+                          ? <span dir="rtl">منطق برق اضطراری · انرژی این تجهیز برای حداکثر <bdi dir="ltr" className="shil-ltr-value">{enNumber(trace.backupHours || 3, 1)}</bdi> ساعت پشتیبانی محاسبه می‌شود.</span>
+                          : <span dir="rtl">منطق انرژی خورشیدی · انرژی روزانه از ساعت مصرف و ضریب همزمانی همین تجهیز محاسبه می‌شود.</span>}
                       </div>
-                    ) : null}
+                      <div className="shil-equipment-calc-grid">
+                        <div><span>توان نامی هر دستگاه</span><strong>{enValue(trace.ratedPowerW, "W")}</strong></div>
+                        <div><span>تعداد</span><strong>{enNumber(trace.quantity)}</strong></div>
+                        <div><span>توان نامی مجموع</span><strong>{enValue(trace.ratedTotalPowerW, "W")}</strong></div>
+                        <div><span>ضریب همزمانی</span><strong>{enNumber(trace.simultaneityFactor, 2)}</strong></div>
+                        <div><span>توان مؤثر</span><strong>{enValue(trace.effectivePowerW, "W")}</strong></div>
+                        <div><span>ضریب توان PF</span><strong>{enNumber(trace.powerFactor, 2)}</strong></div>
+                        <div><span>راندمان مرجع η</span><strong><bdi dir="ltr" className="shil-ltr-value">{enNumber(trace.efficiency * 100, 0)}%</bdi></strong></div>
+                        <div><span>ولتاژ / فاز</span><strong><bdi dir="ltr" className="shil-ltr-value">{enNumber(trace.voltage)} V</bdi><span dir="rtl"> · {trace.phase === "three" ? "سه‌فاز" : "تک‌فاز"}</span></strong></div>
+                        <div><span>جریان نامی هر دستگاه</span><strong>{enValue(trace.nominalCurrentA, "A", 2)}</strong></div>
+                        <div><span>جریان کارکرد مؤثر</span><strong>{enValue(trace.runningCurrentA, "A", 2)}</strong></div>
+                        <div><span>ضریب افزایش / استارت</span><strong><bdi dir="ltr" className="shil-ltr-value">{enNumber(trace.currentStartFactor, 2)}×</bdi></strong></div>
+                        <div><span>جریان راه‌اندازی</span><strong>{enValue(trace.startCurrentA, "A", 2)}</strong></div>
+                        <div><span>توان پیک راه‌اندازی</span><strong>{enValue(trace.surgePowerW, "W")}</strong></div>
+                        <div><span>ساعت مصرف ثبت‌شده</span><strong>{enValue(trace.usageHoursPerDay, "h", 1)}</strong></div>
+                        {effectiveDomain === "emergency" ? <div><span>ساعت مؤثر پشتیبانی</span><strong>{enValue(trace.effectiveEnergyHours, "h", 1)}</strong></div> : null}
+                        <div><span>{effectiveDomain === "emergency" ? "انرژی موردنیاز پشتیبانی" : "انرژی روزانه این تجهیز"}</span><strong>{enValue(trace.energyKWh, "kWh", 2)}</strong></div>
+                      </div>
+                      <div className="shil-equipment-calc-formula">
+                        <strong>نحوه محاسبه با اعداد همین تجهیز</strong>
+                        <p><span dir="rtl">توان نامی مجموع:</span> <bdi dir="ltr" className="shil-formula-ltr">{enNumber(trace.ratedPowerW)} × {enNumber(trace.quantity)} = {enNumber(trace.ratedTotalPowerW)} W</bdi></p>
+                        <p><span dir="rtl">توان مؤثر:</span> <bdi dir="ltr" className="shil-formula-ltr">{enNumber(trace.ratedTotalPowerW)} × {enNumber(trace.simultaneityFactor, 2)} = {enNumber(trace.effectivePowerW)} W</bdi></p>
+                        <p><span dir="rtl">جریان نامی هر دستگاه:</span> <bdi dir="ltr" className="shil-formula-ltr">{enNumber(trace.ratedPowerW)} ÷ ({trace.phase === "three" ? "√3 × " : ""}{enNumber(trace.voltage)} × {enNumber(trace.powerFactor, 2)}) = {enNumber(trace.nominalCurrentA, 2)} A</bdi></p>
+                        <p><span dir="rtl">جریان کارکرد:</span> <bdi dir="ltr" className="shil-formula-ltr">{enNumber(trace.nominalCurrentA, 2)} × {enNumber(trace.quantity)} × {enNumber(trace.simultaneityFactor, 2)} = {enNumber(trace.runningCurrentA, 2)} A</bdi></p>
+                        <p><span dir="rtl">جریان راه‌اندازی:</span> <bdi dir="ltr" className="shil-formula-ltr">{enNumber(trace.nominalCurrentA, 2)} × {enNumber(trace.quantity)} × {enNumber(trace.currentStartFactor, 2)} = {enNumber(trace.startCurrentA, 2)} A</bdi></p>
+                        {trace.isMotor ? (
+                          <p dir="rtl">
+                            {trace.hasSoftStarter ? (<>سافت‌استارتر فعال است؛ ضریب استارت از <bdi dir="ltr" className="shil-ltr-value">{enNumber(trace.normalStartFactor, 2)}×</bdi> به <bdi dir="ltr" className="shil-ltr-value">{enNumber(trace.softStarterFactor, 2)}×</bdi> کاهش یافته است.</>) : (<>بار موتوری بدون سافت‌استارتر؛ ضریب استارت <bdi dir="ltr" className="shil-ltr-value">{enNumber(trace.currentStartFactor, 2)}×</bdi> اعمال شده است.</>)}
+                          </p>
+                        ) : <p dir="rtl">بار غیرموتوری؛ ضریب استارت اضافه اعمال نمی‌شود.</p>}
+                        <p><span dir="rtl">{effectiveDomain === "emergency" ? "انرژی پشتیبانی:" : "انرژی روزانه:"}</span> <bdi dir="ltr" className="shil-formula-ltr">{enNumber(trace.effectivePowerW)} W × {enNumber(trace.effectiveEnergyHours, 1)} h = {enNumber(trace.energyWh)} Wh = {enNumber(trace.energyKWh, 2)} kWh</bdi></p>
+                        <p className="shil-equipment-eff-note">توان بانک تجهیزات به‌عنوان توان ورودی الکتریکی در نظر گرفته شده است؛ η برای شفافیت نمایش داده می‌شود و دوباره روی توان بار اعمال نمی‌شود.</p>
+                      </div>
+                    </details>
                   </div>
                 </article>
               );
@@ -1058,14 +1152,14 @@ export default function CalculationInputs() {
               <div><span>تعداد تجهیزات انتخاب‌شده</span><strong>{enValue(equipmentStats.selectedCount || enginePreview.selectedCount, "تجهیز")}</strong></div>
               <div><span>تجهیزات موتوری</span><strong>{enValue(equipmentStats.motorCount, "تجهیز")}</strong></div>
               <div><span>تجهیزات دارای سافت‌استارتر</span><strong>{enValue(equipmentStats.softStarterCount, "تجهیز")}</strong></div>
-              <div><span>توان کل</span><strong>{enValue(equipmentStats.totalPowerW || enginePreview.totalPowerW, "W")}</strong></div>
-              <div><span>انرژی روزانه</span><strong>{enValue(equipmentStats.totalEnergyKWh || enginePreview.totalEnergyKWh, "KWH", 2)}</strong></div>
+              <div><span>توان مؤثر کل</span><strong>{enValue(equipmentStats.totalPowerW || enginePreview.totalPowerW, "W")}</strong></div>
+              <div><span>{effectiveDomain === "emergency" ? "انرژی پشتیبانی" : "انرژی روزانه"}</span><strong>{enValue(equipmentStats.totalEnergyKWh || enginePreview.totalEnergyKWh, "kWh", 2)}</strong></div>
               <div><span>جریان AC</span><strong>{enValue(equipmentStats.acCurrentA || enginePreview.acCurrentA, "A", 2)}</strong></div>
               <div><span>جریان راه‌اندازی</span><strong>{enValue(equipmentStats.startCurrentA || enginePreview.startCurrentA, "A", 2)}</strong></div>
               <div><span>پیک توان / پیک استارت</span><strong>{enValue(equipmentStats.surgePowerW || enginePreview.surgePowerW, "W")}</strong></div>
             </div>
             {selectedItems.length ? (
-              <p className="shil-muted-note">اعداد این بلوک از تجهیزات انتخاب‌شده، تعداد، ساعت مصرف، ضریب همزمانی، نوع بار موتوری و وضعیت سافت‌استارتر محاسبه شده‌اند.</p>
+              <p className="shil-muted-note">اعداد این بلوک حاصل جمع مستقیم ریزمحاسبات کارت‌های تجهیزات هستند؛ تعداد، ضریب همزمانی، PF، نوع بار، سافت‌استارتر و در برق اضطراری مدت پشتیبانی در همان ریزمحاسبات قابل ردیابی است.</p>
             ) : (
               <div className="shil-empty-selection">برای محاسبه نتایج، ابتدا حداقل یک تجهیز انتخاب کنید.</div>
             )}

@@ -26,6 +26,9 @@ export function normalizeLoadItem(item = {}) {
   const simultaneityFactor = Number(item.simultaneityFactor ?? item.diversityFactor ?? 1) || 1;
   const diversityFactor = simultaneityFactor;
   const powerFactor = Number(item.powerFactor ?? (detectMotorLoad(item) ? 0.82 : 0.95)) || 0.95;
+  // Consumer-bank powers are stored as electrical input power. Efficiency is therefore
+  // shown for traceability, but it does not inflate the registered electrical load.
+  const efficiency = Number(item.efficiency ?? 1) || 1;
   const voltage = Number(item.voltage ?? 220) || 220;
   const phase = item.phase || (voltage >= 380 ? "three" : "single");
   const isMotor = detectMotorLoad(item);
@@ -52,6 +55,7 @@ export function normalizeLoadItem(item = {}) {
     simultaneityFactor,
     diversityFactor,
     powerFactor,
+    efficiency,
     voltage,
     phase,
     isMotor,

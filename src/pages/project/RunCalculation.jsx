@@ -276,23 +276,54 @@ function NativeMetricGrid({ rows = [] }) {
   );
 }
 
+function formatProtectionVoltage(selection = {}, item = {}) {
+  const raw = selection?.ratedVoltageV ?? selection?.ucV ?? selection?.systemVoltageV ?? selection?.requiredVoltageV;
+  if (raw === undefined || raw === null || raw === "") return "-";
+  const values = Array.isArray(raw) ? raw : [raw];
+  const sideText = `${selection?.deviceType || ""} ${selection?.side || ""} ${item?.label || ""}`.toUpperCase();
+  const unit = sideText.includes("AC") && !sideText.includes("DC") ? "VAC" : "VDC";
+  const prefix = selection?.bankMatched === false && selection?.ratedVoltageV == null && selection?.ucV == null ? "≥ " : "";
+  return `${prefix}${values.map((value) => formatNumber(value, 0)).join("/")} ${unit}`;
+}
+
+function formatProtectionBreaking(selection = {}) {
+  const raw = selection?.breakingCapacityKA;
+  if (raw === undefined || raw === null || raw === "") return "-";
+  if (typeof raw === "number") return `${formatNumber(raw, 2)} kA`;
+  const values = Object.entries(raw || {}).map(([key, value]) => {
+    const voltage = String(key).replace(/\D/g, "");
+    return Number.isFinite(Number(value)) ? `${formatNumber(value, 2)} kA @ ${voltage || "DC"} V` : null;
+  }).filter(Boolean);
+  return values.join(" / ") || "-";
+}
+
 function extractProtectionSummary(item = {}) {
+  const selection = item?.selection || {};
   const value = cleanValue(item.value, "");
   const meta = cleanValue(item.meta, "");
-  const ampValue = value.match(/(?:^|\s)(\d+(?:\.\d+)?)\s*A\b/i)?.[1]
-    || meta.match(/(?:^|\s)(\d+(?:\.\d+)?)\s*A\b/i)?.[1];
-  const residualMA = value.match(/(\d+(?:\.\d+)?)\s*mA\b/i)?.[1]
+  const selectedAmp = Number(selection?.ratedCurrentA);
+  const ampValue = Number.isFinite(selectedAmp) && selectedAmp > 0
+    ? formatNumber(selectedAmp, 2)
+    : value.match(/(?:^|\s)(\d+(?:\.\d+)?)\s*A\b/i)?.[1]
+      || meta.match(/(?:^|\s)(\d+(?:\.\d+)?)\s*A\b/i)?.[1];
+  const residualMA = selection?.sensitivityMA
+    || value.match(/(\d+(?:\.\d+)?)\s*mA\b/i)?.[1]
     || meta.match(/(\d+(?:\.\d+)?)\s*mA\b/i)?.[1];
-  const spdType = value.match(/Type\s*(I\+II|I{1,2})/i)?.[1]
+  const spdType = selection?.spdType
+    || value.match(/Type\s*(I\+II|I{1,2})/i)?.[1]
     || meta.match(/Type\s*(I\+II|I{1,2})/i)?.[1];
-  const amp = ampValue ? `${ampValue}A` : residualMA ? `${residualMA}mA` : spdType ? `Type ${spdType}` : "-";
-  const poles = meta.match(/(?:^|[·/\s])(1P\+N|3P\+N|[1-4]P)(?:$|[·/\s])/i)?.[1]
+  const amp = ampValue ? `${ampValue} A` : residualMA ? `${formatNumber(residualMA, 0)} mA` : spdType ? `Type ${spdType}` : "-";
+  const poles = cleanValue(selection?.polesRequired || "", "")
+    || meta.match(/(?:^|[·/\s])(1P\+N|3P\+N|[1-4]P)(?:$|[·/\s])/i)?.[1]
     || value.match(/(?:^|[·/\s])(1P\+N|3P\+N|[1-4]P)(?:$|[·/\s])/i)?.[1]
     || "-";
-  const qty = meta.match(/(\d+)\s*عدد/)?.[1]
+  const qty = selection?.quantity
+    || meta.match(/(\d+)\s*عدد/)?.[1]
     || item.quantity
     || "1";
-  return { amp, poles, qty: `×${qty}` };
+  const voltage = formatProtectionVoltage(selection, item);
+  const deviceType = cleanValue(selection?.deviceType || item?.deviceType || "", "") || cleanValue(item?.label, "تجهیز حفاظتی");
+  return { amp, poles, qty: `×${qty}`, voltage, deviceType };
 }
 
 function EngineeringItems({ items = [], compact = false }) {
@@ -301,13 +332,28 @@ function EngineeringItems({ items = [], compact = false }) {
   return (
     <div className={compact ? "shil-engineering-items shil-engineering-items-compact" : "shil-engineering-items"}>
       {visible.map((item, index) => {
+        const selection = item?.selection || {};
         const summary = extractProtectionSummary(item);
+        const designCurrent = Number(selection?.designCurrentA);
+        const operatingCurrent = Number(selection?.operatingCurrentA);
+        const ratedCurrent = Number(selection?.ratedCurrentA);
+        const bankMatched = selection?.bankMatched;
+        const exactReason = cleanValue(selection?.selectionReason || item?.reason || "", "");
+        const exactTitle = cleanValue(item.value || selection?.label, item.label || "تجهیز حفاظتی");
+        const catalogFamily = cleanValue(selection?.catalogFamilyTitle || "", "");
+        const standard = cleanValue(selection?.standard || item?.standard || "", "");
+        const breaking = formatProtectionBreaking(selection);
+        const deviceVoltage = formatProtectionVoltage(selection, item);
+        const currentRange = Array.isArray(selection?.ratedCurrentRangeA) && selection.ratedCurrentRangeA.length >= 2
+          ? `${formatNumber(selection.ratedCurrentRangeA[0], 0)}–${formatNumber(selection.ratedCurrentRangeA[1], 0)} A`
+          : "";
         if (compact) {
           return (
             <div className="shil-engineering-item shil-engineering-item-print" key={`${item.label || "item"}-${index}`}>
               <span>{cleanValue(item.label, "تجهیز")}</span>
               <b dir="ltr">{summary.amp}</b>
-              <b dir="ltr">{summary.poles}</b>
+              <b dir="ltr">{summary.voltage}</b>
+              <b dir="auto">{summary.poles}</b>
               <b dir="ltr">{summary.qty}</b>
             </div>
           );
@@ -317,18 +363,41 @@ function EngineeringItems({ items = [], compact = false }) {
             <summary className="shil-protection-device-summary">
               <strong>{cleanValue(item.label, "تجهیز حفاظتی")}</strong>
               <span className="shil-protection-quick" dir="ltr">
-                <b>{summary.amp}</b><b>{summary.poles}</b><b>{summary.qty}</b>
+                <b>{summary.amp}</b><b>{summary.voltage}</b><b>{summary.qty}</b>
               </span>
               <i aria-hidden="true">⌄</i>
             </summary>
             <div className="shil-protection-detail-wrap">
               <table className="shil-protection-detail-table">
                 <tbody>
-                  <tr><th>مدل / کلاس SHIL</th><td dir="auto">{cleanValue(item.value)}</td></tr>
-                  <tr><th>جریان / کلاس</th><td dir="ltr">{summary.amp}</td></tr>
-                  <tr><th>تعداد پل</th><td dir="ltr">{summary.poles}</td></tr>
+                  <tr><th>انتخاب اجرایی</th><td dir="auto"><strong>{exactTitle}</strong></td></tr>
+                  <tr><th>نوع تجهیز</th><td dir="ltr">{summary.deviceType}</td></tr>
+                  <tr><th>جریان نامی انتخابی</th><td dir="ltr">{summary.amp}</td></tr>
+                  <tr><th>ولتاژ نامی تجهیز</th><td dir="ltr">{deviceVoltage}</td></tr>
+                  {selection?.requiredVoltageV ? <tr><th>حداقل ولتاژ موردنیاز مدار</th><td dir="ltr">≥ {formatMetric(selection.requiredVoltageV, String(item?.label || "").includes("AC") ? "VAC" : "VDC", 2)}</td></tr> : null}
+                  <tr><th>تعداد پل / آرایش</th><td dir="auto">{summary.poles}</td></tr>
                   <tr><th>تعداد</th><td dir="ltr">{summary.qty}</td></tr>
-                  {item.meta ? <tr><th>مشخصات فنی</th><td dir="auto">{cleanValue(item.meta)}</td></tr> : null}
+                  {Number.isFinite(operatingCurrent) && operatingCurrent > 0 ? <tr><th>جریان کار محاسبه‌شده</th><td dir="ltr">{formatMetric(operatingCurrent, "A", 2)}</td></tr> : null}
+                  {Number.isFinite(designCurrent) && designCurrent > 0 ? <tr><th>جریان طراحی پس از ضریب</th><td dir="ltr">{formatMetric(designCurrent, "A", 2)}</td></tr> : null}
+                  {Number.isFinite(ratedCurrent) && ratedCurrent > 0 && Number.isFinite(designCurrent) ? <tr><th>حاشیه انتخاب کلید</th><td dir="ltr">{formatMetric(Math.max(0, ratedCurrent - designCurrent), "A", 2)}</td></tr> : null}
+                  {selection?.designFactor ? <tr><th>ضریب طراحی</th><td dir="ltr">×{formatNumber(selection.designFactor, 2)}</td></tr> : null}
+                  {selection?.spdType ? <tr><th>کلاس SPD</th><td dir="ltr">Type {selection.spdType}</td></tr> : null}
+                  {selection?.ucV ? <tr><th>Uc</th><td dir="ltr">{Array.isArray(selection.ucV) ? selection.ucV.map((v) => `${formatNumber(v, 0)} V`).join(" / ") : `${formatNumber(selection.ucV, 0)} V`}</td></tr> : null}
+                  {selection?.inKA ? <tr><th>In</th><td dir="ltr">{formatMetric(selection.inKA, "kA", 2)}</td></tr> : null}
+                  {selection?.imaxKA ? <tr><th>Imax</th><td dir="ltr">{formatMetric(selection.imaxKA, "kA", 2)}</td></tr> : null}
+                  {selection?.iimpKA ? <tr><th>Iimp</th><td dir="ltr">{formatMetric(selection.iimpKA, "kA", 2)}</td></tr> : null}
+                  {selection?.upKV ? <tr><th>Up</th><td dir="ltr">{formatMetric(selection.upKV, "kV", 2)}</td></tr> : null}
+                  {breaking !== "-" ? <tr><th>قدرت قطع کاتالوگی</th><td dir="ltr">{breaking}</td></tr> : null}
+                  {selection?.requiredBreakingCapacityKA ? <tr><th>قدرت قطع موردنیاز سایت</th><td dir="ltr">{formatMetric(selection.requiredBreakingCapacityKA, "kA", 2)}</td></tr> : null}
+                  {selection?.sensitivityMA ? <tr><th>حساسیت نشتی</th><td dir="ltr">{formatMetric(selection.sensitivityMA, "mA", 0)}</td></tr> : null}
+                  {selection?.rcdType ? <tr><th>نوع حفاظت نشتی</th><td dir="ltr">Type {selection.rcdType}</td></tr> : null}
+                  {standard ? <tr><th>استاندارد مبنا</th><td dir="ltr">{standard}</td></tr> : null}
+                  {catalogFamily ? <tr><th>خانواده تجهیز بانک SHIL</th><td dir="auto">{catalogFamily}</td></tr> : null}
+                  {currentRange ? <tr><th>بازه خانواده کاتالوگی</th><td dir="ltr">{currentRange}</td></tr> : null}
+                  <tr><th>وضعیت تطبیق بانک</th><td>{bankMatched === false ? "ریتینگ محاسبه شده؛ تطبیق مدل کاتالوگی نهایی لازم است" : "تطبیق با بانک SHIL انجام شده"}</td></tr>
+                  {exactReason ? <tr><th>چرا این ریتینگ انتخاب شد؟</th><td dir="auto">{exactReason}</td></tr> : null}
+                  {selection?.reason ? <tr><th>دلیل انتخاب حفاظتی</th><td dir="auto">{cleanValue(selection.reason)}</td></tr> : null}
+                  {item.meta ? <tr><th>مشخصات تکمیلی</th><td dir="auto">{cleanValue(item.meta)}</td></tr> : null}
                 </tbody>
               </table>
             </div>
@@ -591,20 +660,20 @@ function buildProtectionRows(ctx) {
     return parts.join(" / ");
   };
   const pvItems = [
-    { label: "کلید DC کامباینر", value: pv.breaker, meta: selectionMeta(pvNested?.breakerSelection, `${formatNumber(unifiedPvDeviceQty, 0)} عدد · ${cleanValue(unifiedPv?.DC_breaker?.poles || "-")} · IEC 60947-2`) },
-    { label: "فیوز gPV رشته", value: pv.fuse, meta: selectionMeta(pvNested?.fuseSelection, `${formatNumber(unifiedPvFuseQty || pvNested?.totalStrings || 1, 0)} عدد · IEC 60269-6`) },
-    { label: "SPD DC کامباینر", value: pv.spd, meta: selectionMeta(pvNested?.spdSelection, `${formatNumber(unifiedPvDeviceQty, 0)} عدد · ${cleanValue(unifiedPv?.SPD_DC?.poles || "-")} · IEC 61643-31`) },
-    { label: "ایزولاتور DC", value: pv.isolator, meta: selectionMeta(pvNested?.isolatorSelection, `${formatNumber(unifiedPvDeviceQty, 0)} عدد · ${cleanValue(unifiedPv?.DC_isolator?.poles || "-")} · IEC 60947-3`) },
+    { label: "کلید DC کامباینر", value: pv.breaker, selection: pvNested?.breakerSelection, meta: selectionMeta(pvNested?.breakerSelection, `${formatNumber(unifiedPvDeviceQty, 0)} عدد · ${cleanValue(unifiedPv?.DC_breaker?.poles || "-")} · IEC 60947-2`) },
+    { label: "فیوز gPV رشته", value: pv.fuse, selection: pvNested?.fuseSelection, meta: selectionMeta(pvNested?.fuseSelection, `${formatNumber(unifiedPvFuseQty || pvNested?.totalStrings || 1, 0)} عدد · IEC 60269-6`) },
+    { label: "SPD DC کامباینر", value: pv.spd, selection: pvNested?.spdSelection, meta: selectionMeta(pvNested?.spdSelection, `${formatNumber(unifiedPvDeviceQty, 0)} عدد · ${cleanValue(unifiedPv?.SPD_DC?.poles || "-")} · IEC 61643-31`) },
+    { label: "ایزولاتور DC", value: pv.isolator, selection: pvNested?.isolatorSelection, meta: selectionMeta(pvNested?.isolatorSelection, `${formatNumber(unifiedPvDeviceQty, 0)} عدد · ${cleanValue(unifiedPv?.DC_isolator?.poles || "-")} · IEC 60947-3`) },
   ].filter((item) => item.value && item.value !== "-");
   const batteryItems = hasBattery ? [
-    { label: "فیوز باتری", value: battery.fuse, meta: selectionMeta(batteryNested?.fuseSelection, "IEC 60269") },
-    { label: "کلید DC", value: battery.isolator, meta: selectionMeta(batteryNested?.breakerSelection, "IEC 60947-2") },
-    batteryNested?.isolatorSelection?.label ? { label: "ایزولاتور", value: batteryNested.isolatorSelection.label, meta: selectionMeta(batteryNested?.isolatorSelection, "IEC 60947-3") } : null,
+    { label: "فیوز باتری", value: battery.fuse, selection: batteryNested?.fuseSelection, meta: selectionMeta(batteryNested?.fuseSelection, "IEC 60269") },
+    { label: "کلید DC", value: battery.isolator, selection: batteryNested?.breakerSelection, meta: selectionMeta(batteryNested?.breakerSelection, "IEC 60947-2") },
+    batteryNested?.isolatorSelection?.label ? { label: "ایزولاتور", value: batteryNested.isolatorSelection.label, selection: batteryNested?.isolatorSelection, meta: selectionMeta(batteryNested?.isolatorSelection, "IEC 60947-3") } : null,
   ].filter(Boolean) : [];
   const acItems = [
-    { label: "کلید AC", value: ac.breaker, meta: selectionMeta(acNested?.breakerSelection, "IEC 60947-2") },
-    { label: "SPD", value: ac.spd, meta: selectionMeta(acNested?.spdSelection, "IEC 61643-11") },
-    { label: "RCD / RCBO", value: ac.residual, meta: [ac.poles, acNested?.residualProtection?.sensitivityMA ? `${formatNumber(acNested.residualProtection.sensitivityMA, 0)} mA` : null].filter(Boolean).join(" / ") },
+    { label: "کلید AC", value: ac.breaker, selection: acNested?.breakerSelection, meta: selectionMeta(acNested?.breakerSelection, "IEC 60947-2") },
+    { label: "SPD", value: ac.spd, selection: acNested?.spdSelection, meta: selectionMeta(acNested?.spdSelection, "IEC 61643-11") },
+    { label: "RCD / RCBO", value: ac.residual, selection: acNested?.residualProtection, meta: [ac.poles, acNested?.residualProtection?.sensitivityMA ? `${formatNumber(acNested.residualProtection.sensitivityMA, 0)} mA` : null].filter(Boolean).join(" / ") },
   ].filter((item) => item.value && item.value !== "-");
 
   const rows = [];

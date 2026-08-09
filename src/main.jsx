@@ -176,6 +176,7 @@ import "./appearance/styles/environment-match-calculation-inputs-final.css";
 import "./appearance/styles/calculation-method-match-calculation-inputs-final.css";
 
 import "./appearance/styles/calculation-inputs-unified-final.css";
+import "./appearance/styles/equipment-traceability-v1-4-final.css";
 
 /* Summary = Calculation Inputs visual parity; dedicated final page override */
 import "./appearance/styles/summary-match-calculation-inputs-final.css";
@@ -270,3 +271,10 @@ import "./appearance/styles/shil-v13-2-requested-ui-update.css";
 
 /* PHASE 1 CORE UI: header/footer, design tokens, contrast and shell cleanup. Absolute final import. */
 import "./appearance/styles/shil-phase1-core-ui-final.css";
+
+/* PHASE 2: scalable project management + child pages; absolute final project override. */
+import "./appearance/styles/projects-phase2-engineering-final.css";
+
+/* PHASE 2.1: compact mobile project cards + engineering palette; absolute final project override. */
+import "./appearance/styles/projects-phase2-1-mobile-compact-no-purple.css";
+import "./appearance/styles/projects-phase2-2-mobile-ultra-compact.css";

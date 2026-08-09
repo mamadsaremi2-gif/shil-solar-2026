@@ -484,3 +484,17 @@ body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-grid .
   color: #172b3e !important;
   font-weight: 850 !important;
 }
+
+/* PHASE 1.6 — exact protection selection: title + current + voltage + poles + quantity. */
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-a4-execution-card-structured .shil-engineering-item-print,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-card-structured .shil-engineering-item-print {
+  grid-template-columns:minmax(48px,1.2fr) repeat(4,minmax(32px,.72fr)) !important;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-protection-quick {
+  grid-template-columns:repeat(3,minmax(58px,auto)) !important;
+}
+#shil-execution-output-root[data-shil-run-output-version="15"] .shil-protection-detail-table td[dir="ltr"] {
+  unicode-bidi:isolate !important;
+  direction:ltr !important;
+  text-align:left !important;
+}
