@@ -1,7 +1,6 @@
 import './appearance/styles/shil-force-welcome-after-login.js';
 import './appearance/styles/shil-auth-page-body-class.js';
 
-import './appearance/styles/shil-global-black-text.css';
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./app/App.jsx";
@@ -255,3 +254,19 @@ import "./appearance/styles/run-output-v14-export-fix.css";
 /* V13: global number-before-unit bidi contract. Keep absolute last. */
 import "./appearance/styles/engineering-value-order-v13.css";
 import "./appearance/styles/run-output-v15-hard-final.css";
+
+/* V12 HARD FIX: isolated Project Info three-card layout. Absolute final import. */
+import "./appearance/styles/project-info-floating-cards-v12-hard-final.css";
+
+/* V13 FINAL: Project Info title-card parity + exact centered date sizing. Keep absolute last. */
+import "./appearance/styles/project-info-floating-cards-v13-final.css";
+
+
+/* V13.1 HARD LAYOUT: Project Info independent two-row field layout; absolute final import. */
+import "./appearance/styles/project-info-floating-cards-v13-1-hard-layout.css";
+
+/* V13.2: requested method/projects/environment/header-footer update. Absolute final import. */
+import "./appearance/styles/shil-v13-2-requested-ui-update.css";
+
+/* PHASE 1 CORE UI: header/footer, design tokens, contrast and shell cleanup. Absolute final import. */
+import "./appearance/styles/shil-phase1-core-ui-final.css";

@@ -63,7 +63,7 @@ function runCore(domain) {
           emergencyDesign,
           values: { emergencyDesign },
           warnings: emergencyDesign.warnings || [],
-          explanations: ["خروجی نهایی از طراحی اختصاصی برق اضطراری، بانک باتری و اینورتر خوانده شد."],
+          explanations: ["خروجی نهایی بر اساس طراحی برق اضطراری، بانک باتری و اینورتر محاسبه شد."],
         },
       };
     }
@@ -89,7 +89,7 @@ function runCore(domain) {
           warnings: [...new Set([...(centralResult?.warnings || []), ...(solarDesign.warnings || [])])],
           explanations: [
             ...(centralResult?.explanations || []),
-            "تجهیزات، حفاظت و کابل‌های خروجی نهایی مستقیماً از موتور مرکزی محاسبات خوانده شدند.",
+            "تجهیزات، حفاظت و کابل‌های خروجی نهایی بر اساس داده‌های ثبت‌شده پروژه محاسبه شدند.",
           ],
         },
       };
@@ -556,7 +556,7 @@ function buildProtectionRows(ctx) {
     if (raw === undefined || raw === null || raw === "") return "";
     if (typeof raw === "number") return `Icu ${formatMetric(raw, "kA", 2)}`;
     const values = Object.values(raw || {}).map(Number).filter(Number.isFinite);
-    return values.length ? `Icu تا ${formatMetric(Math.max(...values), "kA", 2)}` : "";
+    return values.length ? `Icu / ${formatMetric(Math.max(...values), "kA", 2)}` : "";
   };
   const standardText = (selection) => selection?.standard ? cleanValue(selection.standard) : "";
 
@@ -588,7 +588,7 @@ function buildProtectionRows(ctx) {
       breakingText(selection),
       standardText(selection) || fallbackStandard,
     ].filter(Boolean);
-    return parts.join(" · ");
+    return parts.join(" / ");
   };
   const pvItems = [
     { label: "کلید DC کامباینر", value: pv.breaker, meta: selectionMeta(pvNested?.breakerSelection, `${formatNumber(unifiedPvDeviceQty, 0)} عدد · ${cleanValue(unifiedPv?.DC_breaker?.poles || "-")} · IEC 60947-2`) },
@@ -604,7 +604,7 @@ function buildProtectionRows(ctx) {
   const acItems = [
     { label: "کلید AC", value: ac.breaker, meta: selectionMeta(acNested?.breakerSelection, "IEC 60947-2") },
     { label: "SPD", value: ac.spd, meta: selectionMeta(acNested?.spdSelection, "IEC 61643-11") },
-    { label: "RCD / RCBO", value: ac.residual, meta: [ac.poles, acNested?.residualProtection?.sensitivityMA ? `${formatNumber(acNested.residualProtection.sensitivityMA, 0)} mA` : null].filter(Boolean).join(" · ") },
+    { label: "RCD / RCBO", value: ac.residual, meta: [ac.poles, acNested?.residualProtection?.sensitivityMA ? `${formatNumber(acNested.residualProtection.sensitivityMA, 0)} mA` : null].filter(Boolean).join(" / ") },
   ].filter((item) => item.value && item.value !== "-");
 
   const rows = [];
@@ -735,7 +735,7 @@ export default function RunCalculation() {
   const calculationInput = readCalculationInput();
   const methodKey = getActiveMethodKey({ domain });
   const aiPreview = readDraft("shil:aiInstallationPreview", null);
-  const projectTitle = project.projectName || project.name || (emergency ? "پروژه برق اضطراری" : "پروژه خورشیدی");
+  const projectTitle = project.projectName || project.name || "کاربر";
   const delivery = useMemo(
     () => buildFinalEngineeringDelivery({ domain, project, summary, result, solarDesign, aiPreview }),
     [domain, project, summary, result, solarDesign, aiPreview]
@@ -785,7 +785,7 @@ export default function RunCalculation() {
     { label: "مدل طراحی", value: runContext.designType },
     { label: "توان بار ضروری", value: `${runContext.loadPowerW} W` },
     { label: "توان پیک / راه‌اندازی", value: `${runContext.surgePowerW} W` },
-    { label: "خروجی AC", value: runContext.phaseAC === "three" ? `${formatMetric(runContext.voltageAC, "V", 2)} سه‌فاز` : `${formatMetric(runContext.voltageAC, "V", 2)} تک‌فاز` },
+    { label: "خروجی AC", value: runContext.phaseAC === "three" ? `${formatMetric(runContext.voltageAC, "V", 2)} / سه‌فاز` : `${formatMetric(runContext.voltageAC, "V", 2)} / تک‌فاز` },
     { label: "مدت پشتیبانی هدف", value: `${runContext.backupHours} ساعت` },
     { label: "ضریب اطمینان اینورتر", value: runContext.reserveFactor },
     { label: "عمق دشارژ مجاز", value: `${runContext.dodPercent}%` },
@@ -840,12 +840,12 @@ export default function RunCalculation() {
   const protectionRows = buildProtectionRows(runContext);
   const nativeProjectRows = emergency ? [
     { label: "نام پروژه", value: project.projectName || project.name || projectTitle, ltr: false },
-    { label: "کارفرما", value: project.clientName || project.customerName || project.employerName || "ثبت نشده", ltr: false },
+    { label: "کارفرما", value: project.clientName || project.customerName || project.employerName || "SHIL CO", ltr: false },
     { label: "مسیر طراحی", value: runContext.projectPathTitle, ltr: false },
     { label: "روش طراحی", value: runContext.methodTitle, ltr: false },
   ] : [
     { label: "نام پروژه", value: project.projectName || project.name || projectTitle, ltr: false },
-    { label: "کارفرما", value: project.clientName || project.customerName || project.employerName || "ثبت نشده", ltr: false },
+    { label: "کارفرما", value: project.clientName || project.customerName || project.employerName || "SHIL CO", ltr: false },
     { label: "شهر مبنا", value: runContext.city, ltr: false },
     { label: "روش طراحی", value: runContext.methodTitle, ltr: false },
   ];
@@ -857,7 +857,7 @@ export default function RunCalculation() {
     { label: "پشتیبانی واقعی", value: formatMetric(runContext.runtimeHours, "H", 2) },
     { label: "ضریب اطمینان اینورتر", value: formatNumber(runContext.reserveFactor, 2) },
     { label: "عمق دشارژ مجاز", value: formatPercent(runContext.dodPercent, 1) },
-    { label: "خروجی AC", value: `${formatMetric(runContext.voltageAC, "V", 2)} ${runContext.phaseAC === "three" ? "سه‌فاز" : "تک‌فاز"}`, ltr: false },
+    { label: "خروجی AC", value: `${formatMetric(runContext.voltageAC, "V", 2)} / ${runContext.phaseAC === "three" ? "سه‌فاز" : "تک‌فاز"}`, ltr: false },
     { label: "انرژی خام موردنیاز", value: formatMetric(runContext.requiredStorageKWh, "KWH", 2) },
   ] : [
     { label: "توان طراحی نهایی", value: formatMetric(runContext.powerAfterFactorW, "W", 2) },
@@ -959,7 +959,7 @@ export default function RunCalculation() {
               <div className="shil-a4-section-title" style={A4_HARD_STYLE.sectionTitle}><span style={A4_HARD_STYLE.sectionIndex}>01</span><h3 style={A4_HARD_STYLE.sectionHeading}>مشخصات پروژه</h3></div>
               <div className="shil-a4-fields shil-a4-fields-project">
                 <div><A4Label>نام پروژه</A4Label><b style={A4_HARD_STYLE.answer}>{project.projectName || project.name || projectTitle}</b></div>
-                <div><A4Label>کارفرما</A4Label><b style={A4_HARD_STYLE.answer}>{project.clientName || project.customerName || project.employerName || "ثبت نشده"}</b></div>
+                <div><A4Label>کارفرما</A4Label><b style={A4_HARD_STYLE.answer}>{project.clientName || project.customerName || project.employerName || "SHIL CO"}</b></div>
                 <div><A4Label>تاریخ ثبت</A4Label><b style={A4_HARD_STYLE.answer}>{cleanValue(project.registrationDate || project.date || project.createdAt || "-")}</b></div>
                 <div><A4Label>مسیر طراحی</A4Label><b style={A4_HARD_STYLE.answer}>{runContext.projectPathTitle}</b></div>
                 {!emergency ? <div><A4Label>شهر مبنا</A4Label><b style={A4_HARD_STYLE.answer}>{runContext.city}</b></div> : <div><A4Label>روش ورود اطلاعات</A4Label><b style={A4_HARD_STYLE.answer}>{runContext.methodTitle}</b></div>}
@@ -977,7 +977,7 @@ export default function RunCalculation() {
                   <div><A4Label>پشتیبانی واقعی</A4Label><A4Metric>{formatMetric(runContext.runtimeHours, "H", 2)}</A4Metric></div>
                   <div><A4Label>ضریب اطمینان اینورتر</A4Label><b style={A4_HARD_STYLE.answer}>{formatNumber(runContext.reserveFactor, 2)}</b></div>
                   <div><A4Label>عمق دشارژ مجاز</A4Label><A4Metric>{formatPercent(runContext.dodPercent, 1)}</A4Metric></div>
-                  <div><A4Label>خروجی AC</A4Label><b style={A4_HARD_STYLE.answer}>{runContext.phaseAC === "three" ? `${formatMetric(runContext.voltageAC, "V", 2)} سه‌فاز` : `${formatMetric(runContext.voltageAC, "V", 2)} تک‌فاز`}</b></div>
+                  <div><A4Label>خروجی AC</A4Label><b style={A4_HARD_STYLE.answer}>{runContext.phaseAC === "three" ? `${formatMetric(runContext.voltageAC, "V", 2)} / سه‌فاز` : `${formatMetric(runContext.voltageAC, "V", 2)} / تک‌فاز`}</b></div>
                   <div><A4Label>انرژی خام موردنیاز</A4Label><A4Metric>{formatMetric(runContext.requiredStorageKWh, "KWH", 2)}</A4Metric></div>
                 </>) : (<>
                   <div><A4Label>توان طراحی نهایی</A4Label><A4Metric>{formatMetric(runContext.powerAfterFactorW, "W", 2)}</A4Metric></div>

@@ -1,0 +1,126 @@
+/* SHIL V11 - ProjectInfo floating three-card layout. Absolute final override. */
+html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+#shil-project-info-root.shil-project-info-page .shil-project-info-primary-fields-flat{
+  width:100% !important;
+  max-width:100% !important;
+  margin:0 0 14px !important;
+  padding:0 !important;
+  background:transparent !important;
+  background-image:none !important;
+  border:0 !important;
+  outline:0 !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+  overflow:visible !important;
+}
+
+html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+#shil-project-info-root.shil-project-info-page .shil-project-info-primary-fields-flat::before,
+html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+#shil-project-info-root.shil-project-info-page .shil-project-info-primary-fields-flat::after{
+  content:none !important;
+  display:none !important;
+}
+
+html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+#shil-project-info-root.shil-project-info-page .shil-project-info-primary-fields-flat > .shil-clean-section-head{
+  width:100% !important;
+  max-width:100% !important;
+  margin:0 0 12px !important;
+}
+
+html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+#shil-project-info-root.shil-project-info-page .shil-project-info-primary-fields-flat > .shil-form-grid-clean{
+  width:100% !important;
+  max-width:100% !important;
+  margin:0 auto !important;
+  padding:0 !important;
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important;
+  grid-template-areas:
+    "project client"
+    "date date" !important;
+  gap:12px !important;
+  align-items:stretch !important;
+  justify-items:stretch !important;
+  background:transparent !important;
+  background-image:none !important;
+  border:0 !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+#shil-project-info-root.shil-project-info-page .shil-project-info-primary-fields-flat > .shil-form-grid-clean > .shil-field-card{
+  position:relative !important;
+  inset:auto !important;
+  transform:none !important;
+  float:none !important;
+  width:100% !important;
+  min-width:0 !important;
+  max-width:none !important;
+  margin:0 !important;
+  box-sizing:border-box !important;
+}
+
+html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+#shil-project-info-root.shil-project-info-page .shil-project-info-primary-fields-flat > .shil-form-grid-clean > .shil-field-card:nth-child(1){
+  grid-area:project !important;
+}
+
+html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+#shil-project-info-root.shil-project-info-page .shil-project-info-primary-fields-flat > .shil-form-grid-clean > .shil-field-card:nth-child(2){
+  grid-area:client !important;
+}
+
+html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+#shil-project-info-root.shil-project-info-page .shil-project-info-primary-fields-flat > .shil-form-grid-clean > .shil-registration-date-field{
+  grid-area:date !important;
+  grid-column:auto !important;
+  justify-self:center !important;
+  align-self:start !important;
+  width:calc((100% - 12px) / 2) !important;
+  min-width:0 !important;
+  max-width:420px !important;
+  margin:0 auto !important;
+  text-align:center !important;
+}
+
+html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+#shil-project-info-root.shil-project-info-page .shil-project-info-primary-fields-flat .shil-registration-date-field > span,
+html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+#shil-project-info-root.shil-project-info-page .shil-project-info-primary-fields-flat .shil-registration-date-input{
+  text-align:center !important;
+}
+
+html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+#shil-project-info-root.shil-project-info-page .shil-project-info-primary-fields-flat .shil-registration-date-input{
+  direction:ltr !important;
+  unicode-bidi:isolate !important;
+}
+
+@media (max-width:700px){
+  html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+  #shil-project-info-root.shil-project-info-page .shil-project-info-primary-fields-flat > .shil-form-grid-clean{
+    gap:10px !important;
+  }
+  html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+  #shil-project-info-root.shil-project-info-page .shil-project-info-primary-fields-flat > .shil-form-grid-clean > .shil-registration-date-field{
+    width:min(70%, 360px) !important;
+  }
+}
+
+@media (max-width:430px){
+  html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+  #shil-project-info-root.shil-project-info-page .shil-project-info-primary-fields-flat > .shil-form-grid-clean{
+    gap:8px !important;
+  }
+  html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+  #shil-project-info-root.shil-project-info-page .shil-project-info-primary-fields-flat > .shil-form-grid-clean > .shil-registration-date-field{
+    width:min(76%, 320px) !important;
+  }
+}

@@ -14,9 +14,9 @@ const SOLAR_METHOD_CARDS = [
 ];
 
 const EMERGENCY_METHOD_CARDS = [
-  { key: "current", title: "جریان کل", badge: "A", hint: "محاسبه بار اضطراری از جریان و ولتاژ" },
-  { key: "power", title: "توان کل", badge: "W / KW", hint: "محاسبه اینورتر و باتری بر اساس توان بار ضروری" },
   { key: "equipment", title: "لیست تجهیزات", badge: "Essential", hint: "انتخاب تجهیزات ضروری برای زمان قطعی برق" },
+  { key: "power", title: "توان کل", badge: "W / KW", hint: "محاسبه اینورتر و باتری بر اساس توان بار ضروری" },
+  { key: "current", title: "جریان کل", badge: "A", hint: "محاسبه بار اضطراری از جریان و ولتاژ" },
 ];
 
 const UTILITY_METHOD_CARDS = [
@@ -119,7 +119,7 @@ export default function CalculationMethod() {
 
   return (
     <EngineeringPageShell title={title}>
-      <div id="shil-calculation-method-root" className={`shil-calculation-method-page ${domain === "emergency" ? "shil-emergency-parity-page" : ""}`}>
+      <div id="shil-calculation-method-root" data-domain={domain} className={`shil-calculation-method-page ${domain === "emergency" ? "shil-emergency-parity-page" : ""}`}>
       <div className="shil-clean-section-head">
         <h2>انتخاب روش طراحی</h2>
         <span>{DOMAIN_LABELS[domain]}</span>

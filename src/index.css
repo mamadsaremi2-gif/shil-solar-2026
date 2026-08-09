@@ -959,3 +959,6 @@ html body:not(.login-page):not(.welcome-page) #shil-emergency-settings-root .shi
  #shil-emergency-settings-root .shil-emergency-equipment-summary{align-items:flex-start}
 }
 /* EMERGENCY_SETTINGS_MINIMAL_V2_END */
+
+/* ProjectInfo V10 layout removed; V12 isolated layout is authoritative. */
+

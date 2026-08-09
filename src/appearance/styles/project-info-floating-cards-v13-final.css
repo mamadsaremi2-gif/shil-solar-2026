@@ -1,0 +1,94 @@
+/* SHIL V13 FINAL - Project Info visual contract
+   - title cards use the same light card language as the data cards
+   - registration date is exactly one card-column wide and centered
+   - isolated to ProjectInfo for both solar and emergency routes
+*/
+
+html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+#shil-project-info-root.shil-project-info-page .shil-project-info-primary-title-v12,
+html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+#shil-project-info-root.shil-project-info-page .shil-project-info-description-title-v13 {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  min-height: 50px !important;
+  margin: 0 auto 10px !important;
+  padding: 8px 12px !important;
+  box-sizing: border-box !important;
+  background: rgba(246, 251, 255, 0.94) !important;
+  background-image: none !important;
+  border: 1px solid rgba(177, 211, 233, 0.92) !important;
+  border-radius: 15px !important;
+  box-shadow: 0 5px 14px rgba(2, 31, 54, 0.16) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+#shil-project-info-root.shil-project-info-page .shil-project-info-primary-title-v12 > h2,
+html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+#shil-project-info-root.shil-project-info-page .shil-project-info-description-title-v13 > h2 {
+  margin: 0 !important;
+  padding: 0 !important;
+  color: #0b2a3d !important;
+  font-size: clamp(18px, 2.7vw, 24px) !important;
+  font-weight: 950 !important;
+  line-height: 1.35 !important;
+  text-align: center !important;
+  text-shadow: none !important;
+}
+
+html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+#shil-project-info-root.shil-project-info-page .shil-project-info-primary-title-v12 > span,
+html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+#shil-project-info-root.shil-project-info-page .shil-project-info-description-title-v13 > span {
+  display: none !important;
+}
+
+/* Exact parity: date card = one top card column, centered. */
+html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+#shil-project-info-root.shil-project-info-page .shil-registration-date-field-v12 {
+  grid-area: date !important;
+  grid-column: 1 / -1 !important;
+  justify-self: center !important;
+  align-self: start !important;
+  width: calc((100% - 12px) / 2) !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  min-height: 86px !important;
+  height: auto !important;
+  margin: 0 auto !important;
+  padding: 8px !important;
+  box-sizing: border-box !important;
+}
+
+/* Keep all three field cards dimensionally identical. */
+html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+#shil-project-info-root.shil-project-info-page .shil-project-info-three-grid-v12 > .shil-project-info-field-v12 {
+  min-height: 86px !important;
+  padding: 8px !important;
+}
+
+@media (max-width: 700px) {
+  html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+  #shil-project-info-root.shil-project-info-page .shil-registration-date-field-v12 {
+    width: calc((100% - 10px) / 2) !important;
+    max-width: none !important;
+  }
+}
+
+@media (max-width: 430px) {
+  html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+  #shil-project-info-root.shil-project-info-page .shil-registration-date-field-v12 {
+    width: calc((100% - 8px) / 2) !important;
+    min-height: 80px !important;
+    padding: 7px !important;
+  }
+
+  html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+  #shil-project-info-root.shil-project-info-page .shil-project-info-three-grid-v12 > .shil-project-info-field-v12 {
+    min-height: 80px !important;
+    padding: 7px !important;
+  }
+}

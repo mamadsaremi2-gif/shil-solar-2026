@@ -14,7 +14,15 @@ export function formatEngineeringText(value, fallback = "-") {
   text = text.replace(/\b(kwh|kw|wh|ah|vac|vdc|ma|mm²|mm2|deg|h|a|v|w|m)\b/gi, (m) => canonical[m.toLowerCase()] || m.toUpperCase());
   text = text.replace(new RegExp(`\\b(${unitPattern})\\s*([+-]?\\d+(?:[.,]\\d+)?)`, "g"), (_m, unit, number) => `${number} ${unit}`);
   text = text.replace(new RegExp(`([+-]?\\d+(?:[.,]\\d+)?)\\s*(${unitPattern})\\b`, "g"), (_m, number, unit) => `${number} ${unit}`);
-  text = text.replace(/\s{2,}/g, " ").trim();
+  // Keep all displayed numerals in English and force engineering units after the number.
+  // Mixed Persian/English phrases are separated with a slash so bidi order stays predictable.
+  text = text
+    .replace(/\s*[|•·]\s*/g, " / ")
+    .replace(/([\u0600-\u06FF])\s+([A-Za-z][A-Za-z0-9+_.-]*)/g, "$1 / $2")
+    .replace(/([A-Za-z][A-Za-z0-9+_.-]*)\s+([\u0600-\u06FF])/g, "$1 / $2")
+    .replace(/\s*\/\s*\/\s*/g, " / ")
+    .replace(/\s{2,}/g, " ")
+    .trim();
   return text || fallback;
 }
 
@@ -30,7 +38,7 @@ export function safeText(value, fallback = "-") {
         .filter(([, v]) => v !== undefined && v !== null && v !== "")
         .slice(0, 4)
         .map(([k, v]) => `${k}: ${safeText(v, "")}`)
-        .join(" | ") || fallback;
+        .join(" / ") || fallback;
     } catch {
       return fallback;
     }

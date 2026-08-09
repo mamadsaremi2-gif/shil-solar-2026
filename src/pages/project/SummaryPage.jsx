@@ -11,6 +11,7 @@ import {
   normalizeProjectDomain,
 } from "../../engines/projectFlowData.js";
 import { getProjectDesignState } from "../../engineering/core/projectDesignState.js";
+import { formatEngineeringText } from "../../utils/safeRender.js";
 
 const faNumber = (value, digits = 0) =>
   Number(value || 0).toLocaleString("en-US", { maximumFractionDigits: digits });
@@ -34,7 +35,7 @@ function SummaryGrid({ rows = [] }) {
         <article className="shil-summary-kv-card" key={`${keyPrefix}-${index}`}>
           <span className="shil-summary-kv-label">{label}</span>
           <strong className="shil-summary-kv-value" dir="ltr" data-engineering-value="true" title={`${label}: ${value || "-"}`}>
-            {value || "-"}
+            {formatEngineeringText(value || "-")}
           </strong>
         </article>
       ))}

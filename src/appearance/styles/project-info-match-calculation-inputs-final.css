@@ -166,11 +166,7 @@ html:has(.shil-page--project-info) #root,
   text-align: center !important;
 }
 
-#shil-project-info-root .shil-form-grid > .shil-field-card:last-child {
-  grid-column: 1 / -1 !important;
-  width: calc(50% - 3px) !important;
-  justify-self: end !important;
-}
+/* V12: obsolete generic :last-child ProjectInfo positioning removed. */
 
 #shil-project-info-root .shil-field-card > span {
   margin: 0 !important;

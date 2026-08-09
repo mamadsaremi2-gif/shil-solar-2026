@@ -108,7 +108,7 @@ export default function UtilitySystemSettings() {
             <div><span>توان AC هدف</span><strong>{enNumber(design.plant.targetMW, 2)} MW</strong></div>
             <div><span>توان DC آرایه</span><strong>{enNumber(design.plant.dcKW / 1000, 2)} MWp</strong></div>
             <div><span>تعداد پنل</span><strong>{faNumber(design.pv.panelCount)} عدد</strong></div>
-            <div><span>تولید سالانه</span><strong>{faNumber(Math.round(design.yield.annualKWh))} KWH</strong></div>
+            <div><span>تولید سالانه</span><strong>{faNumber(Math.round(design.yield.annualKWh))} kWh</strong></div>
           </div>
         </div>
 
@@ -117,7 +117,7 @@ export default function UtilitySystemSettings() {
           <div className="shil-form-grid shil-param-grid">
             <label><span>توان هدف نیروگاه MW</span><input value={plantMW} inputMode="decimal" onChange={(e) => setPlantMW(e.target.value)} /></label>
             <label><span>نسبت DC/AC</span><input value={dcAcRatio} inputMode="decimal" onChange={(e) => setDcAcRatio(e.target.value)} /></label>
-            <label><span>توان هر بلوک اینورتر KW</span><input value={blockKW} inputMode="decimal" onChange={(e) => setBlockKW(e.target.value)} /></label>
+            <label><span>توان هر بلوک اینورتر kW</span><input value={blockKW} inputMode="decimal" onChange={(e) => setBlockKW(e.target.value)} /></label>
             <label><span>ولتاژ MV kV</span><select value={mvVoltageKV} onChange={(e) => setMvVoltageKV(e.target.value)}><option value="20">20 کیلوولت</option><option value="33">33 کیلوولت</option><option value="63">63 کیلوولت</option></select></label>
             <label><span>زمین تقریبی ha/MW</span><input value={landHaPerMW} inputMode="decimal" onChange={(e) => setLandHaPerMW(e.target.value)} /></label>
             <label><span>محدودیت تزریق MW</span><input value={exportLimitMW} inputMode="decimal" onChange={(e) => setExportLimitMW(e.target.value)} /></label>
@@ -130,7 +130,7 @@ export default function UtilitySystemSettings() {
         <div className="shil-section-card shil-config-block">
           <div className="shil-section-head"><h2>خروجی مهندسی نیروگاهی</h2><span>PV + MV + Land</span></div>
           <div className="shil-summary-grid shil-solar-sizing-preview">
-            <div><span>بلوک‌های اینورتر</span><strong>{faNumber(design.plant.blockCount)} × {faNumber(design.plant.blockSizeKW)} KW</strong></div>
+            <div><span>بلوک‌های اینورتر</span><strong>{faNumber(design.plant.blockCount)} × {faNumber(design.plant.blockSizeKW)} kW</strong></div>
             <div><span>فیدر MV</span><strong>{faNumber(design.grid.feederCount)} فیدر / {faNumber(design.grid.mvVoltageKV)}kV</strong></div>
             <div><span>ترانس</span><strong>{faNumber(design.grid.transformerCount)} × {enNumber(design.grid.transformerUnitMVA, 2)} MVA</strong></div>
             <div><span>زمین تقریبی</span><strong>{enNumber(design.land.landHa, 2)} ha</strong></div>

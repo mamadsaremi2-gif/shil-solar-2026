@@ -1,0 +1,327 @@
+/* SHIL V13.2 - requested final UI update
+   - row-style design-method cards on Solar + Emergency
+   - centered project manager cards and all three child lists
+   - shared spark header / platform footer artwork
+   This file is intentionally imported last. */
+
+/* =============================
+   GLOBAL FIXED HEADER / FOOTER
+   ============================= */
+html body:not(.login-page):not(.welcome-page) .shil-page-shell > .shil-fixed-header {
+  background-color: #06111f !important;
+  background-image: url("../../assets/shell/shil-header-spark.png") !important;
+  background-size: cover !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  border: 0 !important;
+  border-bottom: 1px solid rgba(211,230,245,.48) !important;
+  box-shadow: 0 4px 13px rgba(0,0,0,.24) !important;
+  overflow: hidden !important;
+  isolation: isolate !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-page-shell > .shil-fixed-header::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: -1 !important;
+  background: linear-gradient(90deg,rgba(4,14,27,.26),rgba(4,14,27,.04) 36%,rgba(4,14,27,.04) 64%,rgba(4,14,27,.26)) !important;
+  pointer-events: none !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-page-shell > .shil-fixed-header .shil-header-action {
+  color: #f7fbff !important;
+  background: rgba(4,15,29,.58) !important;
+  border: 1px solid rgba(222,235,246,.48) !important;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.06) !important;
+  backdrop-filter: blur(3px) !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-page-shell > .shil-fixed-header .shil-header-title {
+  color: #f7fbff !important;
+  background: rgba(4,15,29,.32) !important;
+  border-color: rgba(222,235,246,.36) !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,.72) !important;
+}
+
+html body:not(.login-page):not(.welcome-page) .shil-page-shell > .shil-fixed-footer {
+  background-color: #06111f !important;
+  background-image: url("../../assets/shell/shil-footer-platform.png") !important;
+  background-size: cover !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  border: 0 !important;
+  border-top: 1px solid rgba(211,230,245,.30) !important;
+  box-shadow: 0 -4px 13px rgba(0,0,0,.24) !important;
+  overflow: hidden !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-page-shell > .shil-fixed-footer > a,
+html body:not(.login-page):not(.welcome-page) .shil-page-shell > .shil-fixed-footer > button {
+  color: #f8fbff !important;
+  background: rgba(4,15,29,.64) !important;
+  border-color: rgba(222,235,246,.50) !important;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.05) !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,.66) !important;
+  backdrop-filter: blur(3px) !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-page-shell > .shil-fixed-footer > a:is(:hover,:focus-visible) {
+  background: rgba(77,78,201,.66) !important;
+  border-color: rgba(188,185,255,.75) !important;
+}
+
+/* =============================
+   CALCULATION METHOD
+   Solar + Emergency: flat row cards
+   ============================= */
+#shil-calculation-method-root .shil-method-grid-five,
+#shil-calculation-method-root .shil-method-grid-minimal,
+#shil-calculation-method-root .shil-method-grid-clean {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  align-items: stretch !important;
+  width: 100% !important;
+  max-width: 760px !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  gap: 7px !important;
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+#shil-calculation-method-root .shil-method-grid-five::before,
+#shil-calculation-method-root .shil-method-grid-five::after {
+  content: none !important;
+  display: none !important;
+}
+#shil-calculation-method-root .shil-large-choice.shil-method-card-engine,
+#shil-calculation-method-root .shil-large-choice.shil-method-card-minimal {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-direction: row !important;
+  width: 100% !important;
+  min-height: 62px !important;
+  height: 62px !important;
+  margin: 0 !important;
+  padding: 8px 82px !important;
+  gap: 0 !important;
+  color: #102542 !important;
+  background: rgba(235,244,252,.90) !important;
+  background-image: none !important;
+  border: 1px solid #abc8e1 !important;
+  border-radius: 16px !important;
+  box-shadow: 0 5px 14px rgba(4,24,43,.12) !important;
+  text-align: center !important;
+  overflow: hidden !important;
+}
+#shil-calculation-method-root .shil-large-choice.shil-method-card-engine > h2 {
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: #102542 !important;
+  font-size: clamp(15px,4vw,18px) !important;
+  line-height: 1.2 !important;
+  font-weight: 950 !important;
+  text-align: center !important;
+}
+#shil-calculation-method-root .shil-large-choice.shil-method-card-engine > small,
+#shil-calculation-method-root .shil-large-choice.shil-method-card-engine > p {
+  display: none !important;
+}
+#shil-calculation-method-root .shil-large-choice.shil-method-card-engine .shil-method-badge {
+  position: absolute !important;
+  top: 50% !important;
+  right: 10px !important;
+  transform: translateY(-50%) !important;
+  min-width: 58px !important;
+  max-width: 68px !important;
+  min-height: 29px !important;
+  margin: 0 !important;
+  padding: 5px 7px !important;
+  color: #0b5167 !important;
+  background: #e6fbfa !important;
+  border: 1px solid #82dcd6 !important;
+  border-radius: 999px !important;
+  font-size: 10px !important;
+  font-weight: 950 !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+#shil-calculation-method-root .shil-large-choice.shil-method-card-engine.active {
+  color: #07583f !important;
+  background: rgba(232,255,240,.96) !important;
+  border-color: #55cf96 !important;
+  box-shadow: 0 5px 14px rgba(20,130,80,.13), inset 0 0 0 1px rgba(85,207,150,.18) !important;
+}
+#shil-calculation-method-root .shil-large-choice.shil-method-card-engine.active > h2 {
+  color: #07583f !important;
+}
+#shil-calculation-method-root .shil-large-choice.shil-method-card-engine.active::after {
+  top: 50% !important;
+  left: 12px !important;
+  transform: translateY(-50%) !important;
+}
+
+@media (max-width: 420px) {
+  #shil-calculation-method-root .shil-large-choice.shil-method-card-engine,
+  #shil-calculation-method-root .shil-large-choice.shil-method-card-minimal {
+    min-height: 58px !important;
+    height: 58px !important;
+    padding-inline: 72px !important;
+    border-radius: 14px !important;
+  }
+  #shil-calculation-method-root .shil-large-choice.shil-method-card-engine .shil-method-badge {
+    right: 8px !important;
+    min-width: 52px !important;
+    max-width: 60px !important;
+    font-size: 9px !important;
+  }
+}
+
+/* =============================
+   PROJECT MANAGER LANDING
+   Center the three categories vertically.
+   ============================= */
+.shil-projects-landing-v529 main.shil-page-content {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+}
+.shil-projects-landing-v529 .shil-projects-menu-v529 {
+  width: min(calc(100% - 18px),760px) !important;
+  max-width: 760px !important;
+  margin: auto !important;
+  padding: 8px 0 !important;
+  gap: 10px !important;
+  justify-content: center !important;
+  align-items: stretch !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+.shil-projects-landing-v529 .shil-projects-menu-v529::before {
+  display: none !important;
+  content: none !important;
+}
+.shil-projects-landing-v529 .shil-nav-card {
+  grid-template-columns: 54px minmax(0,1fr) !important;
+  min-height: 94px !important;
+  padding: 12px 14px !important;
+  gap: 4px 12px !important;
+  color: #102542 !important;
+  background: rgba(235,244,252,.92) !important;
+  border: 1px solid #abc8e1 !important;
+  border-radius: 18px !important;
+  box-shadow: 0 7px 18px rgba(4,24,43,.14) !important;
+  text-align: center !important;
+  justify-items: center !important;
+}
+.shil-projects-landing-v529 .shil-nav-card > svg {
+  width: 43px !important;
+  height: 43px !important;
+  padding: 8px !important;
+  color: #3f46ad !important;
+  background: #f4f1ff !important;
+  border: 1px solid #b9b3f7 !important;
+  border-radius: 14px !important;
+}
+.shil-projects-landing-v529 .shil-nav-card:nth-of-type(2) > svg {
+  color: #258653 !important;
+  background: #ecfff3 !important;
+  border-color: #75dca2 !important;
+}
+.shil-projects-landing-v529 .shil-nav-card:nth-of-type(3) > svg {
+  color: #315c9d !important;
+  background: #eef6ff !important;
+  border-color: #a9c8ef !important;
+}
+.shil-projects-landing-v529 .shil-nav-card h3,
+.shil-projects-landing-v529 .shil-nav-card p {
+  width: 100% !important;
+  text-align: center !important;
+}
+.shil-projects-landing-v529 .shil-nav-card h3 {
+  font-size: 16px !important;
+  font-weight: 950 !important;
+  color: #102542 !important;
+}
+.shil-projects-landing-v529 .shil-nav-card p {
+  font-size: 11px !important;
+  font-weight: 850 !important;
+  color: #536f86 !important;
+}
+
+/* Three child sections: running / final / archived use the same card law. */
+.shil-project-manager-page main.shil-page-content {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+}
+.shil-project-manager-page .shil-project-manager-list {
+  width: min(calc(100% - 18px),760px) !important;
+  max-width: 760px !important;
+  margin: auto !important;
+  padding: 8px 0 !important;
+  gap: 9px !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+.shil-project-manager-page .shil-project-manager-list::before {
+  min-height: 36px !important;
+  margin: 0 0 1px !important;
+  padding: 6px 10px !important;
+  color: #102542 !important;
+  background: rgba(235,244,252,.94) !important;
+  border: 1px solid #abc8e1 !important;
+  border-radius: 14px !important;
+  box-shadow: none !important;
+  font-size: 14px !important;
+  font-weight: 950 !important;
+  text-align: center !important;
+}
+.shil-project-manager-page .shil-project-manager-card,
+.shil-project-manager-page .shil-mini-project-card {
+  color: #102542 !important;
+  background: rgba(235,244,252,.92) !important;
+  border: 1px solid #abc8e1 !important;
+  border-radius: 18px !important;
+  box-shadow: 0 7px 18px rgba(4,24,43,.14) !important;
+}
+.shil-project-manager-page .shil-project-manager-card.is-final {
+  background: rgba(232,255,240,.93) !important;
+  border-color: #75dca2 !important;
+}
+.shil-project-manager-page--archived .shil-project-manager-card {
+  background: rgba(239,246,253,.93) !important;
+  border-color: #a9c8ef !important;
+}
+.shil-project-manager-page .shil-project-manager-main {
+  background: rgba(255,255,255,.80) !important;
+  border-color: rgba(171,200,225,.78) !important;
+  border-radius: 13px !important;
+  text-align: center !important;
+}
+.shil-project-manager-page .shil-project-manager-topline {
+  justify-content: center !important;
+  text-align: center !important;
+}
+.shil-project-manager-page .shil-project-manager-topline strong,
+.shil-project-manager-page .shil-project-manager-main p {
+  text-align: center !important;
+}
+
+@media (max-width: 430px) {
+  .shil-projects-landing-v529 .shil-projects-menu-v529,
+  .shil-project-manager-page .shil-project-manager-list {
+    width: min(calc(100% - 12px),760px) !important;
+  }
+  .shil-projects-landing-v529 .shil-nav-card {
+    min-height: 86px !important;
+    padding: 10px 11px !important;
+    border-radius: 16px !important;
+  }
+}

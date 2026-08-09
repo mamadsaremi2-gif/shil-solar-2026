@@ -68,8 +68,8 @@ export default function ProjectInfo() {
   const nextLabel = "تأیید";
   const registrationDate = getTodayPersianDateEnglish();
   const previousProject = (() => { try { return JSON.parse(localStorage.getItem("shil:projectInfoDraft") || "null") || {}; } catch { return {}; } })();
-  const [projectName, setProjectName] = useState(previousProject.projectName || "");
-  const [clientName, setClientName] = useState(previousProject.clientName || "");
+  const [projectName, setProjectName] = useState(previousProject.projectName || "کاربر");
+  const [clientName, setClientName] = useState(previousProject.clientName || "SHIL CO");
   const [description, setDescription] = useState(previousProject.description || "");
 
   const persistProjectInfo = () => {
@@ -85,32 +85,33 @@ export default function ProjectInfo() {
   return (
     <EngineeringPageShell title="اطلاعات پروژه">
       <div id="shil-project-info-root" className={`shil-project-info-page shil-equipment-page shil-calculation-inputs-page ${domain === PROJECT_PATHS.EMERGENCY ? "shil-project-info-emergency" : ""}`}>
-        <section className="shil-project-info-calc-card">
-          <div className="shil-clean-section-head">
+        <section className="shil-project-info-primary-fields-v131">
+          <div className="shil-project-info-section-title-v131">
             <h2>مشخصات اولیه پروژه</h2>
-            <span>مرحله 1</span>
           </div>
 
-          <div className="shil-form-grid shil-form-grid-clean">
-          <label className="shil-field-card">
-            <span>نام پروژه</span>
-            <input value={projectName} onChange={(e) => setProjectName(e.target.value)} placeholder="نام پروژه را وارد کنید" data-required="true" />
-          </label>
+          <div className="shil-project-info-top-row-v131">
+            <label className="shil-project-info-card-v131 shil-project-name-field-v131">
+              <span>نام پروژه</span>
+              <input value={projectName} onChange={(e) => setProjectName(e.target.value)} placeholder="نام پروژه را وارد کنید" data-required="true" />
+            </label>
 
-          <label className="shil-field-card">
-            <span>نام کارفرما</span>
-            <input value={clientName} onChange={(e) => setClientName(e.target.value)} placeholder="نام کارفرما" />
-          </label>
+            <label className="shil-project-info-card-v131 shil-client-name-field-v131">
+              <span>نام کارفرما</span>
+              <input value={clientName} onChange={(e) => setClientName(e.target.value)} placeholder="نام کارفرما" />
+            </label>
+          </div>
 
-          <label className="shil-field-card shil-registration-date-field">
-            <span>تاریخ ثبت</span>
-            <input className="shil-registration-date-input" value={registrationDate} readOnly dir="ltr" />
-          </label>
+          <div className="shil-project-info-date-row-v131">
+            <label className="shil-project-info-card-v131 shil-registration-date-field-v131">
+              <span>تاریخ ثبت</span>
+              <input className="shil-registration-date-input-v131" value={registrationDate} readOnly dir="ltr" />
+            </label>
           </div>
         </section>
 
         <section className="shil-project-info-calc-card shil-project-info-description-card">
-          <div className="shil-clean-section-head">
+          <div className="shil-project-info-section-title-v131 shil-project-info-description-title-v131">
             <h2>توضیحات پروژه</h2>
             <span>اختیاری</span>
           </div>

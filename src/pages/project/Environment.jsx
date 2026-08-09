@@ -241,8 +241,8 @@ const navigate = useNavigate();
     });
     if (saved.length) return saved.slice(0, 4).map(normalizeArray);
     return [
-      { id: "array-1", title: "آرایه نصب ۱", azimuth: 90, tilt: 20, enabled: true },
-      { id: "array-2", title: "آرایه نصب ۲", azimuth: 270, tilt: 20, enabled: true },
+      { id: "array-1", title: "آرایه نصب 1", azimuth: 90, tilt: 20, enabled: true },
+      { id: "array-2", title: "آرایه نصب 2", azimuth: 270, tilt: 20, enabled: true },
     ];
   });
   const [directionSlots, setDirectionSlots] = useState(persistedEnvironment.directionSlots || defaultDirectionSlots);
@@ -703,29 +703,6 @@ const navigate = useNavigate();
               </small>
             </div>
           </div>
-          <div className="shil-map-container shil-env-location-map shil-map-container"><img src="/assets/shil/map/iran-heatmap.webp" alt="Iran heating system map" />
-            <div
-              className="shil-map-pin"
-              style={{
-                left: `${shilMapPinPosition.x}%`,
-                top: `${shilMapPinPosition.y}%`,
-              }}
-              aria-label={shilMapPinLabel}
-            >
-              <span className="shil-map-pin-core" />
-              <span className="shil-map-pin-radar" />
-            </div>
-            <div
-              className="shil-map-label"
-              style={{
-                left: `${shilMapPinPosition.x}%`,
-                top: `${shilMapPinPosition.y}%`,
-              }}
-            >
-              {shilMapPinLabel}
-            </div>
-
-</div>
         </section>
 
         <section className="shil-env-card">
@@ -756,7 +733,7 @@ const navigate = useNavigate();
                     <span className="shil-efficiency-badge">{Math.round((assessment.effectiveEfficiency || 1) * 100)}٪</span>
                   </div>
                   <div className="shil-orientation-input-grid shil-orientation-input-grid--compact">
-                    <div className="shil-field shil-field--compact"><label>جهت نصب °</label><input className="shil-input" value={installAzimuthDeg} onChange={(event) => setInstallAzimuthDeg(event.target.value)} inputMode="decimal" placeholder="۱۸۰" /><small className="shil-env-hint">۰ شمال · ۹۰ شرق · ۱۸۰ جنوب · ۲۷۰ غرب</small></div>
+                    <div className="shil-field shil-field--compact"><label>جهت نصب °</label><input className="shil-input" value={installAzimuthDeg} onChange={(event) => setInstallAzimuthDeg(event.target.value)} inputMode="decimal" placeholder="180" /><small className="shil-env-hint">0 شمال / 90 شرق / 180 جنوب / 270 غرب</small></div>
                     <div className="shil-field shil-field--compact"><label>زاویه نصب °</label><input className="shil-input" value={installTiltDeg} onChange={(event) => setInstallTiltDeg(event.target.value)} inputMode="decimal" placeholder={`${assessment.recommendedTiltDeg}`} /><small className="shil-env-hint">زاویه پیشنهادی: {assessment.recommendedTiltDeg}°</small></div>
                   </div>
                 </article>
@@ -785,7 +762,7 @@ const navigate = useNavigate();
                               <input className="shil-input" value={item.title} onChange={(event) => updateInstallationArray(item.id, { title: event.target.value })} aria-label={`نام آرایه ${index + 1}`} />
                             </div>
                             <div className="shil-array-fields shil-array-fields--geometry-only shil-array-fields--compact">
-                              <label>جهت نصب °<input className="shil-input" inputMode="decimal" value={item.azimuth} onChange={(event) => updateInstallationArray(item.id, { azimuth: event.target.value })} /><small>۰ شمال · ۹۰ شرق · ۱۸۰ جنوب · ۲۷۰ غرب</small></label>
+                              <label>جهت نصب °<input className="shil-input" inputMode="decimal" value={item.azimuth} onChange={(event) => updateInstallationArray(item.id, { azimuth: event.target.value })} /><small>0 شمال / 90 شرق / 180 جنوب / 270 غرب</small></label>
                               <label>زاویه نصب °<input className="shil-input" inputMode="decimal" value={item.tilt} onChange={(event) => updateInstallationArray(item.id, { tilt: event.target.value })} /><small>زاویه سطح نصب را وارد کنید.</small></label>
                             </div>
                             <div className="shil-array-result-row shil-array-result-row--compact">
@@ -848,7 +825,7 @@ const navigate = useNavigate();
             <div className="shil-upload-box shil-site-upload-box">
               <span>تصاویر محل نصب</span>
               <input type="file" accept="image/*" multiple onChange={handleSiteUpload} />
-              <small className="shil-env-hint">حداکثر ۶ تصویر؛ عکس جدید به گالری اضافه می‌شود.</small>
+              <small className="shil-env-hint">حداکثر 6 تصویر؛ عکس جدید به گالری اضافه می‌شود.</small>
 
               {sitePreviews.length ? (
                 <div className="shil-site-preview-grid shil-site-preview-contain-grid">
