@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabase/client.js";
-import { createSession } from "../auth/session.js";
+import { createSession, isAdminCredential } from "../auth/session.js";
 import loginBackground from "../assets/shil-login-solar-home.png";
 
 const AUTH_TIMEOUT_MS = 12000;
@@ -37,17 +37,38 @@ export default function LoginPage() {
     event.preventDefault();
     setError("");
 
-    const email = login.trim().toLowerCase();
+    const rawLogin = login.trim();
+    const normalizedLogin = rawLogin.toLowerCase();
+    const cleanPassword = password.trim();
 
-    if (!email || !password.trim()) {
-      setError("لطفاً ایمیل و رمز عبور را وارد کنید.");
+    if (!normalizedLogin || !cleanPassword) {
+      setError("لطفاً ایمیل/یوزر و رمز عبور را وارد کنید.");
       return;
     }
 
-    if (!email.includes("@")) {
-      setError("فرمت ایمیل معتبر نیست.");
+    // SHIL hybrid auth: local admin credentials are checked first so the
+    // administration panel remains available in offline/PWA scenarios.
+    // A successful local-admin login still passes through the second PIN
+    // gate inside AdminDashboard.
+    if (isAdminCredential(normalizedLogin, password)) {
+      createSession({
+        role: "admin",
+        login: normalizedLogin,
+        authType: "local-admin",
+        displayName: normalizedLogin,
+      });
+      navigate("/admin", { replace: true });
       return;
     }
+
+    // Normal users (and cloud-managed admins not present in the local list)
+    // continue through Supabase Auth and must use an email address.
+    if (!normalizedLogin.includes("@")) {
+      setError("یوزر ادمین پیدا نشد؛ برای ورود آنلاین، ایمیل معتبر وارد کنید.");
+      return;
+    }
+
+    const email = normalizedLogin;
 
     try {
       setLoading(true);
@@ -465,14 +486,14 @@ export default function LoginPage() {
 
         <form className="shil-auth-form" onSubmit={handleSubmit}>
           <input
-            type="email"
+            type="text"
             value={login}
             onChange={(event) => setLogin(event.target.value)}
-            placeholder="ایمیل"
+            placeholder="ایمیل یا یوزر ادمین"
             autoComplete="username"
-            inputMode="email"
+            inputMode="text"
             dir="ltr"
-            aria-label="ایمیل"
+            aria-label="ایمیل یا یوزر ادمین"
           />
 
           <input
@@ -501,9 +522,9 @@ export default function LoginPage() {
         </button>
 
         <p className="shil-auth-note">
-          اگر حساب کاربری فعال ندارید، از ورود موقت استفاده کنید.
+          کاربران آنلاین با ایمیل Supabase وارد می‌شوند. ادمین می‌تواند با یوزر محلی نیز وارد شود.
           <br />
-          دسترسی مدیر پس از تأیید حساب فعال می‌شود.
+          ورود ادمین پس از این مرحله با PIN امنیتی دوم تأیید می‌شود.
         </p>
       </section>
     </div>

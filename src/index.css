@@ -962,3 +962,45 @@ html body:not(.login-page):not(.welcome-page) #shil-emergency-settings-root .shi
 
 /* ProjectInfo V10 layout removed; V12 isolated layout is authoritative. */
 
+/* SHIL ADMIN PHASE 4 - RULE ENGINE / STANDARDS / RELEASE CENTER */
+.shil-admin-rule-center{display:flex;flex-direction:column;gap:12px}
+.shil-admin-rule-groups{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.shil-admin-rule-group{border:1px solid rgba(142,211,231,.62);border-radius:14px;background:rgba(249,253,255,.94);overflow:hidden}
+.shil-admin-rule-group>summary{min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;cursor:pointer;list-style:none;color:#0b2236}
+.shil-admin-rule-group>summary::-webkit-details-marker{display:none}
+.shil-admin-rule-group>summary strong{font-size:12px;font-weight:900}
+.shil-admin-rule-group>summary span{font-size:10px;font-weight:800;color:#42627a}
+.shil-admin-rule-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;padding:8px;border-top:1px solid rgba(142,211,231,.42)}
+.shil-admin-rule-fields label,.shil-admin-release-meta label{display:flex;flex-direction:column;gap:4px;min-width:0}
+.shil-admin-rule-fields label span,.shil-admin-release-meta label span{font-size:10px;font-weight:800;color:#34576f}
+.shil-admin-rule-fields input,.shil-admin-release-meta input,.shil-admin-release-meta select{min-height:34px;border:1px solid #b7dfe9;border-radius:9px;background:#fff;padding:5px 8px;font-size:11px;color:#0b2236}
+.shil-admin-release-meta{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:9px 0}
+.shil-admin-standards-list{display:flex;flex-direction:column;gap:6px}
+.shil-admin-standard-row{display:grid;grid-template-columns:110px minmax(180px,1fr) 110px auto auto;gap:6px;align-items:center;padding:7px;border:1px solid rgba(142,211,231,.58);border-radius:12px;background:rgba(249,253,255,.94)}
+.shil-admin-standard-row input,.shil-admin-standard-row select,.shil-admin-standard-row textarea{min-height:34px;border:1px solid #b7dfe9;border-radius:9px;background:#fff;padding:5px 7px;font-family:inherit;font-size:11px;color:#0b2236}
+.shil-admin-standard-row textarea{grid-column:1/-1;min-height:46px;resize:vertical}
+.shil-admin-release-kpis{margin-bottom:8px}
+.shil-admin-release-history{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.shil-admin-release-history>article{display:grid;grid-template-columns:100px 1fr auto;gap:7px;align-items:center;padding:8px 9px;border:1px solid rgba(142,211,231,.55);border-radius:12px;background:rgba(249,253,255,.92);color:#0b2236}
+.shil-admin-release-history>article strong{font-size:11px}.shil-admin-release-history>article span{font-size:11px;font-weight:800}.shil-admin-release-history>article small{font-size:9px;color:#5b7283}
+.shil-admin-release-history details{grid-column:1/-1;border-top:1px solid rgba(142,211,231,.35);padding-top:5px;font-size:10px}.shil-admin-release-history summary{cursor:pointer;font-weight:900}.shil-admin-release-history p{margin:4px 0}
+@media(max-width:760px){
+ .shil-admin-rule-groups{grid-template-columns:1fr}
+ .shil-admin-rule-fields{grid-template-columns:1fr 1fr}
+ .shil-admin-standard-row{grid-template-columns:82px minmax(0,1fr) 88px}
+ .shil-admin-standard-row .shil-admin-switch,.shil-admin-standard-row button{min-height:32px}
+ .shil-admin-release-history>article{grid-template-columns:82px 1fr}
+ .shil-admin-release-history>article small{grid-column:1/-1}
+}
+@media(max-width:480px){
+ .shil-admin-rule-fields{grid-template-columns:1fr}
+ .shil-admin-release-meta{grid-template-columns:1fr}
+ .shil-admin-standard-row{grid-template-columns:1fr 1fr;padding:6px}
+ .shil-admin-standard-row input:nth-of-type(2),.shil-admin-standard-row textarea{grid-column:1/-1}
+ .shil-admin-standard-row select{min-width:0}
+}
+/* SHIL ADMIN PHASE 4 END */
+
+/* SHIL Admin Phase 6 — Error & Diagnostics Center */
+.shil-admin-phase6{display:grid;gap:10px}.shil-admin-phase6-kpis{gap:7px}.shil-admin-diag-toolbar{display:grid;grid-template-columns:minmax(0,1fr) 130px 150px;gap:7px}.shil-admin-diag-toolbar input,.shil-admin-diag-toolbar select{min-width:0;height:36px;border-radius:10px;border:1px solid rgba(121,185,231,.28);background:rgba(8,28,46,.78);color:#eef8ff;padding:0 10px;font:inherit}.shil-admin-diag-list{display:grid;gap:6px}.shil-admin-diag-card{overflow:hidden;border:1px solid rgba(116,188,236,.22);border-radius:12px;background:rgba(5,25,42,.78)}.shil-admin-diag-card.warn{border-color:rgba(255,193,84,.35)}.shil-admin-diag-card.error{border-color:rgba(255,111,111,.38)}.shil-admin-diag-card.resolved{opacity:.78}.shil-admin-diag-head{width:100%;min-height:48px;border:0;background:transparent;color:inherit;display:flex;align-items:center;gap:8px;text-align:right;padding:7px 9px;cursor:pointer}.shil-admin-diag-copy{display:grid;gap:2px;min-width:0;flex:1}.shil-admin-diag-copy strong{font-size:12px;line-height:1.45;color:#f5fbff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.shil-admin-diag-copy small{font-size:9.5px;color:#9db7ca;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.shil-admin-diag-status{font-size:9px;border-radius:999px;padding:3px 7px;white-space:nowrap}.shil-admin-diag-status.open{background:rgba(255,179,71,.13);color:#ffd08a;border:1px solid rgba(255,179,71,.24)}.shil-admin-diag-status.ok{background:rgba(70,209,148,.12);color:#94efc1;border:1px solid rgba(70,209,148,.23)}.shil-admin-diag-body{display:grid;gap:8px;padding:8px 10px 10px;border-top:1px solid rgba(125,190,231,.14)}.shil-admin-diag-meta{display:flex;gap:8px;flex-wrap:wrap;font-size:9.5px;color:#a9c0d1}.shil-admin-diag-body details{border:1px solid rgba(122,184,224,.15);border-radius:9px;background:rgba(255,255,255,.025);padding:6px 8px}.shil-admin-diag-body summary{cursor:pointer;font-size:10px;font-weight:700;color:#cfe9fb}.shil-admin-diag-body pre{margin:7px 0 0;max-height:180px;overflow:auto;direction:ltr;text-align:left;white-space:pre-wrap;word-break:break-word;font-size:9px;line-height:1.55;color:#bbd2e2}.shil-admin-diag-body textarea{min-height:58px}.shil-admin-service-dot.error{background:#ff7474;box-shadow:0 0 0 3px rgba(255,116,116,.10)}
+@media(max-width:680px){.shil-admin-phase6{gap:7px}.shil-admin-diag-toolbar{grid-template-columns:1fr 1fr}.shil-admin-diag-toolbar input{grid-column:1/-1}.shil-admin-diag-toolbar input,.shil-admin-diag-toolbar select{height:32px;font-size:10px}.shil-admin-diag-head{min-height:42px;padding:6px 8px}.shil-admin-diag-copy strong{font-size:10.5px}.shil-admin-diag-copy small{font-size:8.5px}.shil-admin-diag-body{padding:7px 8px 8px;gap:6px}.shil-admin-phase6 .shil-admin-stat{min-height:54px;padding:7px}.shil-admin-phase6 .shil-admin-stat strong{font-size:13px}.shil-admin-phase6 .shil-admin-stat span{font-size:9px}.shil-admin-phase6 .shil-admin-stat small{font-size:8px}}

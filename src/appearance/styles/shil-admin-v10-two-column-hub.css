@@ -1,0 +1,143 @@
+/* =====================================================================
+   SHIL ADMIN V10 — TWO COLUMN MODULE HUB
+   Scoped to admin only. No engineering/user page styles are changed.
+   ===================================================================== */
+.shil-page--admin {
+  --adm-v10-edge: 5px;
+  --adm-v10-gap: 5px;
+  --adm-v10-card: linear-gradient(135deg, rgba(255,255,255,.97) 0%, rgba(240,248,255,.96) 52%, rgba(221,240,253,.94) 100%);
+  --adm-v10-card-active: linear-gradient(135deg, rgba(255,255,255,.99) 0%, rgba(231,247,255,.98) 58%, rgba(200,233,252,.96) 100%);
+  --adm-v10-line: rgba(120,190,230,.82);
+  --adm-v10-ink: #0a1d36;
+  --adm-v10-muted: #526f86;
+}
+
+/* guarantee that the hub itself never paints a parent slab */
+.shil-page--admin .shil-admin-module-hub-v10,
+.shil-page--admin .shil-admin-section-nav-v10,
+.shil-page--admin .shil-admin-child-tabs-v10 {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+.shil-page--admin .shil-admin-module-hub-v10::before,
+.shil-page--admin .shil-admin-module-hub-v10::after,
+.shil-page--admin .shil-admin-section-nav-v10::before,
+.shil-page--admin .shil-admin-section-nav-v10::after { content:none !important; display:none !important; }
+
+.shil-page--admin .shil-page-content {
+  padding-inline: var(--adm-v10-edge) !important;
+  padding-top: 4px !important;
+}
+
+/* ultra compact utility hero */
+.shil-page--admin .shil-admin-hero-v10 {
+  display: grid !important;
+  grid-template-columns: minmax(0,1fr) 116px !important;
+  gap: var(--adm-v10-gap) !important;
+  margin: 0 0 var(--adm-v10-gap) !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+.shil-page--admin .shil-admin-brand-v10,
+.shil-page--admin .shil-admin-logout-v10 {
+  min-height: 45px !important;
+  border: 1px solid var(--adm-v10-line) !important;
+  border-radius: 14px !important;
+  background: var(--adm-v10-card) !important;
+  box-shadow: 0 3px 10px rgba(2,18,36,.09) !important;
+}
+.shil-page--admin .shil-admin-brand-v10 {
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:5px 8px !important;
+  min-width:0 !important;
+}
+.shil-page--admin .shil-admin-brand-v10 h2 { margin:0 !important; font-size:12px !important; line-height:1.25 !important; color:var(--adm-v10-ink) !important; }
+.shil-page--admin .shil-admin-brand-v10 span { max-width:100% !important; font-size:6.8px !important; line-height:1.2 !important; color:var(--adm-v10-muted) !important; white-space:nowrap !important; overflow:hidden !important; text-overflow:ellipsis !important; direction:ltr !important; unicode-bidi:isolate !important; }
+.shil-page--admin .shil-admin-logout-v10 { padding:5px 7px !important; font-size:9.5px !important; font-weight:850 !important; line-height:1.25 !important; color:var(--adm-v10-ink) !important; cursor:pointer !important; }
+
+/* main menu: exactly two columns, independent floating cards */
+.shil-page--admin .shil-admin-module-hub-v10 {
+  width:100% !important;
+  display:grid !important;
+  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  gap:var(--adm-v10-gap) !important;
+  margin:0 !important;
+  padding:0 !important;
+}
+.shil-page--admin .shil-admin-module-card-v10 {
+  width:100% !important;
+  min-width:0 !important;
+  min-height:64px !important;
+  display:grid !important;
+  grid-template-columns:22px minmax(0,1fr) 24px !important;
+  align-items:center !important;
+  gap:6px !important;
+  margin:0 !important;
+  padding:7px 9px !important;
+  border:1px solid var(--adm-v10-line) !important;
+  border-radius:15px !important;
+  background:var(--adm-v10-card) !important;
+  color:var(--adm-v10-ink) !important;
+  box-shadow:0 3px 10px rgba(2,18,36,.10) !important;
+  text-align:right !important;
+  overflow:hidden !important;
+  cursor:pointer !important;
+}
+.shil-page--admin .shil-admin-module-card-v10:active { transform:scale(.992); background:var(--adm-v10-card-active) !important; }
+.shil-page--admin .shil-admin-module-copy-v10 { min-width:0 !important; display:flex !important; flex-direction:column !important; gap:2px !important; }
+.shil-page--admin .shil-admin-module-copy-v10 strong { font-size:11px !important; line-height:1.25 !important; font-weight:900 !important; color:var(--adm-v10-ink) !important; white-space:nowrap !important; overflow:hidden !important; text-overflow:ellipsis !important; }
+.shil-page--admin .shil-admin-module-copy-v10 small { font-size:7.5px !important; line-height:1.3 !important; font-weight:650 !important; color:var(--adm-v10-muted) !important; white-space:nowrap !important; overflow:hidden !important; text-overflow:ellipsis !important; }
+.shil-page--admin .shil-admin-module-arrow-v10 { font-size:20px !important; line-height:1 !important; color:#2a6b9d !important; text-align:center !important; }
+.shil-page--admin .shil-admin-module-mark-v10 { width:24px !important; height:24px !important; display:grid !important; place-items:center !important; border:1px solid rgba(82,161,214,.60) !important; border-radius:8px !important; background:rgba(255,255,255,.58) !important; color:#1d69a8 !important; font-size:15px !important; }
+
+/* category page header + its children */
+.shil-page--admin .shil-admin-section-nav-v10 { display:grid !important; grid-template-columns:96px minmax(0,1fr) !important; gap:var(--adm-v10-gap) !important; margin:0 0 var(--adm-v10-gap) !important; padding:0 !important; }
+.shil-page--admin .shil-admin-back-hub-v10,
+.shil-page--admin .shil-admin-section-title-v10,
+.shil-page--admin .shil-admin-child-tabs-v10 button {
+  border:1px solid var(--adm-v10-line) !important;
+  border-radius:14px !important;
+  background:var(--adm-v10-card) !important;
+  color:var(--adm-v10-ink) !important;
+  box-shadow:0 2px 8px rgba(2,18,36,.08) !important;
+}
+.shil-page--admin .shil-admin-back-hub-v10 { min-height:42px !important; padding:5px 6px !important; font-size:8.5px !important; font-weight:850 !important; }
+.shil-page--admin .shil-admin-section-title-v10 { min-width:0 !important; min-height:42px !important; display:flex !important; flex-direction:column !important; justify-content:center !important; padding:5px 9px !important; }
+.shil-page--admin .shil-admin-section-title-v10 strong { font-size:11px !important; line-height:1.2 !important; }
+.shil-page--admin .shil-admin-section-title-v10 small { font-size:7.2px !important; line-height:1.25 !important; color:var(--adm-v10-muted) !important; white-space:nowrap !important; overflow:hidden !important; text-overflow:ellipsis !important; }
+.shil-page--admin .shil-admin-child-tabs-v10 { grid-column:1/-1 !important; display:grid !important; grid-template-columns:repeat(2,minmax(0,1fr)) !important; gap:var(--adm-v10-gap) !important; padding:0 !important; }
+.shil-page--admin .shil-admin-child-tabs-v10 button { min-height:34px !important; padding:4px 7px !important; font-size:9px !important; font-weight:850 !important; }
+.shil-page--admin .shil-admin-child-tabs-v10 button.active { background:var(--adm-v10-card-active) !important; border-color:#3eb9e9 !important; box-shadow:0 0 0 2px rgba(62,185,233,.10) !important; }
+
+/* further compress content cards only inside admin section pages */
+.shil-page--admin .shil-admin-panel { margin-bottom:5px !important; }
+.shil-page--admin .shil-admin-panel-head,
+.shil-page--admin .shil-admin-panel-toggle { min-height:34px !important; }
+.shil-page--admin .shil-admin-panel-toggle { padding:5px 8px !important; }
+.shil-page--admin .shil-admin-panel-title-wrap h3 { font-size:10.5px !important; }
+.shil-page--admin .shil-admin-panel-title-wrap p { font-size:7px !important; }
+.shil-page--admin .shil-admin-stat { min-height:42px !important; padding:4px 5px !important; }
+.shil-page--admin .shil-admin-stat strong { font-size:14px !important; }
+.shil-page--admin .shil-admin-stat span { font-size:7.8px !important; }
+.shil-page--admin .shil-admin-stat small { font-size:6.8px !important; }
+
+@media (max-width:430px) {
+  .shil-page--admin { --adm-v10-edge:4px; --adm-v10-gap:4px; }
+  .shil-page--admin .shil-admin-module-card-v10 { min-height:58px !important; padding:6px 7px !important; grid-template-columns:18px minmax(0,1fr) 21px !important; gap:4px !important; border-radius:13px !important; }
+  .shil-page--admin .shil-admin-module-copy-v10 strong { font-size:9.5px !important; }
+  .shil-page--admin .shil-admin-module-copy-v10 small { font-size:6.5px !important; }
+  .shil-page--admin .shil-admin-module-mark-v10 { width:21px !important; height:21px !important; border-radius:7px !important; }
+  .shil-page--admin .shil-admin-hero-v10 { grid-template-columns:minmax(0,1fr) 92px !important; }
+  .shil-page--admin .shil-admin-brand-v10,
+  .shil-page--admin .shil-admin-logout-v10 { min-height:40px !important; }
+}

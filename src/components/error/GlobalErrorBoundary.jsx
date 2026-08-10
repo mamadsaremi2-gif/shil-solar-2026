@@ -1,4 +1,5 @@
 import React from "react";
+import { captureAdminDiagnostic } from "../../admin/adminDiagnostics.js";
 
 function getRuntimeErrorText(error) {
   if (!error) return "Unknown runtime error";
@@ -27,6 +28,7 @@ export default class GlobalErrorBoundary extends React.Component {
       };
       console.error("[SHIL ErrorBoundary]", error, info);
       localStorage.setItem("shil:lastRuntimeError", JSON.stringify(payload, null, 2));
+      captureAdminDiagnostic({ type: "react-boundary", severity: "error", source: "GlobalErrorBoundary", error, context: { componentStack: payload.componentStack } });
     } catch {
       console.error("[SHIL ErrorBoundary]", error, info);
     }

@@ -1,0 +1,410 @@
+/* =====================================================================
+   SHIL ADMIN V9 — ULTRA COMPACT / TRUE PARENTLESS / ACCORDION
+   Admin-only final override. No engineering/user pages are touched.
+   ===================================================================== */
+
+.shil-page--admin {
+  --adm-edge: 8px;
+  --adm-gap: 6px;
+  --adm-radius: 16px;
+  --adm-radius-sm: 13px;
+  --adm-card: rgba(247, 251, 255, .91);
+  --adm-card-strong: rgba(252, 254, 255, .95);
+  --adm-line: rgba(151, 203, 236, .78);
+  --adm-shadow: 0 4px 12px rgba(2, 18, 36, .12);
+}
+
+/* Remove the global engineering veil that was still covering the solar artwork. */
+.shil-page--admin,
+.shil-page--admin .shil-page-content,
+.shil-page--admin main.shil-page-content,
+.shil-page--admin .shil-admin-command-center,
+.shil-page--admin .shil-admin-review-center,
+.shil-page--admin .shil-admin-rule-center,
+.shil-page--admin .shil-admin-phase5,
+.shil-page--admin .shil-admin-phase6,
+.shil-page--admin .shil-admin-equipment-cms,
+.shil-page--admin .shil-admin-overview-columns,
+.shil-page--admin .shil-admin-grid,
+.shil-page--admin .shil-admin-kpi-grid,
+.shil-page--admin .shil-admin-quick-grid,
+.shil-page--admin .shil-admin-service-list,
+.shil-page--admin .shil-admin-alert-list,
+.shil-page--admin .shil-admin-timeline,
+.shil-page--admin .shil-admin-version-list,
+.shil-page--admin .shil-admin-actions-row,
+.shil-page--admin .shil-thread-list,
+.shil-page--admin .shil-admin-snapshot-list,
+.shil-page--admin .shil-admin-release-history,
+.shil-page--admin .shil-admin-cms-groups,
+.shil-page--admin .shil-admin-cms-item-list,
+.shil-page--admin .shil-admin-rule-groups,
+.shil-page--admin .shil-admin-standards-list,
+.shil-page--admin .shil-admin-diag-list {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.shil-page--admin .shil-page-content::before,
+.shil-page--admin .shil-page-content::after,
+.shil-page--admin main.shil-page-content::before,
+.shil-page--admin main.shil-page-content::after,
+.shil-page--admin .shil-admin-command-center::before,
+.shil-page--admin .shil-admin-command-center::after,
+.shil-page--admin .shil-admin-review-center::before,
+.shil-page--admin .shil-admin-review-center::after,
+.shil-page--admin .shil-admin-panel::before,
+.shil-page--admin .shil-admin-panel::after {
+  content: none !important;
+  display: none !important;
+  background: none !important;
+}
+
+.shil-page--admin .shil-page-content {
+  padding-inline: var(--adm-edge) !important;
+  padding-top: 6px !important;
+  padding-bottom: calc(68px + env(safe-area-inset-bottom)) !important;
+}
+
+/* Hero becomes a very short utility row. */
+.shil-page--admin .shil-admin-hero {
+  gap: 6px !important;
+  margin-bottom: 6px !important;
+}
+.shil-page--admin .shil-admin-hero > div {
+  min-height: 42px !important;
+  padding: 6px 10px !important;
+  border-radius: 15px !important;
+}
+.shil-page--admin .shil-admin-hero h2 {
+  margin: 0 !important;
+  font-size: 13px !important;
+  line-height: 1.25 !important;
+}
+.shil-page--admin .shil-admin-hero span {
+  font-size: 7.5px !important;
+  line-height: 1.2 !important;
+}
+.shil-page--admin .shil-admin-hero p { display: none !important; }
+.shil-page--admin .shil-admin-hero > button,
+.shil-page--admin .shil-admin-hero > .shil-guest-btn {
+  min-width: 92px !important;
+  min-height: 42px !important;
+  padding: 5px 8px !important;
+  border-radius: 15px !important;
+  font-size: 10px !important;
+}
+
+/* Navigation tabs: compact like engineering route cards, never one big grey slab. */
+.shil-page--admin .shil-admin-tabs {
+  grid-template-columns: repeat(4, minmax(0,1fr)) !important;
+  gap: 5px !important;
+  margin: 0 0 7px !important;
+  padding: 0 !important;
+}
+.shil-page--admin .shil-admin-tabs button {
+  min-height: 32px !important;
+  padding: 4px 5px !important;
+  border-radius: 13px !important;
+  font-size: 9.5px !important;
+  line-height: 1.15 !important;
+  box-shadow: 0 2px 7px rgba(2,18,36,.09) !important;
+}
+
+/* Command header: title only on mobile; explanatory copy stays available on larger screens. */
+.shil-page--admin .shil-admin-command-head,
+.shil-page--admin .shil-admin-review-head {
+  min-height: 40px !important;
+  margin-bottom: 6px !important;
+  padding: 6px 10px !important;
+  border-radius: 15px !important;
+}
+.shil-page--admin .shil-admin-command-head h3,
+.shil-page--admin .shil-admin-review-head h3 {
+  font-size: 12px !important;
+}
+.shil-page--admin .shil-admin-command-head p,
+.shil-page--admin .shil-admin-review-head p {
+  font-size: 8px !important;
+  margin-top: 1px !important;
+}
+
+/* True accordion panels. The outer article is transparent; only its small heading floats. */
+.shil-page--admin .shil-admin-panel {
+  margin: 0 0 6px !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+.shil-page--admin .shil-admin-panel-head {
+  min-height: 38px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-radius: 14px !important;
+  overflow: hidden !important;
+}
+.shil-page--admin .shil-admin-panel-toggle {
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 38px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+  margin: 0 !important;
+  padding: 6px 10px !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: var(--adm-ink) !important;
+  box-shadow: none !important;
+  text-align: right !important;
+  cursor: pointer !important;
+}
+.shil-page--admin .shil-admin-panel-title-wrap {
+  min-width: 0 !important;
+  flex: 1 1 auto !important;
+}
+.shil-page--admin .shil-admin-panel-title-wrap h3 {
+  font-size: 12px !important;
+  line-height: 1.25 !important;
+  margin: 0 !important;
+}
+.shil-page--admin .shil-admin-panel-title-wrap p {
+  font-size: 8px !important;
+  line-height: 1.25 !important;
+  margin: 1px 0 0 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+.shil-page--admin .shil-admin-panel-chevron {
+  flex: none !important;
+  width: 22px !important;
+  height: 22px !important;
+  display: grid !important;
+  place-items: center !important;
+  border: 1px solid rgba(115,181,221,.75) !important;
+  border-radius: 50% !important;
+  background: rgba(255,255,255,.72) !important;
+  color: #0a3751 !important;
+  font-size: 15px !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+}
+.shil-page--admin .shil-admin-panel-action {
+  flex: none !important;
+  padding-inline-end: 5px !important;
+}
+.shil-page--admin .shil-admin-panel-body {
+  margin-top: 5px !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+}
+
+/* Search and toolbars are single slim independent cards. */
+.shil-page--admin .shil-admin-overview-search,
+.shil-page--admin .shil-admin-review-toolbar,
+.shil-page--admin .shil-admin-phase5-toolbar,
+.shil-page--admin .shil-admin-phase6-toolbar {
+  margin: 0 0 6px !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+.shil-page--admin .shil-admin-overview-search > input,
+.shil-page--admin .shil-admin-review-toolbar input,
+.shil-page--admin .shil-admin-review-toolbar select,
+.shil-page--admin .shil-admin-phase5-toolbar input,
+.shil-page--admin .shil-admin-phase5-toolbar select,
+.shil-page--admin .shil-admin-phase6-toolbar input,
+.shil-page--admin .shil-admin-phase6-toolbar select {
+  min-height: 38px !important;
+  height: 38px !important;
+  padding: 5px 10px !important;
+  border-radius: 14px !important;
+  font-size: 10.5px !important;
+}
+
+/* KPI cards follow the low-height engineering card language. */
+.shil-page--admin .shil-admin-grid,
+.shil-page--admin .shil-admin-kpi-grid,
+.shil-page--admin .shil-admin-review-kpis,
+.shil-page--admin .shil-admin-release-kpis,
+.shil-page--admin .shil-admin-phase5-kpis,
+.shil-page--admin .shil-admin-phase6-kpis {
+  grid-template-columns: repeat(3, minmax(0,1fr)) !important;
+  gap: 5px !important;
+  margin-bottom: 6px !important;
+}
+.shil-page--admin .shil-admin-stat {
+  min-height: 48px !important;
+  padding: 5px 6px !important;
+  border-radius: 13px !important;
+}
+.shil-page--admin .shil-admin-stat strong {
+  font-size: 16px !important;
+  line-height: 1 !important;
+}
+.shil-page--admin .shil-admin-stat span {
+  margin-top: 2px !important;
+  font-size: 8.5px !important;
+  line-height: 1.15 !important;
+}
+.shil-page--admin .shil-admin-stat small {
+  margin-top: 2px !important;
+  font-size: 7.5px !important;
+  line-height: 1.15 !important;
+}
+
+/* Reusable rows and cards: lower vertical cost, no empty padded cells. */
+.shil-page--admin .shil-admin-service-row,
+.shil-page--admin .shil-admin-alert,
+.shil-page--admin .shil-admin-quick-action,
+.shil-page--admin .shil-admin-timeline-item,
+.shil-page--admin .shil-admin-record-card,
+.shil-page--admin .shil-admin-review-card,
+.shil-page--admin .shil-admin-standard-row,
+.shil-page--admin .shil-admin-snapshot,
+.shil-page--admin .shil-admin-diag-card,
+.shil-page--admin .shil-admin-rule-group,
+.shil-page--admin .shil-admin-cms-group,
+.shil-page--admin .shil-admin-card-editor {
+  min-height: 0 !important;
+  padding: 7px 9px !important;
+  margin: 0 !important;
+  border-radius: 13px !important;
+}
+.shil-page--admin .shil-admin-service-list,
+.shil-page--admin .shil-admin-alert-list,
+.shil-page--admin .shil-admin-timeline,
+.shil-page--admin .shil-thread-list,
+.shil-page--admin .shil-admin-diag-list {
+  display: grid !important;
+  gap: 5px !important;
+}
+.shil-page--admin .shil-admin-service-row strong,
+.shil-page--admin .shil-admin-alert strong,
+.shil-page--admin .shil-admin-timeline-item strong,
+.shil-page--admin .shil-admin-quick-action strong {
+  font-size: 10px !important;
+  line-height: 1.2 !important;
+}
+.shil-page--admin .shil-admin-service-row small,
+.shil-page--admin .shil-admin-alert span,
+.shil-page--admin .shil-admin-timeline-item small,
+.shil-page--admin .shil-admin-quick-action span {
+  font-size: 8px !important;
+  line-height: 1.25 !important;
+}
+
+/* Quick actions: title first; note becomes compact secondary text. */
+.shil-page--admin .shil-admin-quick-grid {
+  grid-template-columns: repeat(2, minmax(0,1fr)) !important;
+  gap: 5px !important;
+  padding: 0 !important;
+}
+.shil-page--admin .shil-admin-quick-action {
+  min-height: 42px !important;
+  padding: 6px 8px !important;
+}
+
+/* Final tools are a compact grid directly over the artwork. */
+.shil-page--admin .shil-admin-overview-tools {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0,1fr)) !important;
+  gap: 5px !important;
+  margin: 6px 0 0 !important;
+  padding: 0 !important;
+}
+.shil-page--admin .shil-admin-overview-tools button {
+  min-height: 38px !important;
+  padding: 5px 8px !important;
+  border-radius: 13px !important;
+  font-size: 10px !important;
+}
+
+/* Keep mixed Persian/English engineering values stable. */
+.shil-page--admin [dir="ltr"],
+.shil-page--admin code,
+.shil-page--admin .shil-admin-service-meta,
+.shil-page--admin time {
+  direction: ltr !important;
+  unicode-bidi: isolate !important;
+  text-align: left !important;
+}
+.shil-page--admin h1,
+.shil-page--admin h2,
+.shil-page--admin h3,
+.shil-page--admin p,
+.shil-page--admin button,
+.shil-page--admin label {
+  unicode-bidi: plaintext;
+}
+
+@media (max-width: 760px) {
+  .shil-page--admin {
+    --adm-edge: 7px;
+    --adm-gap: 5px;
+  }
+
+  .shil-page--admin .shil-admin-tabs {
+    grid-template-columns: repeat(2, minmax(0,1fr)) !important;
+  }
+
+  .shil-page--admin .shil-admin-overview-columns,
+  .shil-page--admin .shil-admin-phase5-two {
+    grid-template-columns: 1fr !important;
+    gap: 6px !important;
+  }
+
+  .shil-page--admin .shil-admin-grid,
+  .shil-page--admin .shil-admin-kpi-grid,
+  .shil-page--admin .shil-admin-review-kpis,
+  .shil-page--admin .shil-admin-release-kpis,
+  .shil-page--admin .shil-admin-phase5-kpis,
+  .shil-page--admin .shil-admin-phase6-kpis {
+    grid-template-columns: repeat(2, minmax(0,1fr)) !important;
+  }
+
+  .shil-page--admin .shil-admin-command-head p,
+  .shil-page--admin .shil-admin-review-head p {
+    display: none !important;
+  }
+
+  .shil-page--admin .shil-admin-service-row small,
+  .shil-page--admin .shil-admin-alert span,
+  .shil-page--admin .shil-admin-timeline-item small,
+  .shil-page--admin .shil-admin-quick-action span {
+    display: none !important;
+  }
+
+  .shil-page--admin .shil-admin-hero {
+    grid-template-columns: minmax(0,1fr) 92px !important;
+  }
+}
+
+@media (max-width: 430px) {
+  .shil-page--admin .shil-page-content {
+    padding-inline: 6px !important;
+  }
+  .shil-page--admin .shil-admin-tabs button {
+    min-height: 30px !important;
+    font-size: 9px !important;
+  }
+  .shil-page--admin .shil-admin-stat {
+    min-height: 45px !important;
+  }
+  .shil-page--admin .shil-admin-stat strong { font-size: 15px !important; }
+  .shil-page--admin .shil-admin-panel-head,
+  .shil-page--admin .shil-admin-panel-toggle { min-height: 36px !important; }
+}

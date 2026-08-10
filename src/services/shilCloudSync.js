@@ -1,3 +1,4 @@
+import { captureAdminDiagnostic } from "../admin/adminDiagnostics.js";
 import { supabase } from "../backend/db/supabaseClient.js";
 import { backendConfig } from "../backend/config/backendConfig.js";
 import { getCurrentSession } from "../auth/session.js";
@@ -177,6 +178,7 @@ export function mirrorCloudWrite(promiseFactory) {
   window.setTimeout(() => {
     Promise.resolve().then(promiseFactory).catch((error) => {
       console.warn("SHIL cloud sync failed:", error?.message || error);
+      captureAdminDiagnostic({ type: "cloud-sync", severity: "warning", source: "shilCloudSync", error });
     });
   }, 0);
 }

@@ -1,7 +1,9 @@
+import './pwa/shilPwaHead.js';
 import './appearance/styles/shil-force-welcome-after-login.js';
 import './appearance/styles/shil-auth-page-body-class.js';
 
 import React from "react";
+import { registerGlobalErrorHandlers } from "./production/errors/globalErrors.js";
 import ReactDOM from "react-dom/client";
 import App from "./app/App.jsx";
 
@@ -24,6 +26,7 @@ import './appearance/styles/shil-dashboard-newproject-icons-direct.css';
 import './appearance/styles/shil-matte-glass-no-lines.css';
 
 window.React = React;
+registerGlobalErrorHandlers();
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -278,3 +281,20 @@ import "./appearance/styles/projects-phase2-engineering-final.css";
 /* PHASE 2.1: compact mobile project cards + engineering palette; absolute final project override. */
 import "./appearance/styles/projects-phase2-1-mobile-compact-no-purple.css";
 import "./appearance/styles/projects-phase2-2-mobile-ultra-compact.css";
+import "./appearance/styles/projects-phase2-4-card-parity-transparent-parent.css";
+
+/* ADMIN V8: parentless floating engineering command center; admin-only absolute final override. */
+import "./appearance/styles/shil-admin-v8-floating-command-center.css";
+
+/* ADMIN V9: true parentless mobile-first accordions; absolute final admin override. */
+import "./appearance/styles/shil-admin-v9-ultra-compact-accordion.css";
+import "./appearance/styles/shil-admin-v10-two-column-hub.css";
+
+/* ADMIN V11: engineering Summary visual parity for root + every admin descendant. Absolute final admin override. */
+import "./appearance/styles/shil-admin-summary-parity-v11-final.css";
+
+/* ADMIN V12: unified engineering design system inherited by root, parents and all admin descendants. Absolute final import. */
+import "./appearance/styles/shil-admin-engineering-design-system-v12-final.css";
+
+/* ADMIN V13: structural cleanup — true parentless hub, compact titles/cards, end-of-page logout. ABSOLUTE FINAL import. */
+import "./appearance/styles/shil-admin-v13-structural-cleanup-final.css";

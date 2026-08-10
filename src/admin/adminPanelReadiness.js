@@ -1,5 +1,5 @@
 export const SHIL_ADMIN_PANEL_READINESS = {
-  version: "admin-foundation-100",
+  version: "admin-command-center-110",
   scope: "engineering-only",
   modules: [
     { key: "equipment-banks", title: "مدیریت بانک تجهیزات", status: "foundation-ready", entities: ["solarPanels", "solarInverters", "batteries", "protection", "cables"], note: "بانک‌ها فقط مشخصات فنی تجهیزات را کنترل می‌کنند؛ قیمت، خرید و فروش تعریف نمی‌شود." },

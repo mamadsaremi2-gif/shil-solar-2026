@@ -1,31 +1,30 @@
 {
-  "id": "/",
-  "name": "SHIL Engineering",
+  "name": "SHIL Iran",
   "short_name": "SHIL",
-  "description": "SHIL Smart Engineering Platform",
+  "description": "سامانه مهندسی طراحی و محاسبات انرژی خورشیدی و برق اضطراری SHIL",
   "lang": "fa",
   "dir": "rtl",
-  "start_url": "/?source=pwa",
+  "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "orientation": "portrait-primary",
-  "theme_color": "#081120",
-  "background_color": "#020617",
+  "orientation": "any",
+  "background_color": "#06182a",
+  "theme_color": "#06182a",
   "icons": [
     {
-      "src": "/pwa-icons/icon-192.png",
+      "src": "/icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/pwa-icons/icon-512.png",
+      "src": "/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/pwa-icons/icon-maskable-512.png",
+      "src": "/icons/maskable-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"

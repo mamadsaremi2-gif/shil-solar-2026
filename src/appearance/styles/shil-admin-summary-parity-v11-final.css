@@ -1,0 +1,352 @@
+/* =====================================================================
+   SHIL ADMIN V11 — SUMMARY VISUAL PARITY
+   Reference: engineering Summary screenshot supplied 2026-08-10.
+   Scope: .shil-page--admin only. The admin root remains parentless while
+   every visible admin block/child follows the same compact light-card law.
+   ===================================================================== */
+
+.shil-page--admin {
+  --adm11-edge: 6px;
+  --adm11-gap: 6px;
+  --adm11-section-pad: 7px;
+  --adm11-title-h: 38px;
+  --adm11-card-min-h: 62px;
+  --adm11-title-bg: #eaf4ff;
+  --adm11-surface: #f9fcff;
+  --adm11-surface-soft: #f8fbfe;
+  --adm11-border: #c8dceb;
+  --adm11-border-strong: #bfd5e5;
+  --adm11-ink: #0b2a3d;
+  --adm11-muted: #60798a;
+  --adm11-chip-ink: #527083;
+  --adm11-ok: #176b4a;
+  --adm11-warn: #8a5a08;
+  --adm11-danger: #983838;
+  --adm11-radius-section: 13px;
+  --adm11-radius-title: 12px;
+  --adm11-radius-card: 11px;
+  color: var(--adm11-ink) !important;
+}
+
+/* Root / infrastructure: same wall spacing as Summary and no extra parent slab. */
+.shil-page--admin main.shil-page-content.shil-ds-page-root {
+  padding-inline: var(--adm11-edge) !important;
+  padding-top: 0 !important;
+  overflow-x: hidden !important;
+}
+.shil-page--admin main.shil-page-content.shil-ds-page-root > * {
+  width: min(100%,980px) !important;
+  max-width: 980px !important;
+  margin-inline: auto !important;
+  box-sizing: border-box !important;
+}
+.shil-page--admin :is(.shil-admin-module-hub-v10,.shil-admin-section-nav-v10,.shil-admin-command-center,.shil-admin-phase5,.shil-admin-phase6) {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Top utility strip follows the Summary title-card proportions. */
+.shil-page--admin .shil-admin-hero-v10 {
+  grid-template-columns: minmax(0,1fr) 118px !important;
+  gap: var(--adm11-gap) !important;
+  margin: 0 0 var(--adm11-gap) !important;
+  padding: var(--adm11-section-pad) !important;
+  background: rgba(249,252,255,.95) !important;
+  border: 1px solid var(--adm11-border) !important;
+  border-radius: var(--adm11-radius-section) !important;
+  box-shadow: none !important;
+}
+.shil-page--admin :is(.shil-admin-brand-v10,.shil-admin-logout-v10) {
+  min-height: var(--adm11-title-h) !important;
+  border: 1px solid var(--adm11-border) !important;
+  border-radius: var(--adm11-radius-title) !important;
+  background: var(--adm11-title-bg) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: var(--adm11-ink) !important;
+}
+.shil-page--admin .shil-admin-brand-v10 h2 { font-size: 15px !important; font-weight: 950 !important; color: var(--adm11-ink) !important; }
+.shil-page--admin .shil-admin-brand-v10 span { font-size: 9px !important; font-weight: 850 !important; color: var(--adm11-chip-ink) !important; }
+.shil-page--admin .shil-admin-logout-v10 { font-size: 9px !important; font-weight: 850 !important; }
+
+/* Main two-column hub: independent Summary-like data cards. */
+.shil-page--admin .shil-admin-module-hub-v10 {
+  grid-template-columns: repeat(2,minmax(0,1fr)) !important;
+  gap: var(--adm11-gap) !important;
+  margin: 0 !important;
+  padding: var(--adm11-section-pad) !important;
+  background: rgba(249,252,255,.95) !important;
+  border: 1px solid var(--adm11-border) !important;
+  border-radius: var(--adm11-radius-section) !important;
+}
+.shil-page--admin .shil-admin-module-card-v10 {
+  min-height: var(--adm11-card-min-h) !important;
+  padding: 7px 8px !important;
+  gap: 5px !important;
+  border: 1px solid var(--adm11-border) !important;
+  border-radius: var(--adm11-radius-card) !important;
+  background: var(--adm11-surface) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: var(--adm11-ink) !important;
+}
+.shil-page--admin .shil-admin-module-card-v10:active { background: var(--adm11-title-bg) !important; }
+.shil-page--admin .shil-admin-module-copy-v10 strong { font-size: 11px !important; line-height: 1.25 !important; color: var(--adm11-ink) !important; }
+.shil-page--admin .shil-admin-module-copy-v10 small { font-size: 8px !important; line-height: 1.3 !important; color: var(--adm11-muted) !important; }
+.shil-page--admin .shil-admin-module-mark-v10 {
+  border-color: var(--adm11-border) !important;
+  background: var(--adm11-title-bg) !important;
+  color: var(--adm11-chip-ink) !important;
+  box-shadow: none !important;
+}
+.shil-page--admin .shil-admin-module-arrow-v10 { color: var(--adm11-chip-ink) !important; }
+
+/* Category title + child tabs = title card and compact chips from Summary. */
+.shil-page--admin .shil-admin-section-nav-v10 {
+  grid-template-columns: 108px minmax(0,1fr) !important;
+  gap: var(--adm11-gap) !important;
+  margin: 0 0 var(--adm11-gap) !important;
+  padding: var(--adm11-section-pad) !important;
+  background: rgba(249,252,255,.95) !important;
+  border: 1px solid var(--adm11-border) !important;
+  border-radius: var(--adm11-radius-section) !important;
+}
+.shil-page--admin :is(.shil-admin-back-hub-v10,.shil-admin-section-title-v10,.shil-admin-child-tabs-v10 button) {
+  min-height: var(--adm11-title-h) !important;
+  border: 1px solid var(--adm11-border) !important;
+  border-radius: var(--adm11-radius-title) !important;
+  background: var(--adm11-title-bg) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: var(--adm11-ink) !important;
+}
+.shil-page--admin .shil-admin-section-title-v10 strong { font-size: 15px !important; font-weight: 950 !important; }
+.shil-page--admin .shil-admin-section-title-v10 small { font-size: 8px !important; color: var(--adm11-muted) !important; }
+.shil-page--admin .shil-admin-child-tabs-v10 { gap: var(--adm11-gap) !important; }
+.shil-page--admin .shil-admin-child-tabs-v10 button { min-height: 34px !important; font-size: 9px !important; }
+.shil-page--admin .shil-admin-child-tabs-v10 button.active { background: #f8fcff !important; border-color: var(--adm11-border-strong) !important; box-shadow: none !important; }
+
+/* Every admin panel is now a direct section card. */
+.shil-page--admin .shil-admin-panel {
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 0 var(--adm11-gap) !important;
+  padding: var(--adm11-section-pad) !important;
+  gap: var(--adm11-gap) !important;
+  border: 1px solid var(--adm11-border) !important;
+  border-radius: var(--adm11-radius-section) !important;
+  background: rgba(249,252,255,.95) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: var(--adm11-ink) !important;
+  overflow: hidden !important;
+}
+.shil-page--admin .shil-admin-panel-head {
+  min-height: var(--adm11-title-h) !important;
+  margin: 0 !important;
+  border: 1px solid var(--adm11-border) !important;
+  border-radius: var(--adm11-radius-title) !important;
+  background: var(--adm11-title-bg) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  overflow: hidden !important;
+}
+.shil-page--admin .shil-admin-panel-toggle {
+  min-height: var(--adm11-title-h) !important;
+  padding: 6px 10px !important;
+  color: var(--adm11-ink) !important;
+  background: transparent !important;
+  border: 0 !important;
+}
+.shil-page--admin .shil-admin-panel-title-wrap h3 { margin: 0 !important; font-size: 13px !important; line-height: 1.25 !important; font-weight: 950 !important; color: var(--adm11-ink) !important; }
+.shil-page--admin .shil-admin-panel-title-wrap p { margin: 2px 0 0 !important; font-size: 8px !important; line-height: 1.35 !important; color: var(--adm11-muted) !important; }
+.shil-page--admin .shil-admin-panel-chevron { color: var(--adm11-chip-ink) !important; }
+.shil-page--admin .shil-admin-panel-body { padding: var(--adm11-gap) 0 0 !important; color: var(--adm11-ink) !important; }
+
+/* Dashboard command title converted from dark glass to Summary title strip. */
+.shil-page--admin .shil-admin-command-center { gap: var(--adm11-gap) !important; }
+.shil-page--admin .shil-admin-command-head {
+  min-height: var(--adm11-title-h) !important;
+  padding: 7px 10px !important;
+  border: 1px solid var(--adm11-border) !important;
+  border-radius: var(--adm11-radius-section) !important;
+  background: var(--adm11-title-bg) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+.shil-page--admin .shil-admin-command-head > div > span { color: var(--adm11-chip-ink) !important; font-size: 8px !important; }
+.shil-page--admin .shil-admin-command-head h3 { color: var(--adm11-ink) !important; font-size: 15px !important; font-weight: 950 !important; }
+.shil-page--admin .shil-admin-command-head p { color: var(--adm11-muted) !important; font-size: 8px !important; }
+.shil-page--admin .shil-admin-command-status { background: #f8fcff !important; border: 1px solid var(--adm11-border) !important; color: var(--adm11-chip-ink) !important; box-shadow: none !important; }
+
+/* KPI/data cards: exact two-column visual language seen in Summary. */
+.shil-page--admin .shil-admin-grid,
+.shil-page--admin .shil-admin-kpi-grid,
+.shil-page--admin .shil-admin-phase5-kpis,
+.shil-page--admin .shil-admin-phase6-kpis,
+.shil-page--admin .shil-admin-release-kpis,
+.shil-page--admin .shil-admin-review-kpis,
+.shil-page--admin .shil-admin-cms-kpis {
+  grid-template-columns: repeat(2,minmax(0,1fr)) !important;
+  gap: var(--adm11-gap) !important;
+}
+.shil-page--admin .shil-admin-stat {
+  min-width: 0 !important;
+  min-height: var(--adm11-card-min-h) !important;
+  padding: 7px 8px !important;
+  gap: 3px !important;
+  text-align: center !important;
+  border: 1px solid var(--adm11-border) !important;
+  border-radius: var(--adm11-radius-card) !important;
+  background: var(--adm11-surface) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: var(--adm11-ink) !important;
+}
+.shil-page--admin .shil-admin-stat strong { font-size: 12px !important; line-height: 1.3 !important; font-weight: 950 !important; color: var(--adm11-ink) !important; }
+.shil-page--admin .shil-admin-stat span { font-size: 10px !important; line-height: 1.2 !important; font-weight: 800 !important; color: var(--adm11-muted) !important; }
+.shil-page--admin .shil-admin-stat small { font-size: 8px !important; line-height: 1.3 !important; color: var(--adm11-muted) !important; }
+
+/* Search, forms and all editable controls. */
+.shil-page--admin :is(input,select,textarea) {
+  box-sizing: border-box !important;
+  min-width: 0 !important;
+  border: 1px solid var(--adm11-border-strong) !important;
+  border-radius: 10px !important;
+  background: #fff !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: var(--adm11-ink) !important;
+  font-family: inherit !important;
+}
+.shil-page--admin input,
+.shil-page--admin select { min-height: 34px !important; padding: 5px 8px !important; font-size: 10px !important; }
+.shil-page--admin textarea { min-height: 58px !important; padding: 7px 8px !important; font-size: 10px !important; }
+.shil-page--admin :is(input,select,textarea):focus { outline: 2px solid rgba(191,213,229,.48) !important; outline-offset: 1px !important; }
+.shil-page--admin .shil-admin-overview-search { margin: 0 !important; padding: 0 !important; background: transparent !important; border: 0 !important; box-shadow: none !important; }
+.shil-page--admin .shil-admin-overview-search > input { width: 100% !important; height: 38px !important; }
+.shil-page--admin .shil-admin-search-results {
+  margin-top: var(--adm11-gap) !important;
+  padding: var(--adm11-gap) !important;
+  border: 1px solid var(--adm11-border) !important;
+  border-radius: var(--adm11-radius-card) !important;
+  background: var(--adm11-surface) !important;
+  box-shadow: none !important;
+}
+
+/* Buttons/chips use Summary's pale capsule treatment, including action rows. */
+.shil-page--admin :is(.shil-admin-actions-row,.shil-admin-cms-actions,.shil-admin-review-actions) { gap: var(--adm11-gap) !important; }
+.shil-page--admin :is(.shil-admin-actions-row,.shil-admin-cms-actions,.shil-admin-review-actions) button,
+.shil-page--admin .shil-admin-quick-action,
+.shil-page--admin .shil-admin-cms-add,
+.shil-page--admin .shil-admin-cms-save {
+  min-height: 34px !important;
+  padding: 5px 10px !important;
+  border: 1px solid var(--adm11-border-strong) !important;
+  border-radius: 10px !important;
+  background: #edf6fd !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: var(--adm11-ink) !important;
+  font-size: 9px !important;
+  font-weight: 900 !important;
+}
+.shil-page--admin button.danger { background: #fff7f7 !important; border-color: #e7caca !important; color: var(--adm11-danger) !important; }
+.shil-page--admin button.success { background: #f4fbf7 !important; border-color: #c7e2d5 !important; color: var(--adm11-ok) !important; }
+
+/* Generic nested child surfaces. No dark parent/background remains. */
+.shil-page--admin :is(
+  .shil-admin-service-row,.shil-admin-alert,.shil-admin-quick-action,
+  .shil-admin-catalog-row,.shil-admin-card-editor,.shil-admin-snapshot,
+  .shil-admin-timeline-item,.shil-admin-standard-row,.shil-admin-release-history > article,
+  .shil-admin-rule-group,.shil-admin-cms-group,.shil-admin-cms-item-summary,
+  .shil-admin-review-summary,.shil-admin-review-body,.shil-thread-card,
+  .shil-admin-diag-card,.shil-admin-health,.shil-admin-cms-metric,
+  .shil-admin-cms-validation,.shil-admin-upload,.shil-admin-image-preview
+) {
+  border: 1px solid var(--adm11-border) !important;
+  border-radius: var(--adm11-radius-card) !important;
+  background: var(--adm11-surface) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: var(--adm11-ink) !important;
+}
+.shil-page--admin :is(.shil-admin-service-row,.shil-admin-alert,.shil-admin-catalog-row,.shil-admin-standard-row,.shil-admin-snapshot,.shil-admin-timeline-item,.shil-admin-cms-item-summary) {
+  padding: 7px 8px !important;
+}
+.shil-page--admin :is(.shil-admin-service-copy,.shil-admin-service-meta,.shil-admin-alert,.shil-admin-review-meta,.shil-admin-diag-meta) { color: var(--adm11-muted) !important; }
+.shil-page--admin :is(.shil-admin-service-row,.shil-admin-alert,.shil-admin-catalog-row,.shil-admin-standard-row,.shil-admin-snapshot,.shil-admin-timeline-item) strong { color: var(--adm11-ink) !important; }
+.shil-page--admin :is(.shil-admin-service-row,.shil-admin-alert,.shil-admin-catalog-row,.shil-admin-standard-row,.shil-admin-snapshot,.shil-admin-timeline-item) small,
+.shil-page--admin :is(.shil-admin-service-row,.shil-admin-alert,.shil-admin-catalog-row,.shil-admin-standard-row,.shil-admin-snapshot,.shil-admin-timeline-item) span { color: var(--adm11-muted) !important; }
+
+/* Diagnostics was the deepest dark subtree; fully normalize its descendants. */
+.shil-page--admin .shil-admin-diag-toolbar { gap: var(--adm11-gap) !important; }
+.shil-page--admin .shil-admin-diag-head { min-height: 44px !important; padding: 7px 8px !important; background: transparent !important; color: var(--adm11-ink) !important; }
+.shil-page--admin .shil-admin-diag-copy strong { color: var(--adm11-ink) !important; font-size: 11px !important; }
+.shil-page--admin .shil-admin-diag-copy small { color: var(--adm11-muted) !important; font-size: 8px !important; }
+.shil-page--admin .shil-admin-diag-body { border-top: 1px solid var(--adm11-border) !important; background: transparent !important; color: var(--adm11-ink) !important; }
+.shil-page--admin .shil-admin-diag-body details { border: 1px solid var(--adm11-border) !important; background: #fff !important; }
+.shil-page--admin .shil-admin-diag-body summary { color: var(--adm11-ink) !important; }
+.shil-page--admin .shil-admin-diag-body pre { color: #36576e !important; background: transparent !important; }
+.shil-page--admin .shil-admin-diag-status { border: 1px solid var(--adm11-border) !important; background: #f8fcff !important; color: var(--adm11-chip-ink) !important; }
+
+/* Rule/CMS nested groups and summaries. */
+.shil-page--admin .shil-admin-rule-groups,
+.shil-page--admin .shil-admin-cms-groups,
+.shil-page--admin .shil-admin-review-list,
+.shil-page--admin .shil-admin-service-list,
+.shil-page--admin .shil-admin-alert-list,
+.shil-page--admin .shil-admin-snapshot-list,
+.shil-page--admin .shil-admin-release-history,
+.shil-page--admin .shil-admin-diag-list,
+.shil-page--admin .shil-thread-list { gap: var(--adm11-gap) !important; }
+.shil-page--admin .shil-admin-rule-group > summary,
+.shil-page--admin .shil-admin-cms-group-head,
+.shil-page--admin .shil-admin-review-head {
+  min-height: 38px !important;
+  padding: 6px 8px !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--adm11-border) !important;
+  background: var(--adm11-title-bg) !important;
+  color: var(--adm11-ink) !important;
+}
+.shil-page--admin .shil-admin-rule-fields { gap: var(--adm11-gap) !important; padding: var(--adm11-gap) !important; border-top: 0 !important; }
+
+/* Alerts retain semantic meaning by text/border only, never saturated fills. */
+.shil-page--admin .shil-admin-alert.warn,
+.shil-page--admin .shil-admin-health.warn,
+.shil-page--admin .shil-admin-stat.warn { border-color: #e3d3b1 !important; background: #fffdf8 !important; color: var(--adm11-warn) !important; }
+.shil-page--admin .shil-admin-alert.ok,
+.shil-page--admin .shil-admin-health.ok,
+.shil-page--admin .shil-admin-stat.ok { border-color: #c7e2d5 !important; background: #f8fdfb !important; color: var(--adm11-ok) !important; }
+
+/* Structural whitespace: compact vertical rhythm across every admin child. */
+.shil-page--admin :is(.shil-admin-overview-columns,.shil-admin-phase5-two,.shil-admin-form-grid,.shil-admin-cms-form-grid,.shil-admin-card-editor-grid,.shil-admin-review-facts) {
+  gap: var(--adm11-gap) !important;
+}
+.shil-page--admin :is(.shil-admin-phase5,.shil-admin-phase6,.shil-admin-rule-center,.shil-admin-equipment-cms,.shil-admin-review-center) { gap: var(--adm11-gap) !important; }
+.shil-page--admin p { max-width: 100%; overflow-wrap: anywhere; }
+
+@media (max-width: 700px) {
+  .shil-page--admin { --adm11-edge: 3px; --adm11-gap: 5px; --adm11-section-pad: 6px; }
+  .shil-page--admin .shil-admin-hero-v10 { grid-template-columns: minmax(0,1fr) 104px !important; }
+  .shil-page--admin .shil-admin-overview-columns,
+  .shil-page--admin .shil-admin-phase5-two { grid-template-columns: 1fr !important; }
+  .shil-page--admin .shil-admin-diag-toolbar { grid-template-columns: 1fr 1fr !important; }
+  .shil-page--admin .shil-admin-diag-toolbar input { grid-column: 1 / -1 !important; }
+}
+
+@media (max-width: 430px) {
+  .shil-page--admin { --adm11-edge: 3px; --adm11-gap: 5px; --adm11-section-pad: 6px; }
+  .shil-page--admin .shil-admin-module-card-v10 { min-height: 62px !important; padding: 7px 6px !important; grid-template-columns: 18px minmax(0,1fr) 21px !important; }
+  .shil-page--admin .shil-admin-module-copy-v10 strong { font-size: 10px !important; }
+  .shil-page--admin .shil-admin-module-copy-v10 small { font-size: 7px !important; }
+  .shil-page--admin .shil-admin-section-nav-v10 { grid-template-columns: 100px minmax(0,1fr) !important; }
+  .shil-page--admin .shil-admin-section-title-v10 strong { font-size: 13px !important; }
+  .shil-page--admin .shil-admin-panel-title-wrap h3 { font-size: 12px !important; }
+}
