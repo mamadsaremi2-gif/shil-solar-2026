@@ -1,0 +1,360 @@
+/* Ready Scenarios and all descendants = Calculation Inputs visual language.
+   Final page-scoped layer; intentionally loaded after legacy scenario styles. */
+html:has(.shil-page--scenarios),
+html:has(.shil-page--scenarios) body,
+html:has(.shil-page--scenarios) #root,
+.shil-page--scenarios {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.shil-page--scenarios main.shil-page-content.shil-ds-page-root {
+  position: absolute !important;
+  inset: 55px 0 40px !important;
+  width: auto !important;
+  height: auto !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+  scroll-padding-top: 8px !important;
+}
+
+#shil-scenarios-root {
+  width: min(100%, 980px) !important;
+  max-width: 980px !important;
+  min-height: 0 !important;
+  margin: 0 auto !important;
+  padding: 8px 7px calc(76px + env(safe-area-inset-bottom, 0px)) !important;
+  color: #0b2a3d !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Hub and level pages */
+#shil-scenarios-root.shil-scenario-hub {
+  display: grid !important;
+  align-content: start !important;
+  grid-template-columns: 1fr !important;
+  gap: 8px !important;
+}
+
+#shil-scenarios-root.shil-scenario-hub--domains {
+  padding-top: clamp(110px, 23vh, 260px) !important;
+}
+
+#shil-scenarios-root.shil-scenario-hub--levels {
+  padding-top: 12px !important;
+}
+
+#shil-scenarios-root .shil-big-route-card {
+  appearance: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 78px !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 13px 16px !important;
+  gap: 4px !important;
+  color: #0b2a3d !important;
+  background: rgba(249,252,255,.96) !important;
+  background-image: none !important;
+  border: 1px solid #c8dceb !important;
+  border-radius: 14px !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  font-family: inherit !important;
+  font-size: 17px !important;
+  font-weight: 950 !important;
+  line-height: 1.35 !important;
+  text-align: center !important;
+  cursor: pointer !important;
+  transition: border-color .15s ease, background-color .15s ease, transform .15s ease !important;
+}
+
+#shil-scenarios-root .shil-big-route-card small {
+  color: #60798a !important;
+  font-size: 11px !important;
+  font-weight: 850 !important;
+  line-height: 1.25 !important;
+}
+
+#shil-scenarios-root .shil-big-route-card:hover,
+#shil-scenarios-root .shil-big-route-card:focus-visible {
+  color: #0b2a3d !important;
+  background: #e8fff0 !important;
+  border-color: #67d59e !important;
+  box-shadow: 0 0 0 2px rgba(50,213,131,.10) !important;
+  outline: none !important;
+}
+
+#shil-scenarios-root .shil-big-route-card:active {
+  transform: scale(.992) !important;
+}
+
+.shil-scenario-hub--levels .shil-big-route-card {
+  min-height: 72px !important;
+}
+
+/* Search and result list */
+#shil-scenarios-root.shil-scenario-list-root {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 7px !important;
+}
+
+#shil-scenarios-root .shil-scenario-search-card {
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 7px !important;
+  gap: 6px !important;
+  color: #0b2a3d !important;
+  background: rgba(249,252,255,.95) !important;
+  background-image: none !important;
+  border: 1px solid #c8dceb !important;
+  border-radius: 13px !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+#shil-scenarios-root .shil-scenario-search-card label {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  min-height: 38px !important;
+  margin: 0 !important;
+  padding: 6px 10px !important;
+  color: #0b2a3d !important;
+  background: #eaf4ff !important;
+  border: 1px solid #c8dceb !important;
+  border-radius: 12px !important;
+  font-size: 16px !important;
+  font-weight: 950 !important;
+  line-height: 1.25 !important;
+  text-align: center !important;
+}
+
+#shil-scenarios-root .shil-scenario-search-card input {
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 48px !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 8px 12px !important;
+  color: #0b2a3d !important;
+  background: #fff !important;
+  border: 1px solid #c8dceb !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  outline: none !important;
+  font-family: inherit !important;
+  font-size: 12px !important;
+  font-weight: 850 !important;
+  text-align: right !important;
+}
+
+#shil-scenarios-root .shil-scenario-search-card input:focus {
+  background: #e8fff0 !important;
+  border-color: #67d59e !important;
+  box-shadow: 0 0 0 2px rgba(50,213,131,.10) !important;
+}
+
+#shil-scenarios-root .shil-scenario-search-card small {
+  display: block !important;
+  margin: 0 !important;
+  padding: 7px 9px !important;
+  color: #60798a !important;
+  background: #f4faff !important;
+  border: 1px solid #d8e7f2 !important;
+  border-radius: 10px !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  line-height: 1.55 !important;
+  text-align: right !important;
+}
+
+#shil-scenarios-root .shil-scenario-page {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  gap: 7px !important;
+  background: transparent !important;
+  border: 0 !important;
+}
+
+#shil-scenarios-root .shil-scenario-detail-card {
+  display: flex !important;
+  flex-direction: column !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 7px !important;
+  gap: 6px !important;
+  color: #0b2a3d !important;
+  background: rgba(249,252,255,.96) !important;
+  background-image: none !important;
+  border: 1px solid #c8dceb !important;
+  border-radius: 13px !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  overflow: hidden !important;
+}
+
+#shil-scenarios-root .shil-scenario-detail-card > h3 {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  min-height: 40px !important;
+  margin: 0 !important;
+  padding: 7px 9px !important;
+  color: #0b2a3d !important;
+  background: #eaf4ff !important;
+  border: 1px solid #c8dceb !important;
+  border-radius: 11px !important;
+  font-size: 14px !important;
+  font-weight: 950 !important;
+  line-height: 1.35 !important;
+  text-align: center !important;
+  overflow-wrap: anywhere !important;
+}
+
+#shil-scenarios-root .shil-scenario-detail-card > p {
+  min-height: 44px !important;
+  margin: 0 !important;
+  padding: 7px 9px !important;
+  color: #60798a !important;
+  background: #f4faff !important;
+  border: 1px solid #d8e7f2 !important;
+  border-radius: 10px !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  line-height: 1.55 !important;
+  text-align: right !important;
+  overflow-wrap: anywhere !important;
+}
+
+#shil-scenarios-root .shil-scenario-detail-grid {
+  display: grid !important;
+  grid-template-columns: minmax(90px, .85fr) minmax(0, 1.15fr) !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  gap: 5px !important;
+}
+
+#shil-scenarios-root .shil-scenario-detail-grid > span,
+#shil-scenarios-root .shil-scenario-detail-grid > strong {
+  display: flex !important;
+  align-items: center !important;
+  min-width: 0 !important;
+  min-height: 35px !important;
+  margin: 0 !important;
+  padding: 6px 7px !important;
+  border-radius: 9px !important;
+  box-shadow: none !important;
+  font-size: 10px !important;
+  line-height: 1.3 !important;
+  overflow-wrap: anywhere !important;
+}
+
+#shil-scenarios-root .shil-scenario-detail-grid > span {
+  justify-content: flex-start !important;
+  color: #07583f !important;
+  background: #e8fff0 !important;
+  border: 1px solid #8fdfb5 !important;
+  font-weight: 900 !important;
+}
+
+#shil-scenarios-root .shil-scenario-detail-grid > strong {
+  justify-content: center !important;
+  color: #0b2a3d !important;
+  background: #fff !important;
+  border: 1px solid #c8dceb !important;
+  font-weight: 950 !important;
+  text-align: center !important;
+}
+
+#shil-scenarios-root .shil-primary-action {
+  appearance: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  min-height: 44px !important;
+  height: auto !important;
+  margin: auto 0 0 !important;
+  padding: 8px 11px !important;
+  color: #0b2a3d !important;
+  background: #e8fff0 !important;
+  background-image: none !important;
+  border: 1px solid #67d59e !important;
+  border-radius: 11px !important;
+  box-shadow: none !important;
+  font-family: inherit !important;
+  font-size: 11px !important;
+  font-weight: 950 !important;
+  line-height: 1.35 !important;
+  text-align: center !important;
+  cursor: pointer !important;
+}
+
+#shil-scenarios-root .shil-primary-action:hover,
+#shil-scenarios-root .shil-primary-action:focus-visible {
+  background: #d7fae5 !important;
+  border-color: #39bf7d !important;
+  outline: none !important;
+}
+
+@media (max-width: 720px) {
+  #shil-scenarios-root .shil-scenario-page {
+    grid-template-columns: 1fr !important;
+  }
+  #shil-scenarios-root.shil-scenario-hub--domains {
+    padding-top: clamp(90px, 18vh, 180px) !important;
+  }
+}
+
+@media (max-width: 430px) {
+  #shil-scenarios-root {
+    padding-inline: 5px !important;
+    gap: 5px !important;
+  }
+  #shil-scenarios-root .shil-big-route-card {
+    min-height: 68px !important;
+    padding: 10px 12px !important;
+    font-size: 15px !important;
+  }
+  #shil-scenarios-root .shil-scenario-detail-card {
+    padding: 6px !important;
+  }
+  #shil-scenarios-root .shil-scenario-detail-grid {
+    grid-template-columns: minmax(78px, .8fr) minmax(0, 1.2fr) !important;
+    gap: 4px !important;
+  }
+  #shil-scenarios-root .shil-scenario-detail-grid > span,
+  #shil-scenarios-root .shil-scenario-detail-grid > strong {
+    min-height: 33px !important;
+    padding: 5px 6px !important;
+    font-size: 9px !important;
+  }
+}

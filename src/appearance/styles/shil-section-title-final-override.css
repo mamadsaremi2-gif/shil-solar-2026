@@ -1,0 +1,91 @@
+﻿/*
+  SHIL Section Title Final Override
+  این فایل باید بعد از تمام فایل‌های ظاهری دیگر بارگذاری شود.
+*/
+
+/* عنوان‌های اصلی بخش‌ها */
+#shil-calculation-inputs-root h2.shil-section-title,
+#shil-calculation-inputs-root h3.shil-section-title,
+#shil-calculation-inputs-root .shil-section-title {
+  box-sizing: border-box !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  width: 100% !important;
+  max-width: 100% !important;
+
+  min-height: 48px !important;
+  height: auto !important;
+
+  margin: 0 0 14px 0 !important;
+  padding: 10px 16px !important;
+
+  color: #0b1f3d !important;
+
+  background: rgba(231, 240, 249, 0.93) !important;
+  background-image: none !important;
+
+  border: 1px solid rgba(148, 163, 184, 0.58) !important;
+  border-radius: 18px !important;
+
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.12) !important;
+
+  font-family: inherit !important;
+  font-size: clamp(17px, 4.4vw, 24px) !important;
+  font-weight: 900 !important;
+  line-height: 1.35 !important;
+
+  text-align: center !important;
+  direction: rtl !important;
+
+  overflow-wrap: anywhere !important;
+  white-space: normal !important;
+
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/* حذف خطوط یا آیکون‌های تزئینی قبلی عنوان */
+#shil-calculation-inputs-root .shil-section-title::before,
+#shil-calculation-inputs-root .shil-section-title::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* حذف فاصله اضافه عنوان درون سکشن‌ها */
+#shil-calculation-inputs-root section > .shil-section-title:first-child {
+  margin-top: 0 !important;
+}
+
+/* نسخه موبایل */
+@media screen and (max-width: 520px) {
+  #shil-calculation-inputs-root h2.shil-section-title,
+  #shil-calculation-inputs-root h3.shil-section-title,
+  #shil-calculation-inputs-root .shil-section-title {
+    min-height: 38px !important;
+
+    margin-bottom: 8px !important;
+    padding: 6px 10px !important;
+
+    border-radius: 13px !important;
+
+    font-size: 15px !important;
+    line-height: 1.25 !important;
+
+    box-shadow: none !important;
+  }
+}
+
+/* نمایشگرهای بسیار کوچک */
+@media screen and (max-width: 360px) {
+  #shil-calculation-inputs-root h2.shil-section-title,
+  #shil-calculation-inputs-root h3.shil-section-title,
+  #shil-calculation-inputs-root .shil-section-title {
+    min-height: 36px !important;
+    padding: 6px 8px !important;
+    font-size: 14px !important;
+    border-radius: 12px !important;
+  }
+}

@@ -1,0 +1,305 @@
+/* SHIL Phase 2.1 — Project Management compact mobile / no-purple final override.
+   Intent: project management must visually match engineering pages, not legacy purple cards. */
+
+:root {
+  --shil-pm-bg: rgba(247, 251, 254, .96);
+  --shil-pm-bg-soft: rgba(238, 247, 252, .95);
+  --shil-pm-bg-muted: rgba(231, 242, 248, .94);
+  --shil-pm-border: #bfd8e6;
+  --shil-pm-border-soft: #d6e6ee;
+  --shil-pm-text: #102a43;
+  --shil-pm-muted: #60798a;
+  --shil-pm-blue: #1d7fa6;
+  --shil-pm-green: #15966b;
+  --shil-pm-green-soft: #e9fff5;
+  --shil-pm-danger: #9c3341;
+}
+
+/* Kill legacy purple layers, gradients, pseudo layers and nested pill backgrounds. */
+:is(.shil-projects-phase2,.shil-project-manager-page)
+:is(.shil-pm-menu-card,.shil-pm-card,.shil-pm-card-summary,.shil-pm-card-copy,.shil-pm-card-copy strong,.shil-pm-card-copy small,
+    .shil-pm-menu-card .copy,.shil-pm-menu-card .copy strong,.shil-pm-menu-card .copy small) {
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+:is(.shil-projects-phase2,.shil-project-manager-page)
+:is(.shil-pm-menu-card,.shil-pm-card,.shil-pm-card-summary,.shil-pm-card-copy)::before,
+:is(.shil-projects-phase2,.shil-project-manager-page)
+:is(.shil-pm-menu-card,.shil-pm-card,.shil-pm-card-summary,.shil-pm-card-copy)::after {
+  content: none !important;
+  display: none !important;
+  background: none !important;
+}
+
+/* Page spacing: more projects visible per phone viewport. */
+:is(.shil-projects-phase2,.shil-project-manager-page) main.shil-page-content {
+  padding: 5px 6px calc(12px + env(safe-area-inset-bottom,0px)) !important;
+}
+.shil-projects-phase2 .shil-pm-menu,
+.shil-project-manager-page .shil-pm-workspace {
+  gap: 5px !important;
+}
+
+/* Landing title + list section title, same light engineering surface. */
+.shil-pm-menu-title,
+.shil-pm-list-head {
+  min-height: 34px !important;
+  padding: 4px 9px !important;
+  border-radius: 10px !important;
+  border: 1px solid var(--shil-pm-border) !important;
+  background: linear-gradient(180deg,#fbfdff 0%,#edf6fb 100%) !important;
+  color: var(--shil-pm-text) !important;
+  box-shadow: 0 2px 7px rgba(7,35,57,.06) !important;
+}
+.shil-pm-menu-title strong,
+.shil-pm-list-head strong { font-size: 11.5px !important; line-height: 1.25 !important; }
+.shil-pm-list-head span {
+  padding: 2px 6px !important;
+  font-size: 7.8px !important;
+  background: #fff !important;
+  color: var(--shil-pm-muted) !important;
+  border-color: var(--shil-pm-border-soft) !important;
+}
+
+/* Main three cards: single low rows, no purple. */
+.shil-projects-phase2 .shil-pm-menu-card {
+  grid-template-columns: 31px minmax(0,1fr) auto !important;
+  gap: 7px !important;
+  min-height: 49px !important;
+  padding: 5px 8px !important;
+  border: 1px solid var(--shil-pm-border) !important;
+  border-radius: 11px !important;
+  background: var(--shil-pm-bg) !important;
+  color: var(--shil-pm-text) !important;
+  box-shadow: 0 2px 7px rgba(7,35,57,.06) !important;
+}
+.shil-projects-phase2 .shil-pm-menu-card .icon {
+  width: 29px !important;
+  height: 29px !important;
+  border-radius: 8px !important;
+  background: #eef8fd !important;
+  border: 1px solid #b8d8e7 !important;
+  color: #17617f !important;
+}
+.shil-projects-phase2 .shil-pm-menu-card--final .icon {
+  background: var(--shil-pm-green-soft) !important;
+  border-color: #88ddb9 !important;
+  color: #0b7654 !important;
+}
+.shil-projects-phase2 .shil-pm-menu-card--archived .icon {
+  background: #f2f6f8 !important;
+  border-color: #cfdee5 !important;
+  color: #536d7d !important;
+}
+.shil-projects-phase2 .shil-pm-menu-card .copy { gap: 0 !important; }
+.shil-projects-phase2 .shil-pm-menu-card .copy strong {
+  font-size: 11px !important;
+  line-height: 1.25 !important;
+  color: var(--shil-pm-text) !important;
+}
+.shil-projects-phase2 .shil-pm-menu-card .copy small {
+  font-size: 7.8px !important;
+  line-height: 1.3 !important;
+  color: var(--shil-pm-muted) !important;
+}
+.shil-projects-phase2 .shil-pm-menu-card .count {
+  min-width: 26px !important;
+  height: 23px !important;
+  padding: 0 5px !important;
+  font-size: 9px !important;
+  background: #eff8fc !important;
+  border-color: #b8d8e7 !important;
+  color: #17617f !important;
+}
+.shil-projects-phase2 .shil-pm-menu-card--final .count {
+  background: var(--shil-pm-green-soft) !important;
+  border-color: #88ddb9 !important;
+  color: #0b7654 !important;
+}
+.shil-pm-menu-note {
+  min-height: 29px !important;
+  padding: 4px 8px !important;
+  border-radius: 9px !important;
+  font-size: 7.8px !important;
+  background: rgba(238,247,252,.91) !important;
+  border-color: var(--shil-pm-border-soft) !important;
+}
+
+/* Compact search and filters. */
+.shil-pm-toolbar {
+  gap: 4px !important;
+  padding: 5px !important;
+  border-radius: 10px !important;
+  background: rgba(243,249,252,.95) !important;
+  border-color: var(--shil-pm-border) !important;
+  box-shadow: 0 2px 7px rgba(7,35,57,.05) !important;
+}
+.shil-pm-search,
+.shil-pm-select {
+  min-height: 31px !important;
+  padding: 0 7px !important;
+  border-radius: 8px !important;
+  border-color: #c9dde8 !important;
+  background: #fff !important;
+}
+.shil-pm-search input,
+.shil-pm-select select {
+  height: 29px !important;
+  font-size: 8.8px !important;
+  color: var(--shil-pm-text) !important;
+}
+
+/* Project list rows: 46-50px closed, engineering surface, no purple nested capsule. */
+.shil-pm-list { gap: 4px !important; }
+.shil-project-manager-page .shil-pm-card {
+  border-radius: 10px !important;
+  border: 1px solid var(--shil-pm-border) !important;
+  background: var(--shil-pm-bg) !important;
+  color: var(--shil-pm-text) !important;
+  box-shadow: 0 2px 7px rgba(7,35,57,.055) !important;
+}
+.shil-project-manager-page .shil-pm-card--final {
+  border-color: #96ddc0 !important;
+  background: rgba(248,255,252,.97) !important;
+}
+.shil-project-manager-page .shil-pm-card--archived {
+  border-color: #cfdee5 !important;
+  background: rgba(247,250,252,.97) !important;
+}
+.shil-project-manager-page .shil-pm-card-summary {
+  grid-template-columns: 27px minmax(0,1fr) auto 14px !important;
+  gap: 5px !important;
+  min-height: 47px !important;
+  padding: 4px 7px !important;
+  background: transparent !important;
+  color: var(--shil-pm-text) !important;
+}
+.shil-project-manager-page .shil-pm-domain-icon {
+  width: 27px !important;
+  height: 27px !important;
+  border-radius: 7px !important;
+  background: #eef8fd !important;
+  border-color: #b8d8e7 !important;
+  color: #17617f !important;
+}
+.shil-project-manager-page .shil-pm-card--final .shil-pm-domain-icon {
+  background: var(--shil-pm-green-soft) !important;
+  border-color: #88ddb9 !important;
+  color: #0b7654 !important;
+}
+.shil-project-manager-page .shil-pm-card-copy {
+  align-items: stretch !important;
+  text-align: right !important;
+  gap: 0 !important;
+}
+.shil-project-manager-page .shil-pm-card-copy strong {
+  font-size: 10.5px !important;
+  line-height: 1.22 !important;
+  color: var(--shil-pm-text) !important;
+}
+.shil-project-manager-page .shil-pm-card-copy small {
+  font-size: 7.5px !important;
+  line-height: 1.25 !important;
+  color: var(--shil-pm-muted) !important;
+}
+.shil-project-manager-page .shil-pm-status {
+  padding: 2px 5px !important;
+  font-size: 7.5px !important;
+  border-radius: 999px !important;
+}
+.shil-project-manager-page .shil-pm-status--running {
+  color: #0d6286 !important;
+  background: #eaf7fd !important;
+  border-color: #9bcde1 !important;
+}
+.shil-project-manager-page .shil-pm-status--final {
+  color: #0a7352 !important;
+  background: var(--shil-pm-green-soft) !important;
+  border-color: #88ddb9 !important;
+}
+.shil-project-manager-page .shil-pm-status--archived {
+  color: #566d7b !important;
+  background: #f0f5f7 !important;
+  border-color: #cfdee5 !important;
+}
+.shil-project-manager-page .shil-pm-chevron { width: 14px !important; height: 14px !important; color: #5f7888 !important; }
+.shil-project-manager-page .shil-pm-progress {
+  width: calc(100% - 14px) !important;
+  height: 2px !important;
+  margin: 0 7px 4px !important;
+  background: #d9e8ef !important;
+}
+.shil-project-manager-page .shil-pm-progress span {
+  background: linear-gradient(90deg,#1f9c78 0%,#2794b7 100%) !important;
+}
+
+/* Open accordion remains compact; details use flat engineering tiles. */
+.shil-project-manager-page .shil-pm-card-details {
+  gap: 4px !important;
+  padding: 0 6px 6px !important;
+  border-top-color: #dfebf1 !important;
+  background: transparent !important;
+}
+.shil-project-manager-page .shil-pm-detail-grid {
+  gap: 4px !important;
+  padding-top: 5px !important;
+}
+.shil-project-manager-page .shil-pm-detail-grid > div {
+  min-height: 37px !important;
+  padding: 4px 5px !important;
+  border-radius: 7px !important;
+  background: #f2f8fb !important;
+  border-color: #d8e7ee !important;
+}
+.shil-project-manager-page .shil-pm-detail-grid .shil-pm-detail-wide { min-height: 34px !important; }
+.shil-project-manager-page .shil-pm-detail-grid span { font-size: 7.2px !important; }
+.shil-project-manager-page .shil-pm-detail-grid strong { font-size: 8.8px !important; line-height: 1.25 !important; }
+.shil-project-manager-page .shil-pm-timeline {
+  border-radius: 8px !important;
+  background: #f8fcfe !important;
+  border-color: #d8e7ee !important;
+}
+.shil-project-manager-page .shil-pm-timeline summary { min-height: 31px !important; padding: 4px 7px !important; font-size: 8.8px !important; }
+.shil-project-manager-page .shil-pm-timeline-list { gap: 3px !important; padding: 0 5px 5px !important; }
+.shil-project-manager-page .shil-pm-timeline-list > div { min-height: 26px !important; padding: 3px 5px !important; border-radius: 6px !important; background: #f0f5f8 !important; }
+.shil-project-manager-page .shil-pm-timeline-list > div.is-done { background: #eafff3 !important; color: #0b7654 !important; }
+.shil-project-manager-page .shil-pm-timeline-list > div.is-current { background: #eaf7fd !important; color: #0d6286 !important; }
+.shil-project-manager-page .shil-pm-timeline-list strong { font-size: 7.4px !important; }
+.shil-project-manager-page .shil-pm-actions { gap: 4px !important; }
+.shil-project-manager-page .shil-pm-actions button,
+.shil-project-manager-page .shil-pm-load-more,
+.shil-project-manager-page .shil-pm-empty a {
+  min-height: 31px !important;
+  padding: 4px 6px !important;
+  border-radius: 7px !important;
+  font-size: 8px !important;
+  background: #eef7fb !important;
+  border-color: #c7dce7 !important;
+  color: #17455f !important;
+}
+.shil-project-manager-page .shil-pm-actions button.primary,
+.shil-project-manager-page .shil-pm-empty a {
+  background: var(--shil-pm-green-soft) !important;
+  border-color: #88ddb9 !important;
+  color: #0b7654 !important;
+}
+
+@media (max-width: 560px) {
+  .shil-pm-toolbar { grid-template-columns: 1fr 1fr !important; }
+  .shil-pm-search { grid-column: 1 / -1 !important; }
+}
+
+@media (max-width: 390px) {
+  .shil-project-manager-page .shil-pm-card-summary {
+    grid-template-columns: 26px minmax(0,1fr) 14px !important;
+    min-height: 45px !important;
+  }
+  .shil-project-manager-page .shil-pm-status {
+    grid-column: 2 !important;
+    justify-self: start !important;
+    margin-top: 1px !important;
+  }
+  .shil-project-manager-page .shil-pm-chevron { grid-column: 3 !important; grid-row: 1 / span 2 !important; }
+  .shil-project-manager-page .shil-pm-domain-icon { grid-row: 1 / span 2 !important; }
+}

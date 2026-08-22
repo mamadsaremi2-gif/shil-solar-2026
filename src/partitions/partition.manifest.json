@@ -1,0 +1,75 @@
+{
+  "version": "clean-reset-1.0.0",
+  "ruleEngine": "disabled",
+  "centralRulesPath": "src/rules",
+  "partitions": {
+    "login": [
+      "src/backend/auth",
+      "src/backend/guards",
+      "src/auth",
+      "src/pages/Login.jsx"
+    ],
+    "admin": [
+      "src/admin",
+      "src/pages/AdminPanel.jsx"
+    ],
+    "dashboard": [
+      "src/pages/Dashboard.jsx",
+      "src/components/dashboard"
+    ],
+    "newProject": [
+      "src/pages/NewProject.jsx",
+      "src/modules/new-project",
+      "src/pages/project"
+    ],
+    "projectSettings": [
+      "src/pages/project/SystemSettings.jsx",
+      "src/data/shilSolarBanks.js"
+    ],
+    "calculation": [
+      "src/rules",
+      "src/calculationGateway",
+      "src/core/calculation",
+      "src/calculation"
+    ],
+    "summary": [
+      "src/pages/project/Summary.jsx",
+      "src/components/summary",
+      "src/reporting"
+    ],
+    "shared": [
+      "src/components",
+      "src/styles",
+      "src/assets",
+      "src/config"
+    ]
+  },
+  "removedFiles": [
+    "src/app/App.backup.jsx",
+    "src/components/IosIconGrid.execution-png.backup.jsx",
+    "src/config/shilAssetPaths.backup.js",
+    "src/config/shilAssetPaths.execution-png.backup.js",
+    "src/data/shilFlowConfig.backup.jsx",
+    "src/data/shilFlowConfig.execution-png.backup.jsx",
+    "src/pages/Dashboard.3x3.backup.jsx",
+    "src/pages/Dashboard.backup.jsx",
+    "src/pages/Dashboard.floating.backup.jsx",
+    "src/styles/shil-ui-final-100.execution-png.backup.css",
+    "src/pages/project/RunCalculation.final-output.backup.jsx",
+    "src/pages/project/SystemSettings.backup.jsx",
+    "src/styles/shil-ui.css.before-confirm-move.bak",
+    "src/pages/project/SystemSettings.jsx.before-confirm-move.bak",
+    "src/config/shilAssetPaths.before-png-priority.js",
+    "src/config/shilAssetPaths.before-svg.js",
+    "src/pages/Dashboard.before-ui-fix.jsx",
+    "src/pages/NewProject.before-ui-fix.jsx",
+    "src/pages/WelcomePage.before-ui-fix.jsx",
+    "src/styles/shil-ui.before-font-fix.css",
+    "src/styles/shil-ui.css.footer-backup",
+    "src/pages/project/SystemSettings.jsx.footer-backup",
+    "src/pages/Contact.jsx.backup-contact-qr",
+    "src/styles/shil-ui.css.backup-contact-qr",
+    "src/backup/backup.js",
+    "src/backup/backupProject.js"
+  ]
+}

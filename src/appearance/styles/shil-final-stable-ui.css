@@ -1,0 +1,808 @@
+/* SHIL FINAL STABLE UI PATCH
+   Restores the original icon asset architecture and normalizes the core mobile-first pages.
+   Keep this file imported last from src/main.jsx. */
+
+:root {
+  --shil-header-h: 58px;
+  --shil-footer-h: 64px;
+  --shil-page-x: clamp(12px, 4vw, 22px);
+  --shil-shell-bg: #020b0f;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  overflow-x: hidden !important;
+  background: var(--shil-shell-bg) !important;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Login keeps its own background and is independent from Main/Dashboard. */
+.shil-login-page,
+.shil-auth-page.shil-login-page {
+  width: 100vw !important;
+  min-height: 100dvh !important;
+  overflow: hidden !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 20px !important;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, .35), rgba(0, 0, 0, .48)),
+    url('/assets/shil/background/login/shil-login-bg.svg') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+}
+
+.shil-auth-page.shil-login-page .shil-auth-card {
+  width: min(92vw, 360px) !important;
+  max-width: 360px !important;
+  padding: 22px 18px !important;
+  border-radius: 24px !important;
+  background: rgba(10, 22, 34, .82) !important;
+  border: 1px solid rgba(255, 255, 255, .08) !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .35) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+}
+
+/* App shell pages use the Main background and controlled scroll. */
+.shil-page-shell {
+  position: relative !important;
+  width: 100vw !important;
+  min-height: 100dvh !important;
+  overflow-x: hidden !important;
+  background: #020b0f !important;
+  isolation: isolate;
+}
+
+.shil-page-shell .shil-master-bg {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: -2 !important;
+  background-image:
+    radial-gradient(circle at 50% 0%, rgba(23, 92, 79, .30), rgba(2, 11, 15, .92) 64%),
+    url('/assets/shil/background/main/shil-main-bg.svg') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+}
+
+.shil-page-shell .shil-master-bg::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 11, 15, .42);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.shil-fixed-header,
+.shil-fixed-footer {
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 50 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding-inline: var(--shil-page-x) !important;
+  color: #f8fafc !important;
+  background: rgba(2, 11, 15, .78) !important;
+  border-color: rgba(255, 255, 255, .08) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+}
+
+.shil-fixed-header {
+  top: 0 !important;
+  height: calc(var(--shil-header-h) + env(safe-area-inset-top, 0px)) !important;
+  padding-top: env(safe-area-inset-top, 0px) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, .08) !important;
+}
+
+.shil-fixed-footer {
+  bottom: 0 !important;
+  min-height: calc(var(--shil-footer-h) + env(safe-area-inset-bottom, 0px)) !important;
+  padding-bottom: env(safe-area-inset-bottom, 0px) !important;
+  border-top: 1px solid rgba(255, 255, 255, .08) !important;
+  gap: 6px !important;
+}
+
+.shil-fixed-header a,
+.shil-fixed-header button,
+.shil-fixed-footer a {
+  color: #f0eaff !important;
+  text-decoration: none !important;
+  font-size: 12px !important;
+  line-height: 1.2 !important;
+  border: 0 !important;
+  background: transparent !important;
+}
+
+.shil-header-title {
+  min-width: 0 !important;
+  padding: 7px 14px !important;
+  border-radius: 999px !important;
+  color: #ffffff !important;
+  background: rgba(255, 255, 255, .08) !important;
+  font-size: 13px !important;
+  font-weight: 900 !important;
+  text-align: center !important;
+}
+
+.shil-page-content {
+  position: relative !important;
+  z-index: 1 !important;
+  width: 100% !important;
+  min-height: 100dvh !important;
+  padding: calc(var(--shil-header-h) + env(safe-area-inset-top, 0px) + 18px) var(--shil-page-x) calc(var(--shil-footer-h) + env(safe-area-inset-bottom, 0px) + 22px) !important;
+  overflow-x: hidden !important;
+}
+
+/* Dashboard + New Project icon grid. */
+.shil-dashboard-home,
+.shil-new-project-no-scroll .shil-page-content {
+  width: 100% !important;
+}
+
+.shil-dashboard-home {
+  min-height: calc(100dvh - var(--shil-header-h) - var(--shil-footer-h) - 40px) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  background: transparent !important;
+}
+
+.shil-online-chip {
+  position: fixed !important;
+  top: calc(var(--shil-header-h) + env(safe-area-inset-top, 0px) + 8px) !important;
+  right: var(--shil-page-x) !important;
+  z-index: 51 !important;
+  max-width: 150px !important;
+  font-size: 10.5px !important;
+  padding: 5px 8px !important;
+}
+
+.shil-ios-grid,
+.dashboard-icons.shil-ios-grid,
+.new-project-grid-3x3.shil-ios-grid {
+  width: min(100%, 980px) !important;
+  margin: 0 auto !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 20px 10px !important;
+  align-items: start !important;
+  justify-items: center !important;
+  overflow: visible !important;
+}
+
+.shil-ios-icon-link,
+.dashboard-icons .shil-ios-icon-link,
+.new-project-grid-3x3 .shil-ios-icon-link {
+  width: 100% !important;
+  max-width: 112px !important;
+  min-height: 122px !important;
+  padding: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 8px !important;
+  text-align: center !important;
+  text-decoration: none !important;
+  color: #f4edff !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+.shil-ios-icon-img,
+.dashboard-icons .shil-ios-icon-img,
+.new-project-grid-3x3 .shil-ios-icon-img {
+  width: 82px !important;
+  height: 82px !important;
+  min-width: 82px !important;
+  min-height: 82px !important;
+  display: grid !important;
+  place-items: center !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, .36)) !important;
+}
+
+.shil-ios-icon-img img,
+.shil-ios-icon-img svg,
+.dashboard-icons .shil-ios-icon-img img,
+.dashboard-icons .shil-ios-icon-img svg,
+.new-project-grid-3x3 .shil-ios-icon-img img,
+.new-project-grid-3x3 .shil-ios-icon-img svg {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: contain !important;
+  display: block !important;
+}
+
+.shil-ios-icon-title,
+.dashboard-icons .shil-ios-icon-title,
+.new-project-grid-3x3 .shil-ios-icon-title {
+  width: 100% !important;
+  max-width: 112px !important;
+  min-height: 32px !important;
+  margin: 0 !important;
+  color: rgba(244, 237, 255, .94) !important;
+  font-size: 11.5px !important;
+  font-weight: 800 !important;
+  line-height: 1.45 !important;
+  text-align: center !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, .45) !important;
+}
+
+/* Welcome page: keep the poster/image contained inside the viewport. */
+.shil-welcome-page,
+.shil-welcome-fullscreen {
+  width: 100vw !important;
+  min-height: 100dvh !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 14px !important;
+  padding: 22px 14px calc(24px + env(safe-area-inset-bottom, 0px)) !important;
+  background: radial-gradient(circle at 50% 0%, rgba(23, 92, 79, .22), #020b0f 70%) !important;
+}
+
+.shil-welcome-fullscreen-image {
+  width: min(92vw, 420px) !important;
+  max-width: 420px !important;
+  max-height: 74dvh !important;
+  height: auto !important;
+  object-fit: contain !important;
+  display: block !important;
+  border-radius: 20px !important;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, .32) !important;
+}
+
+.shil-primary-entry,
+.shil-welcome-entry-button {
+  position: static !important;
+  color: #d8c7ff !important;
+  font-size: 13px !important;
+  text-decoration: none !important;
+  text-align: center !important;
+}
+
+@media (min-width: 700px) {
+  .shil-page-content {
+    padding-inline: clamp(22px, 4vw, 48px) !important;
+  }
+
+  .dashboard-icons.shil-ios-grid,
+  .new-project-grid-3x3.shil-ios-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    gap: 28px 18px !important;
+  }
+
+  .new-project-grid-3x3.shil-ios-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    max-width: 740px !important;
+  }
+
+  .shil-ios-icon-link,
+  .dashboard-icons .shil-ios-icon-link,
+  .new-project-grid-3x3 .shil-ios-icon-link {
+    max-width: 136px !important;
+    min-height: 152px !important;
+  }
+
+  .shil-ios-icon-img,
+  .dashboard-icons .shil-ios-icon-img,
+  .new-project-grid-3x3 .shil-ios-icon-img {
+    width: 110px !important;
+    height: 110px !important;
+    min-width: 110px !important;
+    min-height: 110px !important;
+  }
+
+  .shil-ios-icon-title,
+  .dashboard-icons .shil-ios-icon-title,
+  .new-project-grid-3x3 .shil-ios-icon-title {
+    max-width: 136px !important;
+    font-size: 12.5px !important;
+  }
+
+  .shil-welcome-fullscreen-image {
+    width: min(58vw, 520px) !important;
+    max-width: 520px !important;
+    max-height: 78dvh !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .shil-ios-grid,
+  .dashboard-icons.shil-ios-grid,
+  .new-project-grid-3x3.shil-ios-grid {
+    gap: 16px 8px !important;
+  }
+
+  .shil-ios-icon-link,
+  .dashboard-icons .shil-ios-icon-link,
+  .new-project-grid-3x3 .shil-ios-icon-link {
+    max-width: 96px !important;
+    min-height: 108px !important;
+  }
+
+  .shil-ios-icon-img,
+  .dashboard-icons .shil-ios-icon-img,
+  .new-project-grid-3x3 .shil-ios-icon-img {
+    width: 70px !important;
+    height: 70px !important;
+    min-width: 70px !important;
+    min-height: 70px !important;
+  }
+
+  .shil-ios-icon-title,
+  .dashboard-icons .shil-ios-icon-title,
+  .new-project-grid-3x3 .shil-ios-icon-title {
+    max-width: 96px !important;
+    font-size: 10.5px !important;
+  }
+}
+
+
+/* FINAL DASHBOARD GRID FIX */
+.dashboard-icons.shil-ios-grid{
+  width:min(100%,1100px)!important;
+  margin:0 auto!important;
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  justify-items:center!important;
+  align-items:start!important;
+  gap:48px 72px!important;
+  padding:72px 24px 140px!important;
+}
+
+.dashboard-icons .shil-ios-icon-link{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+  gap:14px!important;
+}
+
+.dashboard-icons .shil-ios-icon-img img{
+  width:118px!important;
+  height:118px!important;
+  object-fit:contain!important;
+}
+
+.dashboard-icons .shil-ios-icon-title{
+  font-size:28px!important;
+  font-weight:700!important;
+  color:#fff!important;
+  line-height:1.4!important;
+}
+
+@media (max-width:900px){
+  .dashboard-icons.shil-ios-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:36px 28px!important;
+  }
+}
+
+@media (max-width:640px){
+  .dashboard-icons.shil-ios-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:24px 16px!important;
+    padding:84px 14px 120px!important;
+  }
+
+  .dashboard-icons .shil-ios-icon-img img{
+    width:86px!important;
+    height:86px!important;
+  }
+
+  .dashboard-icons .shil-ios-icon-title{
+    font-size:16px!important;
+  }
+}
+
+/* =========================
+   SHIL Project Step Header Fix
+   Keeps top project path icons small, horizontal and scrollable
+========================= */
+
+.shil-project-steps,
+.shil-step-strip,
+.shil-path-strip,
+.shil-design-path,
+.shil-flow-strip,
+.shil-project-flow,
+.shil-stage-strip {
+  position: sticky !important;
+  top: 56px !important;
+  z-index: 80 !important;
+
+  width: 100% !important;
+  max-width: 100vw !important;
+
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+
+  gap: 10px !important;
+  padding: 8px 12px !important;
+
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+
+  white-space: nowrap !important;
+  box-sizing: border-box !important;
+
+  background: rgba(2, 11, 15, .86) !important;
+  border-bottom: 1px solid rgba(255,255,255,.08) !important;
+
+  scrollbar-width: none !important;
+}
+
+.shil-project-steps::-webkit-scrollbar,
+.shil-step-strip::-webkit-scrollbar,
+.shil-path-strip::-webkit-scrollbar,
+.shil-design-path::-webkit-scrollbar,
+.shil-flow-strip::-webkit-scrollbar,
+.shil-project-flow::-webkit-scrollbar,
+.shil-stage-strip::-webkit-scrollbar {
+  display: none !important;
+}
+
+.shil-project-steps > *,
+.shil-step-strip > *,
+.shil-path-strip > *,
+.shil-design-path > *,
+.shil-flow-strip > *,
+.shil-project-flow > *,
+.shil-stage-strip > * {
+  flex: 0 0 auto !important;
+  width: 68px !important;
+  max-width: 68px !important;
+  min-width: 68px !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  gap: 4px !important;
+  text-align: center !important;
+  overflow: visible !important;
+}
+
+.shil-project-steps img,
+.shil-step-strip img,
+.shil-path-strip img,
+.shil-design-path img,
+.shil-flow-strip img,
+.shil-project-flow img,
+.shil-stage-strip img {
+  width: 34px !important;
+  height: 34px !important;
+  max-width: 34px !important;
+  max-height: 34px !important;
+  object-fit: contain !important;
+}
+
+.shil-project-steps span,
+.shil-step-strip span,
+.shil-path-strip span,
+.shil-design-path span,
+.shil-flow-strip span,
+.shil-project-flow span,
+.shil-stage-strip span,
+.shil-project-steps p,
+.shil-step-strip p,
+.shil-path-strip p,
+.shil-design-path p,
+.shil-flow-strip p,
+.shil-project-flow p,
+.shil-stage-strip p {
+  max-width: 68px !important;
+  font-size: 8.5px !important;
+  line-height: 1.35 !important;
+  font-weight: 600 !important;
+  color: rgba(255,255,255,.82) !important;
+
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+}
+
+/* prevent generic dashboard icon CSS from touching step header */
+.shil-project-steps .shil-icon-tile,
+.shil-step-strip .shil-icon-tile,
+.shil-path-strip .shil-icon-tile,
+.shil-design-path .shil-icon-tile,
+.shil-flow-strip .shil-icon-tile,
+.shil-project-flow .shil-icon-tile,
+.shil-stage-strip .shil-icon-tile {
+  width: 68px !important;
+  max-width: 68px !important;
+  min-height: auto !important;
+}
+
+.shil-project-steps .shil-icon-tile img,
+.shil-step-strip .shil-icon-tile img,
+.shil-path-strip .shil-icon-tile img,
+.shil-design-path .shil-icon-tile img,
+.shil-flow-strip .shil-icon-tile img,
+.shil-project-flow .shil-icon-tile img,
+.shil-stage-strip .shil-icon-tile img {
+  width: 34px !important;
+  height: 34px !important;
+}
+
+ /* FORCE HEADER 55PX */
+.shil-fixed-header,
+body .shil-fixed-header,
+body[class*="shil-"] .shil-fixed-header {
+  height: 55px !important;
+  min-height: 55px !important;
+  max-height: 55px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  box-sizing: border-box !important;
+}
+
+
+/* ===== FORCE FOOTER 40PX ===== */
+
+.shil-bottom-nav,
+.shil-footer,
+footer{
+    height:40px !important;
+    min-height:40px !important;
+    max-height:40px !important;
+    padding-top:0 !important;
+    padding-bottom:0 !important;
+    box-sizing:border-box !important;
+}
+
+
+/* ===== FORCE FIXED FOOTER 40PX ===== */
+
+.shil-bottom-nav,
+.shil-footer,
+footer {
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: 40px !important;
+  min-height: 40px !important;
+  max-height: 40px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  box-sizing: border-box !important;
+  z-index: 9999 !important;
+}
+
+/* محتوا زیر فوتر گیر نکند */
+body,
+#root,
+.shil-page,
+.shil-page-shell,
+.shil-main,
+main {
+  padding-bottom: 40px !important;
+  box-sizing: border-box !important;
+}
+
+/* اگر خود صفحه اسکرول دارد */
+.shil-page-content,
+.shil-content,
+.page-content,
+main {
+  padding-bottom: 56px !important;
+  box-sizing: border-box !important;
+}
+
+
+/* ===== FORCE TRUE FIXED BOTTOM NAV - MOBILE FIRST ===== */
+
+html,
+body,
+#root {
+  min-height: 100% !important;
+  height: 100% !important;
+}
+
+.shil-bottom-nav,
+.shil-footer,
+footer,
+[class*="bottom-nav"],
+[class*="BottomNav"],
+[class*="footer"],
+[class*="Footer"] {
+  position: fixed !important;
+  inset-inline-start: 0 !important;
+  inset-inline-end: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 40px !important;
+  min-height: 40px !important;
+  max-height: 40px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  margin-bottom: 0 !important;
+  box-sizing: border-box !important;
+  z-index: 2147483647 !important;
+  transform: none !important;
+}
+
+/* اگر فوتر داخل main یا container اسکرولی باشد، محتوا زیرش رد شود */
+main,
+.shil-main,
+.shil-page,
+.shil-page-shell,
+.shil-page-content,
+.shil-content,
+.mobile-first-page,
+.mobile-page,
+[class*="mobile-first"],
+[class*="MobileFirst"],
+[class*="page-content"],
+[class*="PageContent"] {
+  padding-bottom: 56px !important;
+  box-sizing: border-box !important;
+  overflow-x: hidden !important;
+}
+
+/* جلوگیری از اینکه parent با transform باعث fixed اشتباه شود */
+.shil-page,
+.shil-page-shell,
+.mobile-first-page,
+.mobile-page,
+[class*="mobile-first"],
+[class*="MobileFirst"] {
+  transform: none !important;
+  perspective: none !important;
+  filter: none !important;
+  contain: none !important;
+}
+
+
+/* ===== FINAL FIX: SHIL PAGE SHELL HEADER FOOTER ===== */
+
+.shil-page-shell {
+  min-height: 100dvh !important;
+  height: 100dvh !important;
+  overflow: hidden !important;
+  position: relative !important;
+}
+
+.shil-fixed-header {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 55px !important;
+  min-height: 55px !important;
+  max-height: 55px !important;
+  box-sizing: border-box !important;
+  z-index: 9999 !important;
+}
+
+.shil-fixed-footer,
+.shil-bottom-nav,
+.shil-footer,
+footer {
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: 40px !important;
+  min-height: 40px !important;
+  max-height: 40px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  box-sizing: border-box !important;
+  z-index: 9999 !important;
+}
+
+.shil-page-content {
+  position: fixed !important;
+  top: 55px !important;
+  bottom: 40px !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding-bottom: 24px !important;
+  box-sizing: border-box !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+
+/* =====================================================
+   SHIL PAGE SHELL - FINAL LAYOUT
+   ===================================================== */
+
+.shil-page-shell{
+    position:relative !important;
+    width:100% !important;
+    height:100dvh !important;
+    min-height:100dvh !important;
+    overflow:hidden !important;
+}
+
+.shil-page-content{
+    position:absolute !important;
+
+    top:55px !important;
+    left:0 !important;
+    right:0 !important;
+    bottom:40px !important;
+
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+
+    box-sizing:border-box !important;
+
+    -webkit-overflow-scrolling:touch !important;
+}
+
+.shil-no-header .shil-page-content{
+    top:0 !important;
+}
+
+.shil-no-footer .shil-page-content{
+    bottom:0 !important;
+}
+
+.shil-fixed-header{
+    position:fixed !important;
+    top:0 !important;
+    left:0 !important;
+    right:0 !important;
+    height:55px !important;
+    min-height:55px !important;
+    max-height:55px !important;
+    z-index:4000 !important;
+}
+
+.shil-fixed-footer{
+    position:fixed !important;
+    left:0 !important;
+    right:0 !important;
+    bottom:0 !important;
+
+    height:40px !important;
+    min-height:40px !important;
+    max-height:40px !important;
+
+    z-index:4000 !important;
+}
+

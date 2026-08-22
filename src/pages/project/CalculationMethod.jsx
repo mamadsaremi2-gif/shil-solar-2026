@@ -1,0 +1,160 @@
+import ShilPrimaryButton from "../../components/project/ShilPrimaryButton";
+﻿import * as React from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { approveProjectStep } from "../../workflow/projectWorkflow.js";
+import EngineeringPageShell from "../../components/EngineeringPageShell.jsx";
+
+const SOLAR_METHOD_CARDS = [
+  { key: "power", title: "توان کل", badge: "W / KW", hint: "مبنای طراحی بر اساس توان مصرفی کل" },
+  { key: "current", title: "جریان کل", badge: "A", hint: "تبدیل جریان و ولتاژ به توان مصرفی" },
+  { key: "solar_panel_power", title: "توان پنل خورشیدی", badge: "PV W", hint: "فعلاً با وضعیت موجود؛ مسیر تولید PV و انتقال نیروگاهی در توان بالا" },
+  { key: "equipment", title: "لیست تجهیزات", badge: "Equipment", hint: "محاسبه مصرف واقعی از بانک تجهیزات" },
+  { key: "profile", title: "پروفایل مصرف", badge: "Profile", hint: "تحلیل مصرف صبح، ظهر، عصر و شب" },
+  { key: "energy", title: "انرژی روزانه", badge: "KWH/day", hint: "مبنای طراحی بر اساس انرژی روزانه" },
+];
+
+const EMERGENCY_METHOD_CARDS = [
+  { key: "equipment", title: "لیست تجهیزات", badge: "Essential", hint: "انتخاب تجهیزات ضروری برای زمان قطعی برق" },
+  { key: "power", title: "توان کل", badge: "W / KW", hint: "محاسبه اینورتر و باتری بر اساس توان بار ضروری" },
+  { key: "current", title: "جریان کل", badge: "A", hint: "محاسبه بار اضطراری از جریان و ولتاژ" },
+];
+
+const UTILITY_METHOD_CARDS = [
+  { key: "utility_scale", title: "مسیر نیروگاهی", badge: "Utility", hint: "فعلاً در وضعیت موقت اختصاصی نیروگاهی باقی می‌ماند" },
+];
+
+const DOMAIN_LABELS = {
+  solar: "اجرای پروژه با پنل خورشیدی",
+  emergency: "اجرای پروژه برق اضطراری",
+  utility: "اجرای نیروگاه انرژی خورشیدی",
+};
+
+function readDraft(key) {
+  try {
+    return JSON.parse(localStorage.getItem(key) || "null");
+  } catch {
+    return null;
+  }
+}
+
+function getProjectPathDomain() {
+  const draft = readDraft("shil:projectPath") || readDraft("shil:selectedProjectPath");
+  if (typeof draft === "string") return draft;
+  return draft?.domain || draft?.type || draft?.key || null;
+}
+
+function normalizeDomain(value) {
+  const normalized = String(value || "").toLowerCase();
+  if (normalized.includes("emergency") || normalized.includes("backup")) return "emergency";
+  if (normalized.includes("utility") || normalized.includes("plant") || normalized.includes("power-plant")) return "utility";
+  return "solar";
+}
+
+function getCardsForDomain(domain) {
+  if (domain === "emergency") return EMERGENCY_METHOD_CARDS;
+  if (domain === "utility") return UTILITY_METHOD_CARDS;
+  return SOLAR_METHOD_CARDS;
+}
+
+export default function CalculationMethod() {
+  const navigate = useNavigate();
+  const params = useParams();
+  const location = useLocation();
+  const query = new URLSearchParams(location.search);
+
+  const domain = normalizeDomain(
+    params.domain ||
+    query.get("domain") ||
+    getProjectPathDomain() ||
+    localStorage.getItem("shil:calculationDomain") ||
+    localStorage.getItem("shil:scenarioDomain") ||
+    "solar"
+  );
+
+  const methodCards = React.useMemo(() => getCardsForDomain(domain), [domain]);
+
+  // A fresh visit to the method page must never inherit the previous project's choice.
+  // Resumed projects are restored to their confirmed route by project persistence and do not
+  // need an implicit selection here.
+  const [selectedMethod, setSelectedMethod] = React.useState("");
+
+  const context = React.useMemo(
+    () => ({
+      projectPath: readDraft("shil:projectPath") || readDraft("shil:selectedProjectPath"),
+      scenario: readDraft("shil:selectedScenario"),
+      environment: readDraft("shil:environmentDraft"),
+    }),
+    []
+  );
+
+  React.useEffect(() => {
+    document.body.classList.add("shil-calculation-method-screen");
+    return () => document.body.classList.remove("shil-calculation-method-screen");
+  }, []);
+
+  const handleConfirm = () => {
+    if (!selectedMethod) return;
+
+    approveProjectStep("method");
+    localStorage.setItem("shil:calculationMethod", selectedMethod);
+    localStorage.setItem("shil:selectedCalculationMethod", selectedMethod);
+    localStorage.setItem("shil:calculationDomain", domain);
+    localStorage.setItem("shil:scenarioDomain", domain);
+
+    if (domain === "emergency") {
+      localStorage.removeItem("shil:solarPanelPowerInput");
+      localStorage.removeItem("shil:solarPanelPowerPreview");
+      localStorage.removeItem("shil:unifiedPvEngineResult:input");
+    }
+
+    if (selectedMethod === "utility_scale") {
+      navigate("/new-project/system/utility?from=method");
+      return;
+    }
+
+    navigate(`/new-project/input/${domain}/${selectedMethod}`);
+  };
+
+  const title = `روش طراحی ${DOMAIN_LABELS[domain] || DOMAIN_LABELS.solar}`;
+
+  return (
+    <EngineeringPageShell title={title}>
+      <div id="shil-calculation-method-root" data-domain={domain} className={`shil-calculation-method-page ${domain === "emergency" ? "shil-emergency-parity-page" : ""}`}>
+      <div className="shil-clean-section-head">
+        <h2>انتخاب روش طراحی</h2>
+        <span>{DOMAIN_LABELS[domain]}</span>
+      </div>
+
+      <div className="shil-method-context-strip shil-method-context-clean">
+        <span>{context.projectPath?.title || DOMAIN_LABELS[domain]}</span>
+        <strong>{context.environment?.city || "اطلاعات پروژه و شرایط مسیر ثبت می‌شود"}</strong>
+      </div>
+
+      <div className="shil-method-grid-five shil-method-grid-minimal shil-method-grid-clean">
+        {methodCards.map((method, index) => (
+          <button
+            type="button"
+            key={method.key}
+            className={`shil-large-choice shil-method-card-engine shil-method-card-minimal ${selectedMethod === method.key ? "active" : ""}`}
+            onClick={() => setSelectedMethod(method.key)}
+          >
+            <span className="shil-method-badge">{method.badge}</span>
+            <small>گزینه {index + 1}</small>
+            <h2>{method.title}</h2>
+            <p>{method.hint}</p>
+          </button>
+        ))}
+      </div>
+
+      {domain === "emergency" ? (
+        <p className="shil-muted-note">
+          این صفحه مخصوص برق اضطراری است؛ فقط جریان کل، توان کل و لیست تجهیزات فعال هستند.
+        </p>
+      ) : null}
+
+      <ShilPrimaryButton className="shil-calculation-method-confirm" disabled={!selectedMethod}
+        onClick={handleConfirm} label={domain === "emergency" ? "تأیید" : "تأیید روش"} />
+      </div>
+    </EngineeringPageShell>
+  );
+}

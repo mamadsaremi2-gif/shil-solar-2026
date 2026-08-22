@@ -1,0 +1,16 @@
+﻿
+/* ===== LAST OVERRIDE: REMOVE PROJECT WRAPPER FRAME ===== */
+
+html body.shil-project-path-screen .shil-engineering-content > div,
+html body.shil-project-path-screen .shil-card-stack,
+html body.shil-project-path-screen .shil-section-card {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+

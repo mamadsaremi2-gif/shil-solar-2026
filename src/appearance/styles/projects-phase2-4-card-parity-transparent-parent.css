@@ -1,0 +1,210 @@
+/* SHIL Phase 2.4 — Project child-card parity + transparent list parent.
+   Final override: child project cards match Projects landing cards in size/color,
+   while list/workspace parents remain transparent so cards sit directly on the app background. */
+
+:root{
+  --shil-pm24-surface: rgba(249,252,255,.97);
+  --shil-pm24-surface-final: rgba(248,255,252,.98);
+  --shil-pm24-surface-archived: rgba(247,250,252,.97);
+  --shil-pm24-border: #bdd6e3;
+  --shil-pm24-text: #102a43;
+  --shil-pm24-muted: #637b8b;
+}
+
+/* Remove the large visual parent/background behind child project cards. */
+.shil-project-manager-page .shil-pm-workspace,
+.shil-project-manager-page .shil-pm-list,
+.shil-project-manager-page .shil-pm-list::before,
+.shil-project-manager-page .shil-pm-list::after{
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.shil-project-manager-page .shil-pm-workspace{
+  width: min(100%,760px) !important;
+  margin-inline: auto !important;
+  padding: 0 !important;
+  gap: 6px !important;
+}
+
+/* Normal mobile gutters so cards never touch the screen wall. */
+:is(.shil-projects-phase2,.shil-project-manager-page) main.shil-page-content{
+  padding-inline: 10px !important;
+}
+
+/* Child project cards use exactly the same visual language as landing cards. */
+.shil-project-manager-page article.shil-pm-card{
+  width: 100% !important;
+  min-height: 44px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-radius: 10px !important;
+  border: 1px solid var(--shil-pm24-border) !important;
+  background-color: var(--shil-pm24-surface) !important;
+  background-image: linear-gradient(180deg,rgba(255,255,255,.985),rgba(238,247,252,.97)) !important;
+  color: var(--shil-pm24-text) !important;
+  box-shadow: 0 2px 6px rgba(5,31,50,.055) !important;
+  overflow: hidden !important;
+}
+
+.shil-project-manager-page article.shil-pm-card--final{
+  background-color: var(--shil-pm24-surface-final) !important;
+  background-image: linear-gradient(180deg,#fbfffd,#effaf6) !important;
+  border-color: #9ad8c0 !important;
+}
+
+.shil-project-manager-page article.shil-pm-card--archived{
+  background-color: var(--shil-pm24-surface-archived) !important;
+  background-image: linear-gradient(180deg,#fbfcfd,#f0f5f8) !important;
+  border-color: #cad8e0 !important;
+}
+
+/* Closed row = landing card height/density. */
+.shil-project-manager-page .shil-pm-card-summary{
+  grid-template-columns: 27px minmax(0,1fr) auto 13px !important;
+  min-height: 44px !important;
+  padding: 4px 7px !important;
+  gap: 6px !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  color: var(--shil-pm24-text) !important;
+}
+
+.shil-project-manager-page .shil-pm-domain-icon{
+  width: 27px !important;
+  height: 27px !important;
+  min-width: 27px !important;
+  border-radius: 7px !important;
+  background: #edf7fb !important;
+  border: 1px solid #b9d8e7 !important;
+  color: #17617f !important;
+}
+.shil-project-manager-page .shil-pm-domain-icon svg{width:15px !important;height:15px !important;}
+.shil-project-manager-page .shil-pm-card--final .shil-pm-domain-icon{
+  background:#ebfbf5 !important;
+  border-color:#9ad8c0 !important;
+  color:#0d7658 !important;
+}
+
+.shil-project-manager-page .shil-pm-card-copy{
+  min-width:0 !important;
+  gap:0 !important;
+  background:transparent !important;
+  text-align:right !important;
+}
+.shil-project-manager-page .shil-pm-card-copy strong{
+  font-size:10px !important;
+  line-height:1.18 !important;
+  font-weight:850 !important;
+  color:var(--shil-pm24-text) !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+}
+.shil-project-manager-page .shil-pm-card-copy small{
+  font-size:7px !important;
+  line-height:1.18 !important;
+  font-weight:700 !important;
+  color:var(--shil-pm24-muted) !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+}
+
+.shil-project-manager-page .shil-pm-status{
+  min-height:18px !important;
+  padding:1px 5px !important;
+  border-radius:999px !important;
+  font-size:7px !important;
+  line-height:1 !important;
+}
+.shil-project-manager-page .shil-pm-chevron{width:13px !important;height:13px !important;}
+.shil-project-manager-page .shil-pm-progress{
+  width:calc(100% - 14px) !important;
+  height:2px !important;
+  margin:0 7px 3px !important;
+  background:#dce9f0 !important;
+}
+
+/* Small but visible gap between individual project cards. */
+.shil-project-manager-page .shil-pm-list{
+  gap: 6px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Open card: only the selected card grows; no secondary outer panel is introduced. */
+.shil-project-manager-page .shil-pm-card-details{
+  margin:0 !important;
+  padding:4px 6px 6px !important;
+  gap:4px !important;
+  background:transparent !important;
+  border-top:1px solid #dce8ef !important;
+  box-shadow:none !important;
+}
+.shil-project-manager-page .shil-pm-detail-grid{
+  gap:4px !important;
+  padding:0 !important;
+}
+.shil-project-manager-page .shil-pm-detail-grid > div{
+  min-height:32px !important;
+  padding:3px 5px !important;
+  border-radius:7px !important;
+  background:rgba(247,251,253,.94) !important;
+  border:1px solid #d9e7ee !important;
+  box-shadow:none !important;
+}
+.shil-project-manager-page .shil-pm-detail-grid .shil-pm-detail-wide{min-height:30px !important;}
+.shil-project-manager-page .shil-pm-detail-grid span{font-size:6.7px !important;color:var(--shil-pm24-muted) !important;}
+.shil-project-manager-page .shil-pm-detail-grid strong{font-size:8px !important;line-height:1.2 !important;color:var(--shil-pm24-text) !important;}
+.shil-project-manager-page .shil-pm-timeline{
+  border-radius:7px !important;
+  background:rgba(249,252,254,.94) !important;
+  border:1px solid #d9e7ee !important;
+  box-shadow:none !important;
+}
+.shil-project-manager-page .shil-pm-timeline summary{min-height:28px !important;padding:3px 6px !important;font-size:7.6px !important;}
+.shil-project-manager-page .shil-pm-actions{gap:4px !important;}
+.shil-project-manager-page .shil-pm-actions button,
+.shil-project-manager-page .shil-pm-load-more{
+  min-height:29px !important;
+  padding:3px 6px !important;
+  border-radius:7px !important;
+  font-size:7.4px !important;
+}
+
+/* Toolbar and list header also float directly over the background; only their own cards are visible. */
+.shil-project-manager-page .shil-pm-toolbar{
+  margin:0 !important;
+  box-shadow:0 2px 6px rgba(5,31,50,.05) !important;
+}
+.shil-project-manager-page .shil-pm-list-head{
+  margin:0 !important;
+}
+
+/* Prevent old global rules from making text black/dark against unexpected dark wrappers. */
+.shil-project-manager-page :is(.shil-pm-card,.shil-pm-card-summary,.shil-pm-card-copy,.shil-pm-card-details,.shil-pm-detail-grid,.shil-pm-timeline){
+  -webkit-text-fill-color: currentColor !important;
+}
+
+@media (max-width:390px){
+  :is(.shil-projects-phase2,.shil-project-manager-page) main.shil-page-content{padding-inline:8px !important;}
+  .shil-project-manager-page .shil-pm-card-summary{
+    grid-template-columns:25px minmax(0,1fr) 13px !important;
+    min-height:43px !important;
+    padding-inline:6px !important;
+  }
+  .shil-project-manager-page .shil-pm-status{
+    grid-column:2 !important;
+    justify-self:start !important;
+    margin-top:1px !important;
+  }
+  .shil-project-manager-page .shil-pm-chevron{grid-column:3 !important;grid-row:1/span 2 !important;}
+  .shil-project-manager-page .shil-pm-domain-icon{grid-row:1/span 2 !important;width:25px !important;height:25px !important;min-width:25px !important;}
+}

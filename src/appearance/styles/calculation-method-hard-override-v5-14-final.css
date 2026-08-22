@@ -1,0 +1,207 @@
+/* SHIL V5.14 - Calculation Method compact isolated layout */
+
+#shil-calculation-method-root,
+#shil-calculation-method-root .shil-method-minimal-panel {
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  outline: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+#shil-calculation-method-root {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+#shil-calculation-method-root .shil-method-minimal-panel {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+#shil-calculation-method-root .shil-section-head {
+  min-height: 46px !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 8px 12px !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 8px !important;
+  border-radius: 18px !important;
+  background: rgba(190, 204, 224, .86) !important;
+  border: 1px solid rgba(255,255,255,.55) !important;
+  box-shadow: none !important;
+}
+
+#shil-calculation-method-root .shil-section-head h2,
+#shil-calculation-method-root .shil-section-head span {
+  margin: 0 !important;
+  min-width: 0 !important;
+  line-height: 1.35 !important;
+}
+
+#shil-calculation-method-root .shil-section-head h2 {
+  font-size: clamp(16px, 3.8vw, 22px) !important;
+  font-weight: 900 !important;
+}
+
+#shil-calculation-method-root .shil-section-head span {
+  font-size: clamp(11px, 2.8vw, 14px) !important;
+  font-weight: 800 !important;
+  opacity: .82 !important;
+  white-space: nowrap !important;
+}
+
+#shil-calculation-method-root .shil-method-context-strip {
+  width: 100% !important;
+  min-height: 50px !important;
+  margin: 0 !important;
+  padding: 8px 12px !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1.3fr) minmax(90px, .7fr) !important;
+  align-items: center !important;
+  gap: 8px !important;
+  border-radius: 18px !important;
+  background: rgba(240,245,252,.84) !important;
+  border: 1px solid rgba(118, 213, 231, .62) !important;
+  box-shadow: none !important;
+}
+
+#shil-calculation-method-root .shil-method-context-strip > span,
+#shil-calculation-method-root .shil-method-context-strip > strong {
+  min-width: 0 !important;
+  margin: 0 !important;
+  font-size: clamp(11px, 2.8vw, 14px) !important;
+  line-height: 1.35 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+#shil-calculation-method-root .shil-method-context-strip > span {
+  font-weight: 900 !important;
+}
+
+#shil-calculation-method-root .shil-method-context-strip > strong {
+  text-align: left !important;
+  font-weight: 800 !important;
+}
+
+#shil-calculation-method-root .shil-method-grid-five,
+#shil-calculation-method-root .shil-method-grid-minimal {
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+}
+
+#shil-calculation-method-root .shil-method-card-minimal,
+#shil-calculation-method-root .shil-method-card-engine,
+#shil-calculation-method-root .shil-large-choice {
+  min-width: 0 !important;
+  width: 100% !important;
+  min-height: 104px !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 10px !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  grid-template-rows: auto 1fr !important;
+  align-items: center !important;
+  gap: 5px 8px !important;
+  border-radius: 18px !important;
+  background: rgba(207, 215, 226, .88) !important;
+  background-image: none !important;
+  border: 1px solid rgba(255,255,255,.72) !important;
+  box-shadow: none !important;
+  text-decoration: none !important;
+  overflow: hidden !important;
+}
+
+#shil-calculation-method-root .shil-method-card-minimal:nth-child(odd):last-child,
+#shil-calculation-method-root .shil-method-grid-five .shil-large-choice:nth-child(odd):last-child {
+  grid-column: auto !important;
+}
+
+#shil-calculation-method-root .shil-method-card-minimal h2 {
+  grid-column: 1 / -1 !important;
+  margin: 0 !important;
+  font-size: clamp(15px, 3.5vw, 20px) !important;
+  line-height: 1.25 !important;
+  font-weight: 900 !important;
+  text-align: center !important;
+  align-self: end !important;
+}
+
+#shil-calculation-method-root .shil-method-card-minimal .shil-method-badge {
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+  justify-self: end !important;
+  min-width: 50px !important;
+  min-height: 30px !important;
+  margin: 0 !important;
+  padding: 5px 9px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 999px !important;
+  background: rgba(180, 220, 220, .55) !important;
+  border: 1px solid rgba(98, 220, 218, .55) !important;
+  font-size: clamp(10px, 2.5vw, 13px) !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+}
+
+#shil-calculation-method-root .shil-method-card-minimal small,
+#shil-calculation-method-root .shil-method-card-minimal p {
+  display: none !important;
+}
+
+#shil-calculation-method-root .shil-muted-note {
+  margin: 0 !important;
+  padding: 9px 12px !important;
+  min-height: 0 !important;
+  border-radius: 16px !important;
+  background: rgba(247,249,252,.88) !important;
+  border: 1px solid rgba(255,255,255,.58) !important;
+  box-shadow: none !important;
+  font-size: clamp(11px, 2.8vw, 14px) !important;
+  line-height: 1.55 !important;
+}
+
+@media (min-width: 780px) {
+  #shil-calculation-method-root .shil-method-grid-five,
+  #shil-calculation-method-root .shil-method-grid-minimal {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  #shil-calculation-method-root .shil-method-card-minimal,
+  #shil-calculation-method-root .shil-method-card-engine,
+  #shil-calculation-method-root .shil-large-choice {
+    min-height: 112px !important;
+  }
+}
+
+@media (max-width: 380px) {
+  #shil-calculation-method-root .shil-method-context-strip {
+    grid-template-columns: 1fr !important;
+  }
+
+  #shil-calculation-method-root .shil-method-context-strip > strong {
+    text-align: right !important;
+  }
+}

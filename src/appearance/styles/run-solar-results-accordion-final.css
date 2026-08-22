@@ -1,0 +1,117 @@
+/* Solar run output: compact results and important notes accordion. */
+body:not(.login-page):not(.welcome-page) .shil-execution-output-page:not(.shil-emergency-run-output) .shil-results-accordion {
+  width: 100%;
+  margin: 12px 0 0;
+  border: 1px solid rgba(156, 190, 218, 0.9);
+  border-radius: 22px;
+  overflow: hidden;
+  background: rgba(239, 246, 252, 0.94);
+  box-shadow: 0 6px 18px rgba(7, 35, 61, 0.12);
+}
+
+body:not(.login-page):not(.welcome-page) .shil-execution-output-page:not(.shil-emergency-run-output) .shil-results-accordion__header {
+  width: 100%;
+  min-height: 70px;
+  padding: 13px 22px;
+  border: 0;
+  background: rgba(221, 237, 249, 0.98);
+  color: #081d35;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font: inherit;
+  font-size: clamp(1.25rem, 3.2vw, 2rem);
+  font-weight: 900;
+  cursor: pointer;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-execution-output-page:not(.shil-emergency-run-output) .shil-results-accordion__chevron {
+  flex: 0 0 auto;
+  font-size: 0.78em;
+  transition: transform 180ms ease;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-execution-output-page:not(.shil-emergency-run-output) .shil-results-accordion__content {
+  padding: 12px;
+  display: grid;
+  gap: 10px;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-execution-output-page:not(.shil-emergency-run-output) .shil-results-accordion__section {
+  margin: 0;
+  padding: 12px;
+  border: 1px solid rgba(178, 204, 225, 0.82);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.82);
+}
+
+body:not(.login-page):not(.welcome-page) .shil-execution-output-page:not(.shil-emergency-run-output) .shil-results-accordion__section h4 {
+  margin: 0 0 9px;
+  color: #0b2440;
+  text-align: center;
+  font-size: clamp(1rem, 2.5vw, 1.35rem);
+  font-weight: 900;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-execution-output-page:not(.shil-emergency-run-output) .shil-results-accordion__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-execution-output-page:not(.shil-emergency-run-output) .shil-results-accordion__grid p,
+body:not(.login-page):not(.welcome-page) .shil-execution-output-page:not(.shil-emergency-run-output) .shil-results-accordion__notes li {
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid rgba(196, 215, 231, 0.9);
+  border-radius: 13px;
+  background: rgba(248, 251, 254, 0.94);
+  color: #111827;
+  font-size: clamp(0.9rem, 2.1vw, 1.08rem);
+  font-weight: 700;
+  line-height: 1.75;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-execution-output-page:not(.shil-emergency-run-output) .shil-results-accordion__notes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-execution-output-page:not(.shil-emergency-run-output) .shil-results-accordion__notes li::before {
+  content: "•";
+  margin-left: 8px;
+  color: #52657d;
+}
+
+body:not(.login-page):not(.welcome-page) .shil-execution-output-page:not(.shil-emergency-run-output) .shil-results-accordion__notes li.warning {
+  border-color: rgba(226, 177, 49, 0.78);
+  background: rgba(255, 247, 214, 0.95);
+}
+
+@media (max-width: 720px) {
+  body:not(.login-page):not(.welcome-page) .shil-execution-output-page:not(.shil-emergency-run-output) .shil-results-accordion {
+    border-radius: 18px;
+  }
+  body:not(.login-page):not(.welcome-page) .shil-execution-output-page:not(.shil-emergency-run-output) .shil-results-accordion__header {
+    min-height: 58px;
+    padding: 10px 16px;
+  }
+  body:not(.login-page):not(.welcome-page) .shil-execution-output-page:not(.shil-emergency-run-output) .shil-results-accordion__content,
+  body:not(.login-page):not(.welcome-page) .shil-execution-output-page:not(.shil-emergency-run-output) .shil-results-accordion__section {
+    padding: 9px;
+  }
+  body:not(.login-page):not(.welcome-page) .shil-execution-output-page:not(.shil-emergency-run-output) .shil-results-accordion__grid,
+  body:not(.login-page):not(.welcome-page) .shil-execution-output-page:not(.shil-emergency-run-output) .shil-results-accordion__notes {
+    grid-template-columns: 1fr;
+  }
+  body:not(.login-page):not(.welcome-page) .shil-execution-output-page:not(.shil-emergency-run-output) .shil-results-accordion__grid p,
+  body:not(.login-page):not(.welcome-page) .shil-execution-output-page:not(.shil-emergency-run-output) .shil-results-accordion__notes li {
+    padding: 8px 10px;
+    line-height: 1.65;
+  }
+}

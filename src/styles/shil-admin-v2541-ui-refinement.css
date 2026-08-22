@@ -1,0 +1,105 @@
+/* SHIL V25.4.1 — Admin defaults UI refinement. Loaded last on purpose. */
+.shil-page--admin .shil-admin-v24-root{
+  --v2541-ink:#0b2d43;
+  --v2541-muted:#527286;
+  --v2541-line:rgba(111,176,214,.48);
+  --v2541-sky:linear-gradient(145deg,rgba(239,250,255,.96),rgba(189,224,244,.88));
+  --v2541-sky-soft:linear-gradient(145deg,rgba(248,253,255,.96),rgba(215,238,250,.88));
+  --v2541-glass:rgba(240,249,255,.72);
+}
+
+/* Kill legacy purple/indigo surfaces across Admin, including module cards and detail strips. */
+.shil-page--admin .shil-admin-v24-root :is(
+  .shil-admin-module-card-v10,.shil-admin-module-open-v13,.shil-admin-module-details-v13,
+  .shil-admin-module-details-v13>summary,.shil-admin-section-title-v10,.shil-admin-section-details-v13,
+  .shil-admin-section-details-v13>summary,.shil-admin-child-tabs-v10>button,
+  .shil-admin-panel,.shil-admin-panel>summary,.shil-admin-readiness-card-v17,
+  .shil-admin-readiness-score-v17,.shil-admin-overview-kpi-card,.shil-admin-stat,.shil-admin-cms-metric
+){
+  background:var(--v2541-sky-soft)!important;
+  background-image:var(--v2541-sky-soft)!important;
+  border-color:var(--v2541-line)!important;
+  color:var(--v2541-ink)!important;
+  -webkit-text-fill-color:var(--v2541-ink)!important;
+  box-shadow:none!important;
+}
+.shil-page--admin .shil-admin-v24-root .shil-admin-module-card-v10{border-radius:13px!important;overflow:hidden!important}
+.shil-page--admin .shil-admin-v24-root .shil-admin-module-open-v13{min-height:48px!important;padding:6px!important}
+.shil-page--admin .shil-admin-v24-root .shil-admin-module-details-v13{background:transparent!important;background-image:none!important;border:0!important}
+.shil-page--admin .shil-admin-v24-root .shil-admin-module-details-v13>summary{
+  min-height:18px!important;padding:2px 5px!important;background:rgba(224,242,252,.70)!important;background-image:none!important;border:0!important;
+}
+
+/* Home defaults: exactly two compact entry cards, with short titles. */
+.shil-page--admin .shil-admin-v24-root .shil-default-entry-v2541{
+  gap:6px!important;margin:0 0 6px!important;padding:0!important;background:transparent!important;
+}
+.shil-page--admin .shil-admin-v24-root .shil-default-entry-v2541 button{
+  min-height:54px!important;padding:7px 6px!important;border-radius:13px!important;
+  background:var(--v2541-sky)!important;background-image:var(--v2541-sky)!important;
+  border:1px solid var(--v2541-line)!important;color:var(--v2541-ink)!important;box-shadow:none!important;
+}
+.shil-page--admin .shil-admin-v24-root .shil-default-entry-v2541 strong{font-size:13px!important;line-height:1.15!important}
+.shil-page--admin .shil-admin-v24-root .shil-default-entry-v2541 span{font-size:8.5px!important;line-height:1.2!important;color:var(--v2541-muted)!important}
+
+/* Defaults section: no large parent panel, minimal visible background. */
+.shil-page--admin .shil-admin-v24-root .shil-defaults-shell-v254{
+  padding:0 4px calc(112px + env(safe-area-inset-bottom,0px))!important;margin:0!important;background:transparent!important;border:0!important;
+}
+.shil-page--admin .shil-admin-v24-root .shil-defaults-head-v2541{
+  min-height:38px!important;margin:2px 0 6px!important;padding:5px 7px!important;border-radius:11px!important;
+  background:var(--v2541-sky)!important;background-image:var(--v2541-sky)!important;border:1px solid var(--v2541-line)!important;
+}
+.shil-page--admin .shil-admin-v24-root .shil-defaults-head-v2541 div>strong{font-size:12.5px!important;line-height:1.2!important}
+.shil-page--admin .shil-admin-v24-root .shil-default-back-v254{width:28px!important;height:28px!important;min-width:28px!important;padding:0!important;border-radius:9px!important;background:rgba(255,255,255,.62)!important}
+
+/* Eight compact engineering stages. Closed = title only. */
+.shil-page--admin .shil-admin-v24-root .shil-default-stage-grid-v254{gap:5px!important}
+.shil-page--admin .shil-admin-v24-root .shil-default-stage-v254{
+  border-radius:12px!important;border:1px solid var(--v2541-line)!important;background:var(--v2541-sky)!important;background-image:var(--v2541-sky)!important;box-shadow:none!important;
+}
+.shil-page--admin .shil-admin-v24-root .shil-default-stage-v254 summary{
+  grid-template-columns:27px minmax(0,1fr) 18px!important;min-height:58px!important;padding:6px 7px!important;gap:4px!important;
+}
+.shil-page--admin .shil-admin-v24-root .shil-default-stage-v254 summary>b{font-size:9.5px!important;padding:5px 2px!important;background:rgba(255,255,255,.58)!important}
+.shil-page--admin .shil-admin-v24-root .shil-default-stage-v254 summary strong{font-size:11.5px!important;line-height:1.2!important}
+.shil-page--admin .shil-admin-v24-root .shil-default-stage-v254 summary small{display:none!important}
+.shil-page--admin .shil-admin-v24-root .shil-default-stage-v254 summary i{font-size:15px!important;line-height:1!important}
+.shil-page--admin .shil-admin-v24-root .shil-default-stage-v254[open]{grid-column:1/-1!important;background:var(--v2541-sky-soft)!important;background-image:var(--v2541-sky-soft)!important}
+.shil-page--admin .shil-admin-v24-root .shil-default-stage-v254[open] summary{min-height:48px!important}
+.shil-page--admin .shil-admin-v24-root .shil-default-stage-body-v254{padding:6px!important;border-top:1px solid var(--v2541-line)!important}
+.shil-page--admin .shil-admin-v24-root .shil-default-stage-body-v254 h4{margin:0 0 5px!important;font-size:10px!important}
+.shil-page--admin .shil-admin-v24-root .shil-default-note-v254{padding:6px!important;gap:2px!important;border-radius:9px!important;background:rgba(250,253,255,.60)!important;border:1px solid rgba(111,176,214,.28)!important}
+.shil-page--admin .shil-admin-v24-root .shil-default-note-v254 strong{font-size:10px!important}
+.shil-page--admin .shil-admin-v24-root .shil-default-note-v254 span{font-size:8.5px!important;line-height:1.45!important}
+.shil-page--admin .shil-admin-v24-root .shil-default-fields-v254{gap:5px!important}
+.shil-page--admin .shil-admin-v24-root .shil-default-field-v254{padding:5px!important;gap:3px!important;border-radius:9px!important;background:rgba(250,253,255,.60)!important}
+.shil-page--admin .shil-admin-v24-root .shil-default-field-v254 input{padding:6px!important;font-size:10.5px!important}
+
+/* Compact three-button action bar; never hidden behind fixed footer. */
+.shil-page--admin .shil-admin-v24-root .shil-default-actions-v254{
+  position:relative!important;z-index:2!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:5px!important;margin:7px 0 12px!important;padding:0!important;
+}
+.shil-page--admin .shil-admin-v24-root .shil-default-actions-v254 button{
+  min-height:36px!important;padding:6px 3px!important;border-radius:10px!important;font-size:9.5px!important;line-height:1.15!important;
+  background:var(--v2541-sky-soft)!important;background-image:var(--v2541-sky-soft)!important;border:1px solid var(--v2541-line)!important;color:var(--v2541-ink)!important;
+}
+.shil-page--admin .shil-admin-v24-root .shil-default-actions-v254 button.primary{background:var(--v2541-sky)!important;background-image:var(--v2541-sky)!important;font-weight:900!important}
+
+/* The section-level 'details' strip is compact and never purple. */
+.shil-page--admin .shil-admin-v24-root .shil-admin-section-title-v10{min-height:38px!important;margin:3px 0 5px!important;padding:4px 7px!important;background:var(--v2541-sky-soft)!important;background-image:var(--v2541-sky-soft)!important}
+.shil-page--admin .shil-admin-v24-root .shil-admin-section-details-v13>summary{padding:2px!important;background:transparent!important;background-image:none!important;color:var(--v2541-muted)!important}
+
+/* Extra bottom clearance for fixed footer throughout Admin sections. */
+.shil-page--admin .shil-admin-v24-root{padding-bottom:calc(92px + env(safe-area-inset-bottom,0px))!important}
+
+@media(max-width:560px){
+  .shil-page--admin .shil-admin-v24-root .shil-default-stage-v254 summary{min-height:56px!important}
+  .shil-page--admin .shil-admin-v24-root .shil-default-stage-v254 summary strong{font-size:11px!important}
+}
+@media(max-width:360px){
+  .shil-page--admin .shil-admin-v24-root .shil-default-stage-grid-v254{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:4px!important}
+  .shil-page--admin .shil-admin-v24-root .shil-default-stage-v254 summary{grid-template-columns:24px minmax(0,1fr) 14px!important;padding:5px 4px!important}
+  .shil-page--admin .shil-admin-v24-root .shil-default-stage-v254 summary strong{font-size:10px!important}
+  .shil-page--admin .shil-admin-v24-root .shil-default-actions-v254{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+}

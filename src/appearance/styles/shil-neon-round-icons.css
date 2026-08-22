@@ -1,0 +1,298 @@
+
+/* =========================================================
+   SHIL - DASHBOARD / NEW PROJECT NEON ROUND ICON BUTTONS
+   Applies a unified round raised button style to dashboard
+   and new-project icon tiles without changing app logic.
+   ========================================================= */
+
+:root {
+  --shil-neon-purple: #c77dff;
+  --shil-neon-purple-soft: rgba(199, 125, 255, 0.52);
+  --shil-neon-purple-line: rgba(207, 151, 255, 0.92);
+  --shil-neon-purple-inner: rgba(255, 255, 255, 0.38);
+  --shil-icon-glass-bg:
+    radial-gradient(circle at 30% 22%, rgba(255,255,255,.58), rgba(255,255,255,.18) 28%, rgba(255,255,255,.08) 58%, rgba(255,255,255,.04) 100%),
+    linear-gradient(145deg, rgba(255,255,255,.28), rgba(255,255,255,.09));
+}
+
+/* Dashboard / New Project icon wrappers */
+.dashboard-icon,
+.dashboard-card-icon,
+.dashboard-tile-icon,
+.dashboard-action-icon,
+.new-project-icon,
+.project-type-icon,
+.project-card-icon,
+.route-card-icon,
+.shil-dashboard-icon,
+.shil-new-project-icon,
+.mobile-dashboard-icon,
+.mobile-project-icon,
+[class*="dashboard"] .icon,
+[class*="Dashboard"] .icon,
+[class*="new-project"] .icon,
+[class*="NewProject"] .icon,
+[class*="project"] .card-icon,
+[class*="Project"] .card-icon,
+[class*="route"] .card-icon,
+[class*="Route"] .card-icon {
+  width: clamp(54px, 17vw, 74px) !important;
+  height: clamp(54px, 17vw, 74px) !important;
+  min-width: clamp(54px, 17vw, 74px) !important;
+  min-height: clamp(54px, 17vw, 74px) !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  border-radius: 999px !important;
+  position: relative !important;
+  isolation: isolate !important;
+
+  background: var(--shil-icon-glass-bg) !important;
+  border: 1.35px solid var(--shil-neon-purple-line) !important;
+
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.22) inset,
+    0 0 10px rgba(199,125,255,.34),
+    0 0 18px rgba(199,125,255,.22),
+    0 10px 24px rgba(0,0,0,.22),
+    inset 0 1px 0 rgba(255,255,255,.48),
+    inset 0 -8px 16px rgba(120,60,180,.12) !important;
+
+  backdrop-filter: blur(18px) saturate(175%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(175%) !important;
+
+  overflow: hidden !important;
+  transform: translateZ(0) !important;
+  transition:
+    transform .18s ease,
+    box-shadow .18s ease,
+    border-color .18s ease,
+    background .18s ease !important;
+}
+
+/* Thin luminous outer rim */
+.dashboard-icon::before,
+.dashboard-card-icon::before,
+.dashboard-tile-icon::before,
+.dashboard-action-icon::before,
+.new-project-icon::before,
+.project-type-icon::before,
+.project-card-icon::before,
+.route-card-icon::before,
+.shil-dashboard-icon::before,
+.shil-new-project-icon::before,
+.mobile-dashboard-icon::before,
+.mobile-project-icon::before,
+[class*="dashboard"] .icon::before,
+[class*="Dashboard"] .icon::before,
+[class*="new-project"] .icon::before,
+[class*="NewProject"] .icon::before,
+[class*="project"] .card-icon::before,
+[class*="Project"] .card-icon::before,
+[class*="route"] .card-icon::before,
+[class*="Route"] .card-icon::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 2px !important;
+  border-radius: inherit !important;
+  border: 1px solid rgba(255,255,255,.36) !important;
+  box-shadow:
+    0 0 8px rgba(199,125,255,.36),
+    inset 0 0 10px rgba(199,125,255,.13) !important;
+  pointer-events: none !important;
+  z-index: -1 !important;
+}
+
+/* Gloss highlight */
+.dashboard-icon::after,
+.dashboard-card-icon::after,
+.dashboard-tile-icon::after,
+.dashboard-action-icon::after,
+.new-project-icon::after,
+.project-type-icon::after,
+.project-card-icon::after,
+.route-card-icon::after,
+.shil-dashboard-icon::after,
+.shil-new-project-icon::after,
+.mobile-dashboard-icon::after,
+.mobile-project-icon::after,
+[class*="dashboard"] .icon::after,
+[class*="Dashboard"] .icon::after,
+[class*="new-project"] .icon::after,
+[class*="NewProject"] .icon::after,
+[class*="project"] .card-icon::after,
+[class*="Project"] .card-icon::after,
+[class*="route"] .card-icon::after,
+[class*="Route"] .card-icon::after {
+  content: "" !important;
+  position: absolute !important;
+  top: 8px !important;
+  left: 13px !important;
+  width: 42% !important;
+  height: 24% !important;
+  border-radius: 999px !important;
+  background: linear-gradient(180deg, rgba(255,255,255,.72), rgba(255,255,255,.08)) !important;
+  transform: rotate(-18deg) !important;
+  pointer-events: none !important;
+}
+
+/* Icons inside the button */
+.dashboard-icon img,
+.dashboard-card-icon img,
+.dashboard-tile-icon img,
+.dashboard-action-icon img,
+.new-project-icon img,
+.project-type-icon img,
+.project-card-icon img,
+.route-card-icon img,
+.shil-dashboard-icon img,
+.shil-new-project-icon img,
+.mobile-dashboard-icon img,
+.mobile-project-icon img,
+[class*="dashboard"] .icon img,
+[class*="Dashboard"] .icon img,
+[class*="new-project"] .icon img,
+[class*="NewProject"] .icon img,
+[class*="project"] .card-icon img,
+[class*="Project"] .card-icon img,
+[class*="route"] .card-icon img,
+[class*="Route"] .card-icon img,
+.dashboard-icon svg,
+.dashboard-card-icon svg,
+.dashboard-tile-icon svg,
+.dashboard-action-icon svg,
+.new-project-icon svg,
+.project-type-icon svg,
+.project-card-icon svg,
+.route-card-icon svg,
+.shil-dashboard-icon svg,
+.shil-new-project-icon svg,
+.mobile-dashboard-icon svg,
+.mobile-project-icon svg,
+[class*="dashboard"] .icon svg,
+[class*="Dashboard"] .icon svg,
+[class*="new-project"] .icon svg,
+[class*="NewProject"] .icon svg,
+[class*="project"] .card-icon svg,
+[class*="Project"] .card-icon svg,
+[class*="route"] .card-icon svg,
+[class*="Route"] .card-icon svg {
+  width: 58% !important;
+  height: 58% !important;
+  max-width: 44px !important;
+  max-height: 44px !important;
+  object-fit: contain !important;
+  display: block !important;
+  filter:
+    drop-shadow(0 2px 3px rgba(0,0,0,.22))
+    drop-shadow(0 0 6px rgba(199,125,255,.22)) !important;
+  z-index: 1 !important;
+}
+
+/* Make the parent tile feel clickable/raised without forcing layout changes */
+.dashboard-card,
+.dashboard-tile,
+.dashboard-action,
+.new-project-card,
+.project-type-card,
+.route-card,
+.project-card,
+.shil-dashboard-card,
+.shil-project-card,
+[class*="dashboard"] .card,
+[class*="Dashboard"] .card,
+[class*="new-project"] .card,
+[class*="NewProject"] .card,
+[class*="project"] .card,
+[class*="Project"] .card,
+[class*="route"] .card,
+[class*="Route"] .card {
+  overflow: visible !important;
+}
+
+/* Touch feedback */
+.dashboard-card:active .dashboard-icon,
+.dashboard-tile:active .dashboard-tile-icon,
+.dashboard-action:active .dashboard-action-icon,
+.new-project-card:active .new-project-icon,
+.project-type-card:active .project-type-icon,
+.route-card:active .route-card-icon,
+.project-card:active .project-card-icon,
+[class*="dashboard"] .card:active .icon,
+[class*="Dashboard"] .card:active .icon,
+[class*="new-project"] .card:active .icon,
+[class*="NewProject"] .card:active .icon,
+[class*="project"] .card:active .card-icon,
+[class*="Project"] .card:active .card-icon,
+[class*="route"] .card:active .card-icon,
+[class*="Route"] .card:active .card-icon {
+  transform: scale(.96) translateY(1px) !important;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.20) inset,
+    0 0 8px rgba(199,125,255,.28),
+    0 6px 16px rgba(0,0,0,.22),
+    inset 0 2px 8px rgba(0,0,0,.12) !important;
+}
+
+/* =====================================================
+   SHIL PAGE SHELL - FINAL LAYOUT
+   ===================================================== */
+
+.shil-page-shell{
+    position:relative !important;
+    width:100% !important;
+    height:100dvh !important;
+    min-height:100dvh !important;
+    overflow:hidden !important;
+}
+
+.shil-page-content{
+    position:absolute !important;
+
+    top:55px !important;
+    left:0 !important;
+    right:0 !important;
+    bottom:40px !important;
+
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+
+    box-sizing:border-box !important;
+
+    -webkit-overflow-scrolling:touch !important;
+}
+
+.shil-no-header .shil-page-content{
+    top:0 !important;
+}
+
+.shil-no-footer .shil-page-content{
+    bottom:0 !important;
+}
+
+.shil-fixed-header{
+    position:fixed !important;
+    top:0 !important;
+    left:0 !important;
+    right:0 !important;
+    height:55px !important;
+    min-height:55px !important;
+    max-height:55px !important;
+    z-index:4000 !important;
+}
+
+.shil-fixed-footer{
+    position:fixed !important;
+    left:0 !important;
+    right:0 !important;
+    bottom:0 !important;
+
+    height:40px !important;
+    min-height:40px !important;
+    max-height:40px !important;
+
+    z-index:4000 !important;
+}
+

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="مسیر">
+  <defs>
+    <linearGradient id="g" x1="20" y1="12" x2="108" y2="116" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffe8a3"/>
+      <stop offset="0.52" stop-color="#d7a22f"/>
+      <stop offset="1" stop-color="#7a4d08"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="46%" r="62%">
+      <stop offset="0" stop-color="#fff2bc" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#0f1b33" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="s" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="8" flood-color="#000" flood-opacity=".32"/>
+      <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#ffd66c" flood-opacity=".26"/>
+    </filter>
+  </defs>
+  <circle cx="64" cy="64" r="54" fill="url(#glow)"/>
+  <rect x="23" y="23" width="82" height="82" rx="24" fill="#0b172a" opacity=".88"/>
+  <rect x="29" y="29" width="70" height="70" rx="20" fill="url(#g)" filter="url(#s)"/>
+  <path d="M42 84h44M42 67h44M42 50h44" stroke="#241400" stroke-width="7" stroke-linecap="round" opacity=".8"/>
+  <text x="64" y="75" text-anchor="middle" dominant-baseline="middle" font-family="Arial, sans-serif" font-size="28" font-weight="800" fill="#1d1303">↗</text>
+</svg>

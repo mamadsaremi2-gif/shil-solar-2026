@@ -1,0 +1,15 @@
+SHIL V25.4.1 - Admin Defaults UI Refinement
+
+Changes:
+- Shortened the two Admin default-route entry cards to Solar / Emergency.
+- Removed secondary descriptions from closed 8-stage cards.
+- Converted route header into a compact one-line title.
+- Kept details inside accordion bodies only.
+- Compact three-button action bar: Save / Publish / Reset.
+- Added bottom safe-area clearance for fixed footer.
+- Added final Admin CSS override to neutralize legacy purple/indigo module surfaces.
+- Preserved sky-blue / ice-blue / white-glass SHIL palette.
+- No engine, calculation, database, or V25.3 emergency logic changed.
+
+QA:
+SHIL V25.4.1 Admin UI static QA passed.

@@ -1,0 +1,249 @@
+/* SHIL V5.13 - global compact layout for all engineering pages */
+
+/* Keep authentication and welcome screens untouched. */
+.shil-page-shell:not(.shil-page--auth):not(.shil-page--welcome) .shil-engineering-content,
+.shil-page-shell:not(.shil-page--auth):not(.shil-page--welcome) .shil-ds-engineering-content,
+.shil-page-shell:not(.shil-page--auth):not(.shil-page--welcome) .shil-page-content,
+.shil-page-shell:not(.shil-page--auth):not(.shil-page--welcome) .shil-page-scroll {
+  gap: 10px !important;
+}
+
+/* Remove empty height and oversized spacing from structural wrappers. */
+.shil-page-shell:not(.shil-page--auth):not(.shil-page--welcome) :is(
+  .shil-env-page,
+  .shil-equipment-page,
+  .shil-system-settings-page,
+  .shil-summary-page,
+  .shil-final-delivery-page,
+  .shil-project-path-page,
+  .shil-page-stack,
+  .shil-card-stack,
+  .shil-section-stack,
+  .shil-form-stack,
+  .shil-result-stack
+) {
+  gap: 10px !important;
+  margin-block: 0 !important;
+  padding-block: 0 !important;
+  min-height: 0 !important;
+}
+
+/* Structural section wrappers should not create another white page. */
+.shil-page-shell:not(.shil-page--auth):not(.shil-page--welcome) :is(
+  .shil-env-card,
+  .shil-section-card,
+  .shil-config-block,
+  .shil-summary-section,
+  .shil-final-one-page-sheet,
+  .shil-execution-card,
+  .shil-project-path-card,
+  .shil-form-card,
+  .shil-result-card
+) {
+  min-height: 0 !important;
+}
+
+/* Compact titles across all engineering pages. */
+.shil-page-shell:not(.shil-page--auth):not(.shil-page--welcome) :is(
+  .shil-section-title,
+  .shil-section-head,
+  .shil-summary-title,
+  .shil-config-title,
+  .shil-panel-title,
+  .shil-card-title,
+  .shil-final-action-heading
+) {
+  min-height: 0 !important;
+  margin: 0 0 6px !important;
+  padding: 8px 12px !important;
+  border-radius: 15px !important;
+  font-size: clamp(14px, 3.4vw, 19px) !important;
+  line-height: 1.25 !important;
+}
+
+/* Compact field and result cards. */
+.shil-page-shell:not(.shil-page--auth):not(.shil-page--welcome) :is(
+  .shil-field-card,
+  .shil-data-card,
+  .shil-summary-card,
+  .shil-compact-summary-card,
+  .shil-final-compact-card,
+  .shil-equipment-picker-card,
+  .shil-equipment-results-card,
+  .shil-bank-smart-card,
+  .shil-result-item,
+  .shil-info-item,
+  .shil-stat-card,
+  .shil-metric-card
+) {
+  min-height: 50px !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 8px 10px !important;
+  border-radius: 14px !important;
+  box-shadow: none !important;
+}
+
+/* General compact grids. */
+.shil-page-shell:not(.shil-page--auth):not(.shil-page--welcome) :is(
+  .shil-form-grid,
+  .shil-summary-grid,
+  .shil-data-grid,
+  .shil-result-grid,
+  .shil-bank-grid,
+  .shil-equipment-grid,
+  .shil-settings-grid,
+  .shil-metrics-grid
+) {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+  margin: 0 !important;
+}
+
+/* Place short label/value pairs efficiently. */
+.shil-page-shell:not(.shil-page--auth):not(.shil-page--welcome) :is(
+  .shil-field-card,
+  .shil-data-card,
+  .shil-summary-card,
+  .shil-result-item,
+  .shil-info-item,
+  .shil-stat-card,
+  .shil-metric-card
+) > :is(label, span, small, strong, p) {
+  min-width: 0 !important;
+  margin-block: 1px !important;
+  line-height: 1.3 !important;
+  overflow-wrap: anywhere !important;
+}
+
+/* Inputs should be shorter but remain touch friendly. */
+.shil-page-shell:not(.shil-page--auth):not(.shil-page--welcome) :is(
+  input,
+  select,
+  textarea,
+  .shil-input,
+  .shil-select
+) {
+  min-height: 42px !important;
+  height: auto !important;
+  padding: 8px 10px !important;
+  border-radius: 13px !important;
+  line-height: 1.25 !important;
+}
+
+.shil-page-shell:not(.shil-page--auth):not(.shil-page--welcome) textarea {
+  min-height: 70px !important;
+}
+
+/* Compact lists, tables and upload areas. */
+.shil-page-shell:not(.shil-page--auth):not(.shil-page--welcome) :is(
+  table,
+  .shil-table,
+  .shil-equipment-table,
+  .shil-upload-area,
+  .shil-map-container,
+  .shil-gallery,
+  .shil-warning,
+  .shil-alert
+) {
+  margin-block: 0 !important;
+}
+
+.shil-page-shell:not(.shil-page--auth):not(.shil-page--welcome) :is(th, td) {
+  padding: 7px 8px !important;
+  line-height: 1.3 !important;
+}
+
+/* Keep notices inside document flow and reduce their height. */
+.shil-page-shell:not(.shil-page--auth):not(.shil-page--welcome) :is(
+  .shil-warning-overlay,
+  .shil-warning,
+  .shil-alert,
+  .shil-inline-warning,
+  .shil-system-warning
+) {
+  position: relative !important;
+  inset: auto !important;
+  transform: none !important;
+  width: 100% !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 9px 12px !important;
+  line-height: 1.45 !important;
+}
+
+/* Keep confirmation/action rows compact and centered. */
+.shil-page-shell:not(.shil-page--auth):not(.shil-page--welcome) :is(
+  .shil-confirm-slot,
+  .shil-input-content-confirm-slot,
+  .shil-action-row,
+  .shil-form-actions
+) {
+  min-height: 0 !important;
+  margin-top: 8px !important;
+  padding: 0 !important;
+  gap: 8px !important;
+}
+
+/* Reduce vertical padding from navigation/content chrome without changing layout. */
+.shil-page-shell:not(.shil-page--auth):not(.shil-page--welcome) .shil-project-mini-rail {
+  margin-bottom: 8px !important;
+}
+
+@media (max-width: 620px) {
+  .shil-page-shell:not(.shil-page--auth):not(.shil-page--welcome) :is(
+    .shil-form-grid,
+    .shil-summary-grid,
+    .shil-data-grid,
+    .shil-result-grid,
+    .shil-bank-grid,
+    .shil-equipment-grid,
+    .shil-settings-grid,
+    .shil-metrics-grid
+  ) {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 6px !important;
+  }
+
+  /* Long-content cards use full width; short cards stay in the two-column grid. */
+  .shil-page-shell:not(.shil-page--auth):not(.shil-page--welcome) :is(
+    textarea,
+    .shil-map-container,
+    .shil-upload-area,
+    .shil-gallery,
+    .shil-warning,
+    .shil-alert,
+    .shil-table-wrap,
+    .shil-full-width,
+    [data-full-width="true"]
+  ) {
+    grid-column: 1 / -1 !important;
+  }
+
+  .shil-page-shell:not(.shil-page--auth):not(.shil-page--welcome) :is(
+    .shil-field-card,
+    .shil-data-card,
+    .shil-summary-card,
+    .shil-result-item,
+    .shil-info-item,
+    .shil-stat-card,
+    .shil-metric-card
+  ) {
+    min-height: 46px !important;
+    padding: 7px 8px !important;
+  }
+
+  .shil-page-shell:not(.shil-page--auth):not(.shil-page--welcome) :is(
+    .shil-section-title,
+    .shil-section-head,
+    .shil-summary-title,
+    .shil-config-title,
+    .shil-panel-title,
+    .shil-card-title,
+    .shil-final-action-heading
+  ) {
+    padding: 7px 10px !important;
+    margin-bottom: 5px !important;
+  }
+}

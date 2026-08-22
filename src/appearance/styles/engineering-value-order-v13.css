@@ -1,0 +1,54 @@
+/* ================================================================
+   SHIL V13 - GLOBAL ENGINEERING VALUE ORDER
+   Visual contract in every RTL app page: NUMBER first, UNIT second.
+   Examples: 2200 W | 5.7 H | 92 % | 20 A | 87.04 KWH
+   ================================================================ */
+
+/* Common calculated/result value containers across project pages. */
+body:not(.login-page):not(.welcome-page) :is(
+  .shil-summary-grid,
+  .shil-summary-kv-grid,
+  .shil-compact-data-grid,
+  .shil-result-field-grid,
+  .shil-result-grid,
+  .shil-engineering-grid,
+  .shil-final-sheet-grid,
+  .shil-final-equipment-table,
+  .shil-run-native-metric-grid,
+  .shil-run-native-table,
+  .shil-equipment-bank-table,
+  .shil-result-partitions
+) strong,
+body:not(.login-page):not(.welcome-page) :is(
+  .shil-summary-kv-value,
+  .shil-summary-item > strong,
+  .shil-summary-kv-card > strong,
+  .metric-value-v15,
+  .result-value-v15,
+  .shil-value,
+  .shil-number
+) {
+  direction: ltr !important;
+  unicode-bidi: isolate !important;
+  text-align: center !important;
+  font-variant-numeric: lining-nums tabular-nums !important;
+}
+
+/* Execution/output page: force the same ordering even against older RTL !important rules. */
+#shil-execution-output-root .shil-run-native-metric-card strong,
+#shil-execution-output-root .shil-run-native-table-row strong,
+#shil-execution-output-root .shil-final-compact-row strong,
+#shil-execution-output-root .shil-final-equipment-table strong {
+  direction: ltr !important;
+  unicode-bidi: isolate !important;
+  text-align: center !important;
+}
+
+/* Generic numeric output elements used by older pages. */
+body:not(.login-page):not(.welcome-page) output,
+body:not(.login-page):not(.welcome-page) [data-engineering-value="true"] {
+  direction: ltr !important;
+  unicode-bidi: isolate !important;
+  text-align: center !important;
+  font-variant-numeric: lining-nums tabular-nums !important;
+}

@@ -1,0 +1,309 @@
+/* SHIL System Settings V5.15
+   Compact settings layout + sticky project rail below the fixed header.
+   Imported after all earlier visual layers. */
+
+/* The page content itself remains the only scroll container. */
+.shil-page--system-settings main.shil-page-content,
+.shil-page--system-settings main.shil-page-content.shil-ds-page-root {
+  position: relative !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  scroll-padding-top: 112px !important;
+  padding-top: 0 !important;
+}
+
+/* Keep the workflow rail visible immediately below the header while settings data scrolls. */
+.shil-page--system-settings main.shil-page-content > .shil-project-mini-rail,
+.shil-page--system-settings .shil-engineering-content > .shil-project-mini-rail {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 120 !important;
+  width: calc(100% - 8px) !important;
+  max-width: 980px !important;
+  min-height: 0 !important;
+  height: auto !important;
+  margin: 0 auto 8px !important;
+  padding: 6px 8px !important;
+  background: rgba(241, 251, 255, 0.97) !important;
+  border: 1px solid rgba(198, 220, 235, 0.94) !important;
+  border-radius: 0 0 20px 20px !important;
+  box-shadow: 0 8px 18px rgba(5, 22, 44, 0.18) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+}
+
+.shil-page--system-settings .shil-project-mini-rail .project-mini-rail-grid {
+  min-height: 0 !important;
+  padding: 0 !important;
+  gap: 8px !important;
+}
+
+.shil-page--system-settings .shil-project-mini-rail :is(a, button, .shil-step-item, .ios-icon-item) {
+  min-height: 70px !important;
+  padding: 4px 5px !important;
+  gap: 4px !important;
+}
+
+.shil-page--system-settings .shil-project-mini-rail :is(img, svg, .ios-icon, .shil-step-icon) {
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px !important;
+  min-height: 42px !important;
+}
+
+.shil-page--system-settings .shil-project-mini-rail :is(span, strong, p) {
+  margin: 0 !important;
+  font-size: 11px !important;
+  line-height: 1.2 !important;
+}
+
+/* Root is a compact transparent layout stack. */
+#shil-system-settings-unified-root {
+  gap: 9px !important;
+  width: min(100%, 980px) !important;
+  padding: 0 8px calc(70px + env(safe-area-inset-bottom, 0px)) !important;
+}
+
+#shil-system-settings-unified-root > section.shil-section-card.shil-config-block,
+#shil-system-settings-unified-root > .shil-bank-grid {
+  gap: 7px !important;
+}
+
+/* Compact section bars. */
+#shil-system-settings-unified-root .shil-section-head {
+  width: 100% !important;
+  min-height: 42px !important;
+  margin: 0 !important;
+  padding: 7px 12px !important;
+  gap: 5px 12px !important;
+  border-radius: 15px !important;
+  box-shadow: none !important;
+}
+
+#shil-system-settings-unified-root .shil-section-head h2,
+#shil-system-settings-unified-root .shil-section-head h3 {
+  font-size: clamp(16px, 3.6vw, 21px) !important;
+  line-height: 1.2 !important;
+}
+
+#shil-system-settings-unified-root .shil-section-head span {
+  font-size: 11px !important;
+  line-height: 1.2 !important;
+}
+
+/* Use dense two-column grids throughout mobile settings. */
+#shil-system-settings-unified-root :is(
+  .shil-summary-grid,
+  .shil-form-grid.compact,
+  .shil-choice-grid,
+  .shil-choice-grid.three,
+  .shil-bank-datasheet-grid
+) {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 7px !important;
+}
+
+/* Three system types fit in one row where enough width exists. */
+@media (min-width: 560px) {
+  #shil-system-settings-unified-root .shil-choice-grid.three {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+/* Short information cards: remove empty height and tighten content. */
+#shil-system-settings-unified-root :is(
+  .shil-summary-grid > div,
+  .shil-bank-datasheet-grid > div,
+  .shil-summary-modern-item,
+  .shil-summary-detail-item
+) {
+  min-height: 56px !important;
+  height: auto !important;
+  padding: 7px 8px !important;
+  gap: 3px !important;
+  border-radius: 13px !important;
+  box-shadow: none !important;
+}
+
+#shil-system-settings-unified-root :is(
+  .shil-summary-grid span,
+  .shil-bank-datasheet-grid span,
+  .shil-summary-modern-item span,
+  .shil-summary-detail-item span
+) {
+  font-size: 10px !important;
+  line-height: 1.2 !important;
+}
+
+#shil-system-settings-unified-root :is(
+  .shil-summary-grid strong,
+  .shil-bank-datasheet-grid strong,
+  .shil-summary-modern-item strong,
+  .shil-summary-detail-item strong
+) {
+  font-size: 13px !important;
+  line-height: 1.25 !important;
+}
+
+/* Override SummaryGrid inline surfaces and spacing. */
+#shil-system-settings-unified-root .shil-summary-table-card {
+  border-radius: 15px !important;
+  box-shadow: none !important;
+}
+
+#shil-system-settings-unified-root .shil-summary-table-card > div:first-child {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 7px !important;
+  padding: 7px !important;
+}
+
+#shil-system-settings-unified-root .shil-summary-detail-chip {
+  min-height: 36px !important;
+  height: 36px !important;
+  padding: 5px 8px !important;
+  font-size: 12px !important;
+}
+
+#shil-system-settings-unified-root .shil-summary-details {
+  padding: 7px !important;
+}
+
+#shil-system-settings-unified-root .shil-summary-details-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 7px !important;
+}
+
+/* System type choice cards become compact horizontal label/value cards. */
+#shil-system-settings-unified-root .shil-choice-card {
+  min-height: 64px !important;
+  height: auto !important;
+  padding: 7px 8px !important;
+  gap: 2px !important;
+  border-radius: 13px !important;
+  box-shadow: none !important;
+}
+
+#shil-system-settings-unified-root .shil-choice-card strong {
+  font-size: 14px !important;
+  line-height: 1.2 !important;
+}
+
+#shil-system-settings-unified-root .shil-choice-card span {
+  font-size: 10px !important;
+  line-height: 1.2 !important;
+}
+
+/* Design factor controls: compact label and control in the same card. */
+#shil-system-settings-unified-root .shil-form-grid.compact > label {
+  min-height: 72px !important;
+  height: auto !important;
+  padding: 7px !important;
+  gap: 5px !important;
+  border-radius: 13px !important;
+  box-shadow: none !important;
+  font-size: 11px !important;
+  line-height: 1.2 !important;
+}
+
+#shil-system-settings-unified-root :is(input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
+  min-height: 38px !important;
+  height: 38px !important;
+  padding: 5px 8px !important;
+  border-radius: 11px !important;
+  font-size: 13px !important;
+}
+
+/* Equipment banks stay full width but use compact internal rows. */
+#shil-system-settings-unified-root .shil-bank-grid {
+  gap: 9px !important;
+}
+
+#shil-system-settings-unified-root .shil-equipment-bank-card {
+  gap: 7px !important;
+  padding: 8px !important;
+  border-radius: 15px !important;
+  box-shadow: none !important;
+}
+
+#shil-system-settings-unified-root .shil-equipment-bank-title {
+  min-height: 39px !important;
+  padding: 6px 10px !important;
+  border-radius: 12px !important;
+  font-size: clamp(15px, 3.4vw, 19px) !important;
+}
+
+#shil-system-settings-unified-root .shil-equipment-bank-table :is(th, td) {
+  padding: 6px 4px !important;
+  font-size: 10px !important;
+  line-height: 1.2 !important;
+}
+
+#shil-system-settings-unified-root .shil-equipment-bank-chip,
+#shil-system-settings-unified-root .shil-equipment-bank-sheet {
+  min-height: 32px !important;
+  padding: 5px 7px !important;
+  font-size: 10px !important;
+  border-radius: 9px !important;
+}
+
+/* Warnings stay in normal flow and no longer cover controls. */
+#shil-system-settings-unified-root :is(
+  .shil-floating-warning,
+  .shil-warning-overlay,
+  .shil-inline-warning,
+  .shil-system-warning
+) {
+  position: relative !important;
+  inset: auto !important;
+  transform: none !important;
+  width: 100% !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 7px 9px !important;
+  font-size: 11px !important;
+  line-height: 1.35 !important;
+}
+
+#shil-system-settings-unified-root .shil-env-content-confirm-slot {
+  min-height: 0 !important;
+  margin: 5px 0 10px !important;
+  padding: 0 !important;
+}
+
+@media (max-width: 520px) {
+  .shil-page--system-settings main.shil-page-content > .shil-project-mini-rail,
+  .shil-page--system-settings .shil-engineering-content > .shil-project-mini-rail {
+    width: 100% !important;
+    margin-bottom: 6px !important;
+    padding: 4px 5px !important;
+    border-radius: 0 0 16px 16px !important;
+  }
+
+  .shil-page--system-settings .shil-project-mini-rail :is(a, button, .shil-step-item, .ios-icon-item) {
+    min-height: 62px !important;
+  }
+
+  .shil-page--system-settings .shil-project-mini-rail :is(img, svg, .ios-icon, .shil-step-icon) {
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    min-height: 36px !important;
+  }
+
+  #shil-system-settings-unified-root {
+    padding-inline: 5px !important;
+    gap: 7px !important;
+  }
+
+  #shil-system-settings-unified-root :is(
+    .shil-summary-grid,
+    .shil-form-grid.compact,
+    .shil-choice-grid,
+    .shil-choice-grid.three,
+    .shil-bank-datasheet-grid
+  ) {
+    gap: 5px !important;
+  }
+}

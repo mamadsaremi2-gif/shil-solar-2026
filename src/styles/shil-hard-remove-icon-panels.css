@@ -1,0 +1,534 @@
+
+/* =========================================================
+   SHIL HARD REMOVE ICON PANELS
+   Dashboard + New Project:
+   حذف قطعی مستطیل/پنل/گلاسه پشت آیکون‌ها
+   ========================================================= */
+
+/* Make main background visible */
+html,
+body,
+#root {
+  min-height: 100% !important;
+}
+
+body:not(.login-page):not(.welcome-page),
+body:not(.login-page):not(.welcome-page) #root,
+body:not(.login-page):not(.welcome-page) .app,
+body:not(.login-page):not(.welcome-page) .shil-app,
+body:not(.login-page):not(.welcome-page) .mobile-app,
+body:not(.login-page):not(.welcome-page) .app-shell,
+body:not(.login-page):not(.welcome-page) .shil-shell,
+body:not(.login-page):not(.welcome-page) .mobile-shell,
+body:not(.login-page):not(.welcome-page) .page,
+body:not(.login-page):not(.welcome-page) .screen,
+body:not(.login-page):not(.welcome-page) .mobile-page,
+body:not(.login-page):not(.welcome-page) .shil-page,
+body:not(.login-page):not(.welcome-page) .shil-main,
+body:not(.login-page):not(.welcome-page) main {
+  background-image: url('/assets/shil/background/main/shil-main-bg.webp') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  background-attachment: fixed !important;
+}
+
+/* Exact routes often attach page wrappers */
+body:not(.login-page):not(.welcome-page) [data-page="dashboard"],
+body:not(.login-page):not(.welcome-page) [data-page="new-project"],
+body:not(.login-page):not(.welcome-page) [data-route="dashboard"],
+body:not(.login-page):not(.welcome-page) [data-route="new-project"],
+body:not(.login-page):not(.welcome-page) .dashboard-page,
+body:not(.login-page):not(.welcome-page) .dashboard-screen,
+body:not(.login-page):not(.welcome-page) .dashboard-container,
+body:not(.login-page):not(.welcome-page) .dashboard-content,
+body:not(.login-page):not(.welcome-page) .dashboard-wrapper,
+body:not(.login-page):not(.welcome-page) .dashboard-grid,
+body:not(.login-page):not(.welcome-page) .dashboard-grid-wrapper,
+body:not(.login-page):not(.welcome-page) .dashboard-icons,
+body:not(.login-page):not(.welcome-page) .dashboard-menu,
+body:not(.login-page):not(.welcome-page) .dashboard-panel,
+body:not(.login-page):not(.welcome-page) .dashboard-section,
+body:not(.login-page):not(.welcome-page) .dashboard-card,
+body:not(.login-page):not(.welcome-page) .dashboard-card-wrapper,
+body:not(.login-page):not(.welcome-page) .shil-dashboard,
+body:not(.login-page):not(.welcome-page) .new-project-page,
+body:not(.login-page):not(.welcome-page) .new-project-screen,
+body:not(.login-page):not(.welcome-page) .new-project-container,
+body:not(.login-page):not(.welcome-page) .new-project-content,
+body:not(.login-page):not(.welcome-page) .new-project-wrapper,
+body:not(.login-page):not(.welcome-page) .new-project-grid,
+body:not(.login-page):not(.welcome-page) .new-project-grid-3x3,
+body:not(.login-page):not(.welcome-page) .new-project-grid-wrapper,
+body:not(.login-page):not(.welcome-page) .new-project-card,
+body:not(.login-page):not(.welcome-page) .project-grid,
+body:not(.login-page):not(.welcome-page) .project-grid-wrapper,
+body:not(.login-page):not(.welcome-page) .project-menu,
+body:not(.login-page):not(.welcome-page) .project-menu-container,
+body:not(.login-page):not(.welcome-page) .project-path-icons,
+body:not(.login-page):not(.welcome-page) .project-selection-panel,
+body:not(.login-page):not(.welcome-page) .project-selection-wrapper,
+body:not(.login-page):not(.welcome-page) .shil-ios-grid,
+body:not(.login-page):not(.welcome-page) .shil-ios-icon-link {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Any parent that contains the iOS icon grid should not paint a panel */
+body:not(.login-page):not(.welcome-page) div:has(.shil-ios-grid),
+body:not(.login-page):not(.welcome-page) section:has(.shil-ios-grid),
+body:not(.login-page):not(.welcome-page) article:has(.shil-ios-grid),
+body:not(.login-page):not(.welcome-page) main:has(.shil-ios-grid),
+body:not(.login-page):not(.welcome-page) div:has(.shil-ios-icon-link),
+body:not(.login-page):not(.welcome-page) section:has(.shil-ios-icon-link),
+body:not(.login-page):not(.welcome-page) article:has(.shil-ios-icon-link) {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Remove all pseudo overlays from icon parents */
+body:not(.login-page):not(.welcome-page) div:has(.shil-ios-grid)::before,
+body:not(.login-page):not(.welcome-page) div:has(.shil-ios-grid)::after,
+body:not(.login-page):not(.welcome-page) section:has(.shil-ios-grid)::before,
+body:not(.login-page):not(.welcome-page) section:has(.shil-ios-grid)::after,
+body:not(.login-page):not(.welcome-page) article:has(.shil-ios-grid)::before,
+body:not(.login-page):not(.welcome-page) article:has(.shil-ios-grid)::after,
+body:not(.login-page):not(.welcome-page) div:has(.shil-ios-icon-link)::before,
+body:not(.login-page):not(.welcome-page) div:has(.shil-ios-icon-link)::after,
+body:not(.login-page):not(.welcome-page) section:has(.shil-ios-icon-link)::before,
+body:not(.login-page):not(.welcome-page) section:has(.shil-ios-icon-link)::after,
+body:not(.login-page):not(.welcome-page) article:has(.shil-ios-icon-link)::before,
+body:not(.login-page):not(.welcome-page) article:has(.shil-ios-icon-link)::after {
+  display: none !important;
+  content: none !important;
+  background: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Neutralize generic cards/panels only when they wrap icon grid/link */
+body:not(.login-page):not(.welcome-page) .shil-card:has(.shil-ios-grid),
+body:not(.login-page):not(.welcome-page) .shil-panel:has(.shil-ios-grid),
+body:not(.login-page):not(.welcome-page) .shil-block:has(.shil-ios-grid),
+body:not(.login-page):not(.welcome-page) .shil-section:has(.shil-ios-grid),
+body:not(.login-page):not(.welcome-page) .mobile-card:has(.shil-ios-grid),
+body:not(.login-page):not(.welcome-page) div[class*="card"]:has(.shil-ios-grid),
+body:not(.login-page):not(.welcome-page) div[class*="Card"]:has(.shil-ios-grid),
+body:not(.login-page):not(.welcome-page) div[class*="panel"]:has(.shil-ios-grid),
+body:not(.login-page):not(.welcome-page) div[class*="Panel"]:has(.shil-ios-grid),
+body:not(.login-page):not(.welcome-page) div[class*="wrapper"]:has(.shil-ios-grid),
+body:not(.login-page):not(.welcome-page) div[class*="Wrapper"]:has(.shil-ios-grid),
+body:not(.login-page):not(.welcome-page) div[class*="container"]:has(.shil-ios-grid),
+body:not(.login-page):not(.welcome-page) div[class*="Container"]:has(.shil-ios-grid) {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Preserve only the actual icon circles */
+body:not(.login-page):not(.welcome-page) .shil-ios-icon-img {
+  background: rgba(241,247,251,.84) !important;
+  background-image: none !important;
+  border: 1px solid rgba(188,139,255,.45) !important;
+  box-shadow:
+    0 0 8px rgba(199,125,255,.24),
+    0 10px 22px rgba(14,35,55,.13),
+    inset 0 1px 0 rgba(255,255,255,.82) !important;
+  filter: none !important;
+  backdrop-filter: blur(10px) saturate(130%) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(130%) !important;
+}
+
+/* Safety: if a large translucent white rectangle is inline-styled around icon grid */
+body:not(.login-page):not(.welcome-page) [style*="rgba(255, 255, 255"]:has(.shil-ios-grid),
+body:not(.login-page):not(.welcome-page) [style*="rgba(255,255,255"]:has(.shil-ios-grid),
+body:not(.login-page):not(.welcome-page) [style*="background"]:has(.shil-ios-grid),
+body:not(.login-page):not(.welcome-page) [style*="box-shadow"]:has(.shil-ios-grid),
+body:not(.login-page):not(.welcome-page) [style*="backdrop-filter"]:has(.shil-ios-grid) {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Discovered source selectors */
+body:not(.login-page):not(.welcome-page) .advanced-form-status-grid-v15,
+body:not(.login-page):not(.welcome-page) .ag-grid-v15,
+body:not(.login-page):not(.welcome-page) .ai-feature-grid-v15,
+body:not(.login-page):not(.welcome-page) .ai-panel-v15,
+body:not(.login-page):not(.welcome-page) .analytics-dashboard-v15,
+body:not(.login-page):not(.welcome-page) .backend-grid-v15,
+body:not(.login-page):not(.welcome-page) .backend-panel-v15,
+body:not(.login-page):not(.welcome-page) .calculateProject,
+body:not(.login-page):not(.welcome-page) .cards-grid,
+body:not(.login-page):not(.welcome-page) .createProject,
+body:not(.login-page):not(.welcome-page) .dash-card-menu,
+body:not(.login-page):not(.welcome-page) .dash-grid-v15,
+body:not(.login-page):not(.welcome-page) .dash-panel-v15,
+body:not(.login-page):not(.welcome-page) .dashboard,
+body:not(.login-page):not(.welcome-page) .dashboard-action,
+body:not(.login-page):not(.welcome-page) .dashboard-action-icon,
+body:not(.login-page):not(.welcome-page) .dashboard-bg-glow,
+body:not(.login-page):not(.welcome-page) .dashboard-block,
+body:not(.login-page):not(.welcome-page) .dashboard-card,
+body:not(.login-page):not(.welcome-page) .dashboard-card-icon,
+body:not(.login-page):not(.welcome-page) .dashboard-card-wrapper,
+body:not(.login-page):not(.welcome-page) .dashboard-container,
+body:not(.login-page):not(.welcome-page) .dashboard-content,
+body:not(.login-page):not(.welcome-page) .dashboard-grid,
+body:not(.login-page):not(.welcome-page) .dashboard-grid-v15,
+body:not(.login-page):not(.welcome-page) .dashboard-grid-wrapper,
+body:not(.login-page):not(.welcome-page) .dashboard-header-v15,
+body:not(.login-page):not(.welcome-page) .dashboard-icon,
+body:not(.login-page):not(.welcome-page) .dashboard-icons,
+body:not(.login-page):not(.welcome-page) .dashboard-icons-wrapper,
+body:not(.login-page):not(.welcome-page) .dashboard-main-v15,
+body:not(.login-page):not(.welcome-page) .dashboard-page,
+body:not(.login-page):not(.welcome-page) .dashboard-panel,
+body:not(.login-page):not(.welcome-page) .dashboard-screen,
+body:not(.login-page):not(.welcome-page) .dashboard-section,
+body:not(.login-page):not(.welcome-page) .dashboard-shell-v15,
+body:not(.login-page):not(.welcome-page) .dashboard-tile,
+body:not(.login-page):not(.welcome-page) .dashboard-tile-icon,
+body:not(.login-page):not(.welcome-page) .dashboard-wrapper,
+body:not(.login-page):not(.welcome-page) .data-grid,
+body:not(.login-page):not(.welcome-page) .data-layer-grid-v15,
+body:not(.login-page):not(.welcome-page) .data-layer-panel-v15,
+body:not(.login-page):not(.welcome-page) .defaultPanel,
+body:not(.login-page):not(.welcome-page) .effectivePanelPowerW,
+body:not(.login-page):not(.welcome-page) .embla-container-v15,
+body:not(.login-page):not(.welcome-page) .engineering-form-grid-v15,
+body:not(.login-page):not(.welcome-page) .engineering-input-grid-v15,
+body:not(.login-page):not(.welcome-page) .engineering-result-grid-v15,
+body:not(.login-page):not(.welcome-page) .engineering-result-panel-v15,
+body:not(.login-page):not(.welcome-page) .engineering-stats-grid-v15,
+body:not(.login-page):not(.welcome-page) .engineering-status-panel-v15,
+body:not(.login-page):not(.welcome-page) .enterprise-final-grid-v15,
+body:not(.login-page):not(.welcome-page) .enterprise-final-panel-v15,
+body:not(.login-page):not(.welcome-page) .environment-grid-v15,
+body:not(.login-page):not(.welcome-page) .equipment-grid,
+body:not(.login-page):not(.welcome-page) .exportProject,
+body:not(.login-page):not(.welcome-page) .finance-grid-v15,
+body:not(.login-page):not(.welcome-page) .fleet-grid-v15,
+body:not(.login-page):not(.welcome-page) .fleet-panel-v15,
+body:not(.login-page):not(.welcome-page) .getProject,
+body:not(.login-page):not(.welcome-page) .grid-box-v15,
+body:not(.login-page):not(.welcome-page) .gridStudy,
+body:not(.login-page):not(.welcome-page) .gridTemplateColumns,
+body:not(.login-page):not(.welcome-page) .icon-panel,
+body:not(.login-page):not(.welcome-page) .icons-container,
+body:not(.login-page):not(.welcome-page) .importProject,
+body:not(.login-page):not(.welcome-page) .industrial-grid-v15,
+body:not(.login-page):not(.welcome-page) .industrial-panel-v15,
+body:not(.login-page):not(.welcome-page) .input-feature-grid-v15,
+body:not(.login-page):not(.welcome-page) .inverterPanelDistribution,
+body:not(.login-page):not(.welcome-page) .listProjects,
+body:not(.login-page):not(.welcome-page) .live-realtime-grid-v15,
+body:not(.login-page):not(.welcome-page) .live-realtime-panel-v15,
+body:not(.login-page):not(.welcome-page) .loss-grid-v15,
+body:not(.login-page):not(.welcome-page) .map-grid-v15,
+body:not(.login-page):not(.welcome-page) .method-grid-v15,
+body:not(.login-page):not(.welcome-page) .mobile-dashboard-icon,
+body:not(.login-page):not(.welcome-page) .mobile-project-icon,
+body:not(.login-page):not(.welcome-page) .new-project,
+body:not(.login-page):not(.welcome-page) .new-project-block,
+body:not(.login-page):not(.welcome-page) .new-project-card,
+body:not(.login-page):not(.welcome-page) .new-project-container,
+body:not(.login-page):not(.welcome-page) .new-project-content,
+body:not(.login-page):not(.welcome-page) .new-project-grid,
+body:not(.login-page):not(.welcome-page) .new-project-grid-3x3,
+body:not(.login-page):not(.welcome-page) .new-project-grid-wrapper,
+body:not(.login-page):not(.welcome-page) .new-project-icon,
+body:not(.login-page):not(.welcome-page) .new-project-page,
+body:not(.login-page):not(.welcome-page) .new-project-panel,
+body:not(.login-page):not(.welcome-page) .new-project-screen,
+body:not(.login-page):not(.welcome-page) .new-project-wrapper,
+body:not(.login-page):not(.welcome-page) .newProject,
+body:not(.login-page):not(.welcome-page) .ops-grid-v15,
+body:not(.login-page):not(.welcome-page) .ops-panel-v15,
+body:not(.login-page):not(.welcome-page) .panel-v15,
+body:not(.login-page):not(.welcome-page) .panelCount,
+body:not(.login-page):not(.welcome-page) .panelDistribution,
+body:not(.login-page):not(.welcome-page) .panelId,
+body:not(.login-page):not(.welcome-page) .panelParallelCount,
+body:not(.login-page):not(.welcome-page) .panelPowerAnalysis,
+body:not(.login-page):not(.welcome-page) .panelPowerW,
+body:not(.login-page):not(.welcome-page) .panelSeriesCount,
+body:not(.login-page):not(.welcome-page) .panelTitle,
+body:not(.login-page):not(.welcome-page) .panel_array_power_W,
+body:not(.login-page):not(.welcome-page) .panel_power_W,
+body:not(.login-page):not(.welcome-page) .panels,
+body:not(.login-page):not(.welcome-page) .panelsApprox,
+body:not(.login-page):not(.welcome-page) .panelsPerInverter,
+body:not(.login-page):not(.welcome-page) .project-action-btn-v15,
+body:not(.login-page):not(.welcome-page) .project-actionbar-v15,
+body:not(.login-page):not(.welcome-page) .project-brand-v15,
+body:not(.login-page):not(.welcome-page) .project-card,
+body:not(.login-page):not(.welcome-page) .project-card-icon,
+body:not(.login-page):not(.welcome-page) .project-field-v15,
+body:not(.login-page):not(.welcome-page) .project-form-v15,
+body:not(.login-page):not(.welcome-page) .project-grid,
+body:not(.login-page):not(.welcome-page) .project-grid-wrapper,
+body:not(.login-page):not(.welcome-page) .project-header-btn,
+body:not(.login-page):not(.welcome-page) .project-header-v15,
+body:not(.login-page):not(.welcome-page) .project-icons-wrapper,
+body:not(.login-page):not(.welcome-page) .project-main-v15,
+body:not(.login-page):not(.welcome-page) .project-menu-container,
+body:not(.login-page):not(.welcome-page) .project-mini-rail,
+body:not(.login-page):not(.welcome-page) .project-mini-rail-grid,
+body:not(.login-page):not(.welcome-page) .project-next-btn-v15,
+body:not(.login-page):not(.welcome-page) .project-page,
+body:not(.login-page):not(.welcome-page) .project-path-card,
+body:not(.login-page):not(.welcome-page) .project-path-card-v15,
+body:not(.login-page):not(.welcome-page) .project-path-container,
+body:not(.login-page):not(.welcome-page) .project-path-dot-v15,
+body:not(.login-page):not(.welcome-page) .project-path-grid-v15,
+body:not(.login-page):not(.welcome-page) .project-path-icon-v15,
+body:not(.login-page):not(.welcome-page) .project-path-icons,
+body:not(.login-page):not(.welcome-page) .project-path-panel,
+body:not(.login-page):not(.welcome-page) .project-progress-bar-v15,
+body:not(.login-page):not(.welcome-page) .project-progress-fill-v15,
+body:not(.login-page):not(.welcome-page) .project-progress-head-v15,
+body:not(.login-page):not(.welcome-page) .project-progress-item-v15,
+body:not(.login-page):not(.welcome-page) .project-progress-list-v15,
+body:not(.login-page):not(.welcome-page) .project-progress-v15,
+body:not(.login-page):not(.welcome-page) .project-real-form-v15,
+body:not(.login-page):not(.welcome-page) .project-real-grid-v15,
+body:not(.login-page):not(.welcome-page) .project-section-head-v15,
+body:not(.login-page):not(.welcome-page) .project-section-v15,
+body:not(.login-page):not(.welcome-page) .project-selection-panel,
+body:not(.login-page):not(.welcome-page) .project-selection-wrapper,
+body:not(.login-page):not(.welcome-page) .project-shell-v15,
+body:not(.login-page):not(.welcome-page) .project-step-card-v15,
+body:not(.login-page):not(.welcome-page) .project-step-grid-v15,
+body:not(.login-page):not(.welcome-page) .project-step-pill-v15,
+body:not(.login-page):not(.welcome-page) .project-step-rail,
+body:not(.login-page):not(.welcome-page) .project-step-rail-v15,
+body:not(.login-page):not(.welcome-page) .project-title-v15,
+body:not(.login-page):not(.welcome-page) .project-type-card,
+body:not(.login-page):not(.welcome-page) .project-type-icon,
+body:not(.login-page):not(.welcome-page) .projectIndex,
+body:not(.login-page):not(.welcome-page) .projectInfo,
+body:not(.login-page):not(.welcome-page) .projectKey,
+body:not(.login-page):not(.welcome-page) .projectName,
+body:not(.login-page):not(.welcome-page) .projectPath,
+body:not(.login-page):not(.welcome-page) .projectPathTitle,
+body:not(.login-page):not(.welcome-page) .projectService,
+body:not(.login-page):not(.welcome-page) .projectTitle,
+body:not(.login-page):not(.welcome-page) .projects,
+body:not(.login-page):not(.welcome-page) .projectsArchived,
+body:not(.login-page):not(.welcome-page) .projectsFinal,
+body:not(.login-page):not(.welcome-page) .projectsRunning,
+body:not(.login-page):not(.welcome-page) .pv-string-grid-v15,
+body:not(.login-page):not(.welcome-page) .readyScenarios,
+body:not(.login-page):not(.welcome-page) .report-export-grid-v15,
+body:not(.login-page):not(.welcome-page) .requiredAdditionalPanelsFor100,
+body:not(.login-page):not(.welcome-page) .result-grid,
+body:not(.login-page):not(.welcome-page) .run-result-grid-v15,
+body:not(.login-page):not(.welcome-page) .safety-grid-v15,
+body:not(.login-page):not(.welcome-page) .scenarios,
+body:not(.login-page):not(.welcome-page) .selectedPanelId,
+body:not(.login-page):not(.welcome-page) .shil-admin-card-editor-grid,
+body:not(.login-page):not(.welcome-page) .shil-admin-form-grid,
+body:not(.login-page):not(.welcome-page) .shil-admin-grid,
+body:not(.login-page):not(.welcome-page) .shil-admin-panel,
+body:not(.login-page):not(.welcome-page) .shil-admin-panel-head,
+body:not(.login-page):not(.welcome-page) .shil-ai-layer-status-grid,
+body:not(.login-page):not(.welcome-page) .shil-ai-quality-grid,
+body:not(.login-page):not(.welcome-page) .shil-climate-grid,
+body:not(.login-page):not(.welcome-page) .shil-contact-qr-grid,
+body:not(.login-page):not(.welcome-page) .shil-contact-qr-panel,
+body:not(.login-page):not(.welcome-page) .shil-dashboard,
+body:not(.login-page):not(.welcome-page) .shil-dashboard-3x3-page,
+body:not(.login-page):not(.welcome-page) .shil-dashboard-bg,
+body:not(.login-page):not(.welcome-page) .shil-dashboard-card,
+body:not(.login-page):not(.welcome-page) .shil-dashboard-eyebrow,
+body:not(.login-page):not(.welcome-page) .shil-dashboard-final-layout,
+body:not(.login-page):not(.welcome-page) .shil-dashboard-floating-icons,
+body:not(.login-page):not(.welcome-page) .shil-dashboard-floating-page,
+body:not(.login-page):not(.welcome-page) .shil-dashboard-floating-shell,
+body:not(.login-page):not(.welcome-page) .shil-dashboard-grid,
+body:not(.login-page):not(.welcome-page) .shil-dashboard-hero,
+body:not(.login-page):not(.welcome-page) .shil-dashboard-home,
+body:not(.login-page):not(.welcome-page) .shil-dashboard-icon,
+body:not(.login-page):not(.welcome-page) .shil-dashboard-icons-3x3,
+body:not(.login-page):not(.welcome-page) .shil-dashboard-icons-final,
+body:not(.login-page):not(.welcome-page) .shil-dashboard-mini-status,
+body:not(.login-page):not(.welcome-page) .shil-dashboard-mobile-final,
+body:not(.login-page):not(.welcome-page) .shil-dashboard-online-chip,
+body:not(.login-page):not(.welcome-page) .shil-dashboard-page,
+body:not(.login-page):not(.welcome-page) .shil-dashboard-shell,
+body:not(.login-page):not(.welcome-page) .shil-dashboard-status-row,
+body:not(.login-page):not(.welcome-page) .shil-equipment-picker-panel,
+body:not(.login-page):not(.welcome-page) .shil-execution-grid,
+body:not(.login-page):not(.welcome-page) .shil-final-mini-grid,
+body:not(.login-page):not(.welcome-page) .shil-final-panel,
+body:not(.login-page):not(.welcome-page) .shil-final-sheet-grid,
+body:not(.login-page):not(.welcome-page) .shil-form-grid,
+body:not(.login-page):not(.welcome-page) .shil-gps-manual-grid,
+body:not(.login-page):not(.welcome-page) .shil-grid,
+body:not(.login-page):not(.welcome-page) .shil-icon-grid,
+body:not(.login-page):not(.welcome-page) .shil-info-panel,
+body:not(.login-page):not(.welcome-page) .shil-install-upload-grid,
+body:not(.login-page):not(.welcome-page) .shil-ios-grid,
+body:not(.login-page):not(.welcome-page) .shil-ios-icon,
+body:not(.login-page):not(.welcome-page) .shil-ios-icon-img,
+body:not(.login-page):not(.welcome-page) .shil-ios-icon-link,
+body:not(.login-page):not(.welcome-page) .shil-ios-icon-title,
+body:not(.login-page):not(.welcome-page) .shil-linked-details-grid,
+body:not(.login-page):not(.welcome-page) .shil-list-panel,
+body:not(.login-page):not(.welcome-page) .shil-manual-climate-grid,
+body:not(.login-page):not(.welcome-page) .shil-map-container,
+body:not(.login-page):not(.welcome-page) .shil-method-grid,
+body:not(.login-page):not(.welcome-page) .shil-method-grid-five,
+body:not(.login-page):not(.welcome-page) .shil-method-grid-minimal,
+body:not(.login-page):not(.welcome-page) .shil-method-minimal-panel,
+body:not(.login-page):not(.welcome-page) .shil-mini-project-card,
+body:not(.login-page):not(.welcome-page) .shil-new-project-icon,
+body:not(.login-page):not(.welcome-page) .shil-new-project-no-scroll,
+body:not(.login-page):not(.welcome-page) .shil-orientation-factor-grid,
+body:not(.login-page):not(.welcome-page) .shil-orientation-input-grid,
+body:not(.login-page):not(.welcome-page) .shil-panel,
+body:not(.login-page):not(.welcome-page) .shil-panel-power-pro-card,
+body:not(.login-page):not(.welcome-page) .shil-panel-title,
+body:not(.login-page):not(.welcome-page) .shil-param-grid,
+body:not(.login-page):not(.welcome-page) .shil-path-root-grid,
+body:not(.login-page):not(.welcome-page) .shil-project-action-bar,
+body:not(.login-page):not(.welcome-page) .shil-project-card,
+body:not(.login-page):not(.welcome-page) .shil-project-flow,
+body:not(.login-page):not(.welcome-page) .shil-project-header,
+body:not(.login-page):not(.welcome-page) .shil-project-manager-actions,
+body:not(.login-page):not(.welcome-page) .shil-project-manager-card,
+body:not(.login-page):not(.welcome-page) .shil-project-manager-list,
+body:not(.login-page):not(.welcome-page) .shil-project-manager-main,
+body:not(.login-page):not(.welcome-page) .shil-project-manager-meta,
+body:not(.login-page):not(.welcome-page) .shil-project-manager-topline,
+body:not(.login-page):not(.welcome-page) .shil-project-mini-rail,
+body:not(.login-page):not(.welcome-page) .shil-project-page,
+body:not(.login-page):not(.welcome-page) .shil-project-path,
+body:not(.login-page):not(.welcome-page) .shil-project-path-assets-note,
+body:not(.login-page):not(.welcome-page) .shil-project-path-card,
+body:not(.login-page):not(.welcome-page) .shil-project-path-two-cards,
+body:not(.login-page):not(.welcome-page) .shil-project-step-icon,
+body:not(.login-page):not(.welcome-page) .shil-project-step-rail,
+body:not(.login-page):not(.welcome-page) .shil-project-steps,
+body:not(.login-page):not(.welcome-page) .shil-qr-grid,
+body:not(.login-page):not(.welcome-page) .shil-result-field-grid,
+body:not(.login-page):not(.welcome-page) .shil-result-grid,
+body:not(.login-page):not(.welcome-page) .shil-route-dashboard,
+body:not(.login-page):not(.welcome-page) .shil-route-new-project,
+body:not(.login-page):not(.welcome-page) .shil-route-projects,
+body:not(.login-page):not(.welcome-page) .shil-scenario-detail-grid,
+body:not(.login-page):not(.welcome-page) .shil-site-preview-contain-grid,
+body:not(.login-page):not(.welcome-page) .shil-site-preview-grid,
+body:not(.login-page):not(.welcome-page) .shil-summary-grid,
+body:not(.login-page):not(.welcome-page) .shil-system-banks-grid,
+body:not(.login-page):not(.welcome-page) .shil-system-banks-grid-final,
+body:not(.login-page):not(.welcome-page) .shil-three-card-grid,
+body:not(.login-page):not(.welcome-page) .shil-two-card-grid,
+body:not(.login-page):not(.welcome-page) .shil-upload-grid,
+body:not(.login-page):not(.welcome-page) .solarPanelDefaultW,
+body:not(.login-page):not(.welcome-page) .solarPanelManualW,
+body:not(.login-page):not(.welcome-page) .solarPanels,
+body:not(.login-page):not(.welcome-page) .suggestedPanels,
+body:not(.login-page):not(.welcome-page) .summary-grid,
+body:not(.login-page):not(.welcome-page) .summary-grid-v15,
+body:not(.login-page):not(.welcome-page) .system-config-grid-v15,
+body:not(.login-page):not(.welcome-page) .system-grid-v15,
+body:not(.login-page):not(.welcome-page) .targetPanelCount100,
+body:not(.login-page):not(.welcome-page) .targetPanelCount120,
+body:not(.login-page):not(.welcome-page) .totalPanelPowerW,
+body:not(.login-page):not(.welcome-page) .updateProject,
+body:not(.login-page):not(.welcome-page) .weather-grid-v15 {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* =====================================================
+   SHIL PAGE SHELL - FINAL LAYOUT
+   ===================================================== */
+
+.shil-page-shell{
+    position:relative !important;
+    width:100% !important;
+    height:100dvh !important;
+    min-height:100dvh !important;
+    overflow:hidden !important;
+}
+
+.shil-page-content{
+    position:absolute !important;
+
+    top:55px !important;
+    left:0 !important;
+    right:0 !important;
+    bottom:40px !important;
+
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+
+    box-sizing:border-box !important;
+
+    -webkit-overflow-scrolling:touch !important;
+}
+
+.shil-no-header .shil-page-content{
+    top:0 !important;
+}
+
+.shil-no-footer .shil-page-content{
+    bottom:0 !important;
+}
+
+.shil-fixed-header{
+    position:fixed !important;
+    top:0 !important;
+    left:0 !important;
+    right:0 !important;
+    height:55px !important;
+    min-height:55px !important;
+    max-height:55px !important;
+    z-index:4000 !important;
+}
+
+.shil-fixed-footer{
+    position:fixed !important;
+    left:0 !important;
+    right:0 !important;
+    bottom:0 !important;
+
+    height:40px !important;
+    min-height:40px !important;
+    max-height:40px !important;
+
+    z-index:4000 !important;
+}
+

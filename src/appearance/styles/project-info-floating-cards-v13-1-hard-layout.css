@@ -1,0 +1,225 @@
+/* SHIL V13.1 HARD LAYOUT
+   Project Info: isolated two-row field layout.
+   No legacy grid/:last-child rule can resize or reposition the date card. */
+
+html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+#shil-project-info-root.shil-project-info-page .shil-project-info-primary-fields-v131 {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 0 14px !important;
+  padding: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  outline: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  overflow: visible !important;
+}
+
+html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+#shil-project-info-root.shil-project-info-page .shil-project-info-primary-fields-v131::before,
+html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+#shil-project-info-root.shil-project-info-page .shil-project-info-primary-fields-v131::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* Both section titles use the same light card language as the field cards. */
+html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+#shil-project-info-root.shil-project-info-page .shil-project-info-section-title-v131 {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  min-height: 50px !important;
+  margin: 0 auto 10px !important;
+  padding: 8px 12px !important;
+  box-sizing: border-box !important;
+  background: rgba(246, 251, 255, 0.94) !important;
+  background-image: none !important;
+  border: 1px solid rgba(177, 211, 233, 0.92) !important;
+  border-radius: 15px !important;
+  box-shadow: 0 5px 14px rgba(2, 31, 54, 0.16) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+#shil-project-info-root.shil-project-info-page .shil-project-info-section-title-v131 > h2 {
+  margin: 0 !important;
+  padding: 0 !important;
+  color: #0b2a3d !important;
+  font-size: clamp(18px, 2.7vw, 24px) !important;
+  font-weight: 950 !important;
+  line-height: 1.35 !important;
+  text-align: center !important;
+  text-shadow: none !important;
+}
+
+html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+#shil-project-info-root.shil-project-info-page .shil-project-info-section-title-v131 > span {
+  display: none !important;
+}
+
+/* Row 1: exactly two equal cards. */
+html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+#shil-project-info-root.shil-project-info-page .shil-project-info-top-row-v131 {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: stretch !important;
+  justify-content: center !important;
+  gap: 12px !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Row 2: center container, independent from every legacy grid. */
+html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+#shil-project-info-root.shil-project-info-page .shil-project-info-date-row-v131 {
+  display: flex !important;
+  align-items: stretch !important;
+  justify-content: center !important;
+  width: 100% !important;
+  margin: 10px 0 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* All three cards share one dimensional contract. */
+html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+#shil-project-info-root.shil-project-info-page .shil-project-info-card-v131 {
+  position: relative !important;
+  inset: auto !important;
+  transform: none !important;
+  float: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  flex: 0 0 calc((100% - 12px) / 2) !important;
+  width: calc((100% - 12px) / 2) !important;
+  max-width: calc((100% - 12px) / 2) !important;
+  min-width: 0 !important;
+  min-height: 86px !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 8px !important;
+  gap: 6px !important;
+  box-sizing: border-box !important;
+  color: #0b2a3d !important;
+  background: rgba(246, 251, 255, 0.94) !important;
+  background-image: none !important;
+  border: 1px solid rgba(177, 211, 233, 0.92) !important;
+  border-radius: 15px !important;
+  box-shadow: 0 5px 14px rgba(2, 31, 54, 0.16) !important;
+  text-align: center !important;
+  overflow: hidden !important;
+}
+
+html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+#shil-project-info-root.shil-project-info-page .shil-project-info-date-row-v131 > .shil-registration-date-field-v131 {
+  flex: 0 0 calc((100% - 12px) / 2) !important;
+  width: calc((100% - 12px) / 2) !important;
+  max-width: calc((100% - 12px) / 2) !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  align-self: stretch !important;
+}
+
+html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+#shil-project-info-root.shil-project-info-page .shil-project-info-card-v131 > span {
+  margin: 0 !important;
+  color: #0b2a3d !important;
+  font-size: 13px !important;
+  font-weight: 900 !important;
+  line-height: 1.3 !important;
+  text-align: center !important;
+}
+
+html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+#shil-project-info-root.shil-project-info-page .shil-project-info-card-v131 > input {
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 46px !important;
+  min-height: 46px !important;
+  margin: 0 !important;
+  padding: 6px 10px !important;
+  box-sizing: border-box !important;
+  color: #07182e !important;
+  background: #ffffff !important;
+  border: 1px solid #b7d8ee !important;
+  border-radius: 12px !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.8) !important;
+  font-family: inherit !important;
+  font-size: 15px !important;
+  font-weight: 850 !important;
+  text-align: center !important;
+  outline: none !important;
+}
+
+html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+#shil-project-info-root.shil-project-info-page .shil-project-info-card-v131 > input:not([readonly]):focus,
+html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+#shil-project-info-root.shil-project-info-page .shil-project-info-card-v131 > input:not([readonly]):not(:placeholder-shown) {
+  background: #e8fff0 !important;
+  border-color: #65dca1 !important;
+}
+
+html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+#shil-project-info-root.shil-project-info-page .shil-registration-date-input-v131 {
+  direction: ltr !important;
+  unicode-bidi: isolate !important;
+  text-align: center !important;
+  background: #ffffff !important;
+  border-color: #b7d8ee !important;
+}
+
+/* Description title stays a separate light card; description content logic is unchanged. */
+html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+#shil-project-info-root.shil-project-info-page .shil-project-info-description-title-v131 {
+  margin-bottom: 10px !important;
+}
+
+@media (max-width: 700px) {
+  html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+  #shil-project-info-root.shil-project-info-page .shil-project-info-top-row-v131 {
+    gap: 10px !important;
+  }
+
+  html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+  #shil-project-info-root.shil-project-info-page .shil-project-info-card-v131,
+  html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+  #shil-project-info-root.shil-project-info-page .shil-project-info-date-row-v131 > .shil-registration-date-field-v131 {
+    flex-basis: calc((100% - 10px) / 2) !important;
+    width: calc((100% - 10px) / 2) !important;
+    max-width: calc((100% - 10px) / 2) !important;
+  }
+}
+
+@media (max-width: 430px) {
+  html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+  #shil-project-info-root.shil-project-info-page .shil-project-info-top-row-v131 {
+    gap: 8px !important;
+  }
+
+  html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+  #shil-project-info-root.shil-project-info-page .shil-project-info-card-v131,
+  html body.shil-project-info-screen:not(.login-page):not(.welcome-page)
+  #shil-project-info-root.shil-project-info-page .shil-project-info-date-row-v131 > .shil-registration-date-field-v131 {
+    flex-basis: calc((100% - 8px) / 2) !important;
+    width: calc((100% - 8px) / 2) !important;
+    max-width: calc((100% - 8px) / 2) !important;
+    min-height: 80px !important;
+    padding: 7px !important;
+  }
+}

@@ -1,0 +1,437 @@
+/* =====================================================================
+   SHIL ADMIN V13 — STRUCTURAL CLEANUP / TRUE PARENTLESS HUB
+   User-directed cleanup 2026-08-10
+   - Management title is the first row below the fixed app header.
+   - Back-to-sections is the next compact control in section view.
+   - Monitoring/overview module removed from hub.
+   - Hub descriptions moved into minimal in-card accordions.
+   - Logout moved to the real end of admin content as a normal button.
+   - Generic global section/article glass rule is neutralized for admin hub.
+   Scope: .shil-page--admin only; keep as absolute final import.
+   ===================================================================== */
+
+.shil-page--admin {
+  --admin-v13-edge: 3px;
+  --admin-v13-gap: 5px;
+  --admin-v13-title-h: 38px;
+  --admin-v13-card-min-h: 58px;
+  --admin-v13-title-bg: #eaf4ff;
+  --admin-v13-card-bg: #f9fcff;
+  --admin-v13-border: #c8dceb;
+  --admin-v13-ink: #0b0f14;
+  --admin-v13-muted: #526979;
+}
+
+/* ---------------------------------------------------------------------
+   1) First data below header: one compact management title row.
+   --------------------------------------------------------------------- */
+.shil-page--admin .shil-admin-management-title-v13 {
+  width: 100% !important;
+  min-height: var(--admin-v13-title-h) !important;
+  height: var(--admin-v13-title-h) !important;
+  margin: 0 0 var(--admin-v13-gap) !important;
+  padding: 5px 12px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
+  border: 1px solid var(--admin-v13-border) !important;
+  border-radius: 13px !important;
+  background: var(--admin-v13-title-bg) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  color: var(--admin-v13-ink) !important;
+  font-size: 15px !important;
+  line-height: 1.1 !important;
+  font-weight: 900 !important;
+  text-align: center !important;
+}
+
+/* The old oversized hero must stay structurally/visually absent even if stale markup reappears. */
+.shil-page--admin .shil-admin-hero-v10,
+.shil-page--admin .shil-admin-brand-v10,
+.shil-page--admin .shil-admin-logout-v10 {
+  display: none !important;
+}
+
+/* ---------------------------------------------------------------------
+   2) TRUE PARENTLESS HUB.
+   Critical fix for the DevTools rule supplied by the user:
+   body:not(.login-page):not(.welcome-page) section/article/... applied the
+   global matte glass slab. Hub is now a DIV, and these rules hard-reset it.
+   --------------------------------------------------------------------- */
+html body .shil-page--admin .shil-admin-module-hub-v10 {
+  width: 100% !important;
+  margin: 0 0 var(--admin-v13-gap) !important;
+  padding: 0 !important;
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: var(--admin-v13-gap) !important;
+  box-sizing: border-box !important;
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  outline: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  overflow: visible !important;
+}
+html body .shil-page--admin .shil-admin-module-hub-v10::before,
+html body .shil-page--admin .shil-admin-module-hub-v10::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* Every two-column module is the actual visible card; no surrounding slab. */
+html body .shil-page--admin article.shil-admin-module-card-v10 {
+  min-width: 0 !important;
+  min-height: var(--admin-v13-card-min-h) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: center !important;
+  gap: 0 !important;
+  box-sizing: border-box !important;
+  border: 1px solid var(--admin-v13-border) !important;
+  border-radius: 13px !important;
+  background: var(--admin-v13-card-bg) !important;
+  background-image: none !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  overflow: hidden !important;
+  color: var(--admin-v13-ink) !important;
+}
+html body .shil-page--admin article.shil-admin-module-card-v10::before,
+html body .shil-page--admin article.shil-admin-module-card-v10::after {
+  content: none !important;
+  display: none !important;
+}
+
+.shil-page--admin .shil-admin-module-open-v13 {
+  width: 100% !important;
+  min-height: 56px !important;
+  margin: 0 !important;
+  padding: 7px 8px !important;
+  display: grid !important;
+  grid-template-columns: 20px minmax(0, 1fr) 20px !important;
+  align-items: center !important;
+  gap: 4px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: var(--admin-v13-ink) !important;
+  cursor: pointer !important;
+  font-family: inherit !important;
+}
+.shil-page--admin .shil-admin-module-open-v13 > strong {
+  display: block !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  color: var(--admin-v13-ink) !important;
+  font-size: 11px !important;
+  line-height: 1.25 !important;
+  font-weight: 900 !important;
+  text-align: center !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+}
+.shil-page--admin .shil-admin-module-arrow-v10,
+.shil-page--admin .shil-admin-module-mark-v10 {
+  width: 20px !important;
+  min-width: 20px !important;
+  height: 20px !important;
+  min-height: 20px !important;
+  display: grid !important;
+  place-items: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 1px solid var(--admin-v13-border) !important;
+  border-radius: 8px !important;
+  background: #fff !important;
+  color: var(--admin-v13-ink) !important;
+  font-size: 12px !important;
+  line-height: 1 !important;
+  box-shadow: none !important;
+}
+
+/* Compact in-card accordion holds explanatory copy only when the admin asks for it. */
+.shil-page--admin .shil-admin-module-details-v13,
+.shil-page--admin .shil-admin-section-details-v13 {
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: var(--admin-v13-muted) !important;
+}
+.shil-page--admin .shil-admin-module-details-v13 {
+  border-top: 1px solid var(--admin-v13-border) !important;
+}
+.shil-page--admin .shil-admin-module-details-v13 > summary,
+.shil-page--admin .shil-admin-section-details-v13 > summary {
+  min-height: 24px !important;
+  padding: 4px 8px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  list-style: none !important;
+  cursor: pointer !important;
+  color: var(--admin-v13-muted) !important;
+  font-size: 8px !important;
+  line-height: 1.2 !important;
+  font-weight: 800 !important;
+  text-align: center !important;
+  background: transparent !important;
+  border: 0 !important;
+}
+.shil-page--admin .shil-admin-module-details-v13 > summary::-webkit-details-marker,
+.shil-page--admin .shil-admin-section-details-v13 > summary::-webkit-details-marker { display: none !important; }
+.shil-page--admin .shil-admin-module-details-v13 > summary::after,
+.shil-page--admin .shil-admin-section-details-v13 > summary::after {
+  content: " +";
+  margin-inline-start: 3px;
+}
+.shil-page--admin .shil-admin-module-details-v13[open] > summary::after,
+.shil-page--admin .shil-admin-section-details-v13[open] > summary::after { content: " −"; }
+.shil-page--admin .shil-admin-module-details-v13 > p,
+.shil-page--admin .shil-admin-section-details-v13 > p {
+  margin: 0 !important;
+  padding: 4px 7px 7px !important;
+  color: var(--admin-v13-muted) !important;
+  font-size: 7.5px !important;
+  line-height: 1.45 !important;
+  font-weight: 650 !important;
+  text-align: center !important;
+  background: transparent !important;
+}
+
+/* ---------------------------------------------------------------------
+   3) Section view: the back button is the second data item after title.
+   Its visual weight is deliberately a few pixels smaller than title/cards.
+   --------------------------------------------------------------------- */
+html body .shil-page--admin .shil-admin-section-nav-v10 {
+  width: 100% !important;
+  margin: 0 0 var(--admin-v13-gap) !important;
+  padding: 0 !important;
+  display: grid !important;
+  grid-template-columns: 92px minmax(0, 1fr) !important;
+  gap: var(--admin-v13-gap) !important;
+  align-items: stretch !important;
+  box-sizing: border-box !important;
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  outline: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+html body .shil-page--admin .shil-admin-section-nav-v10::before,
+html body .shil-page--admin .shil-admin-section-nav-v10::after {
+  content: none !important;
+  display: none !important;
+}
+.shil-page--admin .shil-admin-back-hub-v10 {
+  order: 0 !important;
+  min-height: 34px !important;
+  height: auto !important;
+  padding: 5px 7px !important;
+  border: 1px solid var(--admin-v13-border) !important;
+  border-radius: 11px !important;
+  background: var(--admin-v13-title-bg) !important;
+  background-image: none !important;
+  color: var(--admin-v13-ink) !important;
+  box-shadow: none !important;
+  font-size: 9px !important;
+  line-height: 1.2 !important;
+  font-weight: 850 !important;
+  white-space: normal !important;
+}
+.shil-page--admin .shil-admin-section-title-v10 {
+  min-height: 34px !important;
+  padding: 4px 8px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 3px !important;
+  border: 1px solid var(--admin-v13-border) !important;
+  border-radius: 11px !important;
+  background: var(--admin-v13-card-bg) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: var(--admin-v13-ink) !important;
+  text-align: center !important;
+}
+.shil-page--admin .shil-admin-section-title-v10 > strong {
+  font-size: 11px !important;
+  line-height: 1.2 !important;
+  font-weight: 900 !important;
+}
+.shil-page--admin .shil-admin-child-tabs-v10 {
+  grid-column: 1 / -1 !important;
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: var(--admin-v13-gap) !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+}
+.shil-page--admin .shil-admin-child-tabs-v10 button {
+  min-height: 34px !important;
+  padding: 5px 7px !important;
+  border: 1px solid var(--admin-v13-border) !important;
+  border-radius: 11px !important;
+  background: var(--admin-v13-card-bg) !important;
+  color: var(--admin-v13-ink) !important;
+  box-shadow: none !important;
+  font-size: 9px !important;
+  font-weight: 850 !important;
+}
+.shil-page--admin .shil-admin-child-tabs-v10 button.active {
+  background: var(--admin-v13-title-bg) !important;
+  border-color: var(--admin-v13-border) !important;
+}
+
+/* ---------------------------------------------------------------------
+   4) Remove purple/legacy large contextual slabs from admin descendants.
+   Explanation belongs to accordions/panel bodies, not oversized banners.
+   --------------------------------------------------------------------- */
+.shil-page--admin :is(
+  .shil-admin-section-nav-v10,
+  .shil-admin-command-head,
+  .shil-admin-phase5-head,
+  .shil-admin-phase6-head
+) {
+  background-image: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Ensure no old purple highlight can leak into tabs/cards. */
+.shil-page--admin :is(
+  .shil-admin-module-card-v10,
+  .shil-admin-section-title-v10,
+  .shil-admin-child-tabs-v10 button,
+  .shil-admin-back-hub-v10
+) {
+  --shil-purple: transparent !important;
+  --shil-accent-purple: transparent !important;
+}
+
+/* ---------------------------------------------------------------------
+   5) Logout: normal confirmation-size button at the actual end of page.
+   --------------------------------------------------------------------- */
+.shil-page--admin .shil-admin-logout-row-v13 {
+  width: 100% !important;
+  margin: 8px 0 54px !important;
+  padding: 0 !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+.shil-page--admin .shil-admin-logout-v13 {
+  width: min(46%, 220px) !important;
+  min-width: 132px !important;
+  min-height: 34px !important;
+  height: 34px !important;
+  padding: 5px 12px !important;
+  border: 1px solid var(--admin-v13-border) !important;
+  border-radius: 11px !important;
+  background: var(--admin-v13-title-bg) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: var(--admin-v13-ink) !important;
+  font-family: inherit !important;
+  font-size: 9px !important;
+  line-height: 1 !important;
+  font-weight: 850 !important;
+}
+
+/* Do not let the global body section/article matte-glass selector repaint our
+   purpose-built V13 hub descendants, even with !important in older CSS. */
+html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-module-hub-v10,
+html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-section-nav-v10,
+html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-logout-row-v13 {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+@media (max-width: 700px) {
+  .shil-page--admin .shil-admin-management-title-v13 {
+    min-height: 36px !important;
+    height: 36px !important;
+    font-size: 14px !important;
+  }
+  .shil-page--admin .shil-admin-module-open-v13 {
+    min-height: 54px !important;
+  }
+  .shil-page--admin .shil-admin-module-open-v13 > strong {
+    font-size: 10.5px !important;
+  }
+}
+
+@media (max-width: 430px) {
+  html body .shil-page--admin .shil-admin-module-hub-v10 {
+    gap: 4px !important;
+  }
+  .shil-page--admin .shil-admin-module-open-v13 {
+    grid-template-columns: 18px minmax(0, 1fr) 18px !important;
+    padding: 6px 5px !important;
+  }
+  .shil-page--admin .shil-admin-module-arrow-v10,
+  .shil-page--admin .shil-admin-module-mark-v10 {
+    width: 18px !important;
+    min-width: 18px !important;
+    height: 18px !important;
+    min-height: 18px !important;
+    font-size: 10px !important;
+  }
+  .shil-page--admin .shil-admin-module-open-v13 > strong {
+    font-size: 10px !important;
+  }
+  html body .shil-page--admin .shil-admin-section-nav-v10 {
+    grid-template-columns: 82px minmax(0, 1fr) !important;
+    gap: 4px !important;
+  }
+  .shil-page--admin .shil-admin-back-hub-v10,
+  .shil-page--admin .shil-admin-section-title-v10 {
+    min-height: 32px !important;
+  }
+  .shil-page--admin .shil-admin-back-hub-v10 { font-size: 8.5px !important; }
+  .shil-page--admin .shil-admin-section-title-v10 > strong { font-size: 10px !important; }
+  .shil-page--admin .shil-admin-logout-v13 {
+    width: 48% !important;
+    min-height: 32px !important;
+    height: 32px !important;
+  }
+}
+
+/* Monitoring context banner intentionally removed: its two real destinations remain as compact tabs. */
+.shil-page--admin .shil-admin-section-nav-spacer-v13 {
+  display: none !important;
+}
+.shil-page--admin .shil-admin-section-nav-v10:has(.shil-admin-section-nav-spacer-v13) .shil-admin-back-hub-v10 {
+  grid-column: 1 / -1 !important;
+  width: min(34%, 150px) !important;
+  justify-self: start !important;
+}

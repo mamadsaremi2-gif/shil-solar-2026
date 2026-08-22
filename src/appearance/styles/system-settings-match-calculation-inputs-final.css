@@ -1,0 +1,589 @@
+/* Solar System Settings = Solar Calculation Inputs visual parity.
+   Isolated to the solar settings root and intentionally imported last. */
+
+#shil-system-settings-unified-root.shil-system-settings-page {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 14px !important;
+  width: min(100%, 980px) !important;
+  max-width: 980px !important;
+  margin: 0 auto !important;
+  padding: 0 12px calc(76px + env(safe-area-inset-bottom, 0px)) !important;
+  color: #0b1f3d !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+  font-family: inherit !important;
+}
+
+/* Match the Calculation Inputs structural rhythm: every section is a layout group. */
+#shil-system-settings-unified-root > section.shil-section-card.shil-config-block,
+#shil-system-settings-unified-root > .shil-bank-grid {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: inherit !important;
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  overflow: visible !important;
+}
+
+/* Same heading cards, sizing, type and color as Calculation Inputs. */
+#shil-system-settings-unified-root .shil-section-head,
+#shil-system-settings-unified-root .shil-equipment-bank-title {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-wrap: wrap !important;
+  gap: 4px 12px !important;
+  min-height: 48px !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 10px 16px !important;
+  color: #0b1f3d !important;
+  background: rgba(231, 240, 249, 0.93) !important;
+  background-image: none !important;
+  border: 1px solid rgba(148, 163, 184, 0.58) !important;
+  border-radius: 18px !important;
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.12) !important;
+  text-align: center !important;
+}
+
+#shil-system-settings-unified-root .shil-section-head h2,
+#shil-system-settings-unified-root .shil-section-head h3,
+#shil-system-settings-unified-root .shil-equipment-bank-title {
+  margin: 0 !important;
+  color: #0b1f3d !important;
+  font-size: clamp(17px, 4.4vw, 24px) !important;
+  font-weight: 900 !important;
+  line-height: 1.35 !important;
+  text-align: center !important;
+}
+
+#shil-system-settings-unified-root .shil-section-head span {
+  width: 100% !important;
+  color: #405b73 !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  line-height: 1.3 !important;
+  text-align: center !important;
+}
+
+/* Two-column card grids exactly follow Calculation Inputs. */
+#shil-system-settings-unified-root :is(
+  .shil-summary-grid,
+  .shil-form-grid.compact,
+  .shil-choice-grid,
+  .shil-choice-grid.three,
+  .shil-bank-datasheet-grid,
+  .shil-summary-details-grid
+) {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* All data/selection cards use the same pale surface, radius and shadow. */
+#shil-system-settings-unified-root :is(
+  .shil-summary-grid > div,
+  .shil-form-grid.compact > label,
+  .shil-choice-card,
+  .shil-summary-modern-item,
+  .shil-summary-detail-item,
+  .shil-bank-smart-note
+) {
+  min-width: 0 !important;
+  min-height: 92px !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 12px !important;
+  gap: 7px !important;
+  color: #0b1f3d !important;
+  background: rgba(249, 252, 255, 0.94) !important;
+  background-image: none !important;
+  border: 1px solid rgba(125, 153, 181, 0.42) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 7px 20px rgba(15, 23, 42, 0.10) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-sizing: border-box !important;
+  text-align: center !important;
+}
+
+#shil-system-settings-unified-root .shil-choice-card,
+#shil-system-settings-unified-root .shil-form-grid.compact > label,
+#shil-system-settings-unified-root :is(.shil-summary-grid > div, .shil-summary-modern-item, .shil-summary-detail-item) {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+#shil-system-settings-unified-root :is(
+  .shil-summary-grid span,
+  .shil-summary-modern-item span,
+  .shil-summary-detail-item span,
+  .shil-form-grid.compact > label > span,
+  .shil-choice-card span,
+  .shil-bank-smart-note span,
+  .shil-bank-smart-note small
+) {
+  color: #405b73 !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  line-height: 1.3 !important;
+}
+
+#shil-system-settings-unified-root :is(
+  .shil-summary-grid strong,
+  .shil-summary-modern-item strong,
+  .shil-summary-detail-item strong,
+  .shil-choice-card strong,
+  .shil-bank-smart-note strong
+) {
+  width: 100% !important;
+  color: #07182e !important;
+  font-size: 17px !important;
+  font-weight: 950 !important;
+  line-height: 1.3 !important;
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+  text-align: center !important;
+}
+
+/* Selected choices use the same green semantic input state used on Calculation Inputs. */
+#shil-system-settings-unified-root .shil-choice-card.is-selected {
+  background: #e1faeb !important;
+  border-color: #43d58a !important;
+  box-shadow: 0 0 0 2px rgba(67, 213, 138, 0.12), 0 7px 20px rgba(15, 23, 42, 0.10) !important;
+}
+
+/* Inputs and selects copy Calculation Inputs dimensions and typography. */
+#shil-system-settings-unified-root :is(input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 46px !important;
+  height: 46px !important;
+  margin: 0 !important;
+  padding: 8px 11px !important;
+  color: #07182e !important;
+  background: #fff !important;
+  border: 1px solid rgba(125, 153, 181, 0.58) !important;
+  border-radius: 13px !important;
+  box-shadow: none !important;
+  font-size: 14px !important;
+  font-weight: 750 !important;
+  line-height: 1.25 !important;
+  text-align: center !important;
+  box-sizing: border-box !important;
+}
+
+#shil-system-settings-unified-root :is(input, select):disabled {
+  opacity: 1 !important;
+  color: #27435c !important;
+  background: #eef5fb !important;
+}
+
+/* Summary component: remove its unique inline skin and use Calculation Inputs cards. */
+#shil-system-settings-unified-root .shil-summary-table-card {
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+#shil-system-settings-unified-root .shil-summary-table-card > div:first-child {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+  padding: 0 !important;
+}
+
+#shil-system-settings-unified-root .shil-summary-detail-chip {
+  width: 100% !important;
+  min-height: 46px !important;
+  height: 46px !important;
+  margin: 10px 0 0 !important;
+  padding: 0 16px !important;
+  color: #0b1f3d !important;
+  background: rgba(231, 240, 249, 0.93) !important;
+  border: 1px solid rgba(148, 163, 184, 0.58) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.09) !important;
+  font-size: 14px !important;
+  font-weight: 900 !important;
+}
+
+#shil-system-settings-unified-root .shil-summary-details {
+  margin-top: 10px !important;
+  padding: 0 !important;
+  background: transparent !important;
+}
+
+/* Equipment banks become full-size Calculation Inputs sections. */
+#shil-system-settings-unified-root .shil-equipment-bank-card {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+#shil-system-settings-unified-root .shil-equipment-bank-table {
+  width: 100% !important;
+  table-layout: fixed !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  color: #0b1f3d !important;
+  background: rgba(249, 252, 255, 0.94) !important;
+  border: 1px solid rgba(125, 153, 181, 0.42) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 7px 20px rgba(15, 23, 42, 0.10) !important;
+  overflow: hidden !important;
+}
+
+#shil-system-settings-unified-root .shil-equipment-bank-table :is(th, td) {
+  padding: 10px 6px !important;
+  color: #0b1f3d !important;
+  border-color: rgba(125, 153, 181, 0.26) !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  line-height: 1.3 !important;
+  text-align: center !important;
+  overflow-wrap: anywhere !important;
+}
+
+#shil-system-settings-unified-root .shil-equipment-bank-table th {
+  background: rgba(231, 240, 249, 0.93) !important;
+  font-weight: 900 !important;
+}
+
+#shil-system-settings-unified-root :is(.shil-equipment-bank-chip, .shil-equipment-bank-sheet) {
+  min-width: 0 !important;
+  min-height: 42px !important;
+  height: 42px !important;
+  padding: 0 10px !important;
+  color: #0b1f3d !important;
+  background: #fff !important;
+  border: 1px solid rgba(125, 153, 181, 0.58) !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  font-size: 12px !important;
+  font-weight: 900 !important;
+}
+
+#shil-system-settings-unified-root .shil-equipment-bank-details.open {
+  margin: 0 !important;
+}
+
+#shil-system-settings-unified-root .shil-equipment-bank-old-content {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  width: 100% !important;
+  padding: 0 !important;
+}
+
+/* Warnings are normal-flow cards, never floating over the content. */
+#shil-system-settings-unified-root :is(.shil-floating-warning, .shil-warning-overlay, .shil-inline-warning, .shil-system-warning) {
+  position: relative !important;
+  inset: auto !important;
+  transform: none !important;
+  width: 100% !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 10px 12px !important;
+  border-radius: 14px !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  line-height: 1.45 !important;
+}
+
+/* Confirmation matches the Calculation Inputs centered action. */
+#shil-system-settings-unified-root .shil-env-content-confirm-slot {
+  position: relative !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 100% !important;
+  min-height: 0 !important;
+  margin: 10px 0 18px !important;
+  padding: 0 !important;
+  transform: none !important;
+}
+
+#shil-system-settings-unified-root .shil-env-content-confirm-button {
+  position: static !important;
+  width: auto !important;
+  min-width: 190px !important;
+  max-width: min(100%, 460px) !important;
+  height: 52px !important;
+  min-height: 52px !important;
+  margin: 0 auto !important;
+  padding: 0 28px !important;
+  border-radius: 18px !important;
+  font-size: 17px !important;
+  font-weight: 950 !important;
+  white-space: nowrap !important;
+  transform: none !important;
+}
+
+@media (max-width: 680px) {
+  #shil-system-settings-unified-root.shil-system-settings-page {
+    gap: 12px !important;
+    padding-inline: 8px !important;
+  }
+
+  #shil-system-settings-unified-root :is(
+    .shil-summary-grid,
+    .shil-form-grid.compact,
+    .shil-choice-grid,
+    .shil-choice-grid.three,
+    .shil-bank-datasheet-grid,
+    .shil-summary-details-grid
+  ),
+  #shil-system-settings-unified-root .shil-summary-table-card > div:first-child {
+    grid-template-columns: 1fr !important;
+  }
+
+  #shil-system-settings-unified-root :is(
+    .shil-summary-grid > div,
+    .shil-form-grid.compact > label,
+    .shil-choice-card,
+    .shil-summary-modern-item,
+    .shil-summary-detail-item
+  ) {
+    min-height: 78px !important;
+  }
+
+  #shil-system-settings-unified-root .shil-equipment-bank-table :is(th, td) {
+    padding: 8px 3px !important;
+    font-size: 10px !important;
+  }
+
+  #shil-system-settings-unified-root :is(.shil-equipment-bank-chip, .shil-equipment-bank-sheet) {
+    min-height: 38px !important;
+    height: auto !important;
+    padding: 6px 4px !important;
+    font-size: 10px !important;
+  }
+}
+
+/* V2 compact pass: preserve the shared visual language while reducing scroll. */
+#shil-system-settings-unified-root.shil-system-settings-page {
+  gap: 9px !important;
+  padding-inline: 8px !important;
+  padding-bottom: calc(68px + env(safe-area-inset-bottom, 0px)) !important;
+}
+
+#shil-system-settings-unified-root > section.shil-section-card.shil-config-block,
+#shil-system-settings-unified-root > .shil-bank-grid,
+#shil-system-settings-unified-root .shil-equipment-bank-card,
+#shil-system-settings-unified-root .shil-equipment-bank-old-content {
+  gap: 8px !important;
+}
+
+#shil-system-settings-unified-root .shil-section-head,
+#shil-system-settings-unified-root .shil-equipment-bank-title {
+  min-height: 40px !important;
+  padding: 6px 12px !important;
+  border-radius: 15px !important;
+  gap: 2px 8px !important;
+}
+
+#shil-system-settings-unified-root .shil-section-head h2,
+#shil-system-settings-unified-root .shil-section-head h3,
+#shil-system-settings-unified-root .shil-equipment-bank-title {
+  font-size: clamp(16px, 3.9vw, 21px) !important;
+  line-height: 1.2 !important;
+}
+
+#shil-system-settings-unified-root .shil-section-head span {
+  font-size: 10px !important;
+  line-height: 1.15 !important;
+}
+
+#shil-system-settings-unified-root :is(
+  .shil-summary-grid,
+  .shil-form-grid.compact,
+  .shil-choice-grid,
+  .shil-choice-grid.three,
+  .shil-bank-datasheet-grid,
+  .shil-summary-details-grid
+),
+#shil-system-settings-unified-root .shil-summary-table-card > div:first-child {
+  gap: 7px !important;
+}
+
+#shil-system-settings-unified-root .shil-choice-grid.three {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+}
+
+#shil-system-settings-unified-root :is(
+  .shil-summary-grid > div,
+  .shil-form-grid.compact > label,
+  .shil-choice-card,
+  .shil-summary-modern-item,
+  .shil-summary-detail-item,
+  .shil-bank-smart-note
+) {
+  min-height: 64px !important;
+  padding: 8px 7px !important;
+  gap: 3px !important;
+  border-radius: 14px !important;
+}
+
+#shil-system-settings-unified-root :is(
+  .shil-summary-grid span,
+  .shil-summary-modern-item span,
+  .shil-summary-detail-item span,
+  .shil-form-grid.compact > label > span,
+  .shil-choice-card span,
+  .shil-bank-smart-note span,
+  .shil-bank-smart-note small
+) {
+  font-size: 10px !important;
+  line-height: 1.15 !important;
+}
+
+#shil-system-settings-unified-root :is(
+  .shil-summary-grid strong,
+  .shil-summary-modern-item strong,
+  .shil-summary-detail-item strong,
+  .shil-choice-card strong,
+  .shil-bank-smart-note strong
+) {
+  font-size: 14px !important;
+  line-height: 1.18 !important;
+}
+
+#shil-system-settings-unified-root :is(input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
+  min-height: 38px !important;
+  height: 38px !important;
+  padding: 5px 8px !important;
+  border-radius: 11px !important;
+  font-size: 12px !important;
+}
+
+#shil-system-settings-unified-root .shil-summary-detail-chip {
+  min-height: 38px !important;
+  height: 38px !important;
+  margin-top: 7px !important;
+  font-size: 12px !important;
+}
+
+#shil-system-settings-unified-root .shil-equipment-bank-table :is(th, td) {
+  padding: 7px 4px !important;
+  font-size: 10px !important;
+  line-height: 1.15 !important;
+}
+
+#shil-system-settings-unified-root :is(.shil-equipment-bank-chip, .shil-equipment-bank-sheet) {
+  min-height: 34px !important;
+  height: 34px !important;
+  border-radius: 10px !important;
+  font-size: 10px !important;
+}
+
+#shil-system-settings-unified-root :is(.shil-floating-warning, .shil-warning-overlay, .shil-inline-warning, .shil-system-warning) {
+  padding: 8px 10px !important;
+  border-radius: 12px !important;
+  font-size: 10px !important;
+  line-height: 1.35 !important;
+}
+
+#shil-system-settings-unified-root .shil-env-content-confirm-slot {
+  margin: 5px 0 10px !important;
+}
+
+#shil-system-settings-unified-root .shil-env-content-confirm-button,
+#shil-system-settings-unified-root .shil-env-content-confirm-button:is(button, a),
+#shil-system-settings-unified-root .shil-env-content-confirm-button button {
+  min-width: 210px !important;
+  height: 48px !important;
+  min-height: 48px !important;
+  padding: 0 26px !important;
+  color: #07182e !important;
+  background: linear-gradient(100deg, #31b9df 0%, #6f55eb 100%) !important;
+  background-image: linear-gradient(100deg, #31b9df 0%, #6f55eb 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.72) !important;
+  border-radius: 18px !important;
+  box-shadow: 0 8px 20px rgba(66, 94, 215, 0.28) !important;
+  font-size: 16px !important;
+  font-weight: 950 !important;
+}
+
+@media (max-width: 680px) {
+  #shil-system-settings-unified-root.shil-system-settings-page {
+    gap: 8px !important;
+    padding-inline: 6px !important;
+  }
+
+  /* Keep data compact and multi-column on phones. */
+  #shil-system-settings-unified-root :is(
+    .shil-summary-grid,
+    .shil-form-grid.compact,
+    .shil-choice-grid,
+    .shil-bank-datasheet-grid,
+    .shil-summary-details-grid
+  ),
+  #shil-system-settings-unified-root .shil-summary-table-card > div:first-child {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 6px !important;
+  }
+
+  #shil-system-settings-unified-root .shil-choice-grid.three {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 6px !important;
+  }
+
+  #shil-system-settings-unified-root :is(
+    .shil-summary-grid > div,
+    .shil-form-grid.compact > label,
+    .shil-choice-card,
+    .shil-summary-modern-item,
+    .shil-summary-detail-item
+  ) {
+    min-height: 58px !important;
+    padding: 7px 5px !important;
+  }
+
+  #shil-system-settings-unified-root .shil-choice-card strong {
+    font-size: 13px !important;
+  }
+
+  #shil-system-settings-unified-root .shil-choice-card span {
+    font-size: 9px !important;
+  }
+
+  #shil-system-settings-unified-root .shil-equipment-bank-table :is(th, td) {
+    padding: 6px 2px !important;
+    font-size: 9px !important;
+  }
+}

@@ -1,0 +1,380 @@
+/* SHIL V6.1 - compact installation dashboard (single / multi orientation) */
+#shil-environment-unified-root {
+  --env-accent: #6d5ef6;
+  --env-accent-2: #4f46e5;
+  --env-soft: #eef2ff;
+  --env-soft-blue: #eaf4ff;
+  --env-border: #d7ddf5;
+  --env-text: #111827;
+  --env-muted: #64748b;
+  --env-danger: #dc2626;
+}
+
+#shil-environment-unified-root .shil-installation-layout-panel {
+  display: grid;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+#shil-environment-unified-root .shil-installation-mode-switch {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 4px !important;
+  padding: 4px !important;
+  margin: 0 !important;
+  border: 1px solid var(--env-border) !important;
+  border-radius: 14px !important;
+  background: rgba(238, 242, 255, .94) !important;
+  box-shadow: none !important;
+}
+
+#shil-environment-unified-root .shil-installation-mode-switch button {
+  min-height: 40px !important;
+  height: 40px !important;
+  padding: 6px 10px !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  background: transparent !important;
+  color: var(--env-text) !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  box-shadow: none !important;
+}
+
+#shil-environment-unified-root .shil-installation-mode-switch button.active {
+  color: #fff !important;
+  background: linear-gradient(135deg, var(--env-accent-2), var(--env-accent)) !important;
+}
+
+#shil-environment-unified-root .shil-single-orientation-card,
+#shil-environment-unified-root .shil-installation-array-card,
+#shil-environment-unified-root .shil-installation-summary-card {
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border: 1px solid var(--env-border) !important;
+  border-radius: 16px !important;
+  background: rgba(255, 255, 255, .97) !important;
+  box-shadow: none !important;
+}
+
+#shil-environment-unified-root .shil-compact-card-head {
+  min-height: 52px;
+  padding: 9px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: linear-gradient(135deg, #f8faff, var(--env-soft));
+  border-bottom: 1px solid var(--env-border);
+}
+
+#shil-environment-unified-root .shil-compact-card-head > div {
+  display: grid;
+  gap: 2px;
+}
+
+#shil-environment-unified-root .shil-compact-card-head strong,
+#shil-environment-unified-root .shil-array-title-wrap strong {
+  color: var(--env-text) !important;
+  font-size: 14px !important;
+  line-height: 1.2 !important;
+}
+
+#shil-environment-unified-root .shil-compact-card-head small,
+#shil-environment-unified-root .shil-array-title-wrap small {
+  color: var(--env-muted) !important;
+  font-size: 11px !important;
+  line-height: 1.25 !important;
+}
+
+#shil-environment-unified-root .shil-efficiency-badge {
+  min-width: 52px;
+  height: 32px;
+  padding: 0 9px;
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: var(--env-soft-blue);
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8 !important;
+  font-size: 14px !important;
+  font-weight: 900 !important;
+}
+
+#shil-environment-unified-root .shil-orientation-input-grid--compact,
+#shil-environment-unified-root .shil-array-fields--compact {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+  margin: 0 !important;
+  padding: 10px !important;
+}
+
+#shil-environment-unified-root .shil-field--compact,
+#shil-environment-unified-root .shil-array-fields--compact > label,
+#shil-environment-unified-root .shil-array-name-row {
+  min-width: 0;
+  margin: 0 !important;
+  padding: 8px !important;
+  display: grid !important;
+  gap: 5px !important;
+  border: 1px solid var(--env-border) !important;
+  border-radius: 12px !important;
+  background: #f8faff !important;
+}
+
+#shil-environment-unified-root .shil-field--compact label,
+#shil-environment-unified-root .shil-array-fields--compact > label,
+#shil-environment-unified-root .shil-array-name-row label {
+  margin: 0 !important;
+  color: var(--env-text) !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  line-height: 1.2 !important;
+}
+
+#shil-environment-unified-root .shil-field--compact .shil-input,
+#shil-environment-unified-root .shil-array-fields--compact .shil-input,
+#shil-environment-unified-root .shil-array-name-row .shil-input {
+  width: 100% !important;
+  min-height: 38px !important;
+  height: 38px !important;
+  margin: 0 !important;
+  padding: 5px 8px !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 10px !important;
+  background: #fff !important;
+  color: var(--env-text) !important;
+  font-size: 15px !important;
+  font-weight: 800 !important;
+  text-align: center !important;
+  box-shadow: none !important;
+}
+
+#shil-environment-unified-root .shil-field--compact small,
+#shil-environment-unified-root .shil-array-fields--compact small {
+  min-height: 0 !important;
+  margin: 0 !important;
+  color: var(--env-muted) !important;
+  font-size: 9.5px !important;
+  line-height: 1.35 !important;
+}
+
+#shil-environment-unified-root .shil-installation-arrays--accordion {
+  display: grid !important;
+  gap: 8px !important;
+  margin: 0 !important;
+}
+
+#shil-environment-unified-root .shil-installation-array-head--accordion {
+  min-height: 54px !important;
+  padding: 5px !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  gap: 5px !important;
+  align-items: stretch !important;
+  background: linear-gradient(135deg, #f8faff, var(--env-soft)) !important;
+  border: 0 !important;
+}
+
+#shil-environment-unified-root .shil-array-toggle {
+  min-width: 0 !important;
+  min-height: 44px !important;
+  height: auto !important;
+  padding: 5px 7px !important;
+  display: grid !important;
+  grid-template-columns: 28px minmax(0, 1fr) auto !important;
+  gap: 7px !important;
+  align-items: center !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  background: transparent !important;
+  color: var(--env-text) !important;
+  text-align: right !important;
+  box-shadow: none !important;
+}
+
+#shil-environment-unified-root .shil-array-toggle-icon {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  background: #fff;
+  border: 1px solid var(--env-border);
+  color: var(--env-accent-2);
+  font-size: 18px;
+  font-weight: 900;
+}
+
+#shil-environment-unified-root .shil-array-title-wrap {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+#shil-environment-unified-root .shil-array-remove {
+  width: auto !important;
+  min-width: 58px !important;
+  min-height: 44px !important;
+  height: 44px !important;
+  margin: 0 !important;
+  padding: 5px 9px !important;
+  border: 1px solid #fecaca !important;
+  border-radius: 10px !important;
+  background: #fff1f2 !important;
+  color: var(--env-danger) !important;
+  font-size: 12px !important;
+  font-weight: 900 !important;
+  box-shadow: none !important;
+}
+
+#shil-environment-unified-root .shil-array-remove:disabled {
+  opacity: .4 !important;
+}
+
+#shil-environment-unified-root .shil-array-expanded-content {
+  display: grid;
+  gap: 0;
+  border-top: 1px solid var(--env-border);
+  background: #fff;
+}
+
+#shil-environment-unified-root .shil-array-name-row {
+  margin: 9px 10px 0 !important;
+  grid-template-columns: 72px minmax(0, 1fr) !important;
+  align-items: center !important;
+}
+
+#shil-environment-unified-root .shil-array-result-row--compact {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 1px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: var(--env-border) !important;
+  border-top: 1px solid var(--env-border) !important;
+}
+
+#shil-environment-unified-root .shil-array-result-row--compact span {
+  min-height: 48px !important;
+  padding: 6px 4px !important;
+  display: grid !important;
+  place-content: center !important;
+  gap: 2px !important;
+  background: var(--env-soft-blue) !important;
+  color: var(--env-muted) !important;
+  font-size: 10px !important;
+  text-align: center !important;
+}
+
+#shil-environment-unified-root .shil-array-result-row--compact strong {
+  color: var(--env-text) !important;
+  font-size: 14px !important;
+}
+
+#shil-environment-unified-root .shil-add-array-button {
+  min-height: 44px !important;
+  height: 44px !important;
+  margin: 0 !important;
+  padding: 6px 12px !important;
+  border: 1px dashed var(--env-accent) !important;
+  border-radius: 12px !important;
+  background: rgba(238, 242, 255, .96) !important;
+  color: var(--env-accent-2) !important;
+  font-size: 13px !important;
+  font-weight: 900 !important;
+  box-shadow: none !important;
+}
+
+#shil-environment-unified-root .shil-array-engine-note {
+  margin: 0 !important;
+  padding: 0 4px !important;
+  color: var(--env-muted) !important;
+  font-size: 10px !important;
+  line-height: 1.55 !important;
+}
+
+#shil-environment-unified-root .shil-installation-summary-card {
+  padding: 10px !important;
+  display: grid !important;
+  gap: 8px !important;
+  background: linear-gradient(135deg, #f8faff, var(--env-soft-blue)) !important;
+}
+
+#shil-environment-unified-root .shil-installation-summary-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0 2px;
+}
+
+#shil-environment-unified-root .shil-installation-summary-main span {
+  color: var(--env-text);
+  font-size: 13px;
+  font-weight: 900;
+}
+
+#shil-environment-unified-root .shil-installation-summary-main strong {
+  color: var(--env-accent-2);
+  font-size: 25px;
+  line-height: 1;
+}
+
+#shil-environment-unified-root .shil-installation-summary-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+}
+
+#shil-environment-unified-root .shil-installation-summary-metrics span {
+  min-height: 50px;
+  padding: 6px 3px;
+  display: grid;
+  place-content: center;
+  gap: 3px;
+  border: 1px solid var(--env-border);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--env-muted);
+  font-size: 9.5px;
+  text-align: center;
+}
+
+#shil-environment-unified-root .shil-installation-summary-metrics strong {
+  color: var(--env-text);
+  font-size: 14px;
+}
+
+#shil-environment-unified-root .shil-array-summary--geometry {
+  min-height: 34px !important;
+  margin: 0 !important;
+  padding: 5px 8px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+  border: 0 !important;
+  border-radius: 9px !important;
+  background: rgba(255,255,255,.78) !important;
+  color: var(--env-muted) !important;
+  font-size: 10px !important;
+}
+
+@media (max-width: 380px) {
+  #shil-environment-unified-root .shil-orientation-input-grid--compact,
+  #shil-environment-unified-root .shil-array-fields--compact {
+    grid-template-columns: 1fr !important;
+  }
+  #shil-environment-unified-root .shil-array-toggle {
+    grid-template-columns: 26px minmax(0, 1fr) !important;
+  }
+  #shil-environment-unified-root .shil-array-toggle .shil-efficiency-badge {
+    grid-column: 2;
+    justify-self: start;
+  }
+}

@@ -1,0 +1,100 @@
+.shil-admin-sensitive-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(7, 20, 34, .52);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.shil-admin-sensitive-dialog {
+  width: min(420px, 94vw);
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid rgba(255,255,255,.78);
+  border-radius: 18px;
+  background: rgba(250,253,255,.96);
+  box-shadow: 0 24px 80px rgba(0,0,0,.28);
+  color: #102a43;
+}
+.shil-admin-sensitive-dialog strong { font-size: 16px; }
+.shil-admin-sensitive-dialog p { margin: 0; font-size: 13px; line-height: 1.8; }
+.shil-admin-sensitive-dialog input {
+  width: 100%;
+  min-height: 46px;
+  border: 1px solid rgba(40,130,190,.35);
+  border-radius: 12px;
+  padding: 0 12px;
+  background: #fff;
+  font: inherit;
+}
+.shil-admin-cloud-users { margin-bottom: 18px; }
+.shil-admin-cloud-users select { min-height: 36px; border-radius: 10px; padding-inline: 8px; }
+
+/* V3.2 User Management Center */
+.shil-admin-user-center { display:grid; gap:12px; margin-bottom:18px; }
+.shil-admin-user-stats { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; }
+.shil-admin-user-toolbar { display:grid; grid-template-columns:minmax(180px,1fr) auto auto auto; gap:8px; align-items:center; }
+.shil-admin-user-toolbar input,.shil-admin-user-toolbar select { min-height:38px; border:1px solid rgba(51,112,153,.22); border-radius:10px; padding:0 10px; background:rgba(255,255,255,.82); font:inherit; }
+.shil-admin-user-list { display:grid; gap:9px; }
+.shil-admin-user-card { display:grid; gap:9px; padding:12px; border:1px solid rgba(47,111,151,.18); border-radius:14px; background:rgba(255,255,255,.74); }
+.shil-admin-user-card header { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+.shil-admin-user-card h3 { margin:0; font-size:14px; }
+.shil-admin-user-card p { margin:2px 0 0; font-size:12px; }
+.shil-admin-user-badges { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:5px; }
+.shil-admin-user-badges span { padding:3px 7px; border-radius:999px; background:rgba(84,111,137,.1); font-size:10px; white-space:nowrap; }
+.shil-admin-user-badges span.ok { background:rgba(34,139,94,.12); }
+.shil-admin-user-badges span.warn { background:rgba(190,126,28,.14); }
+.shil-admin-user-activity { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; }
+.shil-admin-user-activity span { min-width:0; padding:7px 8px; border-radius:10px; background:rgba(31,91,132,.055); font-size:10px; line-height:1.55; }
+.shil-admin-user-activity strong { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:11px; }
+.shil-admin-user-id { opacity:.56; overflow-wrap:anywhere; font-size:10px !important; }
+.shil-admin-user-controls { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.shil-admin-user-controls label { display:grid; grid-template-columns:auto 1fr; align-items:center; gap:6px; font-size:11px; }
+.shil-admin-user-controls select { min-width:0; min-height:36px; border:1px solid rgba(51,112,153,.22); border-radius:10px; padding-inline:8px; background:#fff; }
+.shil-admin-user-details { display:grid; gap:5px; padding-top:8px; border-top:1px dashed rgba(51,112,153,.2); }
+.shil-admin-user-record { display:grid; grid-template-columns:minmax(0,1fr) auto auto; gap:8px; align-items:center; padding:7px 8px; border-radius:9px; background:rgba(31,91,132,.05); font-size:10px; }
+.shil-admin-local-user-data { display:grid; gap:8px; padding-top:12px; border-top:1px solid rgba(51,112,153,.14); }
+.shil-admin-local-user-data>h3 { margin:0; font-size:13px; }
+@media (max-width:760px) {
+  .shil-admin-user-stats { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .shil-admin-user-toolbar { grid-template-columns:1fr 1fr; }
+  .shil-admin-user-toolbar input { grid-column:1/-1; }
+  .shil-admin-user-toolbar button { grid-column:1/-1; }
+  .shil-admin-user-activity { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .shil-admin-user-controls { grid-template-columns:1fr; }
+  .shil-admin-user-record { grid-template-columns:1fr auto; }
+  .shil-admin-user-record small { grid-column:1/-1; }
+}
+
+/* V3.3 Security & Audit Center */
+.shil-admin-security-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px; }
+.shil-admin-security-session,.shil-admin-security-event { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px; align-items:center; padding:8px 0; border-bottom:1px dashed rgba(51,112,153,.16); }
+.shil-admin-security-session>div { display:grid; gap:2px; min-width:0; }
+.shil-admin-security-session small,.shil-admin-security-event small { font-size:10px; opacity:.65; }
+.shil-admin-security-event { grid-template-columns:minmax(0,1fr) minmax(0,.8fr) auto; font-size:11px; }
+.shil-admin-security-note { margin:10px 0 0; font-size:11px; opacity:.72; line-height:1.8; }
+@media (max-width:760px){ .shil-admin-security-grid{grid-template-columns:1fr}.shil-admin-security-event{grid-template-columns:1fr auto}.shil-admin-security-event small{grid-column:1/-1} }
+
+/* SHIL Admin Command Center V4.0 */
+.shil-admin-module-badge-v40{margin-inline-start:auto;min-width:52px;padding:3px 7px;border:1px solid color-mix(in srgb,currentColor 20%,transparent);border-radius:999px;font-size:10px;font-weight:700;opacity:.72;white-space:nowrap;text-align:center}
+.shil-admin-readiness-v40{display:grid;grid-template-columns:minmax(118px,.32fr) minmax(0,1.68fr);gap:10px;margin:8px 0 10px;padding:10px;border:1px solid rgba(120,130,150,.22);border-radius:14px;background:rgba(255,255,255,.028)}
+.shil-admin-readiness-v40.ready{box-shadow:inset 0 0 0 1px rgba(90,170,120,.08)}
+.shil-admin-readiness-v40.blocked{box-shadow:inset 0 0 0 1px rgba(190,130,80,.09)}
+.shil-admin-readiness-score-v40{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:104px;border-radius:11px;background:rgba(255,255,255,.035);text-align:center}
+.shil-admin-readiness-score-v40 strong{font-size:28px;line-height:1;font-variant-numeric:tabular-nums}
+.shil-admin-readiness-score-v40 span{font-size:11px;font-weight:700}
+.shil-admin-readiness-score-v40 small{font-size:9px;opacity:.58}
+.shil-admin-readiness-checks-v40{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.shil-admin-readiness-checks-v40 button{display:flex;align-items:center;gap:7px;min-width:0;padding:7px 8px;border:1px solid rgba(130,140,160,.18);border-radius:10px;background:rgba(255,255,255,.025);text-align:right}
+.shil-admin-readiness-checks-v40 button>span{display:grid;place-items:center;flex:0 0 22px;width:22px;height:22px;border-radius:7px;font-size:11px;font-weight:900;background:rgba(130,140,160,.1)}
+.shil-admin-readiness-checks-v40 button div{display:flex;min-width:0;flex-direction:column;gap:1px}
+.shil-admin-readiness-checks-v40 button strong{font-size:10.5px;line-height:1.35}
+.shil-admin-readiness-checks-v40 button small{font-size:9px;line-height:1.35;opacity:.62;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.shil-admin-readiness-checks-v40 button.ok>span{background:rgba(80,170,120,.14)}
+.shil-admin-readiness-checks-v40 button.blocker>span{background:rgba(210,105,75,.14)}
+.shil-admin-readiness-checks-v40 button.warn>span{background:rgba(205,160,70,.14)}
+@media(max-width:640px){.shil-admin-readiness-v40{grid-template-columns:1fr}.shil-admin-readiness-score-v40{min-height:74px}.shil-admin-readiness-checks-v40{grid-template-columns:1fr}.shil-admin-module-badge-v40{font-size:9px;padding:2px 6px}}

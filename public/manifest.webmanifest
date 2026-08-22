@@ -1,0 +1,38 @@
+{
+  "id": "/",
+  "name": "SHIL Engineering Beta",
+  "short_name": "SHIL",
+  "description": "سامانه مهندسی SHIL برای طراحی، محاسبات و گزارش‌گیری سیستم‌های خورشیدی و برق اضطراری",
+  "lang": "fa",
+  "dir": "rtl",
+  "start_url": "/login?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#020617",
+  "theme_color": "#081120",
+  "categories": [
+    "education",
+    "utilities"
+  ],
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

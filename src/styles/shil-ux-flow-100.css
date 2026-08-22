@@ -1,0 +1,160 @@
+/* SHIL UX FLOW 100 FINAL UPDATE */
+:root {
+  --shil-ux-success: rgba(38, 217, 132, 0.92);
+  --shil-ux-warning: rgba(255, 190, 85, 0.95);
+  --shil-ux-danger: rgba(255, 88, 88, 0.96);
+}
+
+.shil-ux-toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(76px + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  z-index: 2147483000;
+  width: min(calc(100vw - 28px), 430px);
+  padding: 12px 14px;
+  border-radius: 18px;
+  color: #fff;
+  text-align: center;
+  font-size: 13px;
+  line-height: 1.8;
+  background: rgba(12, 18, 28, 0.94);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.34);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  pointer-events: none;
+  animation: shilUxToastIn 0.24s ease-out both;
+}
+
+.shil-ux-toast.success { border-color: rgba(38, 217, 132, 0.34); box-shadow: 0 18px 44px rgba(38, 217, 132, 0.14); }
+.shil-ux-toast.warning { border-color: rgba(255, 190, 85, 0.34); box-shadow: 0 18px 44px rgba(255, 190, 85, 0.14); }
+
+@keyframes shilUxToastIn {
+  from { opacity: 0; transform: translate(-50%, 12px) scale(0.98); }
+  to { opacity: 1; transform: translate(-50%, 0) scale(1); }
+}
+
+.shil-readonly-notice,
+.shil-inline-warning,
+.shil-inline-success {
+  border-radius: 16px !important;
+  padding: 10px 12px !important;
+  line-height: 1.9 !important;
+}
+
+.shil-inline-success {
+  background: rgba(38, 217, 132, 0.10) !important;
+  border: 1px solid rgba(38, 217, 132, 0.25) !important;
+  color: rgba(230, 255, 244, 0.96) !important;
+}
+
+input, textarea, select, [contenteditable="true"] {
+  direction: rtl;
+  unicode-bidi: plaintext;
+  text-align: start;
+  font-variant-numeric: lining-nums;
+}
+
+input[type="email"], input[type="url"], input[type="password"], input[type="number"], input[data-ltr="true"] {
+  direction: ltr;
+  text-align: left;
+}
+
+.shil-mini-project-card {
+  transition: transform .18s ease, border-color .18s ease, background .18s ease;
+}
+
+.shil-mini-project-card:active,
+.shil-nav-card:active,
+.shil-primary-wide:active,
+.shil-output-actions button:active {
+  transform: translateY(1px) scale(.99);
+}
+
+.shil-output-actions button {
+  cursor: pointer;
+  min-height: 44px;
+}
+
+@media print {
+  .shil-project-mini-rail,
+  .shil-bottom-nav,
+  .shil-app-footer,
+  .shil-ux-toast,
+  .shil-soft-link-button,
+  .shil-output-actions,
+  .shil-primary-wide {
+    display: none !important;
+  }
+  body, .shil-page, .shil-section-card {
+    background: #fff !important;
+    color: #111 !important;
+    box-shadow: none !important;
+  }
+  .shil-section-card {
+    break-inside: avoid;
+    border: 1px solid #ddd !important;
+  }
+}
+
+/* =====================================================
+   SHIL PAGE SHELL - FINAL LAYOUT
+   ===================================================== */
+
+.shil-page-shell{
+    position:relative !important;
+    width:100% !important;
+    height:100dvh !important;
+    min-height:100dvh !important;
+    overflow:hidden !important;
+}
+
+.shil-page-content{
+    position:absolute !important;
+
+    top:55px !important;
+    left:0 !important;
+    right:0 !important;
+    bottom:40px !important;
+
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+
+    box-sizing:border-box !important;
+
+    -webkit-overflow-scrolling:touch !important;
+}
+
+.shil-no-header .shil-page-content{
+    top:0 !important;
+}
+
+.shil-no-footer .shil-page-content{
+    bottom:0 !important;
+}
+
+.shil-fixed-header{
+    position:fixed !important;
+    top:0 !important;
+    left:0 !important;
+    right:0 !important;
+    height:55px !important;
+    min-height:55px !important;
+    max-height:55px !important;
+    z-index:4000 !important;
+}
+
+.shil-fixed-footer{
+    position:fixed !important;
+    left:0 !important;
+    right:0 !important;
+    bottom:0 !important;
+
+    height:40px !important;
+    min-height:40px !important;
+    max-height:40px !important;
+
+    z-index:4000 !important;
+}
+

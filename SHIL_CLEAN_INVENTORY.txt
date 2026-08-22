@@ -1,0 +1,35 @@
+SHIL CLEAN PROJECT INVENTORY
+============================
+
+Top-level:
+.env.example
+.env.local
+.env.production.example
+.github
+.gitignore
+.npmrc
+SHIL_CLEAN_INVENTORY.txt
+SHIL_CLEAN_PROJECT_README_FA.txt
+android
+api
+capacitor.config.json
+index.html
+netlify.toml
+package-lock.json
+package.json
+public
+src
+supabase
+tests
+tools
+vercel.json
+vite.config.js
+
+Counts:
+src files: 1078
+public files: 103
+api files: 7
+supabase files: 13
+android files: 59
+tools files: 11
+tests files: 86

@@ -1,0 +1,144 @@
+/* SHIL V6.3 — semantic visual roles for installation data.
+   Neutral = fixed/reference, blue = user input, green/teal = calculated result. */
+
+html body.shil-environment-unified-screen #shil-environment-unified-root {
+  --shil-fixed-bg: #eef3f8;
+  --shil-fixed-border: #cbd7e4;
+  --shil-fixed-text: #334155;
+  --shil-input-bg: #ffffff;
+  --shil-input-border: #63c9e8;
+  --shil-input-focus: #6557f5;
+  --shil-result-bg: #eaf8f3;
+  --shil-result-bg-2: #eaf7ff;
+  --shil-result-border: #89d8be;
+  --shil-result-text: #08715b;
+  --shil-danger-bg: #fff5f5;
+  --shil-danger-border: #f5b9b9;
+  --shil-danger-text: #a12626;
+}
+
+/* Main array boundary: stronger and cleaner hierarchy. */
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-installation-array-card,
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-single-orientation-card,
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-installation-summary-card {
+  border: 1.5px solid #d2deea !important;
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.09) !important;
+}
+
+/* Header is a neutral/read-only region. */
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-installation-array-head--accordion,
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-compact-card-head {
+  background: var(--shil-fixed-bg) !important;
+  border-bottom: 1px solid var(--shil-fixed-border) !important;
+}
+
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-installation-array-card.is-collapsed .shil-installation-array-head--accordion {
+  border-bottom: 0 !important;
+}
+
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-array-title-wrap small,
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-compact-card-head small {
+  color: var(--shil-fixed-text) !important;
+}
+
+/* Fixed values / reference text. */
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-array-fields--compact small,
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-field--compact small,
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-array-engine-note {
+  display: block !important;
+  padding: 7px 9px !important;
+  border: 1px solid var(--shil-fixed-border) !important;
+  border-radius: 11px !important;
+  background: var(--shil-fixed-bg) !important;
+  color: var(--shil-fixed-text) !important;
+  line-height: 1.65 !important;
+}
+
+/* User-editable field containers. */
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-array-name-row,
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-array-fields--compact > label,
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-field--compact {
+  border: 1.5px solid #b9e8f5 !important;
+  background: #f7fdff !important;
+}
+
+/* User-editable controls are unmistakably interactive. */
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-array-name-row .shil-input,
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-array-fields--compact .shil-input,
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-field--compact .shil-input {
+  border: 2px solid var(--shil-input-border) !important;
+  background: var(--shil-input-bg) !important;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.8) !important;
+  transition: border-color .18s ease, box-shadow .18s ease, background .18s ease !important;
+}
+
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-array-name-row .shil-input:focus,
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-array-fields--compact .shil-input:focus,
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-field--compact .shil-input:focus {
+  outline: none !important;
+  border-color: var(--shil-input-focus) !important;
+  background: #fff !important;
+  box-shadow: 0 0 0 4px rgba(101, 87, 245, .15) !important;
+}
+
+/* Calculated results. */
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-array-result-row--compact span,
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-installation-summary-metrics span,
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-array-summary--geometry,
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-efficiency-badge {
+  border: 1.5px solid var(--shil-result-border) !important;
+  background: linear-gradient(135deg, var(--shil-result-bg), var(--shil-result-bg-2)) !important;
+  color: var(--shil-result-text) !important;
+}
+
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-array-result-row--compact span strong,
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-installation-summary-metrics span strong,
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-installation-summary-main strong,
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-efficiency-badge {
+  color: var(--shil-result-text) !important;
+  font-weight: 900 !important;
+}
+
+/* Final result card gets a subtle calculated accent, without adding a wrapper. */
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-installation-summary-card {
+  background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(239,251,247,.98)) !important;
+  border-color: var(--shil-result-border) !important;
+}
+
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-installation-summary-main {
+  padding-bottom: 10px !important;
+  border-bottom: 1px solid #cce9df !important;
+}
+
+/* Destructive action. */
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-array-remove {
+  border-color: var(--shil-danger-border) !important;
+  background: var(--shil-danger-bg) !important;
+  color: var(--shil-danger-text) !important;
+}
+
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-array-remove:disabled {
+  opacity: .45 !important;
+}
+
+/* Add action remains purple and distinct from data roles. */
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-add-array-button {
+  border: 1.5px dashed #7868ff !important;
+  background: rgba(245, 243, 255, .98) !important;
+  color: #4338ca !important;
+}
+
+/* Toggle remains neutral; active mode stays purple. */
+html body.shil-environment-unified-screen #shil-environment-unified-root .shil-array-toggle-icon {
+  background: var(--shil-fixed-bg) !important;
+  border-color: var(--shil-fixed-border) !important;
+  color: var(--shil-fixed-text) !important;
+}
+
+@media (max-width: 640px) {
+  html body.shil-environment-unified-screen #shil-environment-unified-root .shil-array-fields--compact small,
+  html body.shil-environment-unified-screen #shil-environment-unified-root .shil-field--compact small {
+    padding: 6px 7px !important;
+    font-size: 9.5px !important;
+  }
+}

@@ -1,0 +1,609 @@
+/* SHIL PHASE 1 - CORE UI FOUNDATION
+   Scope: shared Header/Footer + global design tokens + shell/container cleanup.
+   This stylesheet MUST remain the absolute last CSS import in main.jsx.
+   It intentionally does not redesign the Projects cards or their child pages. */
+
+:root {
+  /* Core palette - new SHIL visual language */
+  --shil-core-ink: #102a43;
+  --shil-core-ink-soft: #486581;
+  --shil-core-surface: rgba(244, 250, 255, 0.94);
+  --shil-core-surface-strong: #f8fcff;
+  --shil-core-line: rgba(151, 188, 214, 0.74);
+  --shil-core-cyan: #58d8e8;
+  --shil-core-cyan-strong: #1fb6c9;
+  --shil-core-mint: #6ee7b7;
+  --shil-core-gold: #f3b74f;
+
+  /* Shell colors - never black on the photographic artwork */
+  --shil-shell-text: #f4fbff;
+  --shil-shell-text-soft: #d9eef8;
+  --shil-shell-control: rgba(5, 20, 35, 0.72);
+  --shil-shell-control-hover: rgba(11, 42, 62, 0.88);
+  --shil-shell-line: rgba(205, 231, 244, 0.62);
+  --shil-shell-focus: #69e2ef;
+
+  /* Stable viewport contract */
+  --shil-header-bar: 55px;
+  --shil-footer-bar: 40px;
+  --shil-safe-top: env(safe-area-inset-top, 0px);
+  --shil-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --shil-header-total: calc(var(--shil-header-bar) + var(--shil-safe-top));
+  --shil-footer-total: calc(var(--shil-footer-bar) + var(--shil-safe-bottom));
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+}
+
+body:not(.login-page):not(.welcome-page) {
+  overflow: hidden !important;
+  background: #061322 !important;
+}
+
+/* =====================================================
+   SINGLE SHELL / SINGLE SCROLL VIEWPORT
+   ===================================================== */
+body:not(.login-page):not(.welcome-page) .shil-page-shell:not(.shil-page--auth) {
+  position: relative !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 100dvh !important;
+  min-height: 100dvh !important;
+  max-height: 100dvh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  isolation: isolate !important;
+}
+
+/* Only the page content scrolls. This neutralizes old outer card/wrapper visuals. */
+body:not(.login-page):not(.welcome-page)
+  .shil-page-shell:not(.shil-page--auth)
+  > main.shil-page-content {
+  position: fixed !important;
+  top: var(--shil-header-total) !important;
+  right: 0 !important;
+  bottom: var(--shil-footer-total) !important;
+  left: 0 !important;
+  width: auto !important;
+  min-width: 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior-y: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  z-index: 1 !important;
+}
+
+/* EngineeringPageShell is structural only, not another visual panel. */
+body:not(.login-page):not(.welcome-page)
+  .shil-page-shell:not(.shil-page--auth)
+  > main.shil-page-content
+  > .shil-engineering-content {
+  position: relative !important;
+  inset: auto !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* =====================================================
+   HEADER - HIGH CONTRAST ON NEW ARTWORK
+   ===================================================== */
+body:not(.login-page):not(.welcome-page)
+  .shil-page-shell:not(.shil-page--auth)
+  > .shil-fixed-header {
+  position: fixed !important;
+  inset: 0 0 auto 0 !important;
+  width: 100% !important;
+  height: var(--shil-header-total) !important;
+  min-height: var(--shil-header-total) !important;
+  max-height: var(--shil-header-total) !important;
+  display: grid !important;
+  grid-template-columns: minmax(76px, 0.82fr) minmax(145px, 1.7fr) minmax(76px, 0.82fr) !important;
+  align-items: center !important;
+  gap: clamp(7px, 1.8vw, 13px) !important;
+  margin: 0 !important;
+  padding: var(--shil-safe-top) clamp(8px, 2.5vw, 14px) 0 !important;
+  background-color: #06111f !important;
+  background-image:
+    linear-gradient(90deg, rgba(3, 13, 24, 0.76), rgba(3, 13, 24, 0.32) 32%, rgba(3, 13, 24, 0.28) 68%, rgba(3, 13, 24, 0.76)),
+    url("../../assets/shell/shil-header-spark.png") !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--shil-shell-line) !important;
+  border-radius: 0 !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28) !important;
+  overflow: hidden !important;
+  z-index: 10000 !important;
+}
+
+body:not(.login-page):not(.welcome-page)
+  .shil-page-shell:not(.shil-page--auth)
+  > .shil-fixed-header
+  .shil-header-title {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 38px !important;
+  margin: 0 !important;
+  padding: 0 12px !important;
+  color: var(--shil-shell-text) !important;
+  background: rgba(4, 17, 31, 0.54) !important;
+  border: 1px solid rgba(215, 237, 248, 0.52) !important;
+  border-radius: 999px !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05) !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.82) !important;
+  font-size: clamp(14px, 4vw, 18px) !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+}
+
+body:not(.login-page):not(.welcome-page)
+  .shil-page-shell:not(.shil-page--auth)
+  > .shil-fixed-header
+  .shil-header-action {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  margin: 0 !important;
+  padding: 0 10px !important;
+  color: var(--shil-shell-text) !important;
+  -webkit-text-fill-color: var(--shil-shell-text) !important;
+  background: var(--shil-shell-control) !important;
+  background-image: none !important;
+  border: 1px solid var(--shil-shell-line) !important;
+  border-radius: 999px !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05),
+    0 2px 8px rgba(0, 0, 0, 0.18) !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.82) !important;
+  font-size: clamp(11px, 3.2vw, 14px) !important;
+  font-weight: 850 !important;
+  line-height: 1 !important;
+  text-align: center !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+}
+
+body:not(.login-page):not(.welcome-page)
+  .shil-page-shell:not(.shil-page--auth)
+  > .shil-fixed-header
+  .shil-header-action:is(:hover, :focus-visible, :active) {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  background: var(--shil-shell-control-hover) !important;
+  border-color: rgba(105, 226, 239, 0.88) !important;
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(105, 226, 239, 0.18) !important;
+}
+
+body:not(.login-page):not(.welcome-page)
+  .shil-page-shell:not(.shil-page--auth)
+  > .shil-fixed-header
+  :is(svg, i) {
+  color: currentColor !important;
+  fill: none;
+  stroke: currentColor !important;
+}
+
+/* =====================================================
+   FOOTER - SAME CONTRAST / SAME PILL LANGUAGE
+   ===================================================== */
+body:not(.login-page):not(.welcome-page)
+  .shil-page-shell:not(.shil-page--auth)
+  > .shil-fixed-footer {
+  position: fixed !important;
+  inset: auto 0 0 0 !important;
+  width: 100% !important;
+  height: var(--shil-footer-total) !important;
+  min-height: var(--shil-footer-total) !important;
+  max-height: var(--shil-footer-total) !important;
+  display: grid !important;
+  grid-auto-flow: column !important;
+  grid-auto-columns: minmax(0, 1fr) !important;
+  align-items: center !important;
+  gap: 6px !important;
+  margin: 0 !important;
+  padding: 4px clamp(8px, 2.2vw, 12px) calc(4px + var(--shil-safe-bottom)) !important;
+  background-color: #06111f !important;
+  background-image:
+    linear-gradient(180deg, rgba(3, 13, 24, 0.28), rgba(3, 13, 24, 0.68)),
+    url("../../assets/shell/shil-footer-platform.png") !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  border: 0 !important;
+  border-top: 1px solid rgba(205, 231, 244, 0.48) !important;
+  border-radius: 0 !important;
+  box-shadow: 0 -4px 14px rgba(0, 0, 0, 0.28) !important;
+  overflow: hidden !important;
+  z-index: 10000 !important;
+}
+
+body:not(.login-page):not(.welcome-page)
+  .shil-page-shell:not(.shil-page--auth)
+  > .shil-fixed-footer
+  > :is(a, button) {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 32px !important;
+  min-height: 32px !important;
+  max-height: 32px !important;
+  margin: 0 !important;
+  padding: 0 7px !important;
+  color: var(--shil-shell-text) !important;
+  -webkit-text-fill-color: var(--shil-shell-text) !important;
+  background: rgba(4, 17, 31, 0.72) !important;
+  background-image: none !important;
+  border: 1px solid rgba(205, 231, 244, 0.56) !important;
+  border-radius: 999px !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04) !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.84) !important;
+  font-size: 11px !important;
+  font-weight: 850 !important;
+  line-height: 1 !important;
+  text-align: center !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+}
+
+body:not(.login-page):not(.welcome-page)
+  .shil-page-shell:not(.shil-page--auth)
+  > .shil-fixed-footer
+  > :is(a, button):is(:hover, :focus-visible, :active) {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  background: var(--shil-shell-control-hover) !important;
+  border-color: rgba(105, 226, 239, 0.88) !important;
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(105, 226, 239, 0.15) !important;
+}
+
+body:not(.login-page):not(.welcome-page)
+  .shil-page-shell:not(.shil-page--auth)
+  > .shil-fixed-footer
+  :is(svg, i) {
+  color: currentColor !important;
+  fill: none;
+  stroke: currentColor !important;
+}
+
+/* =====================================================
+   GLOBAL TOKEN BRIDGE
+   Repoint commonly used legacy variables to the new palette without
+   forcing one text color onto every component.
+   ===================================================== */
+body:not(.login-page):not(.welcome-page) .shil-page-shell {
+  --shil-text: var(--shil-core-ink);
+  --shil-text-main: var(--shil-core-ink);
+  --shil-text-secondary: var(--shil-core-ink-soft);
+  --shil-border: var(--shil-core-line);
+  --shil-card-bg: var(--shil-core-surface);
+  --shil-surface: var(--shil-core-surface);
+  --shil-accent: var(--shil-core-cyan-strong);
+  --shil-success: #159b72;
+}
+
+/* Inputs keep readable dark navy text on light surfaces. */
+body:not(.login-page):not(.welcome-page)
+  .shil-page-shell
+  :is(input, textarea, select) {
+  color: var(--shil-core-ink) !important;
+  caret-color: var(--shil-core-cyan-strong) !important;
+}
+
+body:not(.login-page):not(.welcome-page)
+  .shil-page-shell
+  :is(input, textarea)::placeholder {
+  color: #5f7488 !important;
+  opacity: 1 !important;
+}
+
+/* Do not let the removed legacy global-black rule leak back into shell chrome. */
+body:not(.login-page):not(.welcome-page)
+  .shil-page-shell
+  :is(.shil-fixed-header, .shil-fixed-footer)
+  :is(a, button, span, strong, div, svg, i) {
+  forced-color-adjust: none;
+}
+
+/* Hide pseudo-panels attached directly to the structural viewport only. */
+body:not(.login-page):not(.welcome-page)
+  .shil-page-shell:not(.shil-page--auth)
+  > main.shil-page-content::before,
+body:not(.login-page):not(.welcome-page)
+  .shil-page-shell:not(.shil-page--auth)
+  > main.shil-page-content::after,
+body:not(.login-page):not(.welcome-page)
+  .shil-page-shell:not(.shil-page--auth)
+  > main.shil-page-content
+  > .shil-engineering-content::before,
+body:not(.login-page):not(.welcome-page)
+  .shil-page-shell:not(.shil-page--auth)
+  > main.shil-page-content
+  > .shil-engineering-content::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* Footer is 56px on phones for comfortable touch targets. */
+@media (max-width: 760px) {
+  :root {
+    --shil-footer-bar: 56px;
+  }
+
+  body:not(.login-page):not(.welcome-page)
+    .shil-page-shell:not(.shil-page--auth)
+    > .shil-fixed-footer {
+    align-items: start !important;
+    padding-top: 7px !important;
+    padding-bottom: calc(7px + var(--shil-safe-bottom)) !important;
+  }
+
+  body:not(.login-page):not(.welcome-page)
+    .shil-page-shell:not(.shil-page--auth)
+    > .shil-fixed-footer
+    > :is(a, button) {
+    height: 42px !important;
+    min-height: 42px !important;
+    max-height: 42px !important;
+    font-size: 12px !important;
+  }
+}
+
+@media (max-width: 380px) {
+  body:not(.login-page):not(.welcome-page)
+    .shil-page-shell:not(.shil-page--auth)
+    > .shil-fixed-header {
+    grid-template-columns: minmax(70px, 0.78fr) minmax(128px, 1.6fr) minmax(70px, 0.78fr) !important;
+    gap: 5px !important;
+    padding-inline: 7px !important;
+  }
+
+  body:not(.login-page):not(.welcome-page)
+    .shil-page-shell:not(.shil-page--auth)
+    > .shil-fixed-header
+    .shil-header-action {
+    padding-inline: 7px !important;
+    font-size: 11px !important;
+  }
+
+  body:not(.login-page):not(.welcome-page)
+    .shil-page-shell:not(.shil-page--auth)
+    > .shil-fixed-footer {
+    gap: 4px !important;
+    padding-inline: 7px !important;
+  }
+
+  body:not(.login-page):not(.welcome-page)
+    .shil-page-shell:not(.shil-page--auth)
+    > .shil-fixed-footer
+    > :is(a, button) {
+    padding-inline: 3px !important;
+    font-size: 11px !important;
+  }
+}
+
+@supports not (height: 100dvh) {
+  body:not(.login-page):not(.welcome-page) .shil-page-shell:not(.shil-page--auth) {
+    height: 100vh !important;
+    min-height: 100vh !important;
+    max-height: 100vh !important;
+  }
+}
+
+/* =====================================================
+   PHASE 1.1 - HEADER CENTER TITLE CAPSULE
+   Requested 2026-08-09: every page title in the middle of
+   the shared header uses a light white gradient and dark ink.
+   Keep this block at the absolute end of the stylesheet.
+   ===================================================== */
+body:not(.login-page):not(.welcome-page)
+  .shil-page-shell:not(.shil-page--auth)
+  > .shil-fixed-header
+  .shil-header-title {
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  background-color: #f8fbff !important;
+  background-image: linear-gradient(180deg, #ffffff 0%, #f7fbff 48%, #edf5fd 100%) !important;
+  border: 1px solid rgba(184, 214, 235, 0.92) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.98),
+    0 2px 8px rgba(7, 24, 40, 0.18) !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Prevent legacy global text rules, spans or nested wrappers from turning
+   the page title black-on-dark or applying text fill/opacity overrides. */
+body:not(.login-page):not(.welcome-page)
+  .shil-page-shell:not(.shil-page--auth)
+  > .shil-fixed-header
+  .shil-header-title,
+body:not(.login-page):not(.welcome-page)
+  .shil-page-shell:not(.shil-page--auth)
+  > .shil-fixed-header
+  .shil-header-title * {
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+/* ========================================================================== */
+/* SHIL Phase 1.2 - Calculation Method row-card layout                        */
+/* 2026-08-09                                                                  */
+/* Scope: CalculationMethod only. Solar=6 rows, Emergency=3 rows.              */
+/* ========================================================================== */
+body.shil-calculation-method-screen #shil-calculation-method-root .shil-method-grid-five,
+body.shil-calculation-method-screen #shil-calculation-method-root .shil-method-grid-minimal,
+body.shil-calculation-method-screen #shil-calculation-method-root .shil-method-grid-clean {
+  width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  gap: 7px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+}
+
+body.shil-calculation-method-screen #shil-calculation-method-root .shil-large-choice.shil-method-card-engine,
+body.shil-calculation-method-screen #shil-calculation-method-root .shil-large-choice.shil-method-card-minimal {
+  position: relative !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  min-height: 52px !important;
+  height: 52px !important;
+  max-height: 52px !important;
+  margin: 0 !important;
+  padding: 7px 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0 !important;
+  border-radius: 16px !important;
+  border: 1px solid rgba(188, 205, 224, .92) !important;
+  background: linear-gradient(180deg, rgba(248, 251, 255, .96) 0%, rgba(230, 238, 248, .94) 100%) !important;
+  background-image: linear-gradient(180deg, rgba(248, 251, 255, .96) 0%, rgba(230, 238, 248, .94) 100%) !important;
+  box-shadow: 0 3px 10px rgba(5, 20, 38, .10) !important;
+  overflow: hidden !important;
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  text-align: center !important;
+  transform: none !important;
+}
+
+body.shil-calculation-method-screen #shil-calculation-method-root .shil-large-choice.shil-method-card-engine > h2,
+body.shil-calculation-method-screen #shil-calculation-method-root .shil-large-choice.shil-method-card-minimal > h2 {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: block !important;
+  font-size: clamp(15px, 3.25vw, 19px) !important;
+  line-height: 1.15 !important;
+  font-weight: 900 !important;
+  letter-spacing: 0 !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  text-shadow: none !important;
+}
+
+/* Row cards are title-only by design; metadata stays in data/state, not UI. */
+body.shil-calculation-method-screen #shil-calculation-method-root .shil-large-choice.shil-method-card-engine > small,
+body.shil-calculation-method-screen #shil-calculation-method-root .shil-large-choice.shil-method-card-engine > p,
+body.shil-calculation-method-screen #shil-calculation-method-root .shil-large-choice.shil-method-card-engine > .shil-method-badge,
+body.shil-calculation-method-screen #shil-calculation-method-root .shil-large-choice.shil-method-card-minimal > small,
+body.shil-calculation-method-screen #shil-calculation-method-root .shil-large-choice.shil-method-card-minimal > p,
+body.shil-calculation-method-screen #shil-calculation-method-root .shil-large-choice.shil-method-card-minimal > .shil-method-badge {
+  display: none !important;
+}
+
+/* Selected/confirmed semantic state: green confirmation card. */
+body.shil-calculation-method-screen #shil-calculation-method-root .shil-large-choice.shil-method-card-engine.active,
+body.shil-calculation-method-screen #shil-calculation-method-root .shil-large-choice.shil-method-card-minimal.active {
+  border-color: rgba(66, 211, 143, .82) !important;
+  background: linear-gradient(180deg, rgba(235, 255, 244, .98) 0%, rgba(213, 249, 231, .96) 100%) !important;
+  background-image: linear-gradient(180deg, rgba(235, 255, 244, .98) 0%, rgba(213, 249, 231, .96) 100%) !important;
+  box-shadow: 0 0 0 1px rgba(66, 211, 143, .18), 0 4px 12px rgba(5, 20, 38, .10) !important;
+}
+
+body.shil-calculation-method-screen #shil-calculation-method-root .shil-large-choice.shil-method-card-engine.active > h2,
+body.shil-calculation-method-screen #shil-calculation-method-root .shil-large-choice.shil-method-card-minimal.active > h2 {
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+}
+
+body.shil-calculation-method-screen #shil-calculation-method-root .shil-large-choice.shil-method-card-engine::before,
+body.shil-calculation-method-screen #shil-calculation-method-root .shil-large-choice.shil-method-card-engine::after,
+body.shil-calculation-method-screen #shil-calculation-method-root .shil-large-choice.shil-method-card-minimal::before,
+body.shil-calculation-method-screen #shil-calculation-method-root .shil-large-choice.shil-method-card-minimal::after {
+  display: none !important;
+  content: none !important;
+}
+
+body.shil-calculation-method-screen #shil-calculation-method-root .shil-large-choice.shil-method-card-engine:active,
+body.shil-calculation-method-screen #shil-calculation-method-root .shil-large-choice.shil-method-card-minimal:active {
+  transform: translateY(1px) !important;
+}
+
+@media (max-width: 430px) {
+  body.shil-calculation-method-screen #shil-calculation-method-root .shil-method-grid-five,
+  body.shil-calculation-method-screen #shil-calculation-method-root .shil-method-grid-minimal,
+  body.shil-calculation-method-screen #shil-calculation-method-root .shil-method-grid-clean {
+    gap: 6px !important;
+  }
+
+  body.shil-calculation-method-screen #shil-calculation-method-root .shil-large-choice.shil-method-card-engine,
+  body.shil-calculation-method-screen #shil-calculation-method-root .shil-large-choice.shil-method-card-minimal {
+    min-height: 48px !important;
+    height: 48px !important;
+    max-height: 48px !important;
+    padding: 6px 12px !important;
+    border-radius: 15px !important;
+  }
+}

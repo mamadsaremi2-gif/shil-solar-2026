@@ -1,0 +1,187 @@
+/* Absolute final environment visibility recovery.
+   This page had legacy transforms/containment rules that left the DOM mounted
+   but prevented painting. Keep this file as the final stylesheet import. */
+body.shil-environment-unified-screen,
+body.shil-environment-unified-screen #root {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  overflow: hidden !important;
+}
+
+body.shil-environment-unified-screen .shil-page-shell.shil-page--environment {
+  position: relative !important;
+  isolation: isolate !important;
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100% !important;
+  height: 100dvh !important;
+  min-height: 100dvh !important;
+  overflow: hidden !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+  filter: none !important;
+  clip-path: none !important;
+  mask: none !important;
+  contain: none !important;
+  content-visibility: visible !important;
+}
+
+body.shil-environment-unified-screen .shil-page--environment > .shil-master-bg {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 0 !important;
+  pointer-events: none !important;
+}
+
+body.shil-environment-unified-screen .shil-page--environment > .shil-fixed-header,
+body.shil-environment-unified-screen .shil-page--environment > .shil-fixed-footer {
+  z-index: 1000 !important;
+}
+
+body.shil-environment-unified-screen .shil-page--environment > main.shil-page-content {
+  position: absolute !important;
+  inset: 55px 0 68px !important;
+  z-index: 100 !important;
+  display: block !important;
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+  translate: none !important;
+  scale: 1 !important;
+  filter: none !important;
+  clip: auto !important;
+  clip-path: none !important;
+  mask: none !important;
+  contain: none !important;
+  content-visibility: visible !important;
+  pointer-events: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+body.shil-environment-unified-screen .shil-page--environment > main.shil-page-content > * {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+  translate: none !important;
+  filter: none !important;
+  clip-path: none !important;
+  mask: none !important;
+  contain: none !important;
+  content-visibility: visible !important;
+}
+
+body.shil-environment-unified-screen .shil-page--environment .shil-project-mini-rail {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 300 !important;
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 70px !important;
+  max-height: none !important;
+  margin: 0 0 7px !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+}
+
+body.shil-environment-unified-screen #shil-environment-unified-root {
+  position: relative !important;
+  inset: auto !important;
+  z-index: 200 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 0 0 auto !important;
+  width: min(100%, 980px) !important;
+  max-width: 980px !important;
+  height: auto !important;
+  min-height: 1px !important;
+  max-height: none !important;
+  margin: 0 auto !important;
+  padding: 0 6px calc(82px + env(safe-area-inset-bottom, 0px)) !important;
+  gap: 7px !important;
+  overflow: visible !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+  translate: none !important;
+  filter: none !important;
+  clip: auto !important;
+  clip-path: none !important;
+  mask: none !important;
+  contain: none !important;
+  content-visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+body.shil-environment-unified-screen #shil-environment-unified-root,
+body.shil-environment-unified-screen #shil-environment-unified-root * {
+  animation-name: none !important;
+  animation-delay: 0s !important;
+  transition-delay: 0s !important;
+}
+
+body.shil-environment-unified-screen #shil-environment-unified-root > .shil-env-card {
+  position: relative !important;
+  inset: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 0 0 auto !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 1px !important;
+  max-height: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+  overflow: visible !important;
+  content-visibility: visible !important;
+}
+
+body.shil-environment-unified-screen #shil-environment-unified-root :is(
+  .shil-section-title,
+  .shil-form-grid,
+  .shil-manual-climate-grid,
+  .shil-climate-grid,
+  .shil-installation-layout-panel,
+  .shil-upload-grid,
+  .shil-map-container,
+  .shil-env-content-confirm-slot
+) {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+  max-height: none !important;
+  content-visibility: visible !important;
+}
+
+@media (max-width: 560px) {
+  body.shil-environment-unified-screen .shil-page--environment > main.shil-page-content {
+    inset: 55px 0 68px !important;
+  }
+  body.shil-environment-unified-screen #shil-environment-unified-root {
+    padding-inline: 5px !important;
+  }
+  body.shil-environment-unified-screen #shil-environment-unified-root :is(
+    .shil-form-grid,
+    .shil-manual-climate-grid,
+    .shil-climate-grid,
+    .shil-upload-grid,
+    .shil-orientation-input-grid,
+    .shil-array-fields
+  ) {
+    grid-template-columns: 1fr !important;
+  }
+}

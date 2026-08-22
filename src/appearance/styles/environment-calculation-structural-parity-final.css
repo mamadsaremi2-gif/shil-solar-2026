@@ -1,0 +1,143 @@
+/* Environment uses the same structural selectors as Calculation Inputs.
+   This file only styles controls unique to Environment. */
+.shil-environment-calculation-parity #shil-calculation-inputs-root :is(
+  .shil-gps-toggle,
+  .shil-install-scroll,
+  .shil-installation-mode-switch,
+  .shil-upload-choice-row
+) {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  width: 100% !important;
+  gap: 6px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+.shil-environment-calculation-parity #shil-calculation-inputs-root .shil-install-scroll {
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  overflow: visible !important;
+}
+.shil-environment-calculation-parity #shil-calculation-inputs-root .shil-installation-mode-switch {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+}
+.shil-environment-calculation-parity #shil-calculation-inputs-root :is(
+  .shil-gps-toggle,
+  .shil-install-scroll,
+  .shil-installation-mode-switch,
+  .shil-upload-choice-row
+) button,
+.shil-environment-calculation-parity #shil-calculation-inputs-root .shil-install-chip {
+  min-width: 0 !important;
+  min-height: 42px !important;
+  margin: 0 !important;
+  padding: 7px 8px !important;
+  color: #0b2a3d !important;
+  background: #edf6fd !important;
+  border: 1px solid #bfd5e5 !important;
+  border-radius: 11px !important;
+  box-shadow: none !important;
+  font-size: 11px !important;
+  font-weight: 900 !important;
+}
+.shil-environment-calculation-parity #shil-calculation-inputs-root :is(
+  .shil-gps-toggle,
+  .shil-install-scroll,
+  .shil-installation-mode-switch,
+  .shil-upload-choice-row
+) button.active,
+.shil-environment-calculation-parity #shil-calculation-inputs-root .shil-install-chip.active {
+  color: #07583f !important;
+  background: #e8fff0 !important;
+  border-color: #55cf96 !important;
+  box-shadow: 0 0 0 2px rgba(50,213,131,.10) !important;
+}
+.shil-environment-calculation-parity #shil-calculation-inputs-root :is(
+  .shil-gps-manual-grid,
+  .shil-manual-climate-grid,
+  .shil-upload-grid,
+  .shil-orientation-input-grid,
+  .shil-array-fields,
+  .shil-climate-grid,
+  .shil-installation-summary-metrics,
+  .shil-array-result-row
+) {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0,1fr)) !important;
+  width: 100% !important;
+  gap: 6px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+.shil-environment-calculation-parity #shil-calculation-inputs-root :is(
+  .shil-climate-box,
+  .shil-installation-summary-metrics > span,
+  .shil-array-result-row > span
+) {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 0 !important;
+  min-height: 56px !important;
+  margin: 0 !important;
+  padding: 7px 8px !important;
+  gap: 2px !important;
+  color: #0b2a3d !important;
+  background: #f9fcff !important;
+  border: 1px solid #c8dceb !important;
+  border-radius: 11px !important;
+  box-shadow: none !important;
+  text-align: center !important;
+}
+.shil-environment-calculation-parity #shil-calculation-inputs-root :is(
+  .shil-single-orientation-card,
+  .shil-installation-array-card,
+  .shil-installation-summary-card,
+  .shil-upload-box,
+  .shil-orientation-frame,
+  .shil-installation-layout-panel
+) {
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 7px !important;
+  gap: 6px !important;
+  color: #0b2a3d !important;
+  background: #f8fbfe !important;
+  border: 1px solid #c8dceb !important;
+  border-radius: 11px !important;
+  box-shadow: none !important;
+}
+.shil-environment-calculation-parity #shil-calculation-inputs-root .shil-map-container {
+  width: 100% !important;
+  height: 170px !important;
+  min-height: 170px !important;
+  margin: 0 !important;
+  background: #f9fcff !important;
+  border: 1px solid #c8dceb !important;
+  border-radius: 11px !important;
+  box-shadow: none !important;
+  overflow: hidden !important;
+}
+.shil-environment-calculation-parity #shil-calculation-inputs-root .shil-env-hint {
+  display: block !important;
+  width: 100% !important;
+  margin: 0 !important;
+  color: #506b7d !important;
+  font-size: 10px !important;
+  font-weight: 750 !important;
+  line-height: 1.55 !important;
+}
+@media (max-width: 560px) {
+  .shil-environment-calculation-parity #shil-calculation-inputs-root .shil-install-scroll {
+    grid-template-columns: repeat(3, minmax(0,1fr)) !important;
+  }
+  .shil-environment-calculation-parity #shil-calculation-inputs-root :is(
+    .shil-manual-climate-grid,
+    .shil-upload-grid,
+    .shil-orientation-input-grid,
+    .shil-array-fields
+  ) {
+    grid-template-columns: 1fr !important;
+  }
+}

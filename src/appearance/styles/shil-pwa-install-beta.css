@@ -1,0 +1,27 @@
+.shil-beta-install-app{
+  position:fixed;
+  left:max(12px,env(safe-area-inset-left));
+  bottom:max(82px,calc(env(safe-area-inset-bottom) + 74px));
+  z-index:5000;
+  min-width:104px;
+  min-height:38px;
+  padding:7px 12px;
+  border:1px solid rgba(153,218,255,.9);
+  border-radius:13px;
+  background:linear-gradient(135deg,rgba(235,248,255,.97),rgba(169,219,249,.95));
+  box-shadow:0 7px 20px rgba(0,20,45,.22);
+  color:#08223c;
+  font:800 12px/1.2 inherit;
+  text-align:center;
+  cursor:pointer;
+}
+.shil-beta-install-app:active{transform:translateY(1px)}
+@media(max-width:430px){
+  .shil-beta-install-app{
+    left:10px;
+    bottom:max(76px,calc(env(safe-area-inset-bottom) + 68px));
+    min-width:96px;
+    min-height:36px;
+    font-size:11.5px;
+  }
+}

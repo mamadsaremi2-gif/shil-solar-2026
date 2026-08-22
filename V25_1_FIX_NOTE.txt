@@ -1,0 +1,4 @@
+SHIL V25.1 FIX
+
+PREPARE_BETA.ps1 was rewritten with ASCII-only runtime messages and saved as UTF-8 with BOM for Windows PowerShell 5.1 compatibility.
+No application logic, UI, Supabase logic, or equipment-bank data was changed by this fix.

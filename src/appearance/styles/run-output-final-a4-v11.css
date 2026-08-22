@@ -1,0 +1,216 @@
+/* SHIL V11 - final A4 delivery + run-output parity */
+#shil-execution-output-root .shil-a4-final-form {
+  display: grid !important;
+  grid-template-rows: 86px 188px 224px 214px minmax(0, 1fr) !important;
+  gap: 10px !important;
+  height: auto !important;
+  aspect-ratio: 210 / 297 !important;
+  align-content: stretch !important;
+}
+
+#shil-execution-output-root .shil-a4-header {
+  position: relative !important;
+  display: grid !important;
+  place-items: center !important;
+  min-height: 0 !important;
+  padding: 10px 84px !important;
+  background: #edf5fb !important;
+}
+
+#shil-execution-output-root .shil-a4-header h1 {
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  text-align: center !important;
+  font-size: 22px !important;
+  line-height: 1.25 !important;
+  font-weight: 950 !important;
+  color: #10253a !important;
+}
+
+#shil-execution-output-root .shil-a4-main-logo {
+  position: absolute !important;
+  inset-inline-end: 14px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 64px !important;
+  height: 64px !important;
+  object-fit: contain !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+#shil-execution-output-root .shil-a4-section {
+  min-height: 0 !important;
+  height: 100% !important;
+  display: grid !important;
+  grid-template-rows: 32px minmax(0,1fr) !important;
+  gap: 6px !important;
+  overflow: hidden !important;
+}
+
+#shil-execution-output-root .shil-a4-section-title {
+  position: relative !important;
+  justify-content: center !important;
+  min-height: 32px !important;
+  padding: 4px 36px !important;
+  border: 1px solid #c8d7e5 !important;
+  border-radius: 10px !important;
+  background: #f1f7fb !important;
+}
+
+#shil-execution-output-root .shil-a4-section-title h3 {
+  width: 100% !important;
+  text-align: center !important;
+  font-size: 14px !important;
+  line-height: 1.2 !important;
+  font-weight: 950 !important;
+}
+
+#shil-execution-output-root .shil-a4-section-title > span {
+  position: absolute !important;
+  inset-inline-end: 8px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+}
+
+#shil-execution-output-root .shil-a4-fields,
+#shil-execution-output-root .shil-a4-execution-grid {
+  height: 100% !important;
+  align-items: stretch !important;
+  grid-auto-rows: 1fr !important;
+}
+
+#shil-execution-output-root .shil-a4-fields > div,
+#shil-execution-output-root .shil-a4-execution-grid > div {
+  min-height: 0 !important;
+  height: 100% !important;
+  padding: 6px 7px !important;
+}
+
+#shil-execution-output-root .shil-a4-table {
+  height: 100% !important;
+  grid-auto-rows: 1fr !important;
+}
+
+#shil-execution-output-root .shil-a4-table > div {
+  min-height: 0 !important;
+  height: 100% !important;
+}
+
+#shil-execution-output-root .shil-a4-table .shil-a4-table-head {
+  height: 28px !important;
+  min-height: 28px !important;
+}
+
+/* The PDF/image contains only the four final delivery sections. */
+#shil-execution-output-root .shil-a4-notes-section,
+#shil-execution-output-root .shil-a4-footer {
+  display: none !important;
+}
+
+/* App-only expandable cards: identical visual language to the main data cards. */
+#shil-execution-output-root .shil-run-data-accordion {
+  width: min(100%, 794px) !important;
+  margin: 8px auto 0 !important;
+  padding: 0 !important;
+  border: 1px solid #b9d2e5 !important;
+  border-radius: 12px !important;
+  background: rgba(248, 251, 253, .96) !important;
+  box-shadow: none !important;
+  overflow: hidden !important;
+}
+
+#shil-execution-output-root .shil-run-data-accordion-header {
+  width: 100% !important;
+  min-height: 56px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  margin: 0 !important;
+  padding: 8px 12px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: #f4f8fb !important;
+  color: #10253a !important;
+  font: inherit !important;
+  font-size: 14px !important;
+  line-height: 1.25 !important;
+  font-weight: 900 !important;
+  text-align: center !important;
+  box-shadow: none !important;
+}
+
+#shil-execution-output-root .shil-run-data-accordion-body {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 6px !important;
+  padding: 6px !important;
+  background: transparent !important;
+}
+
+#shil-execution-output-root .shil-run-data-card {
+  width: 100% !important;
+  min-height: 56px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 !important;
+  padding: 7px 8px !important;
+  border: 1px solid #b9d2e5 !important;
+  border-radius: 11px !important;
+  background: #f8fbfd !important;
+  color: #10253a !important;
+  font: inherit !important;
+  font-size: 12px !important;
+  line-height: 1.35 !important;
+  font-weight: 850 !important;
+  text-align: center !important;
+  box-shadow: none !important;
+}
+
+#shil-execution-output-root .shil-run-warning-card {
+  background: #fffaf1 !important;
+  border-color: #e8d5aa !important;
+}
+
+#shil-execution-output-root .shil-run-action-card {
+  cursor: pointer !important;
+}
+#shil-execution-output-root .shil-run-action-card:disabled {
+  opacity: .62 !important;
+  cursor: default !important;
+}
+
+#shil-execution-output-root .shil-final-output-accordion .shil-output-actions-three {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+}
+
+/* Exact export canvas. */
+body > .shil-a4-export-host .shil-a4-final-form {
+  width: 794px !important;
+  height: 1123px !important;
+  grid-template-rows: 86px 188px 224px 214px minmax(0, 1fr) !important;
+  aspect-ratio: auto !important;
+}
+
+@media (max-width: 620px) {
+  #shil-execution-output-root .shil-a4-final-form {
+    grid-template-rows: 58px 128px 154px 146px minmax(0, 1fr) !important;
+    gap: 5px !important;
+  }
+  #shil-execution-output-root .shil-a4-header { padding: 6px 54px !important; }
+  #shil-execution-output-root .shil-a4-header h1 { font-size: 12px !important; }
+  #shil-execution-output-root .shil-a4-main-logo { width: 42px !important; height: 42px !important; inset-inline-end: 7px !important; }
+  #shil-execution-output-root .shil-a4-section { grid-template-rows: 23px minmax(0,1fr) !important; gap: 3px !important; }
+  #shil-execution-output-root .shil-a4-section-title { min-height: 23px !important; padding: 2px 24px !important; border-radius: 7px !important; }
+  #shil-execution-output-root .shil-a4-section-title h3 { font-size: 9px !important; }
+  #shil-execution-output-root .shil-run-data-accordion-header,
+  #shil-execution-output-root .shil-run-data-card { min-height: 56px !important; font-size: 12px !important; }
+}

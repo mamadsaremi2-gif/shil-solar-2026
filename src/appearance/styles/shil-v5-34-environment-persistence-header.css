@@ -1,0 +1,25 @@
+/* SHIL V5.34 - environment persistence companion + unified header title cards */
+
+.shil-page--environment .shil-fixed-header .shil-header-title,
+.shil-page--calculation-inputs .shil-fixed-header .shil-header-title {
+  min-width: min(58vw, 340px) !important;
+  max-width: min(62vw, 380px) !important;
+  padding: 8px 22px !important;
+  border-radius: 999px !important;
+  background: linear-gradient(135deg, rgba(72, 92, 178, .96), rgba(111, 71, 178, .96)) !important;
+  border: 1px solid rgba(202, 190, 255, .78) !important;
+  box-shadow: 0 8px 24px rgba(54, 38, 126, .26), inset 0 1px 0 rgba(255,255,255,.2) !important;
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  text-align: center !important;
+}
+
+@media (max-width: 480px) {
+  .shil-page--environment .shil-fixed-header .shil-header-title,
+  .shil-page--calculation-inputs .shil-fixed-header .shil-header-title {
+    min-width: 0 !important;
+    width: auto !important;
+    max-width: 58vw !important;
+    padding-inline: 16px !important;
+  }
+}

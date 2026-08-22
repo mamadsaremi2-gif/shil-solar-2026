@@ -1,0 +1,22 @@
+export const SYSTEM_SETTINGS_FIELDS = [
+  "systemType",
+  "autonomyDays",
+  "reserveFactor",
+  "inverterId",
+  "inverterCount",
+  "batteryId",
+  "batteryCount",
+  "panelId",
+  "panelCount",
+  "manualMode",
+  "dcCableLength",
+  "acCableLength",
+  "batteryCableLength",
+  "futureDevelopmentPercent",
+  "projectScale",
+  "targetPlantPowerMW",
+  "targetPlantPowerKW",
+  "targetDesignPowerW",
+  "powerBlockSizeKW",
+  "dcAcRatio"
+];

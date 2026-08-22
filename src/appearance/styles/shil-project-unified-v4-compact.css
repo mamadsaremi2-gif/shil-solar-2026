@@ -1,0 +1,992 @@
+/*
+ * SHIL Project UI V3 - single source of visual truth for all engineering pages.
+ * Scope is intentionally limited to .shil-engineering-shell so dashboard/auth remain untouched.
+ * UTF-8 / RTL safe. Imported last in main.jsx.
+ */
+
+:root {
+  --shil-v3-font: "Vazirmatn", "Vazir", "IRANSansX", Tahoma, Arial, sans-serif;
+  --shil-v3-page-width: 920px;
+  --shil-v3-content-gap: 18px;
+  --shil-v3-radius-lg: 24px;
+  --shil-v3-radius-md: 18px;
+  --shil-v3-radius-sm: 14px;
+  --shil-v3-bg: #f5f7fa;
+  --shil-v3-surface: #ffffff;
+  --shil-v3-surface-soft: #f8fafc;
+  --shil-v3-text: #111827;
+  --shil-v3-muted: #64748b;
+  --shil-v3-border: #d8e0ea;
+  --shil-v3-primary: #6d4ee8;
+  --shil-v3-primary-dark: #5534d2;
+  --shil-v3-primary-soft: #eeeaff;
+  --shil-v3-accent: #21bfe3;
+  --shil-v3-success: #18b86b;
+  --shil-v3-warning: #d89a16;
+  --shil-v3-danger: #d94b58;
+  --shil-v3-shadow: 0 8px 24px rgba(15, 23, 42, .08);
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+/* Persian text integrity */
+.shil-engineering-shell,
+.shil-engineering-shell * {
+  box-sizing: border-box;
+  font-family: var(--shil-v3-font) !important;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+.shil-engineering-shell {
+  direction: rtl;
+  color: var(--shil-v3-text) !important;
+  background: var(--shil-v3-bg) !important;
+  background-image: none !important;
+}
+
+.shil-engineering-shell .shil-master-bg {
+  display: none !important;
+}
+
+/* Header */
+.shil-engineering-shell .shil-fixed-header {
+  height: 72px !important;
+  min-height: 72px !important;
+  padding: 10px 18px !important;
+  display: grid !important;
+  grid-template-columns: 132px minmax(180px, 340px) 132px !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 16px !important;
+  background: #42546a !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-bottom: 1px solid rgba(255,255,255,.28) !important;
+  box-shadow: none !important;
+}
+
+.shil-engineering-shell .shil-header-title {
+  min-height: 48px !important;
+  padding: 0 22px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 999px !important;
+  background: linear-gradient(135deg, #29b9d7 0%, #7656df 100%) !important;
+  border: 1px solid rgba(255,255,255,.45) !important;
+  box-shadow: none !important;
+  color: #07111d !important;
+  font-size: 22px !important;
+  font-weight: 900 !important;
+  line-height: 1.25 !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+}
+
+.shil-engineering-shell .shil-header-action {
+  height: 46px !important;
+  min-height: 46px !important;
+  padding: 0 18px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 999px !important;
+  border: 1px solid #dce5ef !important;
+  background: #f7fafc !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: var(--shil-v3-text) !important;
+  font-size: 16px !important;
+  font-weight: 850 !important;
+  text-decoration: none !important;
+}
+
+/* Main content */
+.shil-engineering-shell .shil-page-content {
+  width: 100% !important;
+  max-width: none !important;
+  min-height: calc(100vh - 140px) !important;
+  padding: 18px 16px 92px !important;
+  margin: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.shil-engineering-shell .shil-engineering-content {
+  width: min(100%, var(--shil-v3-page-width)) !important;
+  max-width: var(--shil-v3-page-width) !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: var(--shil-v3-content-gap) !important;
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.shil-engineering-shell .shil-engineering-content > div,
+.shil-engineering-shell .shil-page-scroll,
+.shil-engineering-shell .shil-env-page,
+.shil-engineering-shell .shil-equipment-page,
+.shil-engineering-shell .shil-system-settings-page,
+.shil-engineering-shell .shil-summary-page,
+.shil-engineering-shell .shil-final-delivery-page {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Step rail */
+.shil-engineering-shell .shil-project-mini-rail,
+.shil-engineering-shell .shil-mini-rail,
+.shil-engineering-shell .shil-step-rail {
+  width: min(100%, var(--shil-v3-page-width)) !important;
+  max-width: var(--shil-v3-page-width) !important;
+  margin: 0 auto 18px !important;
+  padding: 12px 14px !important;
+  background: #ffffff !important;
+  background-image: none !important;
+  border: 1px solid var(--shil-v3-border) !important;
+  border-radius: var(--shil-v3-radius-lg) !important;
+  box-shadow: var(--shil-v3-shadow) !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  scrollbar-width: thin;
+}
+
+.shil-engineering-shell .shil-project-mini-rail a,
+.shil-engineering-shell .shil-mini-rail a,
+.shil-engineering-shell .shil-step-rail a,
+.shil-engineering-shell .shil-step-item {
+  color: var(--shil-v3-text) !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  line-height: 1.35 !important;
+}
+
+/* Unified section/card surfaces */
+.shil-engineering-shell :is(
+  .shil-env-card,
+  .shil-section-card,
+  .shil-config-block,
+  .shil-summary-table-card,
+  .shil-summary-section,
+  .shil-final-sheet-block,
+  .shil-final-one-page-sheet,
+  .shil-execution-card,
+  .shil-project-path-card,
+  .shil-field-card,
+  .shil-equipment-picker-card,
+  .shil-compact-summary-card,
+  .shil-final-compact-card
+) {
+  margin: 0 0 var(--shil-v3-content-gap) !important;
+  padding: 18px !important;
+  background: var(--shil-v3-surface) !important;
+  background-image: none !important;
+  border: 1px solid var(--shil-v3-border) !important;
+  border-radius: var(--shil-v3-radius-lg) !important;
+  box-shadow: var(--shil-v3-shadow) !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.shil-engineering-shell :is(
+  .shil-env-card,
+  .shil-section-card,
+  .shil-config-block,
+  .shil-summary-table-card,
+  .shil-summary-section,
+  .shil-final-sheet-block,
+  .shil-final-one-page-sheet,
+  .shil-execution-card,
+  .shil-project-path-card,
+  .shil-field-card
+)::before,
+.shil-engineering-shell :is(
+  .shil-env-card,
+  .shil-section-card,
+  .shil-config-block,
+  .shil-summary-table-card,
+  .shil-summary-section,
+  .shil-final-sheet-block,
+  .shil-final-one-page-sheet,
+  .shil-execution-card,
+  .shil-project-path-card,
+  .shil-field-card
+)::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* Section headings: one exact language */
+.shil-engineering-shell :is(
+  .shil-clean-section-head,
+  .shil-section-head,
+  .shil-section-title,
+  .shil-summary-section-title,
+  .shil-final-action-heading,
+  .shil-equipment-bank-title
+) {
+  width: 100% !important;
+  min-height: 52px !important;
+  height: auto !important;
+  margin: 0 0 16px !important;
+  padding: 10px 18px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  position: static !important;
+  inset: auto !important;
+  transform: none !important;
+  background: var(--shil-v3-primary-soft) !important;
+  background-image: none !important;
+  border: 1px solid #d6ccff !important;
+  border-radius: var(--shil-v3-radius-md) !important;
+  box-shadow: none !important;
+  color: var(--shil-v3-text) !important;
+  text-align: center !important;
+  font-size: 19px !important;
+  font-weight: 900 !important;
+  line-height: 1.45 !important;
+}
+
+.shil-engineering-shell .shil-clean-section-head span {
+  display: none !important;
+}
+
+.shil-engineering-shell :is(.shil-clean-section-head,.shil-section-head,.shil-section-title,.shil-summary-section-title) h2,
+.shil-engineering-shell :is(.shil-clean-section-head,.shil-section-head,.shil-section-title,.shil-summary-section-title) h3 {
+  margin: 0 !important;
+  color: inherit !important;
+  font: inherit !important;
+  line-height: inherit !important;
+  text-align: center !important;
+}
+
+/* Grids */
+.shil-engineering-shell :is(
+  .shil-form-grid,
+  .shil-summary-grid,
+  .shil-result-field-grid,
+  .shil-final-sheet-grid,
+  .shil-summary-details-grid,
+  .shil-bank-grid,
+  .shil-choice-grid,
+  .shil-execution-grid,
+  .shil-method-grid-five,
+  .shil-climate-grid,
+  .shil-upload-grid
+) {
+  gap: 14px !important;
+}
+
+/* Fields and information cells */
+.shil-engineering-shell :is(
+  .shil-field,
+  .shil-summary-item,
+  .shil-summary-modern-item,
+  .shil-summary-detail-item,
+  .shil-final-compact-row,
+  .shil-result-field,
+  .shil-climate-box,
+  .shil-choice-card,
+  .shil-method-context-strip
+) {
+  min-height: 86px !important;
+  padding: 14px !important;
+  background: var(--shil-v3-surface-soft) !important;
+  background-image: none !important;
+  border: 1px solid var(--shil-v3-border) !important;
+  border-radius: var(--shil-v3-radius-md) !important;
+  box-shadow: none !important;
+  color: var(--shil-v3-text) !important;
+}
+
+.shil-engineering-shell label,
+.shil-engineering-shell .shil-field > span,
+.shil-engineering-shell .shil-summary-label,
+.shil-engineering-shell .label {
+  color: var(--shil-v3-text) !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  line-height: 1.55 !important;
+}
+
+.shil-engineering-shell :is(input,textarea,select,.shil-input,.shil-textarea) {
+  width: 100% !important;
+  min-height: 48px !important;
+  padding: 10px 13px !important;
+  border: 1px solid #c7d2df !important;
+  border-radius: var(--shil-v3-radius-sm) !important;
+  background: #fff !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: var(--shil-v3-text) !important;
+  font-size: 15px !important;
+  font-weight: 650 !important;
+  line-height: 1.5 !important;
+  direction: rtl;
+}
+
+.shil-engineering-shell :is(input,textarea,select,.shil-input,.shil-textarea):focus {
+  outline: 3px solid rgba(33,191,227,.18) !important;
+  border-color: var(--shil-v3-accent) !important;
+}
+
+.shil-engineering-shell textarea,
+.shil-engineering-shell .shil-textarea {
+  min-height: 116px !important;
+  resize: vertical;
+}
+
+.shil-engineering-shell .shil-muted-note,
+.shil-engineering-shell .shil-env-hint,
+.shil-engineering-shell small {
+  color: var(--shil-v3-muted) !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  line-height: 1.7 !important;
+}
+
+/* Tables */
+.shil-engineering-shell :is(
+  table,
+  .shil-compact-summary-table,
+  .shil-final-equipment-table,
+  .shil-equipment-bank-table
+) {
+  width: 100% !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  table-layout: fixed !important;
+  overflow: hidden !important;
+  background: #fff !important;
+  border: 1px solid var(--shil-v3-border) !important;
+  border-radius: var(--shil-v3-radius-md) !important;
+  box-shadow: none !important;
+  color: var(--shil-v3-text) !important;
+}
+
+.shil-engineering-shell :is(table,.shil-compact-summary-table,.shil-final-equipment-table,.shil-equipment-bank-table) :is(th,td),
+.shil-engineering-shell .shil-final-equipment-table > * {
+  min-height: 48px !important;
+  padding: 12px 10px !important;
+  border: 0 !important;
+  border-inline-end: 1px solid var(--shil-v3-border) !important;
+  border-bottom: 1px solid var(--shil-v3-border) !important;
+  background: #fff !important;
+  color: var(--shil-v3-text) !important;
+  font-size: 14px !important;
+  font-weight: 650 !important;
+  line-height: 1.55 !important;
+  text-align: center !important;
+  vertical-align: middle !important;
+  overflow-wrap: anywhere;
+}
+
+.shil-engineering-shell :is(table,.shil-compact-summary-table,.shil-final-equipment-table,.shil-equipment-bank-table) :is(th,.head),
+.shil-engineering-shell .shil-final-equipment-table .head {
+  background: var(--shil-v3-primary-soft) !important;
+  color: var(--shil-v3-text) !important;
+  font-weight: 900 !important;
+}
+
+/* Buttons */
+.shil-engineering-shell :is(
+  button,
+  .shil-primary-wide,
+  .shil-secondary-wide,
+  .shil-env-content-confirm-button,
+  .shil-project-path-confirm,
+  .shil-calculation-method-confirm,
+  .shil-soft-link-button
+) {
+  min-height: 48px !important;
+  height: auto !important;
+  padding: 10px 20px !important;
+  position: static !important;
+  inset: auto !important;
+  translate: none !important;
+  transform: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 999px !important;
+  border: 1px solid transparent !important;
+  background: #fff !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: var(--shil-v3-text) !important;
+  font-size: 15px !important;
+  font-weight: 850 !important;
+  line-height: 1.4 !important;
+  text-align: center !important;
+  text-decoration: none !important;
+  white-space: normal !important;
+}
+
+.shil-engineering-shell :is(
+  .shil-primary-wide,
+  .shil-env-content-confirm-button,
+  .shil-project-path-confirm,
+  .shil-calculation-method-confirm
+) {
+  background: var(--shil-v3-primary) !important;
+  color: #fff !important;
+  border-color: var(--shil-v3-primary-dark) !important;
+}
+
+.shil-engineering-shell .shil-secondary-wide,
+.shil-engineering-shell .shil-soft-link-button {
+  background: #fff !important;
+  color: var(--shil-v3-primary-dark) !important;
+  border-color: #cfc5ff !important;
+}
+
+.shil-engineering-shell .shil-env-content-confirm-slot,
+.shil-engineering-shell .shil-final-action-area {
+  width: 100% !important;
+  margin: 18px 0 0 !important;
+  padding: 0 !important;
+  position: static !important;
+  inset: auto !important;
+  transform: none !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 12px !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Alerts */
+.shil-engineering-shell :is(.shil-floating-warning,.shil-inline-warning,.warning,[role="alert"]) {
+  padding: 14px 16px !important;
+  background: #fff8e8 !important;
+  background-image: none !important;
+  border: 1px solid #ebc45b !important;
+  border-radius: var(--shil-v3-radius-md) !important;
+  box-shadow: none !important;
+  color: #513a05 !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  line-height: 1.7 !important;
+}
+
+/* Remove old decorative gradients from method cards and final hero */
+.shil-engineering-shell :is(
+  .shil-method-grid-five > *,
+  .shil-final-sheet-hero,
+  .shil-final-sheet-hero-centered,
+  .shil-project-path-card,
+  .shil-execution-card
+) {
+  background-image: none !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
+
+.shil-engineering-shell .shil-method-grid-five > * {
+  background: #fff !important;
+  border: 1px solid var(--shil-v3-border) !important;
+  border-radius: var(--shil-v3-radius-md) !important;
+  box-shadow: none !important;
+}
+
+/* Footer */
+.shil-engineering-shell .shil-fixed-footer {
+  min-height: 68px !important;
+  padding: 9px 16px !important;
+  display: grid !important;
+  grid-auto-flow: column !important;
+  grid-auto-columns: minmax(0, 1fr) !important;
+  align-items: center !important;
+  gap: 12px !important;
+  background: #42546a !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-top: 1px solid rgba(255,255,255,.3) !important;
+  box-shadow: none !important;
+}
+
+.shil-engineering-shell .shil-fixed-footer a {
+  min-height: 44px !important;
+  padding: 8px 12px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 999px !important;
+  background: #f7fafc !important;
+  border: 1px solid #dce5ef !important;
+  box-shadow: none !important;
+  color: var(--shil-v3-text) !important;
+  font-size: 15px !important;
+  font-weight: 850 !important;
+  line-height: 1.25 !important;
+  text-decoration: none !important;
+  text-align: center !important;
+}
+
+/* Ensure LTR technical strings remain readable without corrupting Persian flow */
+.shil-engineering-shell :is(code,.ltr,[dir="ltr"],input[type="number"],input[type="email"],input[type="url"]) {
+  direction: ltr !important;
+  unicode-bidi: isolate !important;
+  text-align: left;
+}
+
+@media (max-width: 720px) {
+  :root {
+    --shil-v3-content-gap: 14px;
+    --shil-v3-radius-lg: 20px;
+    --shil-v3-radius-md: 16px;
+  }
+
+  .shil-engineering-shell .shil-fixed-header {
+    height: 66px !important;
+    min-height: 66px !important;
+    padding: 8px 10px !important;
+    grid-template-columns: 94px minmax(0, 1fr) 94px !important;
+    gap: 8px !important;
+  }
+
+  .shil-engineering-shell .shil-header-title {
+    min-height: 44px !important;
+    padding: 0 10px !important;
+    font-size: 18px !important;
+  }
+
+  .shil-engineering-shell .shil-header-action {
+    height: 42px !important;
+    min-height: 42px !important;
+    padding: 0 10px !important;
+    font-size: 14px !important;
+  }
+
+  .shil-engineering-shell .shil-page-content {
+    padding: 12px 10px 82px !important;
+  }
+
+  .shil-engineering-shell :is(
+    .shil-env-card,
+    .shil-section-card,
+    .shil-config-block,
+    .shil-summary-table-card,
+    .shil-summary-section,
+    .shil-final-sheet-block,
+    .shil-final-one-page-sheet,
+    .shil-execution-card,
+    .shil-project-path-card,
+    .shil-field-card
+  ) {
+    padding: 14px !important;
+  }
+
+  .shil-engineering-shell :is(
+    .shil-clean-section-head,
+    .shil-section-head,
+    .shil-section-title,
+    .shil-summary-section-title,
+    .shil-final-action-heading,
+    .shil-equipment-bank-title
+  ) {
+    min-height: 48px !important;
+    margin-bottom: 12px !important;
+    padding: 8px 12px !important;
+    font-size: 17px !important;
+  }
+
+  .shil-engineering-shell :is(
+    .shil-form-grid,
+    .shil-summary-grid,
+    .shil-result-field-grid,
+    .shil-final-sheet-grid,
+    .shil-summary-details-grid,
+    .shil-bank-grid,
+    .shil-choice-grid,
+    .shil-execution-grid,
+    .shil-method-grid-five,
+    .shil-climate-grid,
+    .shil-upload-grid
+  ) {
+    grid-template-columns: 1fr !important;
+  }
+
+  .shil-engineering-shell .shil-project-path-two-cards {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .shil-engineering-shell :is(table,.shil-compact-summary-table,.shil-final-equipment-table,.shil-equipment-bank-table) :is(th,td),
+  .shil-engineering-shell .shil-final-equipment-table > * {
+    padding: 10px 7px !important;
+    font-size: 12px !important;
+  }
+
+  .shil-engineering-shell .shil-fixed-footer {
+    min-height: 62px !important;
+    padding: 8px 8px !important;
+    gap: 7px !important;
+  }
+
+  .shil-engineering-shell .shil-fixed-footer a {
+    min-height: 42px !important;
+    padding: 7px 6px !important;
+    font-size: 13px !important;
+  }
+}
+
+@media (max-width: 430px) {
+  .shil-engineering-shell .shil-header-title {
+    font-size: 16px !important;
+  }
+
+  .shil-engineering-shell .shil-project-path-two-cards {
+    grid-template-columns: 1fr !important;
+  }
+
+  .shil-engineering-shell .shil-fixed-footer a {
+    font-size: 12px !important;
+  }
+}
+
+/* =========================================================
+ * SHIL Project UI V4 Compact - final density and space pass
+ * ======================================================= */
+:root {
+  --shil-v3-content-gap: 10px;
+  --shil-v3-radius-lg: 18px;
+  --shil-v3-radius-md: 14px;
+  --shil-v3-radius-sm: 10px;
+  --shil-v3-shadow: 0 3px 10px rgba(15, 23, 42, .06);
+}
+
+.shil-engineering-shell .shil-fixed-header {
+  height: 62px !important;
+  min-height: 62px !important;
+  padding: 7px 14px !important;
+  gap: 10px !important;
+}
+
+.shil-engineering-shell .shil-header-title {
+  min-height: 42px !important;
+  padding: 0 16px !important;
+  font-size: 20px !important;
+}
+
+.shil-engineering-shell .shil-header-action {
+  height: 40px !important;
+  min-height: 40px !important;
+  padding: 0 14px !important;
+  font-size: 15px !important;
+}
+
+.shil-engineering-shell .shil-page-content {
+  min-height: calc(100vh - 124px) !important;
+  padding: 10px 12px 76px !important;
+}
+
+.shil-engineering-shell .shil-engineering-content {
+  gap: 10px !important;
+}
+
+.shil-engineering-shell :is(.shil-project-mini-rail,.shil-mini-rail,.shil-step-rail) {
+  margin: 0 auto 10px !important;
+  padding: 7px 9px !important;
+  border-radius: 18px !important;
+  min-height: 92px !important;
+}
+
+.shil-engineering-shell :is(.shil-project-mini-rail,.shil-mini-rail,.shil-step-rail) :is(a,.shil-step-item) {
+  min-width: 112px !important;
+  padding: 4px 6px !important;
+  font-size: 13px !important;
+}
+
+.shil-engineering-shell :is(
+  .shil-env-card,.shil-section-card,.shil-config-block,.shil-summary-table-card,
+  .shil-summary-section,.shil-final-sheet-block,.shil-final-one-page-sheet,
+  .shil-execution-card,.shil-project-path-card,.shil-field-card,
+  .shil-equipment-picker-card,.shil-compact-summary-card,.shil-final-compact-card
+) {
+  margin: 0 0 10px !important;
+  padding: 12px !important;
+  border-radius: 18px !important;
+  min-height: 0 !important;
+  height: auto !important;
+}
+
+.shil-engineering-shell :is(
+  .shil-clean-section-head,.shil-section-head,.shil-section-title,
+  .shil-summary-section-title,.shil-final-action-heading,.shil-equipment-bank-title
+) {
+  min-height: 42px !important;
+  margin: 0 0 9px !important;
+  padding: 7px 12px !important;
+  font-size: 18px !important;
+  border-radius: 14px !important;
+}
+
+.shil-engineering-shell :is(
+  .shil-form-grid,.shil-summary-grid,.shil-result-field-grid,.shil-final-sheet-grid,
+  .shil-summary-details-grid,.shil-bank-grid,.shil-choice-grid,.shil-execution-grid,
+  .shil-method-grid-five,.shil-climate-grid,.shil-upload-grid
+) {
+  gap: 10px !important;
+  margin: 0 !important;
+}
+
+.shil-engineering-shell :is(
+  .shil-field,.shil-form-field,.shil-input-card,.shil-result-field,.shil-summary-item,
+  .shil-final-data-item,.shil-data-card,.shil-climate-item,.shil-method-card
+) {
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 10px 12px !important;
+  margin: 0 !important;
+  border-radius: 14px !important;
+}
+
+.shil-engineering-shell :is(input,select,textarea,.shil-input,.shil-select) {
+  min-height: 42px !important;
+  height: auto !important;
+  padding: 8px 11px !important;
+  border-radius: 12px !important;
+  font-size: 15px !important;
+}
+
+.shil-engineering-shell textarea {
+  min-height: 88px !important;
+  max-height: 180px !important;
+  resize: vertical !important;
+}
+
+.shil-engineering-shell :is(label,.shil-field-label,.shil-label) {
+  margin-bottom: 5px !important;
+  font-size: 14px !important;
+  line-height: 1.45 !important;
+}
+
+.shil-engineering-shell :is(p,.shil-help,.shil-helper-text,.shil-description) {
+  margin-top: 5px !important;
+  margin-bottom: 5px !important;
+  line-height: 1.65 !important;
+}
+
+.shil-engineering-shell :is(table,.shil-compact-summary-table,.shil-final-equipment-table,.shil-equipment-bank-table) {
+  margin: 0 !important;
+  border-spacing: 0 !important;
+}
+
+.shil-engineering-shell :is(table,.shil-compact-summary-table,.shil-final-equipment-table,.shil-equipment-bank-table) :is(th,td),
+.shil-engineering-shell .shil-final-equipment-table > * {
+  min-height: 0 !important;
+  padding: 8px 7px !important;
+  line-height: 1.45 !important;
+  vertical-align: middle !important;
+}
+
+.shil-engineering-shell :is(
+  button,.shil-primary-wide,.shil-confirm-button,.shil-action-button,.shil-btn-primary,
+  .shil-btn-secondary,.shil-env-content-confirm-button
+) {
+  min-height: 42px !important;
+  height: auto !important;
+  padding: 8px 16px !important;
+  margin-top: 8px !important;
+  border-radius: 14px !important;
+  font-size: 15px !important;
+}
+
+.shil-engineering-shell :is(.shil-alert,.shil-warning,.shil-warning-card,.shil-status-block) {
+  min-height: 0 !important;
+  padding: 10px 12px !important;
+  margin: 8px 0 !important;
+  border-radius: 14px !important;
+  line-height: 1.65 !important;
+}
+
+/* Remove empty shells and legacy spacer nodes. */
+.shil-engineering-shell :is(.shil-spacer,.shil-empty-card,.shil-empty-state:empty,.shil-card:empty,.shil-panel:empty,.shil-wrapper:empty) {
+  display: none !important;
+  min-height: 0 !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.shil-engineering-shell :is([style*="min-height: 300"],[style*="min-height:300"],[style*="height: 300"],[style*="height:300"]) {
+  min-height: 0 !important;
+  height: auto !important;
+}
+
+/* Path cards: compact and resilient when images are unavailable. */
+.shil-engineering-shell .shil-project-path-two-cards {
+  gap: 10px !important;
+}
+
+.shil-engineering-shell .shil-project-path-card {
+  display: grid !important;
+  grid-template-columns: 92px minmax(0,1fr) !important;
+  align-items: center !important;
+  gap: 10px !important;
+  min-height: 132px !important;
+}
+
+.shil-engineering-shell .shil-project-path-card img {
+  width: 92px !important;
+  height: 92px !important;
+  object-fit: contain !important;
+  border-radius: 12px !important;
+}
+
+.shil-engineering-shell .shil-project-path-card img:not([src]),
+.shil-engineering-shell .shil-project-path-card img[src=""] {
+  display: none !important;
+}
+
+/* Final and summary pages: compact data presentation. */
+.shil-engineering-shell :is(.shil-summary-grid,.shil-final-sheet-grid,.shil-result-field-grid) {
+  grid-template-columns: repeat(2,minmax(0,1fr)) !important;
+}
+
+.shil-engineering-shell :is(.shil-summary-item,.shil-final-data-item,.shil-result-field) {
+  min-height: 74px !important;
+}
+
+.shil-engineering-shell :is(.shil-final-one-page-sheet,.shil-final-sheet-block) {
+  padding: 12px !important;
+}
+
+/* Footer must never cover content. */
+.shil-engineering-shell .shil-fixed-footer {
+  min-height: 58px !important;
+  padding: 6px 8px !important;
+  gap: 6px !important;
+}
+
+.shil-engineering-shell .shil-fixed-footer a {
+  min-height: 40px !important;
+  padding: 6px 8px !important;
+  font-size: 13px !important;
+}
+
+@media (max-width: 720px) {
+  :root { --shil-v3-content-gap: 8px; }
+
+  .shil-engineering-shell .shil-fixed-header {
+    height: 58px !important;
+    min-height: 58px !important;
+    padding: 6px 8px !important;
+    grid-template-columns: 88px minmax(0,1fr) 88px !important;
+    gap: 6px !important;
+  }
+
+  .shil-engineering-shell .shil-header-title {
+    min-height: 38px !important;
+    padding: 0 8px !important;
+    font-size: 17px !important;
+  }
+
+  .shil-engineering-shell .shil-header-action {
+    min-height: 38px !important;
+    height: 38px !important;
+    padding: 0 8px !important;
+    font-size: 13px !important;
+  }
+
+  .shil-engineering-shell .shil-page-content {
+    padding: 8px 8px 70px !important;
+  }
+
+  .shil-engineering-shell :is(.shil-project-mini-rail,.shil-mini-rail,.shil-step-rail) {
+    min-height: 82px !important;
+    margin-bottom: 8px !important;
+    padding: 6px !important;
+    scrollbar-width: none !important;
+  }
+
+  .shil-engineering-shell :is(.shil-project-mini-rail,.shil-mini-rail,.shil-step-rail)::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .shil-engineering-shell :is(.shil-project-mini-rail,.shil-mini-rail,.shil-step-rail) :is(a,.shil-step-item) {
+    min-width: 102px !important;
+    font-size: 12px !important;
+  }
+
+  .shil-engineering-shell :is(
+    .shil-env-card,.shil-section-card,.shil-config-block,.shil-summary-table-card,
+    .shil-summary-section,.shil-final-sheet-block,.shil-final-one-page-sheet,
+    .shil-execution-card,.shil-project-path-card,.shil-field-card
+  ) {
+    padding: 10px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .shil-engineering-shell :is(
+    .shil-clean-section-head,.shil-section-head,.shil-section-title,
+    .shil-summary-section-title,.shil-final-action-heading,.shil-equipment-bank-title
+  ) {
+    min-height: 38px !important;
+    margin-bottom: 7px !important;
+    padding: 6px 10px !important;
+    font-size: 16px !important;
+  }
+
+  .shil-engineering-shell :is(
+    .shil-form-grid,.shil-summary-grid,.shil-result-field-grid,.shil-final-sheet-grid,
+    .shil-summary-details-grid,.shil-bank-grid,.shil-choice-grid,.shil-execution-grid,
+    .shil-method-grid-five,.shil-climate-grid,.shil-upload-grid
+  ) {
+    gap: 8px !important;
+  }
+
+  .shil-engineering-shell .shil-project-path-two-cards {
+    grid-template-columns: 1fr !important;
+  }
+
+  .shil-engineering-shell .shil-project-path-card {
+    grid-template-columns: 72px minmax(0,1fr) !important;
+    min-height: 104px !important;
+    gap: 8px !important;
+  }
+
+  .shil-engineering-shell .shil-project-path-card img {
+    width: 72px !important;
+    height: 72px !important;
+  }
+
+  .shil-engineering-shell :is(.shil-summary-grid,.shil-final-sheet-grid,.shil-result-field-grid) {
+    grid-template-columns: 1fr !important;
+  }
+
+  .shil-engineering-shell :is(.shil-summary-item,.shil-final-data-item,.shil-result-field) {
+    min-height: 60px !important;
+    padding: 9px 10px !important;
+  }
+
+  .shil-engineering-shell textarea {
+    min-height: 76px !important;
+  }
+}

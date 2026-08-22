@@ -1,0 +1,256 @@
+/*
+  SHIL Admin V24 — Clean Consolidated
+  Single final visual source for AdminDashboard.
+  Reference: SHIL engineering Summary / CalculationInputs surfaces.
+  Scope is strictly .shil-page--admin .shil-admin-v24-root.
+*/
+.shil-page--admin .shil-admin-v24-root{
+  --adm24-ink:#0b2034;
+  --adm24-muted:#5d7182;
+  --adm24-line:#b7cddd;
+  --adm24-line-strong:#91bdd8;
+  --adm24-gradient:linear-gradient(100deg,#dceaf6 0%,#cddceb 100%);
+  --adm24-card:linear-gradient(145deg,rgba(251,253,255,.98),rgba(233,243,250,.97));
+  --adm24-card-strong:linear-gradient(145deg,rgba(243,249,253,.99),rgba(214,232,244,.98));
+  --adm24-white:rgba(253,254,255,.97);
+  --adm24-ok:#e6f7ee;
+  --adm24-warn:#fff6e5;
+  --adm24-danger:#fff0f0;
+  --adm24-gap:6px;
+  --adm24-radius:14px;
+  width:100%;
+  max-width:980px;
+  margin:0 auto;
+  padding:0 7px;
+  color:var(--adm24-ink)!important;
+  direction:rtl;
+}
+.shil-page--admin .shil-admin-v24-root,
+.shil-page--admin .shil-admin-v24-root *{box-sizing:border-box}
+
+/* Parentless engineering-page structure. */
+.shil-page--admin .shil-admin-v24-root :is(
+  section,article,
+  .shil-admin-command-center,.shil-admin-review-center,.shil-admin-rule-center,
+  .shil-admin-phase5,.shil-admin-phase6,.shil-admin-equipment-cms,.shil-admin-consumer-cms,
+  .shil-admin-cms-groups,.shil-admin-cms-item-list,.shil-admin-local-user-data,
+  .shil-admin-overview-v17,.shil-admin-overview-columns,.shil-admin-grid,.shil-admin-kpi-grid,
+  .shil-admin-review-list,.shil-admin-user-list,.shil-admin-service-list,.shil-admin-timeline,
+  .shil-admin-actions-row,.shil-admin-form-grid,.shil-admin-cms-form-grid,.shil-admin-review-facts,
+  .shil-admin-review-checks,.shil-admin-phase5-reports,.shil-admin-users-wrap,.shil-admin-security-wrap,
+  .shil-admin-cloud-wrap,.shil-admin-rules-wrap,[class*="wrapper"],[class*="container"]
+){
+  background:transparent!important;background-image:none!important;border:0!important;outline:0!important;
+  box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+}
+.shil-page--admin .shil-admin-v24-root :is(section,article)::before,
+.shil-page--admin .shil-admin-v24-root :is(section,article)::after{content:none!important;display:none!important}
+
+/* Page / section titles. */
+.shil-page--admin .shil-admin-v24-root .shil-admin-management-title-v13{
+  width:100%!important;min-height:42px!important;margin:5px 0 7px!important;padding:6px 10px!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;text-align:center!important;
+  background:var(--adm24-gradient)!important;background-image:var(--adm24-gradient)!important;
+  border:1px solid var(--adm24-line)!important;border-radius:var(--adm24-radius)!important;box-shadow:none!important;
+  color:var(--adm24-ink)!important;-webkit-text-fill-color:var(--adm24-ink)!important;
+  font-size:clamp(15px,4vw,19px)!important;font-weight:950!important;line-height:1.2!important;
+}
+.shil-page--admin .shil-admin-v24-root .shil-admin-section-title-v10{
+  width:100%!important;min-height:38px!important;margin:4px 0 6px!important;padding:5px 8px!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;gap:5px!important;flex-wrap:wrap!important;
+  background:var(--adm24-gradient)!important;border:1px solid var(--adm24-line)!important;border-radius:12px!important;
+  box-shadow:none!important;text-align:center!important;color:var(--adm24-ink)!important;
+}
+.shil-page--admin .shil-admin-v24-root .shil-admin-section-title-v10>strong{font-size:13px!important;text-align:center!important}
+.shil-page--admin .shil-admin-v24-root .shil-admin-section-details-v13{width:100%!important;background:transparent!important;border:0!important;margin:0!important}
+.shil-page--admin .shil-admin-v24-root .shil-admin-section-details-v13>summary{font-size:9px!important;color:var(--adm24-muted)!important;text-align:center!important;list-style:none!important}
+.shil-page--admin .shil-admin-v24-root .shil-admin-section-details-v13>p{margin:4px 0 0!important;font-size:9px!important;color:var(--adm24-muted)!important;text-align:center!important}
+.shil-page--admin .shil-admin-v24-root .shil-admin-section-nav-spacer-v13{display:none!important}
+
+/* Hub and child navigation: short 2-column engineering cards. */
+.shil-page--admin .shil-admin-v24-root .shil-admin-module-hub-v10,
+.shil-page--admin .shil-admin-v24-root .shil-admin-child-tabs-v10{
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:var(--adm24-gap)!important;
+  margin:0!important;padding:0!important;background:transparent!important;
+}
+.shil-page--admin .shil-admin-v24-root .shil-admin-module-card-v10{
+  min-width:0!important;margin:0!important;padding:0!important;overflow:hidden!important;
+  background:var(--adm24-card)!important;background-image:var(--adm24-card)!important;
+  border:1px solid var(--adm24-line)!important;border-radius:var(--adm24-radius)!important;box-shadow:none!important;
+}
+.shil-page--admin .shil-admin-v24-root .shil-admin-module-open-v13,
+.shil-page--admin .shil-admin-v24-root .shil-admin-child-tabs-v10>button{
+  width:100%!important;min-height:50px!important;margin:0!important;padding:6px 8px!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;gap:4px!important;
+  background:var(--adm24-card)!important;background-image:var(--adm24-card)!important;
+  border:1px solid var(--adm24-line)!important;border-radius:var(--adm24-radius)!important;box-shadow:none!important;
+  color:var(--adm24-ink)!important;-webkit-text-fill-color:var(--adm24-ink)!important;text-align:center!important;
+  font-size:12px!important;font-weight:900!important;line-height:1.2!important;
+}
+.shil-page--admin .shil-admin-v24-root .shil-admin-module-open-v13{border:0!important;border-radius:0!important}
+.shil-page--admin .shil-admin-v24-root .shil-admin-module-open-v13 strong{font-size:12px!important;text-align:center!important}
+.shil-page--admin .shil-admin-v24-root .shil-admin-module-arrow-v10,
+.shil-page--admin .shil-admin-v24-root .shil-admin-module-mark-v10{display:none!important}
+.shil-page--admin .shil-admin-v24-root .shil-admin-module-badge-v40{font-size:8px!important;color:var(--adm24-muted)!important;text-align:center!important}
+.shil-page--admin .shil-admin-v24-root .shil-admin-module-details-v13{margin:0!important;background:transparent!important;border:0!important}
+.shil-page--admin .shil-admin-v24-root .shil-admin-module-details-v13>summary{padding:3px!important;font-size:8px!important;text-align:center!important;color:var(--adm24-muted)!important;list-style:none!important}
+.shil-page--admin .shil-admin-v24-root .shil-admin-module-details-v13>p{margin:0!important;padding:5px 7px 7px!important;font-size:8.5px!important;text-align:center!important;color:var(--adm24-muted)!important;border-top:1px solid var(--adm24-line)!important}
+
+/* Overview hero. */
+.shil-page--admin .shil-admin-v24-root .shil-admin-overview-hero-v17,
+.shil-page--admin .shil-admin-v24-root .shil-admin-command-head{
+  width:100%!important;min-height:48px!important;margin:4px 0 6px!important;padding:6px 8px!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;flex-wrap:wrap!important;
+  background:var(--adm24-gradient)!important;background-image:var(--adm24-gradient)!important;
+  border:1px solid var(--adm24-line)!important;border-radius:var(--adm24-radius)!important;box-shadow:none!important;text-align:center!important;
+}
+.shil-page--admin .shil-admin-v24-root .shil-admin-overview-hero-v17 h3,
+.shil-page--admin .shil-admin-v24-root .shil-admin-command-head h3{font-size:14px!important;margin:0!important;text-align:center!important}
+.shil-page--admin .shil-admin-v24-root .shil-admin-command-status{padding:3px 6px!important;border-radius:9px!important;background:var(--adm24-white)!important;border:1px solid var(--adm24-line)!important;color:var(--adm24-ink)!important;font-size:8px!important}
+
+/* Readiness, KPIs and compact facts — absolutely no purple. */
+.shil-page--admin .shil-admin-v24-root .shil-admin-overview-readiness-v17,
+.shil-page--admin .shil-admin-v24-root .shil-admin-readiness-checks-v17,
+.shil-page--admin .shil-admin-v24-root .shil-admin-overview-kpi-grid-v17,
+.shil-page--admin .shil-admin-v24-root :is(.shil-admin-kpi-grid,.shil-admin-review-kpis,.shil-admin-phase5-kpis,.shil-admin-phase6-kpis,.shil-admin-cms-kpis,.shil-admin-user-stats,.shil-admin-security-grid,.shil-admin-review-facts,.shil-admin-release-kpis){
+  width:100%!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:var(--adm24-gap)!important;margin:0 0 6px!important;padding:0!important;background:transparent!important;
+}
+.shil-page--admin .shil-admin-v24-root :is(
+  .shil-admin-readiness-score-v17,.shil-admin-readiness-card-v17,.shil-admin-overview-kpi-card,
+  .shil-admin-stat,.shil-admin-cms-metric,.shil-admin-review-kpis>*,.shil-admin-phase5-kpis>*,.shil-admin-phase6-kpis>*,
+  .shil-admin-user-stats>*,.shil-admin-security-grid>*,.shil-admin-review-facts>*,.shil-admin-release-kpis>*
+){
+  min-width:0!important;min-height:52px!important;margin:0!important;padding:5px 6px!important;
+  background:var(--adm24-card-strong)!important;background-image:var(--adm24-card-strong)!important;
+  border:1px solid var(--adm24-line)!important;border-radius:var(--adm24-radius)!important;box-shadow:none!important;
+  color:var(--adm24-ink)!important;-webkit-text-fill-color:var(--adm24-ink)!important;text-align:center!important;
+}
+.shil-page--admin .shil-admin-v24-root :is(.shil-admin-readiness-score-v17,.shil-admin-readiness-card-v17,.shil-admin-overview-kpi-card)>summary{
+  width:100%!important;min-height:40px!important;padding:2px!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:2px!important;
+  background:transparent!important;border:0!important;list-style:none!important;cursor:pointer!important;text-align:center!important;
+}
+.shil-page--admin .shil-admin-v24-root :is(.shil-admin-readiness-score-v17,.shil-admin-readiness-card-v17,.shil-admin-overview-kpi-card)>summary::-webkit-details-marker{display:none!important}
+.shil-page--admin .shil-admin-v24-root .shil-admin-readiness-state-v17{width:21px!important;height:21px!important;display:grid!important;place-items:center!important;border-radius:8px!important;background:#e8f2f8!important;border:1px solid var(--adm24-line)!important;font-size:11px!important}
+.shil-page--admin .shil-admin-v24-root :is(.shil-admin-readiness-score-v17,.shil-admin-readiness-card-v17).ok .shil-admin-readiness-state-v17{background:var(--adm24-ok)!important}
+.shil-page--admin .shil-admin-v24-root :is(.shil-admin-readiness-card-v17.warn,.shil-admin-readiness-card-v17.blocker) .shil-admin-readiness-state-v17{background:var(--adm24-warn)!important}
+.shil-page--admin .shil-admin-v24-root :is(.shil-admin-stat,.shil-admin-cms-metric,.shil-admin-overview-kpi-card,.shil-admin-readiness-score-v17,.shil-admin-readiness-card-v17) :is(strong,b){font-size:14px!important;line-height:1.05!important;text-align:center!important;color:var(--adm24-ink)!important}
+.shil-page--admin .shil-admin-v24-root :is(.shil-admin-stat,.shil-admin-cms-metric,.shil-admin-overview-kpi-card,.shil-admin-readiness-score-v17,.shil-admin-readiness-card-v17) :is(span,small){font-size:8.5px!important;line-height:1.2!important;text-align:center!important;color:var(--adm24-muted)!important}
+.shil-page--admin .shil-admin-v24-root :is(.shil-admin-readiness-score-detail-v17,.shil-admin-readiness-detail-v17,.shil-admin-overview-kpi-detail){padding:5px!important;margin-top:3px!important;border-top:1px solid var(--adm24-line)!important;background:transparent!important;text-align:center!important;font-size:8.5px!important}
+
+/* Search/filter controls. */
+.shil-page--admin .shil-admin-v24-root :is(.shil-admin-overview-search,.shil-admin-overview-search-v17,.shil-admin-review-toolbar,.shil-admin-user-toolbar,.shil-admin-cms-toolbar,.shil-admin-diag-toolbar){width:100%!important;margin:5px 0!important;padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important}
+.shil-page--admin .shil-admin-v24-root :is(input,select,textarea){width:100%!important;min-height:34px!important;padding:6px 9px!important;background:var(--adm24-white)!important;border:1px solid var(--adm24-line)!important;border-radius:11px!important;box-shadow:none!important;color:var(--adm24-ink)!important;-webkit-text-fill-color:var(--adm24-ink)!important;text-align:center!important;font-size:10.5px!important;outline:0!important}
+.shil-page--admin .shil-admin-v24-root textarea{min-height:62px!important;resize:vertical!important}
+.shil-page--admin .shil-admin-v24-root :is(input,textarea)::placeholder{color:var(--adm24-muted)!important;opacity:1!important}
+
+/* Accordion-first content modules. */
+.shil-page--admin .shil-admin-v24-root .shil-admin-overview-accordion-grid-v17,
+.shil-page--admin .shil-admin-v24-root .shil-admin-overview-columns{
+  width:100%!important;display:flex!important;flex-wrap:wrap!important;align-items:flex-start!important;gap:var(--adm24-gap)!important;margin:0!important;padding:0!important;background:transparent!important;
+}
+.shil-page--admin .shil-admin-v24-root article.shil-admin-panel{
+  width:calc(50% - 3px)!important;min-width:0!important;margin:0!important;padding:0!important;overflow:hidden!important;
+  background:var(--adm24-card)!important;background-image:var(--adm24-card)!important;
+  border:1px solid var(--adm24-line)!important;border-radius:var(--adm24-radius)!important;box-shadow:none!important;
+}
+.shil-page--admin .shil-admin-v24-root article.shil-admin-panel.is-open{width:100%!important}
+.shil-page--admin .shil-admin-v24-root .shil-admin-panel-head{margin:0!important;padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important}
+.shil-page--admin .shil-admin-v24-root .shil-admin-panel-toggle{
+  width:100%!important;min-height:42px!important;padding:5px 7px!important;display:grid!important;grid-template-columns:1fr 24px!important;align-items:center!important;gap:3px!important;
+  background:transparent!important;background-image:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;color:var(--adm24-ink)!important;text-align:center!important;
+}
+.shil-page--admin .shil-admin-v24-root .shil-admin-panel-title-wrap{min-width:0!important;text-align:center!important}
+.shil-page--admin .shil-admin-v24-root .shil-admin-panel-title-wrap h3{font-size:10.5px!important;margin:0!important;text-align:center!important}
+.shil-page--admin .shil-admin-v24-root .shil-admin-panel-title-wrap p{display:none!important}
+.shil-page--admin .shil-admin-v24-root .shil-admin-panel-chevron{width:24px!important;height:24px!important;display:grid!important;place-items:center!important;border:1px solid var(--adm24-line)!important;border-radius:50%!important;background:var(--adm24-white)!important;color:var(--adm24-ink)!important;font-size:13px!important}
+.shil-page--admin .shil-admin-v24-root .shil-admin-panel-body{padding:6px!important;background:transparent!important;border-top:1px solid var(--adm24-line)!important;box-shadow:none!important}
+
+/* Records, users, review, diagnostics, catalog: single-layer leaf cards. */
+.shil-page--admin .shil-admin-v24-root :is(
+  .shil-admin-record-card,.shil-admin-user-card,.shil-admin-user-record,.shil-admin-review-card,.shil-admin-diag-card,
+  .shil-admin-service-row,.shil-admin-security-session,.shil-admin-security-event,.shil-admin-standard-row,
+  .shil-admin-snapshot,.shil-admin-catalog-row,.shil-admin-cms-group,.shil-admin-cms-item,.shil-admin-rule-group,
+  .shil-admin-timeline-item,.shil-admin-alert,.shil-admin-quick-action
+){
+  width:100%!important;min-width:0!important;margin:4px 0!important;padding:7px!important;
+  background:var(--adm24-card)!important;background-image:var(--adm24-card)!important;
+  border:1px solid var(--adm24-line)!important;border-radius:var(--adm24-radius)!important;box-shadow:none!important;color:var(--adm24-ink)!important;text-align:center!important;
+}
+.shil-page--admin .shil-admin-v24-root :is(.shil-admin-record-head,.shil-admin-review-head,.shil-admin-diag-head,.shil-admin-cms-group-head,.shil-admin-cms-item-summary){text-align:center!important;justify-content:center!important;gap:4px!important}
+.shil-page--admin .shil-admin-v24-root :is(.shil-admin-record-head,.shil-admin-review-head,.shil-admin-diag-head,.shil-admin-cms-item-summary) :is(strong,b){font-size:11px!important;text-align:center!important}
+.shil-page--admin .shil-admin-v24-root :is(.shil-admin-review-meta,.shil-admin-diag-meta,.shil-admin-service-meta,.shil-admin-cms-meta,.shil-admin-release-meta,.shil-admin-user-id){font-size:8.5px!important;color:var(--adm24-muted)!important;text-align:center!important}
+
+/* Equipment CMS: remove giant gray slabs; sections only reveal data when needed. */
+.shil-page--admin .shil-admin-v24-root :is(.shil-admin-equipment-cms,.shil-admin-consumer-cms,.shil-admin-cms-groups){padding:0!important;margin:0!important;background:transparent!important;border:0!important;box-shadow:none!important}
+.shil-page--admin .shil-admin-v24-root .shil-admin-cms-group{padding:5px!important}
+.shil-page--admin .shil-admin-v24-root .shil-admin-cms-group-head{min-height:36px!important;padding:4px 6px!important;background:var(--adm24-gradient)!important;border:1px solid var(--adm24-line)!important;border-radius:11px!important;text-align:center!important}
+.shil-page--admin .shil-admin-v24-root .shil-admin-cms-group-head strong{font-size:11px!important;text-align:center!important}
+.shil-page--admin .shil-admin-v24-root .shil-admin-cms-item{padding:5px!important}
+.shil-page--admin .shil-admin-v24-root .shil-admin-cms-item-body{padding:5px!important;margin-top:4px!important;background:transparent!important;border-top:1px solid var(--adm24-line)!important}
+.shil-page--admin .shil-admin-v24-root :is(.shil-admin-form-grid,.shil-admin-cms-form-grid,.shil-admin-card-editor-grid,.shil-admin-rule-fields){display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:5px!important;background:transparent!important}
+.shil-page--admin .shil-admin-v24-root .shil-admin-field-wide{grid-column:1/-1!important}
+
+/* Buttons use SHIL reference gradient, never purple. */
+.shil-page--admin .shil-admin-v24-root button,
+.shil-page--admin .shil-admin-v24-root .shil-primary-wide{
+  min-height:34px!important;padding:5px 9px!important;background:var(--adm24-gradient)!important;background-image:var(--adm24-gradient)!important;
+  border:1px solid var(--adm24-line-strong)!important;border-radius:11px!important;box-shadow:none!important;color:var(--adm24-ink)!important;-webkit-text-fill-color:var(--adm24-ink)!important;
+  font-size:10.5px!important;font-weight:850!important;text-align:center!important;
+}
+.shil-page--admin .shil-admin-v24-root button.danger{background:var(--adm24-danger)!important;background-image:none!important;color:#7b3535!important}
+.shil-page--admin .shil-admin-v24-root button.warn{background:var(--adm24-warn)!important;background-image:none!important;color:#76510d!important}
+.shil-page--admin .shil-admin-v24-root button:disabled{opacity:.55!important}
+
+/* Actions: compact 2-col where possible. */
+.shil-page--admin .shil-admin-v24-root :is(.shil-admin-actions-row,.shil-admin-review-actions,.shil-admin-user-controls,.shil-admin-cms-actions,.shil-admin-quick-grid,.shil-admin-overview-tools-v17){display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:5px!important;margin:5px 0!important;padding:0!important;background:transparent!important}
+.shil-page--admin .shil-admin-v24-root :is(.shil-admin-actions-row,.shil-admin-review-actions,.shil-admin-user-controls,.shil-admin-cms-actions,.shil-admin-quick-grid,.shil-admin-overview-tools-v17)>*:last-child:nth-child(odd){grid-column:1/-1!important}
+
+/* Back: no gray parent strip. */
+.shil-page--admin .shil-admin-v24-root .shil-admin-section-back-row-v16,
+.shil-page--admin .shil-admin-v24-root [class*="back-row"]{
+  width:100%!important;min-height:0!important;margin:9px 0 3px!important;padding:0!important;display:flex!important;align-items:center!important;justify-content:center!important;
+  background:transparent!important;background-image:none!important;border:0!important;outline:0!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+}
+.shil-page--admin .shil-admin-v24-root .shil-admin-back-hub-v16,
+.shil-page--admin .shil-admin-v24-root [class*="back-row"]>button{
+  width:min(100%,220px)!important;min-height:34px!important;margin:0 auto!important;padding:5px 12px!important;background:var(--adm24-gradient)!important;background-image:var(--adm24-gradient)!important;border:1px solid var(--adm24-line)!important;border-radius:11px!important;box-shadow:none!important;font-size:10.5px!important;font-weight:900!important;
+}
+
+/* Logout only on hub, compact. */
+.shil-page--admin .shil-admin-v24-root .shil-admin-logout-row-v13{margin:9px 0 3px!important;padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important;text-align:center!important}
+.shil-page--admin .shil-admin-v24-root .shil-admin-logout-v13{width:min(100%,230px)!important;min-height:36px!important;margin:0 auto!important}
+
+/* Global text normalization inside Admin only. */
+.shil-page--admin .shil-admin-v24-root :is(h1,h2,h3,h4,h5,h6,p,span,small,label,li,td,th,time,strong,b){max-width:100%!important;overflow-wrap:anywhere!important;text-align:center!important;color:var(--adm24-ink)!important;-webkit-text-fill-color:var(--adm24-ink)!important;text-shadow:none!important}
+.shil-page--admin .shil-admin-v24-root :is(p,small,label,li,td,th,time){font-size:9px!important;line-height:1.35!important}
+
+/* Absolute purple neutralizer for legacy classes/inline colors inside Admin. */
+.shil-page--admin .shil-admin-v24-root :is(
+  .shil-admin-readiness-score-v17,.shil-admin-readiness-card-v17,.shil-admin-overview-kpi-card,
+  .shil-admin-stat,.shil-admin-cms-metric,.shil-admin-panel,.shil-admin-record-card,.shil-admin-user-card,
+  .shil-admin-review-card,.shil-admin-diag-card,.shil-admin-cms-item,.shil-admin-cms-group
+),
+.shil-page--admin .shil-admin-v24-root [style*="#7063d4"],
+.shil-page--admin .shil-admin-v24-root [style*="#574ebb"],
+.shil-page--admin .shil-admin-v24-root [style*="#7c3aed"],
+.shil-page--admin .shil-admin-v24-root [style*="rgb(112, 99, 212)"],
+.shil-page--admin .shil-admin-v24-root [style*="rgb(87, 78, 187)"]{
+  color:var(--adm24-ink)!important;-webkit-text-fill-color:var(--adm24-ink)!important;
+}
+
+@media(max-width:560px){
+  .shil-page--admin .shil-admin-v24-root{--adm24-gap:5px;--adm24-radius:12px;padding-inline:5px!important}
+  .shil-page--admin .shil-admin-v24-root .shil-admin-management-title-v13{min-height:38px!important;font-size:15px!important;margin:4px 0 6px!important}
+  .shil-page--admin .shil-admin-v24-root :is(.shil-admin-module-open-v13,.shil-admin-child-tabs-v10>button){min-height:46px!important;font-size:10.5px!important}
+  .shil-page--admin .shil-admin-v24-root article.shil-admin-panel{width:calc(50% - 2.5px)!important}
+  .shil-page--admin .shil-admin-v24-root article.shil-admin-panel.is-open{width:100%!important}
+  .shil-page--admin .shil-admin-v24-root :is(.shil-admin-readiness-score-v17,.shil-admin-readiness-card-v17,.shil-admin-overview-kpi-card,.shil-admin-stat,.shil-admin-cms-metric,.shil-admin-review-kpis>*,.shil-admin-user-stats>*,.shil-admin-security-grid>*){min-height:48px!important;padding:4px!important}
+}
+@media(max-width:360px){
+  .shil-page--admin .shil-admin-v24-root .shil-admin-module-hub-v10,
+  .shil-page--admin .shil-admin-v24-root .shil-admin-child-tabs-v10,
+  .shil-page--admin .shil-admin-v24-root :is(.shil-admin-overview-readiness-v17,.shil-admin-readiness-checks-v17,.shil-admin-overview-kpi-grid-v17,.shil-admin-kpi-grid,.shil-admin-review-kpis,.shil-admin-phase5-kpis,.shil-admin-phase6-kpis,.shil-admin-cms-kpis,.shil-admin-user-stats,.shil-admin-security-grid,.shil-admin-review-facts,.shil-admin-release-kpis),
+  .shil-page--admin .shil-admin-v24-root :is(.shil-admin-form-grid,.shil-admin-cms-form-grid,.shil-admin-card-editor-grid,.shil-admin-rule-fields),
+  .shil-page--admin .shil-admin-v24-root :is(.shil-admin-actions-row,.shil-admin-review-actions,.shil-admin-user-controls,.shil-admin-cms-actions,.shil-admin-quick-grid,.shil-admin-overview-tools-v17){grid-template-columns:1fr!important}
+  .shil-page--admin .shil-admin-v24-root article.shil-admin-panel{width:100%!important}
+}

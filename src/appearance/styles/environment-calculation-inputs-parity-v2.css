@@ -1,0 +1,414 @@
+/* Environment page visual parity with Calculation Inputs.
+   Loaded after the visibility rescue so the page stays paintable while receiving
+   the same compact cards, spacing, colors and responsive layout. */
+body.shil-environment-unified-screen #shil-environment-unified-root {
+  width: min(100%, 980px) !important;
+  padding: 0 6px calc(84px + env(safe-area-inset-bottom, 0px)) !important;
+  gap: 8px !important;
+  color: #0b2a3d !important;
+}
+
+body.shil-environment-unified-screen #shil-environment-unified-root > .shil-env-card {
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 7px !important;
+  gap: 7px !important;
+  background: rgba(249, 252, 255, .95) !important;
+  background-image: none !important;
+  border: 1px solid #c8dceb !important;
+  border-radius: 13px !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+body.shil-environment-unified-screen #shil-environment-unified-root .shil-section-title {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  min-height: 38px !important;
+  margin: 0 !important;
+  padding: 6px 10px !important;
+  color: #0b2a3d !important;
+  background: #eaf4ff !important;
+  border: 1px solid #c8dceb !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  font-size: 16px !important;
+  font-weight: 950 !important;
+  line-height: 1.25 !important;
+  text-align: center !important;
+}
+
+body.shil-environment-unified-screen #shil-environment-unified-root .shil-form-grid,
+body.shil-environment-unified-screen #shil-environment-unified-root .shil-manual-climate-grid,
+body.shil-environment-unified-screen #shil-environment-unified-root .shil-climate-grid,
+body.shil-environment-unified-screen #shil-environment-unified-root .shil-upload-grid,
+body.shil-environment-unified-screen #shil-environment-unified-root .shil-orientation-input-grid,
+body.shil-environment-unified-screen #shil-environment-unified-root .shil-array-fields {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  gap: 7px !important;
+}
+
+body.shil-environment-unified-screen #shil-environment-unified-root .shil-form-grid > .shil-field:nth-child(1),
+body.shil-environment-unified-screen #shil-environment-unified-root .shil-form-grid > .shil-field:nth-child(2),
+body.shil-environment-unified-screen #shil-environment-unified-root .shil-form-grid > .shil-field:nth-child(3) {
+  grid-column: auto !important;
+}
+body.shil-environment-unified-screen #shil-environment-unified-root .shil-form-grid > .shil-field:nth-child(2),
+body.shil-environment-unified-screen #shil-environment-unified-root .shil-form-grid > .shil-field:nth-child(3) {
+  grid-column: 1 / -1 !important;
+}
+
+body.shil-environment-unified-screen #shil-environment-unified-root :is(
+  .shil-field,
+  .shil-upload-box,
+  .shil-single-orientation-card,
+  .shil-installation-array-card,
+  .shil-installation-summary-card,
+  .shil-climate-box,
+  .shil-warning-list,
+  .shil-installation-layout-panel
+) {
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 7px !important;
+  color: #0b2a3d !important;
+  background: #f9fcff !important;
+  background-image: none !important;
+  border: 1px solid #c8dceb !important;
+  border-radius: 11px !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+body.shil-environment-unified-screen #shil-environment-unified-root .shil-field {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  min-height: 0 !important;
+  gap: 5px !important;
+}
+
+body.shil-environment-unified-screen #shil-environment-unified-root :is(.shil-field > label, .shil-upload-box > span, .shil-array-name-row > label) {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 32px !important;
+  margin: 0 !important;
+  padding: 5px 8px !important;
+  color: #07583f !important;
+  background: #e8fff0 !important;
+  border: 1px solid #67d59e !important;
+  border-radius: 10px !important;
+  font-size: 11px !important;
+  font-weight: 950 !important;
+  line-height: 1.2 !important;
+  text-align: center !important;
+}
+
+body.shil-environment-unified-screen #shil-environment-unified-root :is(input:not([type="checkbox"]):not([type="radio"]):not([type="file"]), select, textarea, .shil-input) {
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 38px !important;
+  height: 38px !important;
+  margin: 0 !important;
+  padding: 6px 9px !important;
+  color: #07182e !important;
+  background: #fff !important;
+  border: 1px solid #b7d8ee !important;
+  border-radius: 10px !important;
+  box-shadow: none !important;
+  font: 800 13px/1.3 inherit !important;
+  text-align: center !important;
+  outline: none !important;
+}
+body.shil-environment-unified-screen #shil-environment-unified-root :is(input:not([type="file"]), select, textarea):focus {
+  background: #e8fff0 !important;
+  border-color: #67d59e !important;
+  box-shadow: 0 0 0 2px rgba(50, 213, 131, .10) !important;
+}
+
+body.shil-environment-unified-screen #shil-environment-unified-root .shil-env-hint,
+body.shil-environment-unified-screen #shil-environment-unified-root small {
+  margin: 0 !important;
+  padding: 5px 7px !important;
+  color: #526579 !important;
+  background: #fff9df !important;
+  border: 1px solid #efd167 !important;
+  border-radius: 9px !important;
+  font-size: 9px !important;
+  font-weight: 750 !important;
+  line-height: 1.45 !important;
+  text-align: center !important;
+}
+
+body.shil-environment-unified-screen #shil-environment-unified-root :is(.shil-gps-toggle, .shil-upload-choice-row, .shil-installation-mode-switch, .shil-install-scroll) {
+  display: grid !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  gap: 5px !important;
+}
+body.shil-environment-unified-screen #shil-environment-unified-root .shil-gps-toggle { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+body.shil-environment-unified-screen #shil-environment-unified-root :is(.shil-upload-choice-row, .shil-installation-mode-switch) { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+body.shil-environment-unified-screen #shil-environment-unified-root .shil-install-scroll { grid-template-columns: repeat(5, minmax(0, 1fr)) !important; }
+
+body.shil-environment-unified-screen #shil-environment-unified-root :is(.shil-gps-toggle button, .shil-upload-choice-row button, .shil-installation-mode-switch button, .shil-install-chip) {
+  min-width: 0 !important;
+  min-height: 36px !important;
+  margin: 0 !important;
+  padding: 5px 6px !important;
+  color: #0b2a3d !important;
+  background: #f7fbff !important;
+  border: 1px solid #c8dceb !important;
+  border-radius: 10px !important;
+  box-shadow: none !important;
+  font-size: 10px !important;
+  font-weight: 900 !important;
+  white-space: normal !important;
+}
+body.shil-environment-unified-screen #shil-environment-unified-root :is(.shil-gps-toggle button, .shil-upload-choice-row button, .shil-installation-mode-switch button, .shil-install-chip).active {
+  color: #07583f !important;
+  background: #e8fff0 !important;
+  border-color: #55cf96 !important;
+  box-shadow: 0 0 0 2px rgba(50, 213, 131, .10) !important;
+}
+
+body.shil-environment-unified-screen #shil-environment-unified-root .shil-gps-manual-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 5px !important;
+}
+
+body.shil-environment-unified-screen #shil-environment-unified-root .shil-map-container {
+  position: relative !important;
+  width: 100% !important;
+  height: 170px !important;
+  min-height: 170px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  background: #f9fcff !important;
+  border: 1px solid #c8dceb !important;
+  border-radius: 11px !important;
+  box-shadow: none !important;
+}
+body.shil-environment-unified-screen #shil-environment-unified-root .shil-map-container > img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  opacity: .9 !important;
+}
+
+body.shil-environment-unified-screen #shil-environment-unified-root .shil-installation-layout-panel {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 7px !important;
+}
+body.shil-environment-unified-screen #shil-environment-unified-root :is(.shil-compact-card-head, .shil-array-toggle, .shil-installation-summary-main) {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 6px !important;
+}
+body.shil-environment-unified-screen #shil-environment-unified-root .shil-efficiency-badge {
+  flex: 0 0 auto !important;
+  min-width: 44px !important;
+  padding: 4px 7px !important;
+  color: #07583f !important;
+  background: #e8fff0 !important;
+  border: 1px solid #67d59e !important;
+  border-radius: 999px !important;
+  font-size: 11px !important;
+  font-weight: 950 !important;
+}
+body.shil-environment-unified-screen #shil-environment-unified-root .shil-installation-arrays {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+}
+body.shil-environment-unified-screen #shil-environment-unified-root .shil-array-toggle {
+  width: 100% !important;
+  padding: 0 !important;
+  color: #0b2a3d !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+body.shil-environment-unified-screen #shil-environment-unified-root .shil-array-expanded-content {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  padding-top: 6px !important;
+}
+body.shil-environment-unified-screen #shil-environment-unified-root .shil-array-name-row {
+  display: grid !important;
+  grid-template-columns: 90px minmax(0, 1fr) !important;
+  gap: 5px !important;
+  align-items: center !important;
+}
+body.shil-environment-unified-screen #shil-environment-unified-root :is(.shil-array-result-row, .shil-installation-summary-metrics, .shil-array-summary) {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 5px !important;
+  margin-top: 5px !important;
+}
+body.shil-environment-unified-screen #shil-environment-unified-root :is(.shil-array-result-row, .shil-installation-summary-metrics, .shil-array-summary) > span {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 42px !important;
+  padding: 5px !important;
+  color: #405b73 !important;
+  background: #f7fbff !important;
+  border: 1px solid #d8e6f0 !important;
+  border-radius: 9px !important;
+  font-size: 9px !important;
+  font-weight: 800 !important;
+}
+
+body.shil-environment-unified-screen #shil-environment-unified-root :is(.shil-add-array-button, .shil-array-remove, .shil-mini-action) {
+  min-height: 36px !important;
+  padding: 6px 10px !important;
+  color: #0b2a3d !important;
+  background: #eaf4ff !important;
+  border: 1px solid #b8cddd !important;
+  border-radius: 10px !important;
+  box-shadow: none !important;
+  font-size: 11px !important;
+  font-weight: 900 !important;
+}
+body.shil-environment-unified-screen #shil-environment-unified-root .shil-array-remove {
+  min-height: 30px !important;
+  color: #9b2c2c !important;
+  background: #fff4f4 !important;
+  border-color: #efc4c4 !important;
+}
+
+body.shil-environment-unified-screen #shil-environment-unified-root input[type="file"] {
+  width: 100% !important;
+  min-height: 38px !important;
+  padding: 5px !important;
+  color: #405b73 !important;
+  background: #fff !important;
+  border: 1px dashed #9fc7df !important;
+  border-radius: 10px !important;
+  font-size: 10px !important;
+}
+body.shil-environment-unified-screen #shil-environment-unified-root .shil-site-preview-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 5px !important;
+}
+body.shil-environment-unified-screen #shil-environment-unified-root .shil-site-preview-card {
+  margin: 0 !important;
+  padding: 4px !important;
+  background: #fff !important;
+  border: 1px solid #d8e6f0 !important;
+  border-radius: 9px !important;
+}
+body.shil-environment-unified-screen #shil-environment-unified-root .shil-site-preview-card img {
+  width: 100% !important;
+  height: 70px !important;
+  object-fit: contain !important;
+}
+
+body.shil-environment-unified-screen #shil-environment-unified-root .shil-climate-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+}
+body.shil-environment-unified-screen #shil-environment-unified-root .shil-climate-box {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 58px !important;
+  gap: 2px !important;
+  text-align: center !important;
+}
+body.shil-environment-unified-screen #shil-environment-unified-root .shil-climate-box span {
+  color: #405b73 !important;
+  font-size: 9px !important;
+  font-weight: 800 !important;
+}
+body.shil-environment-unified-screen #shil-environment-unified-root .shil-climate-box strong {
+  color: #07182e !important;
+  font-size: 13px !important;
+  font-weight: 950 !important;
+}
+body.shil-environment-unified-screen #shil-environment-unified-root .shil-warning-list {
+  background: #fff9df !important;
+  border-color: #efd167 !important;
+}
+body.shil-environment-unified-screen #shil-environment-unified-root .shil-warning-list p {
+  margin: 0 0 4px !important;
+  color: #6b5411 !important;
+  font-size: 10px !important;
+  line-height: 1.5 !important;
+}
+
+body.shil-environment-unified-screen #shil-environment-unified-root .shil-env-content-confirm-slot {
+  display: flex !important;
+  justify-content: center !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+}
+body.shil-environment-unified-screen #shil-environment-unified-root .shil-env-content-confirm-button,
+body.shil-environment-unified-screen #shil-environment-unified-root .shil-primary-wide {
+  width: min(100%, 430px) !important;
+  min-height: 42px !important;
+  margin: 0 auto !important;
+  padding: 8px 14px !important;
+  color: #0b2a3d !important;
+  background: #e8fff0 !important;
+  border: 1px solid #55cf96 !important;
+  border-radius: 999px !important;
+  box-shadow: none !important;
+  font-size: 15px !important;
+  font-weight: 950 !important;
+}
+body.shil-environment-unified-screen #shil-environment-unified-root .shil-env-content-confirm-button:disabled,
+body.shil-environment-unified-screen #shil-environment-unified-root .shil-primary-wide:disabled {
+  opacity: .55 !important;
+  background: #e5ebf1 !important;
+  border-color: #c6d3df !important;
+}
+
+@media (max-width: 560px) {
+  body.shil-environment-unified-screen #shil-environment-unified-root {
+    padding-inline: 5px !important;
+    gap: 7px !important;
+  }
+  body.shil-environment-unified-screen #shil-environment-unified-root > .shil-env-card {
+    padding: 6px !important;
+    gap: 6px !important;
+  }
+  body.shil-environment-unified-screen #shil-environment-unified-root :is(
+    .shil-form-grid,
+    .shil-manual-climate-grid,
+    .shil-upload-grid,
+    .shil-orientation-input-grid,
+    .shil-array-fields
+  ) {
+    grid-template-columns: 1fr !important;
+  }
+  body.shil-environment-unified-screen #shil-environment-unified-root .shil-form-grid > .shil-field {
+    grid-column: 1 !important;
+  }
+  body.shil-environment-unified-screen #shil-environment-unified-root .shil-climate-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+  body.shil-environment-unified-screen #shil-environment-unified-root .shil-install-scroll {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}

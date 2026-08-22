@@ -1,0 +1,84 @@
+/* =========================================================
+   SHIL V5.4 - shared main background for every application page
+   Source file:
+   public/assets/shil/background/main/shil-main-bg.webp
+   ========================================================= */
+
+:root {
+  --shil-shared-page-background: url('/assets/shil/background/main/shil-main-bg.webp');
+}
+
+/* The shell is the single background owner on all non-auth pages. */
+html body:not(.login-page):not(.welcome-page) .shil-page-shell,
+html body:not(.login-page):not(.welcome-page) .shil-page-shell.shil-engineering-shell {
+  background-color: #08172b !important;
+  background-image:
+    linear-gradient(180deg, rgba(3, 12, 26, .18), rgba(3, 15, 32, .54)),
+    var(--shil-shared-page-background) !important;
+  background-size: cover, cover !important;
+  background-position: center center, center center !important;
+  background-repeat: no-repeat, no-repeat !important;
+  background-attachment: fixed, fixed !important;
+}
+
+/* The dedicated background layer guarantees the image remains visible
+   even when older page-specific rules rewrite the shell background. */
+html body:not(.login-page):not(.welcome-page) .shil-page-shell > .shil-master-bg {
+  display: block !important;
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  z-index: 0 !important;
+  pointer-events: none !important;
+  opacity: 1 !important;
+  background-color: #08172b !important;
+  background-image:
+    linear-gradient(180deg, rgba(3, 12, 26, .18), rgba(3, 15, 32, .54)),
+    var(--shil-shared-page-background) !important;
+  background-size: cover, cover !important;
+  background-position: center center, center center !important;
+  background-repeat: no-repeat, no-repeat !important;
+  background-attachment: fixed, fixed !important;
+}
+
+/* Keep application layers above the background. */
+html body:not(.login-page):not(.welcome-page) .shil-page-shell > .shil-fixed-header,
+html body:not(.login-page):not(.welcome-page) .shil-page-shell > .shil-page-content,
+html body:not(.login-page):not(.welcome-page) .shil-page-shell > .shil-fixed-footer {
+  position: relative;
+  z-index: 1 !important;
+}
+
+/* Content wrappers must not paint an opaque page-sized surface over it. */
+html body:not(.login-page):not(.welcome-page) .shil-page-shell > .shil-page-content,
+html body:not(.login-page):not(.welcome-page) .shil-engineering-shell .shil-engineering-content,
+html body:not(.login-page):not(.welcome-page) .shil-engineering-shell .shil-ds-engineering-content {
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+/* Preserve readable cards and functional blocks; only full-page wrappers are transparent. */
+html body:not(.login-page):not(.welcome-page) .shil-page-shell :is(
+  .shil-card,
+  .shil-panel,
+  .shil-section,
+  .shil-env-card,
+  .shil-summary-card,
+  .shil-final-card,
+  .shil-report-card,
+  .shil-output-card,
+  .shil-form-card,
+  .project-card,
+  .route-card,
+  .project-type-card
+) {
+  background-image: none;
+}
+
+@media (max-width: 768px) {
+  html body:not(.login-page):not(.welcome-page) .shil-page-shell,
+  html body:not(.login-page):not(.welcome-page) .shil-page-shell > .shil-master-bg {
+    background-attachment: scroll, scroll !important;
+  }
+}

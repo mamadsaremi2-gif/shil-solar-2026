@@ -1,0 +1,13 @@
+SHIL Admin UI V24 - Clean Consolidated
+
+اقدامات:
+- حذف لایه CSS داخلی بزرگ V16-V19 از AdminDashboard تا Cascade چندلایه خاتمه پیدا کند.
+- حذف Importهای Admin V8 تا V13 از main.jsx و حذف V23 از AdminDashboard.
+- تعریف تنها لایه نهایی ظاهری Admin با فایل src/styles/shil-admin-v24-clean-consolidated.css و Import آن در انتهای main.jsx.
+- حذف رنگ‌های بنفش از کارت‌های Readiness/KPI/Diagnostics و جایگزینی با گرادیان مرجع آبی روشن اپ.
+- حذف Parentهای خاکستری و Wrapperهای اضافه در صفحات فرزند.
+- تبدیل کارت‌ها و داده‌ها به ساختار فشرده، مرکزچین و Mobile-first.
+- Accordion-first برای پنل‌های جزئیات و نمایش تمام‌عرض هنگام باز شدن.
+- فرم‌ها و اکشن‌ها دو ستونه در عرض موبایل مناسب و تک‌ستونه در عرض بسیار کم.
+- حذف نوار خاکستری والد دکمه بازگشت و تبدیل آن به دکمه مینیمال مستقل.
+- بدون تغییر در Supabase، Authentication، Cloud، Local/PWA، موتور محاسبات یا منطق داده.
