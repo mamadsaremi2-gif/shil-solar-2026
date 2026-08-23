@@ -1,0 +1,509 @@
+/* =========================================================
+   SHIL V25.18 — ADMIN ENGINEERING REVIEW RUNTIME FINAL
+   Exact-class isolation. No purple. Compact mobile first.
+   This file MUST be the final stylesheet imported by main.jsx.
+   ========================================================= */
+
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-center,
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-groups,
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-domain,
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-domain-list {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-center {
+  display: grid !important;
+  gap: 6px !important;
+}
+
+/* KPI: compact 3-column row; fifth item naturally wraps. */
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-kpis {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 4px !important;
+  margin: 0 0 4px !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-kpis > * {
+  min-height: 48px !important;
+  margin: 0 !important;
+  padding: 5px 4px !important;
+  border: 1px solid rgba(153, 194, 220, .78) !important;
+  border-radius: 12px !important;
+  background: rgba(239, 248, 255, .80) !important;
+  background-image: none !important;
+  box-shadow: 0 3px 9px rgba(0, 20, 40, .08) !important;
+  backdrop-filter: blur(7px) !important;
+  -webkit-backdrop-filter: blur(7px) !important;
+  color: #0a2540 !important;
+  text-align: center !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-kpis :is(strong,b) {
+  font-size: 13px !important;
+  line-height: 1 !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-kpis :is(span,small,p) {
+  font-size: 8.5px !important;
+  line-height: 1.2 !important;
+}
+
+/* Search + filter are intentionally shallow. */
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-toolbar {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr) !important;
+  gap: 4px !important;
+  width: 100% !important;
+  margin: 0 0 4px !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-toolbar :is(input,select) {
+  width: 100% !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  margin: 0 !important;
+  padding: 4px 8px !important;
+  border: 1px solid rgba(155, 196, 222, .82) !important;
+  border-radius: 11px !important;
+  background: rgba(247, 252, 255, .94) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: #102b46 !important;
+  font-size: 10.5px !important;
+  font-weight: 750 !important;
+  text-align: center !important;
+}
+
+/* Domain accordion: absolutely no purple/large parent shell. */
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root section.shil-admin-review-domain {
+  display: block !important;
+  min-height: 0 !important;
+  margin: 0 0 4px !important;
+  padding: 0 !important;
+  overflow: visible !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root button.shil-admin-review-domain-head {
+  width: min(100%, 340px) !important;
+  min-width: 0 !important;
+  max-width: 340px !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  margin: 0 auto !important;
+  padding: 4px 10px !important;
+  display: grid !important;
+  grid-template-columns: 1fr 22px !important;
+  align-items: center !important;
+  gap: 4px !important;
+  border: 1px solid rgba(151, 191, 217, .86) !important;
+  border-radius: 12px !important;
+  background: rgba(235, 246, 253, .76) !important;
+  background-color: rgba(235, 246, 253, .76) !important;
+  background-image: none !important;
+  box-shadow: 0 3px 9px rgba(0, 16, 34, .08) !important;
+  backdrop-filter: blur(7px) !important;
+  -webkit-backdrop-filter: blur(7px) !important;
+  color: #0c2944 !important;
+  text-align: center !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-domain-head > div {
+  display: flex !important;
+  align-items: baseline !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  min-width: 0 !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-domain-head strong {
+  font-size: 11.5px !important;
+  line-height: 1 !important;
+  font-weight: 900 !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-domain-head small {
+  font-size: 8.5px !important;
+  line-height: 1 !important;
+  font-weight: 750 !important;
+  opacity: .72 !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-domain-head > span {
+  font-size: 15px !important;
+  line-height: 1 !important;
+}
+
+/* Exact card class defeats generic article/[class*=card] purple rules. */
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root article.shil-admin-review-card,
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root article.shil-admin-review-card.submitted,
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root article.shil-admin-review-card.under_review,
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root article.shil-admin-review-card.needs_revision,
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root article.shil-admin-review-card.approved,
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root article.shil-admin-review-card.rejected {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(155, 195, 220, .70) !important;
+  border-radius: 11px !important;
+  background: rgba(232, 245, 253, .70) !important;
+  background-color: rgba(232, 245, 253, .70) !important;
+  background-image: none !important;
+  box-shadow: 0 2px 8px rgba(0, 20, 40, .07) !important;
+  backdrop-filter: blur(6px) !important;
+  -webkit-backdrop-filter: blur(6px) !important;
+  color: #0d2944 !important;
+}
+
+/* Closed project row: one compact line. */
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root button.shil-admin-review-summary {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 42px !important;
+  min-height: 42px !important;
+  margin: 0 !important;
+  padding: 4px 7px !important;
+  display: grid !important;
+  grid-template-columns: minmax(0,1fr) auto !important;
+  align-items: center !important;
+  gap: 5px !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  outline: 0 !important;
+  background: rgba(247, 252, 255, .70) !important;
+  background-color: rgba(247, 252, 255, .70) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: #0c2944 !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-main {
+  min-width: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 6px !important;
+  text-align: right !important;
+  overflow: hidden !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-main > strong {
+  flex: 0 1 auto !important;
+  min-width: 0 !important;
+  max-width: 42% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  font-size: 10.5px !important;
+  line-height: 1.1 !important;
+  font-weight: 900 !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-main > small {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 3px !important;
+  overflow: hidden !important;
+  color: #36556e !important;
+  font-size: 8.5px !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-main bdi {
+  display: inline-block !important;
+  min-width: 0 !important;
+  max-width: 62% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  direction: ltr !important;
+  unicode-bidi: isolate !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-meta {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 3px !important;
+  min-width: 0 !important;
+  font-size: 8px !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-chevron {
+  width: 18px !important;
+  height: 18px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 50% !important;
+  background: rgba(210, 232, 246, .86) !important;
+  font-size: 11px !important;
+}
+
+/* Domain children grid; compact two-column on wider admin view. */
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-domain-list {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 4px !important;
+  margin-top: 4px !important;
+}
+
+/* Expanded child — no large colored parent. */
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-body {
+  margin: 0 !important;
+  padding: 5px !important;
+  display: grid !important;
+  gap: 4px !important;
+  border: 0 !important;
+  border-top: 1px solid rgba(159, 199, 222, .60) !important;
+  border-radius: 0 !important;
+  background: rgba(244, 250, 254, .66) !important;
+  background-color: rgba(244, 250, 254, .66) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  backdrop-filter: blur(6px) !important;
+  -webkit-backdrop-filter: blur(6px) !important;
+  color: #0c2944 !important;
+}
+
+/* Facts: 4 short results in one row when space permits. */
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-facts {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0,1fr)) !important;
+  gap: 3px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-facts > div {
+  min-height: 38px !important;
+  margin: 0 !important;
+  padding: 4px 3px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 1px !important;
+  border: 1px solid rgba(162, 200, 223, .70) !important;
+  border-radius: 9px !important;
+  background: rgba(231, 244, 252, .76) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-facts span {
+  font-size: 7.5px !important;
+  line-height: 1.05 !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-facts strong {
+  font-size: 9.5px !important;
+  line-height: 1.05 !important;
+}
+
+/* Checklist is chips, not a big sentence. */
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-checks {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 3px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-checks > span {
+  min-height: 22px !important;
+  padding: 3px 6px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 1px solid rgba(157, 197, 220, .72) !important;
+  border-radius: 999px !important;
+  background: rgba(235, 247, 253, .76) !important;
+  font-size: 7.8px !important;
+  line-height: 1 !important;
+}
+
+/* Warnings remain collapsed unless requested. */
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root details.shil-admin-review-warnings {
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 1px solid rgba(189, 202, 211, .65) !important;
+  border-radius: 9px !important;
+  background: rgba(249, 252, 254, .74) !important;
+  box-shadow: none !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-warnings > summary {
+  min-height: 28px !important;
+  padding: 4px 7px !important;
+  font-size: 8.5px !important;
+  font-weight: 850 !important;
+  text-align: center !important;
+}
+
+/* Note editor is compact. */
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root label.shil-admin-review-note {
+  margin: 0 !important;
+  padding: 0 !important;
+  display: grid !important;
+  gap: 2px !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-note > span {
+  font-size: 8px !important;
+  font-weight: 800 !important;
+  text-align: center !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-note textarea {
+  width: 100% !important;
+  min-height: 48px !important;
+  max-height: 80px !important;
+  margin: 0 !important;
+  padding: 6px 8px !important;
+  border: 1px solid rgba(155, 196, 222, .76) !important;
+  border-radius: 9px !important;
+  background: rgba(252, 254, 255, .90) !important;
+  box-shadow: none !important;
+  color: #173650 !important;
+  font-size: 9px !important;
+  line-height: 1.35 !important;
+  resize: vertical !important;
+}
+
+/* History becomes a tiny horizontal strip. */
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-history {
+  min-height: 25px !important;
+  margin: 0 !important;
+  padding: 3px 6px !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 8px !important;
+  border: 1px solid rgba(166, 202, 223, .55) !important;
+  border-radius: 8px !important;
+  background: rgba(238, 248, 253, .66) !important;
+  box-shadow: none !important;
+  font-size: 7.8px !important;
+}
+
+/* IMPORTANT: beat the global inline/button sizing rules seen in DevTools. */
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-actions {
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: grid !important;
+  grid-template-columns: repeat(5, minmax(0,1fr)) !important;
+  gap: 4px !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-actions > button,
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-actions > button.success,
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-actions > button.warn,
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-actions > button.danger {
+  position: static !important;
+  inset: auto !important;
+  float: none !important;
+  place-self: stretch !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 32px !important;
+  min-height: 32px !important;
+  max-height: 32px !important;
+  margin: 0 !important;
+  padding: 3px 4px !important;
+  transform: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 1px solid rgba(151, 194, 220, .78) !important;
+  border-radius: 9px !important;
+  background: rgba(230, 244, 252, .92) !important;
+  background-color: rgba(230, 244, 252, .92) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: #102c47 !important;
+  -webkit-text-fill-color: #102c47 !important;
+  font-size: 8.3px !important;
+  font-weight: 850 !important;
+  line-height: 1 !important;
+  text-align: center !important;
+  white-space: normal !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-actions > button.success {
+  background: rgba(223, 245, 236, .94) !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-actions > button.warn {
+  background: rgba(250, 240, 215, .94) !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-actions > button.danger {
+  background: rgba(248, 229, 229, .94) !important;
+}
+
+/* Empty result. */
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-empty {
+  margin: 0 !important;
+  padding: 7px !important;
+  border: 1px solid rgba(159, 198, 221, .58) !important;
+  border-radius: 9px !important;
+  background: rgba(245, 251, 254, .76) !important;
+  font-size: 9px !important;
+  text-align: center !important;
+}
+
+/* Desktop/tablet can use two narrow columns for CLOSED/short project rows. */
+@media (min-width: 760px) {
+  html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-domain-list {
+    grid-template-columns: repeat(2, minmax(0,1fr)) !important;
+  }
+  html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root article.shil-admin-review-card:has(.shil-admin-review-body) {
+    grid-column: 1 / -1 !important;
+  }
+}
+
+/* Small phones: 2x2 facts and 3+2 action buttons to avoid tiny labels. */
+@media (max-width: 520px) {
+  html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-kpis {
+    grid-template-columns: repeat(2, minmax(0,1fr)) !important;
+  }
+  html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-toolbar {
+    grid-template-columns: 1fr !important;
+  }
+  html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-facts {
+    grid-template-columns: repeat(2, minmax(0,1fr)) !important;
+  }
+  html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-actions {
+    grid-template-columns: repeat(2, minmax(0,1fr)) !important;
+  }
+  html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-actions > button:last-child {
+    grid-column: 1 / -1 !important;
+    width: min(48%, 180px) !important;
+    justify-self: center !important;
+  }
+}
+
+/* Neutralize any purple CSS custom properties inside this module. */
+html body:not(.login-page):not(.welcome-page) .shil-admin-v24-root .shil-admin-review-center * {
+  --purple: transparent !important;
+  --violet: transparent !important;
+}

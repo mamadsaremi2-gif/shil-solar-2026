@@ -5,6 +5,7 @@ import EngineeringPageShell from "../../components/EngineeringPageShell.jsx";
 import ShilWarningOverlay from "../../components/ShilWarningOverlay.jsx";
 import { approveProjectStep } from "../../workflow/projectWorkflow.js";
 import { getEnabledEquipment } from "../../data/registry/index.js";
+import { readAdminDefaults } from "../../admin/adminStore.js";
 import { buildSolarSystemDesign } from "../../engines/solarDesignEngine.js";
 import { optionLabel } from "../../engines/solarBankRules.js";
 import { getProjectPath, getSystemSetupHandoff, normalizeProjectDomain, writeJson } from "../../engines/projectFlowData.js";
@@ -309,6 +310,7 @@ export default function SystemSettings() {
   const projectPath = useMemo(() => getProjectPath(), []);
   const handoff = useMemo(() => getSystemSetupHandoff(), []);
   const domain = normalizeProjectDomain({ ...handoff, domain: params.domain || projectPath.domain });
+  const adminDefaults = readAdminDefaults();
 
   const panels = useMemo(() => getEnabledEquipment("panels"), []);
   const inverters = useMemo(() => getEnabledEquipment("inverters"), []);
@@ -321,8 +323,8 @@ export default function SystemSettings() {
     return initialNeedsBattery ? "offgrid" : "ongrid";
   });
   const [designAdjustmentMode, setDesignAdjustmentMode] = useState("decrease");
-  const [designAdjustmentPercent, setDesignAdjustmentPercent] = useState("20");
-  const lockedAutonomyDays = String(handoff?.autonomy?.inputDays ?? handoff?.autonomy?.days ?? 0);
+  const [designAdjustmentPercent, setDesignAdjustmentPercent] = useState(String(adminDefaults.solarDesignAdjustmentPercent ?? 20));
+  const lockedAutonomyDays = String(handoff?.autonomy?.inputDays ?? handoff?.autonomy?.days ?? adminDefaults.defaultAutonomyDays ?? 0);
   const lockedAutonomyHours = String(handoff?.autonomy?.inputHours ?? handoff?.autonomy?.hours ?? 0);
   const [autonomyDays] = useState(() => lockedAutonomyDays);
   const [autonomyHours] = useState(() => lockedAutonomyHours);

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { startManualProjectFlow, PROJECT_PATHS } from "../../workflow/flowIsolation.js";
 import EngineeringPageShell from "../../components/EngineeringPageShell.jsx";
 import StepConfirmLink from "../../components/StepConfirmLink.jsx";
+import { readAdminDefaults } from "../../admin/adminStore.js";
 
 function readProjectDomain() {
   try {
@@ -67,9 +68,10 @@ export default function ProjectInfo() {
 
   const nextLabel = "تأیید";
   const registrationDate = getTodayPersianDateEnglish();
+  const adminDefaults = readAdminDefaults();
   const previousProject = (() => { try { return JSON.parse(localStorage.getItem("shil:projectInfoDraft") || "null") || {}; } catch { return {}; } })();
-  const [projectName, setProjectName] = useState(previousProject.projectName || "کاربر");
-  const [clientName, setClientName] = useState(previousProject.clientName || "SHIL CO");
+  const [projectName, setProjectName] = useState(previousProject.projectName || adminDefaults.defaultProjectName || "کاربر");
+  const [clientName, setClientName] = useState(previousProject.clientName || adminDefaults.defaultClientName || "SHIL CO");
   const [description, setDescription] = useState(previousProject.description || "");
 
   const persistProjectInfo = () => {

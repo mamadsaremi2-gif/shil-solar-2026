@@ -1,0 +1,454 @@
+/* =========================================================
+   SHIL V25.21 — ADMIN PROJECTS / REVIEW PARITY
+   Runtime-final visual isolation for Admin > Projects.
+   Goals: no purple, compact closed rows, minimal expanded child,
+   equal centered actions, more background visibility.
+   ========================================================= */
+
+html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root .shil-admin-project-list-v252 {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 4px !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Top export action: compact utility control instead of a large card. */
+html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root .shil-admin-actions-row:has(+ .shil-admin-project-list-v252) {
+  width: 100% !important;
+  margin: 0 0 5px !important;
+  padding: 0 !important;
+  display: flex !important;
+  justify-content: center !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root .shil-admin-actions-row:has(+ .shil-admin-project-list-v252) > button {
+  position: static !important;
+  width: min(230px, 62%) !important;
+  min-width: 0 !important;
+  max-width: 230px !important;
+  height: 32px !important;
+  min-height: 32px !important;
+  margin: 0 auto !important;
+  padding: 3px 9px !important;
+  border: 1px solid rgba(154,195,220,.76) !important;
+  border-radius: 10px !important;
+  background: rgba(237,248,254,.82) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: #102d47 !important;
+  -webkit-text-fill-color: #102d47 !important;
+  font-size: 9px !important;
+  font-weight: 850 !important;
+}
+
+/* Exact article selector defeats generic [class*=card] purple rules. */
+html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root article.shil-admin-project-card-v252,
+html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root article.shil-admin-project-card-v252.is-open {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(151,194,220,.72) !important;
+  border-radius: 11px !important;
+  background: rgba(230,245,253,.70) !important;
+  background-color: rgba(230,245,253,.70) !important;
+  background-image: none !important;
+  box-shadow: 0 2px 8px rgba(0,20,40,.06) !important;
+  backdrop-filter: blur(6px) !important;
+  -webkit-backdrop-filter: blur(6px) !important;
+  color: #0d2944 !important;
+  -webkit-text-fill-color: #0d2944 !important;
+}
+
+/* Closed row: same compact accordion language as Engineering Review. */
+html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root button.shil-admin-project-card-summary-v252 {
+  position: static !important;
+  inset: auto !important;
+  float: none !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 42px !important;
+  min-height: 42px !important;
+  max-height: 42px !important;
+  margin: 0 !important;
+  padding: 4px 7px !important;
+  display: grid !important;
+  grid-template-columns: minmax(0,1fr) 24px !important;
+  align-items: center !important;
+  gap: 5px !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  outline: 0 !important;
+  background: rgba(247,252,255,.72) !important;
+  background-color: rgba(247,252,255,.72) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+  color: #0c2944 !important;
+  -webkit-text-fill-color: #0c2944 !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root .shil-admin-project-card-summary-v252 > span {
+  min-width: 0 !important;
+  display: grid !important;
+  gap: 1px !important;
+  text-align: center !important;
+  overflow: hidden !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root .shil-admin-project-card-summary-v252 strong {
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  font-size: 9.5px !important;
+  line-height: 1.05 !important;
+  font-weight: 900 !important;
+  color: #102b46 !important;
+  -webkit-text-fill-color: #102b46 !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root .shil-admin-project-card-summary-v252 small {
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  font-size: 7.8px !important;
+  line-height: 1.05 !important;
+  font-weight: 760 !important;
+  color: #47657c !important;
+  -webkit-text-fill-color: #47657c !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root .shil-admin-project-card-summary-v252 > b {
+  width: 22px !important;
+  height: 22px !important;
+  min-width: 22px !important;
+  min-height: 22px !important;
+  margin: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+  border: 1px solid rgba(151,194,220,.76) !important;
+  border-radius: 8px !important;
+  background: rgba(221,240,251,.90) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: #0c2944 !important;
+  font-size: 13px !important;
+  line-height: 1 !important;
+}
+
+/* Expanded child: no colored/purple parent shell. */
+html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root .shil-admin-project-card-body-v252 {
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 5px !important;
+  display: grid !important;
+  gap: 4px !important;
+  border: 0 !important;
+  border-top: 1px solid rgba(156,198,222,.58) !important;
+  border-radius: 0 !important;
+  background: rgba(244,250,254,.64) !important;
+  background-color: rgba(244,250,254,.64) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  backdrop-filter: blur(6px) !important;
+  -webkit-backdrop-filter: blur(6px) !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root .shil-admin-project-report-v252 {
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  color: #0d2944 !important;
+}
+
+/* Project identity header becomes a short information strip. */
+html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root .shil-admin-project-report-v252 > header {
+  min-height: 48px !important;
+  margin: 0 0 4px !important;
+  padding: 5px 7px !important;
+  display: grid !important;
+  place-content: center !important;
+  gap: 1px !important;
+  border: 1px solid rgba(157,198,222,.68) !important;
+  border-radius: 9px !important;
+  background: rgba(238,248,254,.74) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  text-align: center !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root .shil-admin-project-report-v252 > header h3 {
+  margin: 0 !important;
+  font-size: 10.5px !important;
+  line-height: 1.05 !important;
+  font-weight: 900 !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root .shil-admin-project-report-v252 > header :is(p,small) {
+  margin: 0 !important;
+  font-size: 7.7px !important;
+  line-height: 1.15 !important;
+  color: #45637a !important;
+  -webkit-text-fill-color: #45637a !important;
+}
+
+/* Short project facts in a compact grid. */
+html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root .shil-admin-project-top-grid-v252 {
+  display: grid !important;
+  grid-template-columns: repeat(3,minmax(0,1fr)) !important;
+  gap: 3px !important;
+  margin: 0 0 4px !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root .shil-admin-project-top-grid-v252 > div,
+html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root details.shil-admin-project-id-v252 {
+  min-width: 0 !important;
+  min-height: 38px !important;
+  margin: 0 !important;
+  padding: 4px 3px !important;
+  display: grid !important;
+  align-content: center !important;
+  gap: 1px !important;
+  border: 1px solid rgba(162,200,223,.70) !important;
+  border-radius: 8px !important;
+  background: rgba(232,245,252,.78) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  text-align: center !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root .shil-admin-project-top-grid-v252 :is(span,summary) {
+  list-style: none !important;
+  font-size: 7.3px !important;
+  line-height: 1.05 !important;
+  color: #567086 !important;
+  -webkit-text-fill-color: #567086 !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root .shil-admin-project-top-grid-v252 strong {
+  min-width: 0 !important;
+  overflow-wrap: anywhere !important;
+  font-size: 8.3px !important;
+  line-height: 1.1 !important;
+  color: #102b46 !important;
+  -webkit-text-fill-color: #102b46 !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root details.shil-admin-project-id-v252 {
+  grid-column: 1 / -1 !important;
+  min-height: 26px !important;
+  padding: 3px 5px !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root details.shil-admin-project-id-v252 > strong {
+  margin-top: 3px !important;
+  font-size: 7.5px !important;
+}
+
+/* Nested report sections remain CLOSED by default and look like mini accordions. */
+html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root details.shil-admin-project-report-section {
+  width: 100% !important;
+  min-height: 0 !important;
+  margin: 0 0 3px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(159,199,222,.65) !important;
+  border-radius: 8px !important;
+  background: rgba(239,249,254,.72) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root .shil-admin-project-report-section > summary {
+  min-height: 30px !important;
+  padding: 4px 7px !important;
+  display: grid !important;
+  grid-template-columns: minmax(0,1fr) auto !important;
+  align-items: center !important;
+  gap: 4px !important;
+  list-style: none !important;
+  cursor: pointer !important;
+  background: rgba(226,242,251,.80) !important;
+  background-image: none !important;
+  text-align: center !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root .shil-admin-project-report-section > summary strong {
+  font-size: 8.8px !important;
+  line-height: 1 !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root .shil-admin-project-report-section > summary span {
+  font-size: 7px !important;
+  line-height: 1 !important;
+  color: #577187 !important;
+  -webkit-text-fill-color: #577187 !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root .shil-admin-project-detail-grid {
+  padding: 4px !important;
+  display: grid !important;
+  grid-template-columns: repeat(2,minmax(0,1fr)) !important;
+  gap: 3px !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root .shil-admin-project-detail-grid > div {
+  min-width: 0 !important;
+  min-height: 34px !important;
+  padding: 3px !important;
+  display: grid !important;
+  place-content: center !important;
+  gap: 1px !important;
+  border: 1px solid rgba(180,211,228,.70) !important;
+  border-radius: 7px !important;
+  background: rgba(249,253,255,.88) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  text-align: center !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root .shil-admin-project-detail-grid span {
+  font-size: 7px !important;
+  line-height: 1.05 !important;
+  color: #5a7388 !important;
+  -webkit-text-fill-color: #5a7388 !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root .shil-admin-project-detail-grid strong {
+  overflow-wrap: anywhere !important;
+  font-size: 7.8px !important;
+  line-height: 1.08 !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root details.shil-admin-project-raw {
+  margin: 0 4px 4px !important;
+  padding: 3px !important;
+  border: 1px solid rgba(188,214,228,.72) !important;
+  border-radius: 7px !important;
+  background: rgba(255,255,255,.90) !important;
+  box-shadow: none !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root .shil-admin-project-raw summary {
+  font-size: 7.4px !important;
+  font-weight: 800 !important;
+}
+
+/* Actions: exactly equal, centered, 4px gaps; defeat global 220px rules. */
+html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root .shil-admin-project-actions-v252 {
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: grid !important;
+  grid-template-columns: repeat(3,minmax(0,1fr)) !important;
+  gap: 4px !important;
+  align-items: center !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root .shil-admin-project-actions-v252 > button,
+html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root .shil-admin-project-actions-v252 > button.danger {
+  position: static !important;
+  inset: auto !important;
+  float: none !important;
+  place-self: stretch !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 31px !important;
+  min-height: 31px !important;
+  max-height: 31px !important;
+  margin: 0 !important;
+  padding: 3px !important;
+  transform: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 1px solid rgba(151,194,220,.76) !important;
+  border-radius: 8px !important;
+  background: rgba(229,244,252,.92) !important;
+  background-color: rgba(229,244,252,.92) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  color: #102c47 !important;
+  -webkit-text-fill-color: #102c47 !important;
+  font-size: 8px !important;
+  line-height: 1 !important;
+  font-weight: 850 !important;
+  text-align: center !important;
+  white-space: normal !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root .shil-admin-project-actions-v252 > button.danger {
+  background: rgba(248,229,229,.94) !important;
+}
+
+/* Share options are a compact two-button child, not another large parent. */
+html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root .shil-admin-project-share-choice-v252 {
+  width: 100% !important;
+  margin: 4px 0 0 !important;
+  padding: 4px !important;
+  display: grid !important;
+  grid-template-columns: repeat(2,minmax(0,1fr)) !important;
+  gap: 4px !important;
+  border: 1px solid rgba(159,199,222,.62) !important;
+  border-radius: 8px !important;
+  background: rgba(239,249,254,.76) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root .shil-admin-project-share-choice-v252 > strong {
+  grid-column: 1 / -1 !important;
+  font-size: 8px !important;
+  line-height: 1 !important;
+  text-align: center !important;
+}
+html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root .shil-admin-project-share-choice-v252 > button {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 29px !important;
+  min-height: 29px !important;
+  margin: 0 !important;
+  padding: 3px !important;
+  border: 1px solid rgba(151,194,220,.72) !important;
+  border-radius: 8px !important;
+  background: rgba(232,246,253,.94) !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  font-size: 8px !important;
+}
+
+/* Hard neutralization of purple tokens within Projects only. */
+html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root .shil-admin-project-list-v252 *,
+html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root .shil-admin-project-list-v252 *::before,
+html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root .shil-admin-project-list-v252 *::after {
+  --purple: transparent !important;
+  --violet: transparent !important;
+  text-shadow: none !important;
+}
+
+@media (min-width: 760px) {
+  html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root .shil-admin-project-list-v252 {
+    grid-template-columns: repeat(2,minmax(0,1fr)) !important;
+  }
+  html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root article.shil-admin-project-card-v252.is-open {
+    grid-column: 1 / -1 !important;
+  }
+}
+
+@media (max-width: 520px) {
+  html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root .shil-admin-project-top-grid-v252 {
+    grid-template-columns: repeat(2,minmax(0,1fr)) !important;
+  }
+  html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root .shil-admin-project-top-grid-v252 > div:nth-child(3) {
+    grid-column: 1 / -1 !important;
+  }
+  html body:not(.login-page):not(.welcome-page) .shil-page--admin .shil-admin-v24-root .shil-admin-project-actions-v252 {
+    grid-template-columns: repeat(3,minmax(0,1fr)) !important;
+  }
+}

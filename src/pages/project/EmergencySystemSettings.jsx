@@ -14,6 +14,7 @@ import {
   selectEmergencyProtection,
 } from "../../engines/emergencyBankRules.js";
 import { batterySeriesCountForInverter } from "../../engines/solarBankRules.js";
+import { readAdminDefaults } from "../../admin/adminStore.js";
 
 function readDraft(key, fallback = null) {
   try { return JSON.parse(localStorage.getItem(key) || "null") || fallback; }
@@ -469,7 +470,14 @@ function BankSelect({ title, value, onChange, items, selectedItem, smartMeta, de
 export default function EmergencySystemSettings() {
   const navigate = useNavigate();
   const handoff = useMemo(() => readDraft("shil:systemSetupHandoff", null), []);
-  const defaults = readDraft("shil:emergencyPowerSettings", {});
+  const adminDefaults = readAdminDefaults();
+  const defaults = {
+    requiredEmergencyHours: adminDefaults.emergencyRequiredHours || 3,
+    safetyFactor: adminDefaults.emergencySafetyFactor || 1.25,
+    cableLengthM: adminDefaults.emergencyCableLengthM || 10,
+    lengthFactor: adminDefaults.emergencyCableLengthFactor || 1.15,
+    ...readDraft("shil:emergencyPowerSettings", {}),
+  };
   const banks = useMemo(() => ({
     inverters: getEnabledEquipment("inverters"),
     batteries: getEnabledEquipment("batteries"),
@@ -489,7 +497,7 @@ export default function EmergencySystemSettings() {
   );
   const [backupHours, setBackupHours] = useState(defaultHours);
   const [reserveFactor, setReserveFactor] = useState(defaults.safetyFactor || 1.25);
-  const [dodPercent, setDodPercent] = useState(80);
+  const [dodPercent, setDodPercent] = useState(toNumber(adminDefaults.emergencyDefaultDodPercent, 80));
   const [cableLengthM, setCableLengthM] = useState(toNumber(defaults.cableLengthM, 10));
   const [lengthFactor, setLengthFactor] = useState(toNumber(defaults.lengthFactor, 1.15));
   const [manualMode, setManualMode] = useState(false);

@@ -1,5 +1,6 @@
 import { normalizeAccessRole } from "./roles.js";
 import { deleteCloudRecord, mirrorCloudWrite, upsertCloudRecord } from "../services/shilCloudSync.js";
+import { readLocalOrSessionItem, safeLocalRemoveItem, safeLocalSetItem } from "../services/storageQuotaGuard.js";
 
 const SESSION_KEY = "shil-session";
 const DEVICE_GUEST_KEY = "shil-device-guest-id";
@@ -156,7 +157,7 @@ export async function isAdminCredential(login, password) {
 }
 
 export function getCurrentSession() {
-  return safeParse(localStorage.getItem(SESSION_KEY), null);
+  return safeParse(readLocalOrSessionItem(SESSION_KEY), null);
 }
 
 export function getCurrentUserId() {
@@ -174,7 +175,7 @@ export function createSession({ role = "user", accessRole = "viewer", login = ""
   if (role === "guest") {
     const existingGuestId = localStorage.getItem(DEVICE_GUEST_KEY);
     userId = existingGuestId || makeId("guest");
-    localStorage.setItem(DEVICE_GUEST_KEY, userId);
+    safeLocalSetItem(DEVICE_GUEST_KEY, userId);
   }
 
   const previous = getCurrentSession();
@@ -191,17 +192,17 @@ export function createSession({ role = "user", accessRole = "viewer", login = ""
     createdAt: new Date().toISOString(),
   };
 
-  localStorage.setItem(SESSION_KEY, JSON.stringify(session));
-  localStorage.setItem("shil-role", role);
+  safeLocalSetItem(SESSION_KEY, JSON.stringify(session));
+  safeLocalSetItem("shil-role", role);
   return session;
 }
 
 export function clearSession() {
   const current = getCurrentSession();
   if (current?.userId && typeof sessionStorage !== "undefined") sessionStorage.removeItem(`shil:auth:validated:${current.userId}`);
-  localStorage.removeItem(SESSION_KEY);
-  localStorage.removeItem("shil-role");
-  localStorage.removeItem(PROFILE_KEY);
+  safeLocalRemoveItem(SESSION_KEY);
+  safeLocalRemoveItem("shil-role");
+  safeLocalRemoveItem(PROFILE_KEY);
 
   // End only the temporary PIN verification window, while preserving the configured PIN hash.
   const securityKey = "shil:admin:security";

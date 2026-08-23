@@ -289,3 +289,8 @@ import "./styles/shil-v25-2-stage1.css";
 import "./styles/shil-v25-2-stage2-admin-ux.css";
 import "./styles/shil-admin-path-defaults-v254.css";
 import "./styles/shil-admin-v2541-ui-refinement.css";
+/* V25.18: Engineering Review runtime-final isolation. MUST stay last. */
+import "./styles/shil-admin-review-runtime-final-v2518.css";
+
+/* V25.20: Admin Users = Engineering Review visual parity. MUST stay absolute last. */
+import "./styles/shil-admin-users-review-parity-v2520.css";

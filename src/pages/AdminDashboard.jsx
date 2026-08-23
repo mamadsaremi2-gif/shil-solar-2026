@@ -417,14 +417,23 @@ function ReviewProjectCard({ item, onStatus, onExport }) {
   ];
   return (
     <article className={`shil-admin-review-card ${status}`}>
-      <button type="button" className="shil-admin-review-summary" onClick={() => setOpen((v) => !v)}>
+      <button
+        type="button"
+        className="shil-admin-review-summary"
+        aria-expanded={open}
+        onClick={() => setOpen((v) => !v)}
+      >
         <div className="shil-admin-review-main">
           <strong>{projectTitle}</strong>
-          <small>{item.userLogin || item.userId || "کاربر"} · {domain === "emergency" ? "برق اضطراری" : domain === "solar" ? "خورشیدی" : "دامنه نامشخص"}</small>
+          <small>
+            <bdi dir="ltr">{item.userLogin || item.userId || "کاربر"}</bdi>
+            <span aria-hidden="true"> · </span>
+            <span>{domain === "emergency" ? "برق اضطراری" : domain === "solar" ? "خورشیدی" : "دامنه نامشخص"}</span>
+          </small>
         </div>
         <div className="shil-admin-review-meta">
           <ReviewStatusBadge status={status} />
-          <span className="shil-admin-review-chevron">{open ? "−" : "+"}</span>
+          <span className="shil-admin-review-chevron" aria-hidden="true">{open ? "−" : "+"}</span>
         </div>
       </button>
       {open ? (
@@ -465,6 +474,29 @@ function ReviewProjectCard({ item, onStatus, onExport }) {
         </div>
       ) : null}
     </article>
+  );
+}
+
+function ReviewDomainGroup({ title, domain, items, onStatus, onExport }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <section className={`shil-admin-review-domain ${domain}`}>
+      <button
+        type="button"
+        className="shil-admin-review-domain-head"
+        aria-expanded={open}
+        onClick={() => setOpen((v) => !v)}
+      >
+        <div><strong>{title}</strong><small>{items.length} پرونده</small></div>
+        <span aria-hidden="true">{open ? "−" : "+"}</span>
+      </button>
+      {open ? (
+        <div className="shil-admin-review-domain-list">
+          {items.map((item) => <ReviewProjectCard key={`${item.sourceKey}-${item.id}`} item={item} onStatus={onStatus} onExport={onExport} />)}
+          {!items.length ? <div className="shil-admin-review-empty">پرونده‌ای در این مسیر مطابق فیلتر فعلی وجود ندارد.</div> : null}
+        </div>
+      ) : null}
+    </section>
   );
 }
 
@@ -1913,6 +1945,16 @@ async function setupOrRotateRecoveryCode() {
   function saveDefaultsData() {
     const saved = saveAdminDefaults({
       ...defaults,
+      solarDefaultAzimuthDeg: normalizeNumber(defaults.solarDefaultAzimuthDeg, DEFAULT_ADMIN_DEFAULTS.solarDefaultAzimuthDeg),
+      solarDefaultAcVoltageV: normalizeNumber(defaults.solarDefaultAcVoltageV, DEFAULT_ADMIN_DEFAULTS.solarDefaultAcVoltageV),
+      solarDefaultUsageHours: normalizeNumber(defaults.solarDefaultUsageHours, DEFAULT_ADMIN_DEFAULTS.solarDefaultUsageHours),
+      solarDefaultPanelCount: normalizeNumber(defaults.solarDefaultPanelCount, DEFAULT_ADMIN_DEFAULTS.solarDefaultPanelCount),
+      solarDefaultInverterCount: normalizeNumber(defaults.solarDefaultInverterCount, DEFAULT_ADMIN_DEFAULTS.solarDefaultInverterCount),
+      solarDesignAdjustmentPercent: normalizeNumber(defaults.solarDesignAdjustmentPercent, DEFAULT_ADMIN_DEFAULTS.solarDesignAdjustmentPercent),
+      emergencyDefaultAcVoltageV: normalizeNumber(defaults.emergencyDefaultAcVoltageV, DEFAULT_ADMIN_DEFAULTS.emergencyDefaultAcVoltageV),
+      emergencyDefaultDodPercent: normalizeNumber(defaults.emergencyDefaultDodPercent, DEFAULT_ADMIN_DEFAULTS.emergencyDefaultDodPercent),
+      emergencyCableLengthM: normalizeNumber(defaults.emergencyCableLengthM, DEFAULT_ADMIN_DEFAULTS.emergencyCableLengthM),
+      emergencyCableLengthFactor: normalizeNumber(defaults.emergencyCableLengthFactor, DEFAULT_ADMIN_DEFAULTS.emergencyCableLengthFactor),
       solarPanelDefaultW: normalizeNumber(defaults.solarPanelDefaultW, DEFAULT_ADMIN_DEFAULTS.solarPanelDefaultW),
       solarPanelManualW: normalizeNumber(defaults.solarPanelManualW, DEFAULT_ADMIN_DEFAULTS.solarPanelManualW),
       defaultAutonomyDays: normalizeNumber(defaults.defaultAutonomyDays, DEFAULT_ADMIN_DEFAULTS.defaultAutonomyDays),
@@ -2184,15 +2226,26 @@ async function setupOrRotateRecoveryCode() {
 
   const currentAdminGroup = adminGroups.find((group) => group.items.some((item) => item.key === tab)) || adminGroups[0];
 
-  const engineeringDefaultSteps = [
-    { key: "path", title: "مسیر پروژه", note: "انتخاب شاخه و رفتار شروع پروژه" },
-    { key: "info", title: "اطلاعات پروژه", note: "پیش‌فرض‌های ثبت مشخصات پروژه" },
-    { key: "environment", title: "شرایط محیطی", note: "مبنای داده‌های محیطی و اقلیمی" },
-    { key: "method", title: "روش ورود دیتا", note: "روش ورود و آماده‌سازی داده‌ها" },
-    { key: "inputs", title: "ورودی محاسبات", note: "مقادیر پایه ورودی موتور" },
-    { key: "system", title: "تنظیمات", note: "پارامترهای طراحی و تجهیزات" },
+  const solarEngineeringDefaultSteps = [
+    { key: "path", title: "مسیر پروژه", note: "انتخاب اجرای پروژه با پنل خورشیدی" },
+    { key: "info", title: "اطلاعات پروژه", note: "مشخصات اولیه پروژه" },
+    { key: "environment", title: "شرایط محیطی", note: "صفحه واقعی اقلیم، موقعیت و آرایش نصب" },
+    { key: "method", title: "روش ورود دیتا", note: "روش طراحی خورشیدی" },
+    { key: "inputs", title: "ورودی محاسبات", note: "مقادیر پایه ورودی موتور خورشیدی" },
+    { key: "system", title: "تنظیمات", note: "پارامترهای طراحی و بانک تجهیزات" },
     { key: "summary", title: "چکیده طراحی", note: "کنترل خروجی پیش از اجرا" },
-    { key: "run", title: "اجرا", note: "مبنای اجرای نهایی موتور" },
+    { key: "run", title: "اجرا", note: "اجرای نهایی موتور خورشیدی" },
+  ];
+
+  // مسیر واقعی برق اضطراری Environment ندارد: Info مستقیماً به Method می‌رود.
+  const emergencyEngineeringDefaultSteps = [
+    { key: "path", title: "مسیر پروژه", note: "انتخاب اجرای پروژه برق اضطراری" },
+    { key: "info", title: "اطلاعات پروژه", note: "مشخصات اولیه پروژه" },
+    { key: "method", title: "روش ورود دیتا", note: "فقط جریان کل، توان کل و لیست تجهیزات" },
+    { key: "inputs", title: "ورودی محاسبات", note: "بار اضطراری و زمان پشتیبانی" },
+    { key: "system", title: "تنظیمات", note: "اینورتر، باتری و تنظیمات برق اضطراری" },
+    { key: "summary", title: "چکیده طراحی", note: "کنترل خروجی پیش از اجرا" },
+    { key: "run", title: "اجرا", note: "اجرای نهایی موتور برق اضطراری" },
   ];
 
   function openDefaultsPath(path) {
@@ -2205,6 +2258,16 @@ async function setupOrRotateRecoveryCode() {
   async function publishDefaultsPath(path) {
     const saved = saveAdminDefaults({
       ...defaults,
+      solarDefaultAzimuthDeg: normalizeNumber(defaults.solarDefaultAzimuthDeg, DEFAULT_ADMIN_DEFAULTS.solarDefaultAzimuthDeg),
+      solarDefaultAcVoltageV: normalizeNumber(defaults.solarDefaultAcVoltageV, DEFAULT_ADMIN_DEFAULTS.solarDefaultAcVoltageV),
+      solarDefaultUsageHours: normalizeNumber(defaults.solarDefaultUsageHours, DEFAULT_ADMIN_DEFAULTS.solarDefaultUsageHours),
+      solarDefaultPanelCount: normalizeNumber(defaults.solarDefaultPanelCount, DEFAULT_ADMIN_DEFAULTS.solarDefaultPanelCount),
+      solarDefaultInverterCount: normalizeNumber(defaults.solarDefaultInverterCount, DEFAULT_ADMIN_DEFAULTS.solarDefaultInverterCount),
+      solarDesignAdjustmentPercent: normalizeNumber(defaults.solarDesignAdjustmentPercent, DEFAULT_ADMIN_DEFAULTS.solarDesignAdjustmentPercent),
+      emergencyDefaultAcVoltageV: normalizeNumber(defaults.emergencyDefaultAcVoltageV, DEFAULT_ADMIN_DEFAULTS.emergencyDefaultAcVoltageV),
+      emergencyDefaultDodPercent: normalizeNumber(defaults.emergencyDefaultDodPercent, DEFAULT_ADMIN_DEFAULTS.emergencyDefaultDodPercent),
+      emergencyCableLengthM: normalizeNumber(defaults.emergencyCableLengthM, DEFAULT_ADMIN_DEFAULTS.emergencyCableLengthM),
+      emergencyCableLengthFactor: normalizeNumber(defaults.emergencyCableLengthFactor, DEFAULT_ADMIN_DEFAULTS.emergencyCableLengthFactor),
       solarPanelDefaultW: normalizeNumber(defaults.solarPanelDefaultW, DEFAULT_ADMIN_DEFAULTS.solarPanelDefaultW),
       solarPanelManualW: normalizeNumber(defaults.solarPanelManualW, DEFAULT_ADMIN_DEFAULTS.solarPanelManualW),
       defaultAutonomyDays: normalizeNumber(defaults.defaultAutonomyDays, DEFAULT_ADMIN_DEFAULTS.defaultAutonomyDays),
@@ -2221,32 +2284,56 @@ async function setupOrRotateRecoveryCode() {
     if (!window.confirm("پیش‌فرض‌های این مسیر به مقادیر کارخانه برگردد؟")) return;
     setDefaults((prev) => path === "solar" ? {
       ...prev,
+      defaultProjectName: DEFAULT_ADMIN_DEFAULTS.defaultProjectName,
+      defaultClientName: DEFAULT_ADMIN_DEFAULTS.defaultClientName,
+      solarDefaultCity: DEFAULT_ADMIN_DEFAULTS.solarDefaultCity,
+      solarDefaultInstallType: DEFAULT_ADMIN_DEFAULTS.solarDefaultInstallType,
+      solarDefaultAzimuthDeg: DEFAULT_ADMIN_DEFAULTS.solarDefaultAzimuthDeg,
       solarPanelDefaultW: DEFAULT_ADMIN_DEFAULTS.solarPanelDefaultW,
       solarPanelManualW: DEFAULT_ADMIN_DEFAULTS.solarPanelManualW,
+      solarDefaultPanelCount: DEFAULT_ADMIN_DEFAULTS.solarDefaultPanelCount,
+      solarDefaultAcVoltageV: DEFAULT_ADMIN_DEFAULTS.solarDefaultAcVoltageV,
+      solarDefaultUsageHours: DEFAULT_ADMIN_DEFAULTS.solarDefaultUsageHours,
+      solarDefaultInverterCount: DEFAULT_ADMIN_DEFAULTS.solarDefaultInverterCount,
       defaultAutonomyDays: DEFAULT_ADMIN_DEFAULTS.defaultAutonomyDays,
       defaultSafetyFactor: DEFAULT_ADMIN_DEFAULTS.defaultSafetyFactor,
+      solarDesignAdjustmentPercent: DEFAULT_ADMIN_DEFAULTS.solarDesignAdjustmentPercent,
     } : {
       ...prev,
+      defaultProjectName: DEFAULT_ADMIN_DEFAULTS.defaultProjectName,
+      defaultClientName: DEFAULT_ADMIN_DEFAULTS.defaultClientName,
+      emergencyDefaultAcVoltageV: DEFAULT_ADMIN_DEFAULTS.emergencyDefaultAcVoltageV,
       emergencyRequiredHours: DEFAULT_ADMIN_DEFAULTS.emergencyRequiredHours,
       emergencySafetyFactor: DEFAULT_ADMIN_DEFAULTS.emergencySafetyFactor,
+      emergencyDefaultDodPercent: DEFAULT_ADMIN_DEFAULTS.emergencyDefaultDodPercent,
+      emergencyCableLengthM: DEFAULT_ADMIN_DEFAULTS.emergencyCableLengthM,
+      emergencyCableLengthFactor: DEFAULT_ADMIN_DEFAULTS.emergencyCableLengthFactor,
     });
     notify("مقادیر کارخانه در پیش‌نویس قرار گرفت؛ برای اعمال، انتشار را بزنید.");
   }
 
-  function DefaultField({ label, value, onChange, min, max, step = "any", suffix = "" }) {
-    return <label className="shil-default-field-v254"><span>{label}</span><div><input type="number" value={value} min={min} max={max} step={step} onChange={(e)=>onChange(e.target.value)} />{suffix ? <small>{suffix}</small> : null}</div></label>;
+  function DefaultField({ label, value, onChange, min, max, step = "any", suffix = "", readOnly = false }) {
+    return <label className="shil-default-field-v254"><span>{label}</span><div><input type="number" value={value} min={min} max={max} step={step} readOnly={readOnly} onChange={readOnly ? undefined : (e)=>onChange(e.target.value)} />{suffix ? <small>{suffix}</small> : null}</div></label>;
+  }
+
+  function DefaultTextField({ label, value, onChange, readOnly = false }) {
+    return <label className="shil-default-field-v254"><span>{label}</span><div><input type="text" value={value || ""} readOnly={readOnly} onChange={readOnly ? undefined : (e)=>onChange(e.target.value)} /></div></label>;
+  }
+
+  function DefaultSelectField({ label, value, onChange, options = [] }) {
+    return <label className="shil-default-field-v254"><span>{label}</span><div><select value={value || ""} onChange={(e)=>onChange(e.target.value)}>{options.map((item)=><option key={item.value} value={item.value}>{item.label}</option>)}</select></div></label>;
   }
 
   function DefaultsStageBody({ path, stepKey }) {
     const solar = path === "solar";
-    if (stepKey === "path") return <div className="shil-default-note-v254"><strong>پیش‌فرض مسیر</strong><span>{solar ? "اجرای پروژه با پنل خورشیدی" : "اجرای پروژه برق اضطراری"}</span></div>;
-    if (stepKey === "info") return <div className="shil-default-note-v254"><strong>پیش‌فرض‌های اطلاعات پروژه</strong><span>اطلاعات هویتی پروژه توسط کاربر ثبت می‌شود و مقدار اجباری از سمت ادمین ندارد.</span></div>;
-    if (stepKey === "environment") return <div className="shil-default-note-v254"><strong>پیش‌فرض‌های شرایط محیطی</strong><span>{solar ? "داده‌های اقلیمی و موقعیت پروژه مبنای محاسبه خورشیدی هستند." : "شرایط محیطی در مسیر برق اضطراری ثبت می‌شود و پارامتر مستقل اجباری ندارد."}</span></div>;
-    if (stepKey === "method") return <div className="shil-default-note-v254"><strong>پیش‌فرض‌های روش ورود دیتا</strong><span>روش ورود دیتا در پروژه توسط کاربر انتخاب می‌شود.</span></div>;
-    if (stepKey === "inputs") return solar ? <div className="shil-default-fields-v254"><DefaultField label="توان پنل پیش‌فرض" suffix="W" value={defaults.solarPanelDefaultW} min="1" onChange={(v)=>setDefaults(p=>({...p,solarPanelDefaultW:v}))}/><DefaultField label="توان پنل دستی پیشنهادی" suffix="W" value={defaults.solarPanelManualW} min="1" onChange={(v)=>setDefaults(p=>({...p,solarPanelManualW:v}))}/></div> : <div className="shil-default-note-v254"><strong>پیش‌فرض بارهای اضطراری</strong><span>ساعت مبنای همه مصرف‌کننده‌ها ثابت و برابر ۱ ساعت است. ضرایب همزمانی فعلی حفظ می‌شوند.</span></div>;
-    if (stepKey === "system") return solar ? <div className="shil-default-fields-v254"><DefaultField label="روز خودکفایی" suffix="روز" value={defaults.defaultAutonomyDays} min="1" onChange={(v)=>setDefaults(p=>({...p,defaultAutonomyDays:v}))}/><DefaultField label="ضریب اطمینان" value={defaults.defaultSafetyFactor} min="1" step="0.01" onChange={(v)=>setDefaults(p=>({...p,defaultSafetyFactor:v}))}/></div> : <div className="shil-default-fields-v254"><DefaultField label="زمان برق اضطراری" suffix="ساعت" value={defaults.emergencyRequiredHours} min="1" max="24" step="1" onChange={(v)=>setDefaults(p=>({...p,emergencyRequiredHours:v}))}/><DefaultField label="ضریب اطمینان" value={defaults.emergencySafetyFactor} min="1" step="0.01" onChange={(v)=>setDefaults(p=>({...p,emergencySafetyFactor:v}))}/><div className="shil-default-note-v254"><strong>قاعده موتور</strong><span>زمان پیش‌فرض ۳ ساعت و محدوده مجاز کاربر ۱ تا ۲۴ ساعت است؛ انتخاب اینورتر از توان مؤثر و باتری از توان مؤثر × زمان پشتیبانی انجام می‌شود.</span></div></div>;
-    if (stepKey === "summary") return <div className="shil-default-note-v254"><strong>پیش‌فرض‌های چکیده</strong><span>چکیده از داده‌های تأییدشده مراحل قبل ساخته می‌شود و مقدار مستقل قابل تغییر ندارد.</span></div>;
-    return <div className="shil-default-note-v254"><strong>پیش‌فرض‌های اجرا</strong><span>اجرای نهایی از موتور محاسبات و تنظیمات منتشرشده همین مسیر استفاده می‌کند.</span></div>;
+    if (stepKey === "path") return <div className="shil-default-note-v254"><strong>مسیر واقعی پروژه</strong><span>{solar ? "مسیر پروژه ← اطلاعات پروژه ← شرایط محیطی ← روش ورود دیتا ← ورودی محاسبات ← تنظیمات ← چکیده طراحی ← اجرا" : "مسیر پروژه ← اطلاعات پروژه ← روش ورود دیتا ← ورودی محاسبات ← تنظیمات ← چکیده طراحی ← اجرا"}</span><small>{solar ? "شاخه: اجرای پروژه با پنل خورشیدی" : "شاخه: اجرای پروژه برق اضطراری؛ صفحه شرایط محیطی در این مسیر وجود ندارد."}</small></div>;
+    if (stepKey === "info") return <div className="shil-default-fields-v254"><DefaultTextField label="نام پروژه پیش‌فرض" value={defaults.defaultProjectName} onChange={(v)=>setDefaults(p=>({...p,defaultProjectName:v}))}/><DefaultTextField label="نام کارفرما پیش‌فرض" value={defaults.defaultClientName} onChange={(v)=>setDefaults(p=>({...p,defaultClientName:v}))}/><div className="shil-default-note-v254"><strong>تاریخ ثبت</strong><span>به‌صورت خودکار از تاریخ روز ساخته می‌شود؛ توضیحات پروژه اختیاری است.</span></div></div>;
+    if (stepKey === "environment") return <div className="shil-default-fields-v254"><DefaultTextField label="شهر پیش‌فرض" value={defaults.solarDefaultCity} onChange={(v)=>setDefaults(p=>({...p,solarDefaultCity:v}))}/><DefaultSelectField label="نوع محیط نصب" value={defaults.solarDefaultInstallType} onChange={(v)=>setDefaults(p=>({...p,solarDefaultInstallType:v}))} options={[{value:"urban",label:"شهری"},{value:"industrial",label:"صنعتی"},{value:"coastal",label:"ساحلی"},{value:"mountain",label:"کوهستانی"},{value:"desert",label:"کویری"}]}/><DefaultField label="آزیموت پیش‌فرض" suffix="°" value={defaults.solarDefaultAzimuthDeg} min="0" max="359" step="1" onChange={(v)=>setDefaults(p=>({...p,solarDefaultAzimuthDeg:v}))}/><div className="shil-default-note-v254"><strong>شیب نصب و اقلیم</strong><span>شیب پیشنهادی از عرض جغرافیایی محاسبه می‌شود و داده‌های دما، تابش و ارتفاع از بانک شهر انتخاب‌شده می‌آیند.</span></div></div>;
+    if (stepKey === "method") return <div className="shil-default-note-v254"><strong>روش‌های واقعی فعال</strong><span>{solar ? "توان کل، جریان کل، توان پنل خورشیدی، لیست تجهیزات، پروفایل مصرف و انرژی روزانه" : "لیست تجهیزات، توان کل و جریان کل"}</span><small>در صفحه واقعی Method انتخاب قبلی به پروژه جدید منتقل نمی‌شود و کاربر باید روش را انتخاب کند؛ بنابراین پیش‌فرض اجباری برای Method تعریف نشده است.</small></div>;
+    if (stepKey === "inputs") return solar ? <div className="shil-default-fields-v254"><DefaultField label="ولتاژ AC پیش‌فرض" suffix="V" value={defaults.solarDefaultAcVoltageV} min="1" onChange={(v)=>setDefaults(p=>({...p,solarDefaultAcVoltageV:v}))}/><DefaultField label="ساعت مصرف پیش‌فرض" suffix="h" value={defaults.solarDefaultUsageHours} min="0" step="0.5" onChange={(v)=>setDefaults(p=>({...p,solarDefaultUsageHours:v}))}/><DefaultField label="توان پنل پیش‌فرض" suffix="W" value={defaults.solarPanelDefaultW} min="1" onChange={(v)=>setDefaults(p=>({...p,solarPanelDefaultW:v}))}/><DefaultField label="توان پنل دستی پیشنهادی" suffix="W" value={defaults.solarPanelManualW} min="1" onChange={(v)=>setDefaults(p=>({...p,solarPanelManualW:v}))}/><DefaultField label="تعداد پنل اولیه" suffix="عدد" value={defaults.solarDefaultPanelCount} min="1" step="1" onChange={(v)=>setDefaults(p=>({...p,solarDefaultPanelCount:v}))}/><DefaultField label="تعداد اینورتر اولیه" suffix="عدد" value={defaults.solarDefaultInverterCount} min="1" step="1" onChange={(v)=>setDefaults(p=>({...p,solarDefaultInverterCount:v}))}/></div> : <div className="shil-default-fields-v254"><DefaultField label="ولتاژ AC پیش‌فرض" suffix="V" value={defaults.emergencyDefaultAcVoltageV} min="1" onChange={(v)=>setDefaults(p=>({...p,emergencyDefaultAcVoltageV:v}))}/><DefaultField label="ساعت مبنای هر تجهیز" suffix="h" value={defaults.emergencyBaseLoadHours || 1} readOnly onChange={()=>{}}/><DefaultField label="زمان پشتیبانی پیش‌فرض" suffix="h" value={defaults.emergencyRequiredHours} min="1" max="24" step="1" onChange={(v)=>setDefaults(p=>({...p,emergencyRequiredHours:v}))}/><div className="shil-default-note-v254"><strong>قاعده واقعی موتور</strong><span>در لیست تجهیزات برق اضطراری، ساعت مبنای همه تجهیزات ثابت و برابر ۱ ساعت است و زمان پشتیبانی جداگانه از ۱ تا ۲۴ ساعت وارد محاسبات باتری می‌شود.</span></div></div>;
+    if (stepKey === "system") return solar ? <div className="shil-default-fields-v254"><DefaultField label="روز خودکفایی" suffix="روز" value={defaults.defaultAutonomyDays} min="0" step="1" onChange={(v)=>setDefaults(p=>({...p,defaultAutonomyDays:v}))}/><DefaultField label="ضریب اطمینان" value={defaults.defaultSafetyFactor} min="1" step="0.01" onChange={(v)=>setDefaults(p=>({...p,defaultSafetyFactor:v}))}/><DefaultField label="تنظیم طراحی اولیه" suffix="%" value={defaults.solarDesignAdjustmentPercent} min="0" max="100" step="1" onChange={(v)=>setDefaults(p=>({...p,solarDesignAdjustmentPercent:v}))}/><div className="shil-default-note-v254"><strong>بانک تجهیزات</strong><span>پنل، اینورتر و باتری از بانک تجهیزات منتشرشده انتخاب می‌شوند و مقدار مستقل Hard-code شده در این بلوک ندارند.</span></div></div> : <div className="shil-default-fields-v254"><DefaultField label="زمان برق اضطراری" suffix="h" value={defaults.emergencyRequiredHours} min="1" max="24" step="1" onChange={(v)=>setDefaults(p=>({...p,emergencyRequiredHours:v}))}/><DefaultField label="ضریب اطمینان" value={defaults.emergencySafetyFactor} min="1" step="0.01" onChange={(v)=>setDefaults(p=>({...p,emergencySafetyFactor:v}))}/><DefaultField label="عمق دشارژ پیش‌فرض" suffix="%" value={defaults.emergencyDefaultDodPercent} min="1" max="100" step="1" onChange={(v)=>setDefaults(p=>({...p,emergencyDefaultDodPercent:v}))}/><DefaultField label="طول کابل مبنا" suffix="m" value={defaults.emergencyCableLengthM} min="0" step="0.5" onChange={(v)=>setDefaults(p=>({...p,emergencyCableLengthM:v}))}/><DefaultField label="ضریب طول کابل" value={defaults.emergencyCableLengthFactor} min="1" step="0.01" onChange={(v)=>setDefaults(p=>({...p,emergencyCableLengthFactor:v}))}/></div>;
+    if (stepKey === "summary") return <div className="shil-default-note-v254"><strong>چکیده طراحی</strong><span>این صفحه از داده‌های تأییدشده مسیر، بار، محاسبات و تجهیزات ساخته می‌شود و مقدار مستقل قابل تغییر ندارد.</span></div>;
+    return <div className="shil-default-note-v254"><strong>اجرای نهایی</strong><span>{solar ? "خروجی نهایی از موتور خورشیدی و تنظیمات منتشرشده همین مسیر ساخته می‌شود." : "خروجی نهایی از موتور برق اضطراری، اینورتر، باتری، حفاظت و کابل‌های محاسبه‌شده ساخته می‌شود."}</span></div>;
   }
 
   function openAdminTab(key) {
@@ -2431,25 +2518,16 @@ async function setupOrRotateRecoveryCode() {
       
 {tab === "review" ? (
         <div className="shil-admin-review-center">
-          <section className="shil-admin-review-head">
-            <div>
-              <span>Engineering Review Center</span>
-              <h3>صف بررسی و تأیید مهندسی پروژه‌ها</h3>
-              <p>هر تصمیم همراه با یادداشت، بازبین و زمان ثبت در پرونده پروژه و Audit Log ذخیره می‌شود.</p>
-            </div>
-            <button type="button" onClick={() => downloadJson("shil-engineering-review-queue.json", reviewProjects)}>خروجی صف</button>
-          </section>
-
-          <section className="shil-admin-grid shil-admin-review-kpis">
+          <section className="shil-admin-review-kpis">
             <StatCard title="ارسال‌شده" value={reviewMetrics.submitted} />
-            <StatCard title="در حال بررسی" value={reviewMetrics.under_review} />
+            <StatCard title="در بررسی" value={reviewMetrics.under_review} />
             <StatCard title="نیازمند اصلاح" value={reviewMetrics.needs_revision} status={reviewMetrics.needs_revision ? "warn" : "ok"} />
-            <StatCard title="تأیید مهندسی" value={reviewMetrics.approved} status="ok" />
+            <StatCard title="تأیید" value={reviewMetrics.approved} status="ok" />
             <StatCard title="رد شده" value={reviewMetrics.rejected} status={reviewMetrics.rejected ? "warn" : ""} />
           </section>
 
           <section className="shil-admin-review-toolbar">
-            <input value={reviewSearch} onChange={(event) => setReviewSearch(event.target.value)} placeholder="جستجو در نام پروژه، کاربر یا کارفرما..." dir="auto" />
+            <input value={reviewSearch} onChange={(event) => setReviewSearch(event.target.value)} placeholder="جستجو در پروژه، کاربر یا کارفرما..." dir="auto" />
             <select value={reviewFilter} onChange={(event) => setReviewFilter(event.target.value)}>
               <option value="all">همه وضعیت‌ها</option>
               <option value="submitted">ارسال‌شده</option>
@@ -2458,16 +2536,12 @@ async function setupOrRotateRecoveryCode() {
               <option value="approved">تأیید مهندسی</option>
               <option value="rejected">رد شده</option>
             </select>
-            <select value={reviewDomain} onChange={(event) => setReviewDomain(event.target.value)}>
-              <option value="all">همه مسیرها</option>
-              <option value="solar">خورشیدی</option>
-              <option value="emergency">برق اضطراری</option>
-            </select>
           </section>
 
-          <div className="shil-admin-review-list">
-            {reviewProjects.map((item) => <ReviewProjectCard key={`${item.sourceKey}-${item.id}`} item={item} onStatus={setEngineeringReview} onExport={exportReviewProject} />)}
-            {!reviewProjects.length ? <div className="shil-admin-review-empty">پروژه‌ای مطابق فیلتر فعلی وجود ندارد.</div> : null}
+          <div className="shil-admin-review-groups">
+            <ReviewDomainGroup title="برق اضطراری" domain="emergency" items={reviewProjects.filter((item) => getProjectDomain(item) === "emergency")} onStatus={setEngineeringReview} onExport={exportReviewProject} />
+            <ReviewDomainGroup title="خورشیدی" domain="solar" items={reviewProjects.filter((item) => getProjectDomain(item) === "solar")} onStatus={setEngineeringReview} onExport={exportReviewProject} />
+            {reviewProjects.some((item) => getProjectDomain(item) === "unknown") ? <ReviewDomainGroup title="سایر پرونده‌ها" domain="unknown" items={reviewProjects.filter((item) => getProjectDomain(item) === "unknown")} onStatus={setEngineeringReview} onExport={exportReviewProject} /> : null}
           </div>
         </div>
       ) : null}
@@ -2476,7 +2550,7 @@ async function setupOrRotateRecoveryCode() {
         <AdminPanel title="مرکز مدیریت کاربران" subtitle="مدیریت Profile، Role، Status و فعالیت Cloud در کنار داده‌های Local/PWA.">
           {emergencyLocalAdmin ? <div className="shil-admin-alert warn"><strong>حالت Emergency Local Admin</strong><span>مدیریت کاربران Cloud در این حالت فقط قابل مشاهده نیست و کاملاً غیرفعال است؛ برای عملیات Cloud با ادمین Supabase وارد شوید.</span></div> : null}
 
-          {canCloudAdmin ? <section className="shil-admin-user-center">
+          {canCloudAdmin ? <section className="shil-admin-user-center shil-admin-user-review-parity">
             <div className="shil-admin-user-stats">
               <StatCard title="کل کاربران Cloud" value={managedProfileSummary.total} note={`${managedProfileSummary.approved} حساب تأییدشده`} />
               <StatCard title="در انتظار تأیید" value={managedProfileSummary.pending} status={managedProfileSummary.pending ? "warn" : "ok"} />
@@ -2492,7 +2566,7 @@ async function setupOrRotateRecoveryCode() {
               <select value={userRoleFilter} onChange={(e)=>setUserRoleFilter(e.target.value)}>
                 <option value="all">همه نقش‌ها</option><option value="super_admin">Super Admin</option><option value="admin">Admin</option><option value="engineer">Engineer</option><option value="reviewer">Reviewer</option><option value="viewer">Viewer</option><option value="user">User</option>
               </select>
-              <button type="button" onClick={()=>loadManagedProfiles(true)} disabled={managedProfilesState.loading}>{managedProfilesState.loading ? "در حال دریافت..." : "بروزرسانی"}</button>
+              <button type="button" className="shil-admin-user-refresh" onClick={()=>loadManagedProfiles(true)} disabled={managedProfilesState.loading}>{managedProfilesState.loading ? "در حال دریافت..." : "بروزرسانی"}</button>
             </div>
 
             {managedProfilesState.error ? <p className="shil-auth-error">{managedProfilesState.error}</p> : null}
@@ -2504,57 +2578,110 @@ async function setupOrRotateRecoveryCode() {
                 const isSelf = profile.id === session?.userId;
                 const detailsOpen = expandedManagedUser === profile.id;
                 const records = managedUserRecords[profile.id] || [];
-                return <article className="shil-admin-user-card" key={profile.id}>
-                  <header>
-                    <div><h3>{profile.full_name || profile.email || profile.id}</h3><p>{profile.email || "بدون ایمیل"}</p></div>
-                    <div className="shil-admin-user-badges"><span>{profile.role || "viewer"}</span><span className={profile.status === "approved" ? "ok" : "warn"}>{profile.status || "pending"}</span>{isSelf ? <span>حساب فعال</span> : null}</div>
-                  </header>
-                  <div className="shil-admin-user-activity">
-                    <span>پروژه <strong>{activity.projects || 0}</strong></span>
-                    <span>بازخورد <strong>{activity.feedback || 0}</strong></span>
-                    <span>پرسش <strong>{activity.assistant || 0}</strong></span>
-                    <span>آخرین فعالیت <strong>{activity.lastActivityAt ? new Date(activity.lastActivityAt).toLocaleString("en-US") : "ثبت نشده"}</strong></span>
-                  </div>
-                  <p className="shil-admin-user-id" dir="ltr">{profile.id}</p>
-                  <div className="shil-admin-user-controls">
-                    <label>وضعیت <select value={profile.status || "pending"} disabled={isSelf} onChange={(e)=>changeManagedProfile(profile,{status:e.target.value})}><option value="pending">Pending</option><option value="approved">Approved</option><option value="suspended">Suspended</option><option value="rejected">Rejected</option><option value="disabled">Disabled</option></select></label>
-                    <label>نقش <select value={profile.role || "viewer"} disabled={!canManageRoles || isSelf} onChange={(e)=>changeManagedProfile(profile,{role:e.target.value})}>
-                      {canGrantAdminRoles ? <><option value="super_admin">Super Admin</option><option value="admin">Admin</option></> : null}
-                      <option value="engineer">Engineer</option><option value="reviewer">Reviewer</option><option value="viewer">Viewer</option><option value="user">User</option>
-                    </select></label>
-                  </div>
-                  <div className="shil-admin-actions-row compact">
-                    <button type="button" onClick={()=>toggleManagedUserDetails(profile)}>{detailsOpen ? "بستن جزئیات" : "فعالیت Cloud"}</button>
-                    <button type="button" onClick={()=>exportManagedUser(profile)}>خروجی Cloud</button>
-                    <button type="button" className="danger" disabled={isSelf} onClick={()=>removeManagedUserCloudData(profile)}>حذف داده Cloud</button>
-                  </div>
-                  {detailsOpen ? <div className="shil-admin-user-details">
-                    {managedUserRecordState.loading === profile.id ? <p>در حال دریافت فعالیت...</p> : records.slice(0, 30).map((row)=><div className="shil-admin-user-record" key={row.id}>
-                      <strong>{row.base_key}</strong><span>{row.status || "open"}</span><small>{row.updated_at ? new Date(row.updated_at).toLocaleString("en-US") : "—"}</small>
-                    </div>)}
-                    {!records.length && managedUserRecordState.loading !== profile.id ? <p>رکورد Cloud برای این کاربر ثبت نشده است.</p> : null}
+                const profileEmail = String(profile.email || "").trim().toLowerCase();
+                const localUser = (data.users || []).find((user) => {
+                  const userId = String(user?.userId || "").trim().toLowerCase();
+                  const login = String(user?.login || "").trim().toLowerCase();
+                  return userId === String(profile.id || "").toLowerCase() || (profileEmail && (login === profileEmail || userId === profileEmail));
+                });
+                return <article className={`shil-admin-user-card ${profile.status || "pending"} ${detailsOpen ? "is-open" : ""}`} key={profile.id}>
+                  <button
+                    type="button"
+                    className="shil-admin-user-summary"
+                    aria-expanded={detailsOpen}
+                    onClick={()=>toggleManagedUserDetails(profile)}
+                  >
+                    <div className="shil-admin-user-summary-main">
+                      <strong>{profile.full_name || profile.email || profile.id}</strong>
+                      <small><bdi dir="ltr">{profile.email || "بدون ایمیل"}</bdi></small>
+                    </div>
+                    <div className="shil-admin-user-summary-meta">
+                      <span className="role">{profile.role || "viewer"}</span>
+                      <span className={`status ${profile.status || "pending"}`}>{profile.status || "pending"}</span>
+                      {isSelf ? <span className="self">فعال</span> : null}
+                      <span className="shil-admin-user-chevron" aria-hidden="true">{detailsOpen ? "−" : "+"}</span>
+                    </div>
+                  </button>
+
+                  {detailsOpen ? <div className="shil-admin-user-body">
+                    <div className="shil-admin-user-facts">
+                      <div><span>پروژه</span><strong>{activity.projects || 0}</strong></div>
+                      <div><span>پرسش</span><strong>{activity.assistant || 0}</strong></div>
+                      <div><span>بازخورد</span><strong>{activity.feedback || 0}</strong></div>
+                      <div><span>آخرین فعالیت</span><strong dir="ltr">{activity.lastActivityAt ? new Date(activity.lastActivityAt).toLocaleString("en-US") : "ثبت نشده"}</strong></div>
+                    </div>
+
+                    <div className="shil-admin-user-controls">
+                      <label><span>وضعیت</span><select value={profile.status || "pending"} disabled={isSelf} onChange={(e)=>changeManagedProfile(profile,{status:e.target.value})}><option value="pending">Pending</option><option value="approved">Approved</option><option value="suspended">Suspended</option><option value="rejected">Rejected</option><option value="disabled">Disabled</option></select></label>
+                      <label><span>نقش</span><select value={profile.role || "viewer"} disabled={!canManageRoles || isSelf} onChange={(e)=>changeManagedProfile(profile,{role:e.target.value})}>
+                        {canGrantAdminRoles ? <><option value="super_admin">Super Admin</option><option value="admin">Admin</option></> : null}
+                        <option value="engineer">Engineer</option><option value="reviewer">Reviewer</option><option value="viewer">Viewer</option><option value="user">User</option>
+                      </select></label>
+                    </div>
+
+                    <p className="shil-admin-user-id"><span>شناسه</span><bdi dir="ltr">{profile.id}</bdi></p>
+
+                    <details className="shil-admin-user-cloud-records">
+                      <summary>فعالیت Cloud <span>{records.length ? `${records.length} رکورد` : ""}</span></summary>
+                      <div className="shil-admin-user-record-list">
+                        {managedUserRecordState.loading === profile.id ? <p>در حال دریافت فعالیت...</p> : records.slice(0, 30).map((row)=><div className="shil-admin-user-record" key={row.id}>
+                          <strong>{row.base_key}</strong><span>{row.status || "open"}</span><small>{row.updated_at ? new Date(row.updated_at).toLocaleString("en-US") : "—"}</small>
+                        </div>)}
+                        {!records.length && managedUserRecordState.loading !== profile.id ? <p>رکورد Cloud برای این کاربر ثبت نشده است.</p> : null}
+                      </div>
+                    </details>
+
+                    {localUser ? <details className="shil-admin-user-local-record">
+                      <summary>داده Local/PWA</summary>
+                      <div className="shil-admin-user-local-facts">
+                        <span>نقش: <strong>{localUser.role || "—"}</strong></span>
+                        <span>پروژه: <strong>{localUser.projects || 0}</strong></span>
+                        <span>بازخورد: <strong>{localUser.feedback || 0}</strong></span>
+                        <span>پرسش: <strong>{localUser.assistant || 0}</strong></span>
+                        <span>آخرین فعالیت: <strong dir="ltr">{localUser.lastAt ? new Date(localUser.lastAt).toLocaleString("en-US") : "نامشخص"}</strong></span>
+                      </div>
+                      <div className="shil-admin-user-local-actions">
+                        <button type="button" onClick={() => downloadJson(`shil-user-${localUser.userId}.json`, exportUserBundle(localUser.userId))}>خروجی Local</button>
+                        <button type="button" className="danger" onClick={() => requestSensitiveAction(`حذف تمام داده‌های Local کاربر ${localUser.login || localUser.userId}`, () => { deleteUserAllData(localUser.userId); logAdminAction("user-data:delete-all", { targetUserId: localUser.userId, entity: "user-data" }); setDataVersion((v)=>v+1); notify("تمام اطلاعات Local این کاربر حذف شد."); })}>حذف Local</button>
+                      </div>
+                    </details> : null}
+
+                    <div className="shil-admin-user-actions">
+                      <button type="button" onClick={()=>exportManagedUser(profile)}>خروجی Cloud</button>
+                      <button type="button" className="danger" disabled={isSelf} onClick={()=>removeManagedUserCloudData(profile)}>حذف داده Cloud</button>
+                    </div>
                   </div> : null}
                 </article>;
               })}
-              {!filteredManagedProfiles.length && !managedProfilesState.loading ? <p>کاربری مطابق فیلتر فعلی وجود ندارد.</p> : null}
+              {!filteredManagedProfiles.length && !managedProfilesState.loading ? <p className="shil-admin-user-empty">کاربری مطابق فیلتر فعلی وجود ندارد.</p> : null}
             </div>
           </section> : null}
 
-          <section className="shil-admin-local-user-data">
-            <h3>داده‌های Local/PWA کاربران</h3>
-            <div className="shil-thread-list">
-              {data.users.map((user) => <article className="shil-thread-card" key={user.userId}>
-                <h3>{user.login || user.userId}</h3>
-                <p><strong>نقش ثبت‌شده:</strong> {user.role} · <strong>آخرین فعالیت:</strong> {user.lastAt ? new Date(user.lastAt).toLocaleString("en-US") : "نامشخص"}</p>
-                <p>پروژه: {user.projects} · بازخورد: {user.feedback} · پرسش: {user.assistant}</p>
-                <div className="shil-admin-actions-row compact">
-                  <button type="button" onClick={() => downloadJson(`shil-user-${user.userId}.json`, exportUserBundle(user.userId))}>خروجی Local</button>
-                  <button type="button" className="danger" onClick={() => requestSensitiveAction(`حذف تمام داده‌های Local کاربر ${user.login || user.userId}`, () => { deleteUserAllData(user.userId); logAdminAction("user-data:delete-all", { targetUserId: user.userId, entity: "user-data" }); setDataVersion((v)=>v+1); notify("تمام اطلاعات Local این کاربر حذف شد."); })}>حذف Local</button>
-                </div>
-              </article>)}
-              {!data.users.length ? <p>هنوز کاربری داده Local ثبت نکرده است.</p> : null}
-            </div>
-          </section>
+          {(() => {
+            const localOnlyUsers = (data.users || []).filter((user) => {
+              const userId = String(user?.userId || "").trim().toLowerCase();
+              const login = String(user?.login || "").trim().toLowerCase();
+              return !managedProfiles.some((profile) => {
+                const profileId = String(profile?.id || "").trim().toLowerCase();
+                const email = String(profile?.email || "").trim().toLowerCase();
+                return profileId === userId || (email && (email === login || email === userId));
+              });
+            });
+            if (!localOnlyUsers.length) return null;
+            return <details className="shil-admin-local-only-users">
+              <summary>داده‌های Local/PWA بدون پروفایل Cloud <span>{localOnlyUsers.length}</span></summary>
+              <div className="shil-admin-local-only-list">
+                {localOnlyUsers.map((user) => <article className="shil-admin-local-only-card" key={user.userId}>
+                  <div><strong><bdi dir="ltr">{user.login || user.userId}</bdi></strong><small>{user.role || "user"}</small></div>
+                  <div className="shil-admin-local-only-metrics"><span>پروژه {user.projects || 0}</span><span>بازخورد {user.feedback || 0}</span><span>پرسش {user.assistant || 0}</span></div>
+                  <div className="shil-admin-local-only-actions">
+                    <button type="button" onClick={() => downloadJson(`shil-user-${user.userId}.json`, exportUserBundle(user.userId))}>خروجی Local</button>
+                    <button type="button" className="danger" onClick={() => requestSensitiveAction(`حذف تمام داده‌های Local کاربر ${user.login || user.userId}`, () => { deleteUserAllData(user.userId); logAdminAction("user-data:delete-all", { targetUserId: user.userId, entity: "user-data" }); setDataVersion((v)=>v+1); notify("تمام اطلاعات Local این کاربر حذف شد."); })}>حذف Local</button>
+                  </div>
+                </article>)}
+              </div>
+            </details>;
+          })()}
         </AdminPanel>
       ) : null}
 
@@ -2624,18 +2751,18 @@ async function setupOrRotateRecoveryCode() {
             <>
               <header className="shil-defaults-head-v254"><strong>پیش‌فرض‌های مسیر پروژه</strong><span>مسیر موردنظر را انتخاب کنید.</span></header>
               <div className="shil-default-path-grid-v254">
-                <button type="button" onClick={()=>setDefaultsPath("solar")}><strong>پیش‌فرض‌های خورشیدی</strong><span>۸ مرحله مهندسی</span></button>
-                <button type="button" onClick={()=>setDefaultsPath("emergency")}><strong>پیش‌فرض‌های برق اضطراری</strong><span>۸ مرحله مهندسی</span></button>
+                <button type="button" onClick={()=>setDefaultsPath("solar")}><strong>پیش‌فرض‌های خورشیدی</strong><span>۸ مرحله واقعی</span></button>
+                <button type="button" onClick={()=>setDefaultsPath("emergency")}><strong>پیش‌فرض‌های برق اضطراری</strong><span>۷ مرحله واقعی · بدون شرایط محیطی</span></button>
               </div>
             </>
           ) : (
             <>
               <header className="shil-defaults-head-v254 shil-defaults-head-v2541">
                 <button type="button" className="shil-default-back-v254" onClick={()=>setDefaultsPath(null)}>‹</button>
-                <div><strong>{defaultsPath === "solar" ? "☀ پیش‌فرض‌های خورشیدی · ۸ مرحله" : "⚡ پیش‌فرض‌های برق اضطراری · ۸ مرحله"}</strong></div>
+                <div><strong>{defaultsPath === "solar" ? "☀ پیش‌فرض‌های خورشیدی · ۸ مرحله واقعی" : "⚡ پیش‌فرض‌های برق اضطراری · ۷ مرحله واقعی"}</strong></div>
               </header>
               <div className="shil-default-stage-grid-v254">
-                {engineeringDefaultSteps.map((step,index)=>(
+                {(defaultsPath === "solar" ? solarEngineeringDefaultSteps : emergencyEngineeringDefaultSteps).map((step,index)=>(
                   <details key={step.key} className="shil-default-stage-v254">
                     <summary><b>{String(index+1).padStart(2,"0")}</b><span><strong>{step.title}</strong></span><i>+</i></summary>
                     <div className="shil-default-stage-body-v254"><h4>پیش‌فرض‌های {step.title}</h4><DefaultsStageBody path={defaultsPath} stepKey={step.key}/></div>

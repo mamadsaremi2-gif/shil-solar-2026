@@ -7,6 +7,7 @@ import SmartCityInput, { findIranCityByName, getDefaultIranCity } from "../../co
 import { analyzeEnvironmentForEngineering, analyzeInstallationArrays, estimateRecommendedTilt, normalizePersianNumber } from "../../core/environment/environmentAssessment.js";
 import { approveProjectStep } from "../../workflow/projectWorkflow.js";
 import { clearScenarioFlow, isScenarioFlowFor } from "../../workflow/flowIsolation.js";
+import { readAdminDefaults } from "../../admin/adminStore.js";
 
 const directionOptions = [
   { key: "north", label: "شمال", deg: 0 },
@@ -172,6 +173,8 @@ export default function Environment() {
   }, []);
 const navigate = useNavigate();
   const { domain = localStorage.getItem("shil:scenarioDomain") || "solar" } = useParams();
+  const adminDefaults = useMemo(() => readAdminDefaults(), []);
+  const configuredCity = findIranCityByName(adminDefaults.solarDefaultCity) || isfahan || null;
 
   const environmentDraftKey = useMemo(() => {
     const projectKey = localStorage.getItem("shil:activeProjectKey") || "active-draft";
@@ -207,15 +210,15 @@ const navigate = useNavigate();
       return {};
     }
   }, [environmentDraftKey]);
-  const [city, setCity] = useState(persistedEnvironment.city || isfahan?.name || "اصفهان");
-  const [selectedCity, setSelectedCity] = useState(() => findIranCityByName(persistedEnvironment.city) || isfahan || null);
+  const [city, setCity] = useState(persistedEnvironment.city || configuredCity?.name || adminDefaults.solarDefaultCity || isfahan?.name || "اصفهان");
+  const [selectedCity, setSelectedCity] = useState(() => findIranCityByName(persistedEnvironment.city) || configuredCity || isfahan || null);
   const [manualOverride, setManualOverride] = useState(Boolean(persistedEnvironment.manualOverride));
   const [address, setAddress] = useState(persistedEnvironment.address || "");
   const [gpsMode, setGpsMode] = useState(persistedEnvironment.gpsMode || "auto");
   const [latitude, setLatitude] = useState(String(persistedEnvironment.latitude ?? defaultClimate.latitude));
   const [longitude, setLongitude] = useState(String(persistedEnvironment.longitude ?? defaultClimate.longitude));
-  const [installType, setInstallType] = useState(persistedEnvironment.installType || "urban");
-  const [manualClimate, setManualClimate] = useState(() => persistedEnvironment.climate || cityToClimate(isfahan, domain, persistedEnvironment.installType || "urban"));
+  const [installType, setInstallType] = useState(persistedEnvironment.installType || adminDefaults.solarDefaultInstallType || "urban");
+  const [manualClimate, setManualClimate] = useState(() => persistedEnvironment.climate || cityToClimate(configuredCity || isfahan, domain, persistedEnvironment.installType || adminDefaults.solarDefaultInstallType || "urban"));
   const [compassAttachment, setCompassAttachment] = useState(null);
   const [siteAttachments, setSiteAttachments] = useState([]);
   const [compassPreview, setCompassPreview] = useState("");
@@ -227,7 +230,7 @@ const navigate = useNavigate();
   const [gpsStatus, setGpsStatus] = useState("");
   const [validationMessage, setValidationMessage] = useState("");
   const [installTiltDeg, setInstallTiltDeg] = useState(String(persistedEnvironment.installTiltDeg ?? estimateRecommendedTilt(defaultClimate.latitude)));
-  const [installAzimuthDeg, setInstallAzimuthDeg] = useState(String(persistedEnvironment.installAzimuthDeg ?? 180));
+  const [installAzimuthDeg, setInstallAzimuthDeg] = useState(String(persistedEnvironment.installAzimuthDeg ?? adminDefaults.solarDefaultAzimuthDeg ?? 180));
   const [installationMode, setInstallationMode] = useState(persistedEnvironment.installationMode === "multi" ? "multi" : "single");
   const [openInstallationArrayId, setOpenInstallationArrayId] = useState("array-1");
   const [installationArrays, setInstallationArrays] = useState(() => {

@@ -109,12 +109,34 @@ export const DEFAULT_RELEASE_STATE = {
 };
 
 export const DEFAULT_ADMIN_DEFAULTS = {
+  // اطلاعات پروژه - مشترک در هر دو مسیر واقعی
+  defaultProjectName: "کاربر",
+  defaultClientName: "SHIL CO",
+
+  // مسیر خورشیدی: ProjectPath -> Info -> Environment -> Method -> Inputs -> System -> Summary -> Run
+  solarDefaultCity: "اصفهان",
+  solarDefaultInstallType: "urban",
+  solarDefaultAzimuthDeg: 180,
   solarPanelDefaultW: 620,
   solarPanelManualW: 700,
+  solarDefaultPanelCount: 10,
+  solarDefaultAcVoltageV: 220,
+  solarDefaultUsageHours: 5,
+  solarDefaultInverterCount: 1,
   defaultAutonomyDays: 1,
   defaultSafetyFactor: 1.25,
+  solarDesignAdjustmentPercent: 20,
+
+  // مسیر برق اضطراری: ProjectPath -> Info -> Method -> Inputs -> System -> Summary -> Run
+  // طبق مسیر واقعی پروژه، Environment در این شاخه وجود ندارد.
+  emergencyBaseLoadHours: 1,
+  emergencyDefaultAcVoltageV: 220,
   emergencyRequiredHours: 3,
   emergencySafetyFactor: 1.25,
+  emergencyDefaultDodPercent: 80,
+  emergencyCableLengthM: 10,
+  emergencyCableLengthFactor: 1.15,
+
   maxPngKb: 900,
   autoSnapshot: true,
   adminAssetHint: "برای تغییر تصویر کارت‌ها، فایل PNG را از همین پنل بارگذاری کنید یا فایل public/project-path-cards.json را ویرایش کنید.",

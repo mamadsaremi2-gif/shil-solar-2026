@@ -10,6 +10,7 @@ import { EMERGENCY_BASE_LOAD_HOURS, EMERGENCY_DEFAULT_BACKUP_HOURS, EMERGENCY_MI
 import { METHOD_LABELS, persistSurfaceLoadPreview as persistLoadEngineResult, runSurfaceLoadPreview as runLoadEngine, runSurfacePvPreview as runUnifiedPvForUi } from "../../calculationGateway/surfacePreviewData.js";
 import { SHIL_SOLAR_PANELS } from "../../data/shilSolarBanks.js";
 import { isScenarioFlowFor, startUtilityGateway } from "../../workflow/flowIsolation.js";
+import { readAdminDefaults } from "../../admin/adminStore.js";
 
 function readDraft(key) {
   try { return JSON.parse(localStorage.getItem(key) || "null"); }
@@ -235,6 +236,7 @@ export default function CalculationInputs() {
   const navigate = useNavigate();
   const params = useParams();
   const domain = params.domain || localStorage.getItem("shil:calculationDomain") || localStorage.getItem("shil:scenarioDomain") || "solar";
+  const adminDefaults = React.useMemo(() => readAdminDefaults(), []);
   const requestedMethod = params.method || localStorage.getItem("shil:calculationMethod") || "equipment";
   const allowedMethodsByDomain = React.useMemo(() => ({
     emergency: ["current", "power", "equipment"],
@@ -284,9 +286,9 @@ export default function CalculationInputs() {
   const [manualEnergyKWh, setManualEnergyKWh] = React.useState(persistedInputDraft.manualEnergyKWh ?? "");
   const [manualPowerW, setManualPowerW] = React.useState(persistedInputDraft.manualPowerW ?? "");
   const [manualCurrentA, setManualCurrentA] = React.useState(persistedInputDraft.manualCurrentA ?? "");
-  const [manualVoltage, setManualVoltage] = React.useState(persistedInputDraft.manualVoltage ?? "220");
-  const [manualHours, setManualHours] = React.useState(persistedInputDraft.manualHours ?? (domain === "emergency" ? "3" : "5"));
-  const [profileVoltage, setProfileVoltage] = React.useState(persistedInputDraft.profileVoltage ?? "220");
+  const [manualVoltage, setManualVoltage] = React.useState(persistedInputDraft.manualVoltage ?? String(domain === "emergency" ? (adminDefaults.emergencyDefaultAcVoltageV || 220) : (adminDefaults.solarDefaultAcVoltageV || 220)));
+  const [manualHours, setManualHours] = React.useState(persistedInputDraft.manualHours ?? String(domain === "emergency" ? (adminDefaults.emergencyRequiredHours || 3) : (adminDefaults.solarDefaultUsageHours || 5)));
+  const [profileVoltage, setProfileVoltage] = React.useState(persistedInputDraft.profileVoltage ?? String(adminDefaults.solarDefaultAcVoltageV || 220));
   const [profilePowerW, setProfilePowerW] = React.useState(persistedInputDraft.profilePowerW ?? "1000");
   const [profileMorningKWh, setProfileMorningKWh] = React.useState(persistedInputDraft.profileMorningKWh ?? "1");
   const [profileNoonKWh, setProfileNoonKWh] = React.useState(persistedInputDraft.profileNoonKWh ?? "1");
@@ -298,16 +300,16 @@ export default function CalculationInputs() {
   const environmentAssessment = React.useMemo(() => readDraft("shil:environmentAssessment") || {}, []);
   const envSolarDefaults = React.useMemo(() => getEnvironmentSolarDefaults(environment, environmentAssessment), [environment, environmentAssessment]);
 
-  const defaultPanel = SHIL_SOLAR_PANELS.find((p) => p.powerW === 620) || SHIL_SOLAR_PANELS[0];
+  const defaultPanel = SHIL_SOLAR_PANELS.find((p) => Number(p.powerW) === Number(adminDefaults.solarPanelDefaultW || 620)) || SHIL_SOLAR_PANELS[0];
   const [selectedPanelId, setSelectedPanelId] = React.useState(persistedInputDraft.selectedPanelId || defaultPanel?.id || "");
-  const [panelCount, setPanelCount] = React.useState(persistedInputDraft.panelCount ?? "10");
+  const [panelCount, setPanelCount] = React.useState(persistedInputDraft.panelCount ?? String(adminDefaults.solarDefaultPanelCount || 10));
   const [psh, setPsh] = React.useState(persistedInputDraft.psh ?? String(envSolarDefaults.psh));
   const [lossPercent, setLossPercent] = React.useState(persistedInputDraft.lossPercent ?? String(envSolarDefaults.totalLoss));
-  const [acVoltageRoute, setAcVoltageRoute] = React.useState(persistedInputDraft.acVoltageRoute ?? "220");
-  const [inverterSplitCount, setInverterSplitCount] = React.useState(persistedInputDraft.inverterSplitCount ?? "1");
+  const [acVoltageRoute, setAcVoltageRoute] = React.useState(persistedInputDraft.acVoltageRoute ?? String(adminDefaults.solarDefaultAcVoltageV || 220));
+  const [inverterSplitCount, setInverterSplitCount] = React.useState(persistedInputDraft.inverterSplitCount ?? String(adminDefaults.solarDefaultInverterCount || 1));
   const [forceAutonomyBattery, setForceAutonomyBattery] = React.useState(persistedInputDraft.forceAutonomyBattery ?? (domain === "emergency"));
   const [autonomyHours, setAutonomyHours] = React.useState(() => domain === "emergency"
-    ? String(clampEmergencyBackupHours(persistedInputDraft.autonomyHours, EMERGENCY_DEFAULT_BACKUP_HOURS))
+    ? String(clampEmergencyBackupHours(persistedInputDraft.autonomyHours, adminDefaults.emergencyRequiredHours || EMERGENCY_DEFAULT_BACKUP_HOURS))
     : (persistedInputDraft.autonomyHours ?? ""));
   const [autonomyDays, setAutonomyDays] = React.useState(persistedInputDraft.autonomyDays ?? "");
 
