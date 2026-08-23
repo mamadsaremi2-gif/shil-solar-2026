@@ -41,6 +41,20 @@ export function getEquipmentBank(type) {
   const group = runtimeGroupMap[type];
   if (!catalog || !group || !Array.isArray(catalog[group]) || !catalog[group].length) return fallback;
   const runtime = normalizeEquipmentBank(catalog[group].map((item) => adaptRuntimeItem(type, item)), { category: type, source: "admin-runtime" });
+
+  // Protection records published from Admin are intentionally user-editable and may
+  // contain only commercial fields (title/rating/standard).  Do not let a partial
+  // runtime catalog erase the richer engineering protection families used by the
+  // sizing engine.  Runtime rows override matching static IDs and custom rows are
+  // appended, while untouched engineering families remain available for selection.
+  if (type === "protections") {
+    const runtimeIds = new Set(runtime.map((item) => item.id));
+    return Object.freeze([
+      ...runtime,
+      ...fallback.filter((item) => !runtimeIds.has(item.id)),
+    ]);
+  }
+
   return runtime;
 }
 

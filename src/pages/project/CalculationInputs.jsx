@@ -434,6 +434,8 @@ export default function CalculationInputs() {
       phaseAC: voltage >= 380 ? "three" : "single",
       manualEnergyWh: energyFromManual || solarPanelEnergyWh,
       manualPowerW: powerFromCurrent || powerFromManual || solarPanelPowerW,
+      manualCurrentA: method === "current" ? toNumber(manualCurrentA, 0) : undefined,
+      powerFactorAC: (method === "power" || method === "current") ? 1 : undefined,
       manualHours: toNumber(method === "profile" ? 1 : manualHours || psh || 0, 0),
       backupHours: domain === "emergency" ? clampEmergencyBackupHours(autonomyHours) : undefined,
       manualSurgeW: method === "profile" ? profileSurgePowerW : 0,
@@ -525,7 +527,13 @@ export default function CalculationInputs() {
       finalResult?.totalEnergyKWh || (toNumber(finalResult?.totalEnergyWh, 0) / 1000),
       0
     ).toFixed(2));
-    const currentA = voltage > 0 ? Number((totalPowerW / Math.max(1, voltage * (phase === "three" ? Math.sqrt(3) : 1))).toFixed(2)) : 0;
+    const phaseFactor = phase === "three" ? Math.sqrt(3) : 1;
+    const currentA = Number(toNumber(
+      method === "current" ? manualCurrentA :
+      method === "equipment" ? (equipmentStats.acCurrentA || finalResult?.acCurrentA || finalResult?.totalCurrentA) :
+      finalResult?.acCurrentA || finalResult?.totalCurrentA || (voltage > 0 ? totalPowerW / Math.max(1, voltage * phaseFactor) : 0),
+      0
+    ).toFixed(2));
     const surgePowerW = Math.round(toNumber(
       method === "equipment" ? equipmentStats.surgePowerW :
       method === "profile" ? profileSurgePowerW :
@@ -683,6 +691,9 @@ export default function CalculationInputs() {
         voltageAC: voltage,
         phaseAC: phase,
         currentA,
+        totalCurrentA: currentA,
+        powerFactorAC: (method === "power" || method === "current") ? 1 : (finalResult?.powerFactorAC || undefined),
+        electricalBasisSource: method === "current" ? "direct_current" : method === "equipment" ? "equipment_aggregate" : method === "power" ? "direct_power" : "derived",
         surgePowerW,
       },
       environmentSnapshot: {
@@ -825,6 +836,8 @@ export default function CalculationInputs() {
       phaseAC: toNumber(method === "solar_panel_power" ? acVoltageRoute : method === "profile" ? profileVoltage : manualVoltage || 220, 220) >= 380 ? "three" : "single",
       manualEnergyWh: method === "energy" && manualEnergyKWh ? toNumber(manualEnergyKWh, 0) * 1000 : method === "profile" ? profileTotalEnergyWh : method === "solar_panel_power" ? calculatedPvDailyKWh * 1000 : 0,
       manualPowerW: method === "current" && manualCurrentA ? Math.round(toNumber(manualCurrentA, 0) * toNumber(manualVoltage || 220, 220) * (toNumber(manualVoltage || 220, 220) >= 380 ? Math.sqrt(3) : 1)) : method === "profile" ? profilePeakPowerW : method === "solar_panel_power" ? totalPanelPowerW : toNumber(manualPowerW, 0),
+      manualCurrentA: method === "current" ? toNumber(manualCurrentA, 0) : undefined,
+      powerFactorAC: (method === "power" || method === "current") ? 1 : undefined,
       manualSurgeW: method === "profile" ? profileSurgePowerW : 0,
       manualHours: toNumber(method === "solar_panel_power" ? psh || 0 : method === "profile" ? 1 : manualHours || 0, 0),
       backupHours: domain === "emergency" ? clampEmergencyBackupHours(autonomyHours) : undefined,

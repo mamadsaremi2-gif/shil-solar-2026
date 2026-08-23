@@ -40,7 +40,11 @@ function toCableDetail(cable, currentA, voltageV, lengthM, side, allowedDropPerc
     ampacityA: cable?.currentA || null,
     voltageDropPercent: dropPercent,
     allowedDropPercent,
-    status: dropPercent && dropPercent > allowedDropPercent ? 'نیازمند افزایش سطح مقطع' : 'قابل قبول',
+    ampacityPass: safeNumber(cable?.currentA, 0) >= currentA,
+    voltageDropPass: !(dropPercent && dropPercent > allowedDropPercent),
+    status: safeNumber(cable?.currentA, 0) < currentA
+      ? 'نیازمند افزایش سطح مقطع - ظرفیت جریان ناکافی'
+      : (dropPercent && dropPercent > allowedDropPercent ? 'نیازمند افزایش سطح مقطع - افت ولتاژ' : 'قابل قبول'),
   };
 }
 
@@ -68,8 +72,10 @@ export const cableRule = Object.freeze({
     };
 
     const warnings = Object.entries(details)
-      .filter(([, d]) => d.voltageDropPercent && d.voltageDropPercent > d.allowedDropPercent)
-      .map(([key, d]) => ({ code: `CABLE_DROP_${key.toUpperCase()}`, message: `${d.label}: افت ولتاژ ${d.voltageDropPercent}% از حد مجاز ${d.allowedDropPercent}% بیشتر است.` }));
+      .filter(([, d]) => !d.ampacityPass || (d.voltageDropPercent && d.voltageDropPercent > d.allowedDropPercent))
+      .map(([key, d]) => !d.ampacityPass
+        ? ({ code: `CABLE_AMPACITY_${key.toUpperCase()}`, message: `${d.label}: ظرفیت جریان کابل ${d.ampacityA || 0}A از جریان طراحی ${d.currentA}A کمتر است.` })
+        : ({ code: `CABLE_DROP_${key.toUpperCase()}`, message: `${d.label}: افت ولتاژ ${d.voltageDropPercent}% از حد مجاز ${d.allowedDropPercent}% بیشتر است.` }));
 
     return {
       equipment: { cables: { pv: pvCable, battery: batteryCable, ac: acCable } },

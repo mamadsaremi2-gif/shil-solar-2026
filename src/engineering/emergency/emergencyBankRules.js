@@ -39,7 +39,7 @@ export function filterEmergencyBatteries(batteries = [], inverter = null, requir
 export function selectEmergencyProtection(protections = [], cables = []) {
   const protectionItems = (Array.isArray(protections) ? protections : []).filter((item) => {
     const group = String(item.group || item.side || item.deviceType || "").toLowerCase();
-    return group.includes("battery") || group.includes("ac") || group.includes("dc mccb") || group.includes("dcmccb") || group.includes("fuse") || group.includes("isolator");
+    return group.includes("battery") || group.includes("ac") || group.includes("dc mccb") || group.includes("dcmccb") || group.includes("fuse") || group.includes("isolator") || group.includes("disconnect");
   });
   const cableItems = (Array.isArray(cables) ? cables : []).filter((item) => {
     const side = String(item.side || item.title || "").toLowerCase();

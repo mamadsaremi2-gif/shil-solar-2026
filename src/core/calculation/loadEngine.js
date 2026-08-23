@@ -112,7 +112,10 @@ export function runLoadEngine(input = {}) {
   const method = input.method || "equipment";
   const voltageAC = Number(input.voltageAC ?? 220) || 220;
   const phaseAC = input.phaseAC || (voltageAC >= 380 ? "three" : "single");
-  const powerFactorAC = Number(input.powerFactorAC ?? 0.95) || 0.95;
+  const directElectricalMethod = method === "power" || method === "current";
+  const powerFactorAC = Number(input.powerFactorAC ?? (directElectricalMethod ? 1 : 0.95)) || (directElectricalMethod ? 1 : 0.95);
+  const manualCurrentA = Math.max(0, Number(input.manualCurrentA ?? input.totalCurrentA ?? 0) || 0);
+  const phaseFactorAC = phaseAC === "three" ? Math.sqrt(3) : 1;
   const dcBusVoltage = Number(input.dcBusVoltage ?? (domain === "solar" ? 48 : 24)) || 48;
   const selectedItems = (input.selectedItems || []).map((item) => normalizeLoadItem(item, { domain }));
   const scenario = input.scenario || null;
@@ -130,12 +133,19 @@ export function runLoadEngine(input = {}) {
   const totalRunningCurrentA = selectedItems.reduce((sum, item) => sum + Number(item.runningCurrentA || item.currentA || 0), 0);
   const totalStartCurrentA = selectedItems.reduce((sum, item) => sum + Number(item.startCurrentA || item.currentA || 0), 0);
 
-  const totalPowerW = Math.round(Number(input.manualPowerW || 0) || equipmentPowerW || fallbackPowerW);
+  const currentDerivedPowerW = method === "current" && manualCurrentA > 0
+    ? manualCurrentA * voltageAC * phaseFactorAC
+    : 0;
+  const totalPowerW = Math.round(currentDerivedPowerW || Number(input.manualPowerW || 0) || equipmentPowerW || fallbackPowerW);
   const emergencyStorageEnergyWh = domain === "emergency" ? emergencyBackupEnergyWh(totalPowerW, emergencyBackupHours) : 0;
   const totalEnergyWh = Math.round(Number(input.manualEnergyWh || 0) || (domain === "emergency" ? emergencyStorageEnergyWh : equipmentEnergyWh) || (totalPowerW * fallbackHours));
   const surgePowerW = Math.round(Number(input.manualSurgeW || 0) || equipmentSurgeW || (totalPowerW * 1.6));
-  const fallbackCurrentA = phaseAC === "three" ? totalPowerW / (Math.sqrt(3) * voltageAC * powerFactorAC) : totalPowerW / (voltageAC * powerFactorAC);
-  const acCurrentA = selectedItems.length ? round(totalRunningCurrentA, 2) : round(fallbackCurrentA, 2);
+  const fallbackCurrentA = totalPowerW / Math.max(1, phaseFactorAC * voltageAC * powerFactorAC);
+  const acCurrentA = method === "current" && manualCurrentA > 0
+    ? round(manualCurrentA, 2)
+    : selectedItems.length
+      ? round(totalRunningCurrentA, 2)
+      : round(fallbackCurrentA, 2);
   const startCurrentA = selectedItems.length ? round(totalStartCurrentA, 2) : round(acCurrentA * 1.6, 2);
   const dcCurrentA = round(totalPowerW / dcBusVoltage, 2);
   const loadProfile = input.loadProfile || buildLoadProfile(selectedItems, input);

@@ -38,6 +38,7 @@ export function runEngineeringPipeline(form = {}, options = {}) {
   const banks = normalizeBanks(form, options);
   const handoff = form.handoff || form.systemSetupHandoff || form;
   const settings = form.settings || form.systemSettings || form.systemSettingsDraft || {};
+  const emergencyDesign = form.emergencyDesign || (domain === "emergency" ? (settings.design || form.design || null) : null);
 
   const gatewayResult = {
     ok: true,
@@ -89,13 +90,22 @@ export function runEngineeringPipeline(form = {}, options = {}) {
 
   let protectionResult = { values: {}, equipment: {}, warnings: [], explanations: [] };
   try {
-    protectionResult = protectionRule.run({ ...form, cableDetails: form.cableDetails || solarDesign?.cableDetails || form.values?.cableDetails, cables: form.cables || solarDesign?.cables || form.values?.cables }, {
+    protectionResult = protectionRule.run({
+      ...form,
+      emergencyDesign,
+      cableDetails: form.cableDetails || emergencyDesign?.protection?.cableDetails || solarDesign?.cableDetails || form.values?.cableDetails,
+      cables: form.cables || emergencyDesign?.protection?.cables || solarDesign?.cables || form.values?.cables,
+    }, {
       solarDesign,
       batteryDesign,
-      load: solarDesign?.load || form.load || {},
+      load: solarDesign?.load || emergencyDesign?.load || form.load || {},
       pvArray: solarDesign?.pvArray || {},
-      equipment: { inverter: solarDesign?.inverter || form.inverter || {}, battery: solarDesign?.battery?.item || form.battery || {}, panel: solarDesign?.panel || form.panel || {} },
-      values: { solarDesign },
+      equipment: {
+        inverter: solarDesign?.inverter || emergencyDesign?.inverter || form.inverter || {},
+        battery: solarDesign?.battery?.item || emergencyDesign?.battery || form.battery || {},
+        panel: solarDesign?.panel || form.panel || {},
+      },
+      values: { solarDesign, emergencyDesign },
     }) || protectionResult;
   } catch (error) {
     protectionResult = { values: {}, equipment: {}, warnings: [{ code: "PROTECTION_ENGINE_ERROR", message: error?.message || String(error) }], explanations: [] };

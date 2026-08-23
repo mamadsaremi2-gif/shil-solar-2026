@@ -3,8 +3,11 @@ import { protectionRegistry } from '../../../data/registry/protection/protection
 
 const registry = Array.isArray(protectionRegistry) ? protectionRegistry : [];
 const STANDARD_AMPS = [2,4,6,10,16,20,25,32,40,50,63,80,100,125,160,200,250,315,400,500,630,800,1000,1250,1600];
+const STANDARD_CHANGEOVER_AMPS = [16,20,25,32,40,50,63,80,100,125,160,200,250,315,400,630,800,1000,1250,1600];
 const num = (v, fallback = 0) => Number.isFinite(Number(v)) ? Number(v) : fallback;
 const nextStandardAmp = (value) => STANDARD_AMPS.find((a) => a >= Math.max(0, num(value))) || Math.ceil(Math.max(0, num(value)) / 100) * 100;
+const nextChangeoverAmp = (value) => STANDARD_CHANGEOVER_AMPS.find((a) => a >= Math.max(0, num(value))) || Math.ceil(Math.max(0, num(value)) / 100) * 100;
+const firstPositive = (...values) => values.map((value) => num(value, 0)).find((value) => value > 0) || 0;
 const rangeIncludes = (range = [], value = 0) => Array.isArray(range) && range.length >= 2 && num(value) >= num(range[0]) && num(value) <= num(range[1]);
 const enabled = (item) => item?.enabled !== false;
 const maxRatedVoltage = (item) => { const v = item?.ratedVoltageV ?? item?.ratedVoltageVdc ?? item?.ucRangeVdc; return Array.isArray(v) ? Math.max(...v.map((x) => num(x, 0))) : num(v, 99999); };
@@ -25,6 +28,13 @@ function selectDevice(deviceTypes, requiredA, voltageV = 0, side = '', requiredB
   const types = Array.isArray(deviceTypes) ? deviceTypes : [deviceTypes];
   const candidates = registry.filter((item) => enabled(item) && types.includes(item.deviceType) && (!side || !item.side || String(item.side).includes(side)) && (!voltageV || maxRatedVoltage(item) >= voltageV) && rangeIncludes(ratingRange(item), requiredA));
   if (!candidates.length) return null;
+  // Prefer the closest adequate catalog voltage/current family instead of an unnecessarily high-voltage family.
+  candidates.sort((a, b) => {
+    const voltageDelta = maxRatedVoltage(a) - maxRatedVoltage(b);
+    if (voltageDelta !== 0) return voltageDelta;
+    const ar = ratingRange(a); const br = ratingRange(b);
+    return num(ar[1], 99999) - num(br[1], 99999);
+  });
   if (!requiredBreakingKA) return candidates[0];
   return candidates.find((item) => num(breakingCapacityAtVoltage(item, voltageV), 0) >= requiredBreakingKA) || null;
 }
@@ -108,10 +118,13 @@ function selectResidualProtection(input = {}, inverter = {}, phase = {}, acRatin
   const hasSixMilliampDcDetection = Boolean(inverter?.dcResidualDetection6mA || inverter?.rcmu6mA || inverter?.integratedRcmu);
   const requestedType = String(residual.type || '').toUpperCase();
   const rcdType = requestedType || (hasSixMilliampDcDetection ? 'A' : 'B');
-  const deviceType = residual.preferRcbo ? 'RCBO' : 'RCD';
+  // For final circuits up to 63 A, prefer a combined RCBO by default.
+  // Admin/user settings can explicitly disable this by setting preferRcbo=false.
+  const preferRcbo = residual.preferRcbo !== false && acRatingA > 0 && acRatingA <= 63;
+  const deviceType = preferRcbo ? 'RCBO' : 'RCD';
   const item = findExact((x) => x.deviceType === deviceType && String(x.side).includes('AC') && (!x.rcdType || x.rcdType === rcdType) && (!x.sensitivityMA || x.sensitivityMA === sensitivityMA) && (!ratingRange(x).length || rangeIncludes(ratingRange(x), acRatingA)))
     || findExact((x) => x.deviceType === deviceType && String(x.side).includes('AC') && (!x.rcdType || x.rcdType === rcdType) && (!ratingRange(x).length || rangeIncludes(ratingRange(x), acRatingA)));
-  return rec(item, `${deviceType} Type ${rcdType} ${sensitivityMA}mA`, acRatingA || null, 1, {
+  return rec(item, `${deviceType} ${acRatingA || '-'} A / ${sensitivityMA}mA Type ${rcdType}`, acRatingA || null, 1, {
     rcdType,
     sensitivityMA,
     polesRequired: phase.three ? '4P' : '2P',
@@ -146,16 +159,27 @@ export const protectionRule = Object.freeze({
     const pvRatingA = nextStandardAmp(pvDesignCurrentA);
 
     const phase = phaseInfo(load, inverter);
-    const pf = Math.min(1, Math.max(0.7, num(load.powerFactor || input.powerFactor, 0.9)));
+    const pf = Math.min(1, Math.max(0.7, num(load.powerFactor || input.powerFactor, 1)));
     const invEfficiency = Math.min(1, Math.max(0.5, num(inverter.efficiency, 0.93)));
     const powerW = num(load.finalPowerW || load.totalPowerW || load.loadPowerW || result.values?.designLoadW || inverter.designPowerW || inverter.ratedPowerW || inverter.powerW, 0);
-    const acOperatingCurrentA = phase.three ? powerW / (Math.sqrt(3) * Math.max(phase.voltage,1) * pf) : powerW / (Math.max(phase.voltage,1) * pf);
-    const acDesignCurrentA = round(acOperatingCurrentA * 1.25, 2);
+    const reportedAcCurrentA = firstPositive(load.totalCurrentA, load.currentA, load.finalCurrentA, result.values?.totalCurrentA, result.values?.designCurrentA, input.totalCurrentA, input.currentA);
+    const calculatedAcCurrentA = phase.three ? powerW / (Math.sqrt(3) * Math.max(phase.voltage,1) * pf) : powerW / (Math.max(phase.voltage,1) * pf);
+    const acOperatingCurrentA = reportedAcCurrentA || calculatedAcCurrentA;
+    // Final AC protection follows the actual project load current and is rounded up
+    // to the next standard protective-device rating. This keeps 3000W/220V ~= 13.6A at C16A.
+    const acBreakerFactor = Math.max(1, num(input.protectionSettings?.acBreakerFactor || input.systemSettings?.protection?.acBreakerFactor, 1));
+    const acDesignCurrentA = round(acOperatingCurrentA * acBreakerFactor, 2);
     const acRatingA = nextStandardAmp(acDesignCurrentA);
+    // Transfer/changeover switch carries the full emergency load and gets a default 25% margin.
+    const changeoverFactor = Math.max(1, num(input.protectionSettings?.changeoverFactor || input.systemSettings?.protection?.changeoverFactor, 1.25));
+    const changeoverDesignCurrentA = round(acOperatingCurrentA * changeoverFactor, 2);
+    const changeoverRatingA = nextChangeoverAmp(changeoverDesignCurrentA);
 
     const batteryVoltage = num(batteryBlock.packVoltage || inverter.batteryVoltage || inverter.dcVoltage || battery.nominalVoltage, 0);
     const hasBattery = Boolean(solar.system?.needsBattery || batteryBlock?.count > 0 || (batteryVoltage > 0 && !inverter.noBatteryRequired));
-    const batteryOperatingCurrentA = hasBattery && batteryVoltage > 0 ? powerW / (batteryVoltage * invEfficiency) : 0;
+    const inverterRatedPowerW = firstPositive(inverter.ratedPowerW, inverter.powerW, inverter.nominalPowerW, inverter.outputPowerW, inverter.designPowerW);
+    const batteryBasisPowerW = Math.max(powerW, inverterRatedPowerW || 0);
+    const batteryOperatingCurrentA = hasBattery && batteryVoltage > 0 ? batteryBasisPowerW / (batteryVoltage * invEfficiency) : 0;
     const batteryDesignCurrentA = round(batteryOperatingCurrentA * 1.25, 2);
     const batteryRatingA = hasBattery ? nextStandardAmp(batteryDesignCurrentA) : 0;
 
@@ -169,6 +193,7 @@ export const protectionRule = Object.freeze({
     const pvFuse = selectDevice('PV_FUSE', nextStandardAmp(Math.max(panelIsc * 1.25, 1)), pvVoltage, 'PV_DC', pvFaultKA);
     const pvIsolator = selectDevice(['DC_ISOLATOR','DC_LOAD_DISCONNECTOR'], pvRatingA, pvVoltage, pvRatingA > 32 ? '' : 'PV_DC');
     const acBreaker = selectDevice([acBreakerType,'AC_BREAKER','AC_MCCB'], acRatingA, phase.voltage, 'AC', acFaultKA);
+    const changeoverSwitch = selectDevice(['CHANGEOVER_SWITCH','TRANSFER_SWITCH'], changeoverRatingA, phase.voltage, 'AC');
     const batteryFuse = selectDevice('BATTERY_FUSE', batteryRatingA, batteryVoltage, 'BATTERY', batteryFaultKA);
     const batteryBreaker = selectDevice([batteryBreakerType,'BATTERY_BREAKER','DC_MCCB'], batteryRatingA, batteryVoltage, '', batteryFaultKA);
     const batteryIsolator = selectDevice(['BATTERY_ISOLATOR','DC_LOAD_DISCONNECTOR','DC_ISOLATOR'], batteryRatingA, batteryVoltage, '');
@@ -190,7 +215,7 @@ export const protectionRule = Object.freeze({
     const protection = {
       source: 'SHIL_PROTECTION_ENGINE_V4',
       brand: 'SHIL',
-      standardBasis: ['IEC 62548-1:2023 + AMD1:2025', 'IEC 60364-7-712:2025', 'IEC 60947-2:2024', 'IEC 60947-3', 'IEC 60269-6', 'IEC 61643-31:2018'],
+      standardBasis: ['IEC 62548-1:2023 + AMD1:2025', 'IEC 60364-7-712:2025', 'IEC 60947-2:2024', 'IEC 60947-3', 'IEC 60269-6', 'IEC 61643-31:2018', 'IEC 60947-6-1'],
       shortCircuitAssessment: {
         pvProspectiveKA: pvFaultKA,
         batteryProspectiveKA: batteryFaultKA,
@@ -228,14 +253,18 @@ export const protectionRule = Object.freeze({
         brand: 'SHIL',
         designVoltageV: round(phase.voltage, 2), phase: phase.three ? 'سه‌فاز' : 'تک‌فاز', powerFactor: pf,
         operatingCurrentA: round(acOperatingCurrentA, 2), currentA: acDesignCurrentA, breakerA: acRatingA,
-        breakerType: acRatingA <= 125 ? 'MCB' : 'MCCB', breaker: `SHIL ${acRatingA} A ${acRatingA <= 125 ? 'MCB' : 'MCCB'}`,
-        breakerSelection: rec(acBreaker, `${acRatingA} A ${acRatingA <= 125 ? 'MCB' : 'MCCB'}`, acRatingA, inverterCount, { requiredBreakingCapacityKA: acFaultKA, requiredVoltageV: round(phase.voltage, 2), breakingCapacityVerified: acFaultKA ? Boolean(acBreaker) : null, operatingCurrentA: round(acOperatingCurrentA, 2), designCurrentA: acDesignCurrentA, designFactor: 1.25, polesRequired: phase.poles, selectionReason: `جریان خروجی AC ${round(acOperatingCurrentA, 2)} A × 1.25 = ${acDesignCurrentA} A؛ کلید استاندارد ${acRatingA} A انتخاب شد.` }),
+        breakerType: acRatingA <= 125 ? 'MCB' : 'MCCB', breakerCurve: acRatingA <= 125 ? 'C' : null,
+        breaker: `SHIL ${acRatingA <= 125 ? `C${acRatingA}` : `${acRatingA} A MCCB`}`,
+        breakerSelection: rec(acBreaker, `${acRatingA <= 125 ? `MCB C${acRatingA}` : `${acRatingA} A MCCB`}`, acRatingA, inverterCount, { requiredBreakingCapacityKA: acFaultKA, requiredVoltageV: round(phase.voltage, 2), breakingCapacityVerified: acFaultKA ? Boolean(acBreaker) : null, operatingCurrentA: round(acOperatingCurrentA, 2), designCurrentA: acDesignCurrentA, designFactor: acBreakerFactor, characteristicCurve: acRatingA <= 125 ? 'C' : null, polesRequired: phase.poles, selectionReason: `جریان بار AC ${round(acOperatingCurrentA, 2)} A؛ با ضریب ${round(acBreakerFactor, 2)} جریان طراحی ${acDesignCurrentA} A و ریتینگ استاندارد بعدی ${acRatingA} A انتخاب شد.` }),
         poles: phase.poles,
         spd: acSpd?.title || `SHIL SPD AC ${acSpdType}`, spdSelection: spdRecord(acSpd, `SPD AC ${acSpdType}`, inverterCount, phase.voltage),
         residualProtection: residualSelection,
+        changeoverA: changeoverRatingA,
+        changeover: `SHIL ${changeoverRatingA} A Changeover Switch`,
+        changeoverSelection: rec(changeoverSwitch, `${changeoverRatingA} A Changeover Switch`, changeoverRatingA, 1, { requiredVoltageV: round(phase.voltage, 2), operatingCurrentA: round(acOperatingCurrentA, 2), designCurrentA: changeoverDesignCurrentA, designFactor: changeoverFactor, polesRequired: phase.poles, selectionReason: `کلید چنج‌اور باید جریان کامل بار ${round(acOperatingCurrentA, 2)} A را عبور دهد؛ با حاشیه ${round(changeoverFactor, 2)} ریتینگ استاندارد ${changeoverRatingA} A انتخاب شد.` }),
         quantity: inverterCount,
         cableCoordination: acCableCoordination,
-        standards: ['IEC 60364-7-712:2025', 'IEC 60947-2:2024', 'IEC 61643-11'],
+        standards: ['IEC 60364-7-712:2025', 'IEC 60947-2:2024', 'IEC 60947-6-1', 'IEC 61643-11'],
       },
     };
 
@@ -243,6 +272,7 @@ export const protectionRule = Object.freeze({
     if (hasPv && !pvBreaker) warnings.push({ code: 'PROTECTION_BANK_PV_BREAKER_FALLBACK', message: 'کلید DC SHIL با رنج/قدرت قطع دقیق در بانک پیدا نشد؛ ریتینگ استاندارد محاسبه شده و برای انتخاب نهایی باید داده اتصال‌کوتاه و کاتالوگ SHIL تطبیق داده شود.' });
     if (hasBattery && !batteryFuse) warnings.push({ code: 'PROTECTION_BANK_BATTERY_FALLBACK', message: 'فیوز باتری SHIL با رنج دقیق در بانک پیدا نشد؛ ریتینگ استاندارد محاسبه شده و نیازمند تطبیق کاتالوگی SHIL است.' });
     if (!acBreaker) warnings.push({ code: 'PROTECTION_BANK_AC_BREAKER_FALLBACK', message: 'کلید AC SHIL با رنج/قدرت قطع دقیق در بانک پیدا نشد؛ ریتینگ استاندارد محاسبه شده و نیازمند تطبیق کاتالوگی SHIL است.' });
+    if (!changeoverSwitch) warnings.push({ code: 'PROTECTION_BANK_CHANGEOVER_FALLBACK', message: 'کلید چنج‌اور با رنج دقیق در بانک SHIL پیدا نشد؛ ریتینگ مهندسی محاسبه شده و تطبیق کاتالوگی نهایی لازم است.' });
     if (!acFaultKA) warnings.push({ code: 'PROSPECTIVE_SHORT_CIRCUIT_REQUIRED', message: 'جریان اتصال‌کوتاه محتمل سمت AC ثبت نشده است؛ Icu/Ics نهایی تا ورود این داده تأیید قطعی نمی‌شود.' });
     if (pvCableCoordination.status === 'CHECK' || batteryCableCoordination.status === 'CHECK' || acCableCoordination.status === 'CHECK') warnings.push({ code: 'CABLE_PROTECTION_COORDINATION_CHECK', message: 'در حداقل یکی از مدارها ریتینگ کلید از ظرفیت جریان مجاز کابل بیشتر است و باید سطح مقطع/کلید اصلاح شود.' });
     const breakerSelections = [hasPv ? protection.pvDc?.breakerSelection : null, hasBattery ? protection.batteryDc?.breakerSelection : null, protection.ac?.breakerSelection].filter(Boolean);

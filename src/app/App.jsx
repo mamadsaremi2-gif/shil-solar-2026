@@ -30,7 +30,7 @@ const SolarSystemType = lazy(() => import("../modules/new-project/pages/SolarSys
 const CalculationMethod = lazy(() => import("../modules/new-project/pages/CalculationMethod.jsx"));
 const CalculationInputs = lazy(() => import("../modules/new-project/pages/CalculationInputs.jsx"));
 const SystemSettings = lazy(() => import("../modules/new-project/pages/SystemSettings.jsx"));
-const EmergencySystemSettings = lazy(() => import("../pages/EmergencySystemSettings.jsx"));
+const EmergencySystemSettings = lazy(() => import("../pages/project/EmergencySystemSettings.jsx"));
 const UtilitySystemSettings = lazy(() => import("../pages/UtilitySystemSettings.jsx"));
 const SummaryPage = lazy(() => import("../modules/new-project/pages/SummaryPage.jsx"));
 const RunCalculation = lazy(() => import("../modules/new-project/pages/RunCalculation.jsx"));
