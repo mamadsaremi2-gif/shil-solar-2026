@@ -1,0 +1,173 @@
+/* SHIL V12.2 - iOS/mobile equipment picker visibility hard fix.
+   Scope is intentionally isolated to CalculationInputs equipment picker. */
+
+@media (max-width: 620px) {
+  #shil-calculation-inputs-root .shil-equipment-picker-panel {
+    overflow: visible !important;
+  }
+
+  #shil-calculation-inputs-root .shil-equipment-scroll-list.shil-equipment-category-list {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 7px !important;
+    max-height: min(52vh, 520px) !important;
+    padding: 3px !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  #shil-calculation-inputs-root .shil-equipment-category {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 52px !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  #shil-calculation-inputs-root .shil-equipment-category > summary {
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 52px !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 10px 12px !important;
+    gap: 10px !important;
+    overflow: visible !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    color: #0a2138 !important;
+    -webkit-text-fill-color: #0a2138 !important;
+    font-size: 14px !important;
+    line-height: 1.35 !important;
+    font-weight: 900 !important;
+    white-space: normal !important;
+    text-align: right !important;
+    text-indent: 0 !important;
+  }
+
+  #shil-calculation-inputs-root .shil-equipment-category > summary::marker,
+  #shil-calculation-inputs-root .shil-equipment-category > summary::-webkit-details-marker {
+    display: none !important;
+    content: "" !important;
+  }
+
+  #shil-calculation-inputs-root .shil-equipment-category > summary strong,
+  #shil-calculation-inputs-root .shil-equipment-category > summary span {
+    display: block !important;
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    overflow: visible !important;
+    transform: none !important;
+    clip: auto !important;
+    clip-path: none !important;
+    filter: none !important;
+    text-shadow: none !important;
+    white-space: normal !important;
+  }
+
+  #shil-calculation-inputs-root .shil-equipment-category > summary strong {
+    flex: 1 1 auto !important;
+    color: #0a2138 !important;
+    -webkit-text-fill-color: #0a2138 !important;
+    font-size: 14px !important;
+    line-height: 1.35 !important;
+    font-weight: 950 !important;
+    text-align: right !important;
+  }
+
+  #shil-calculation-inputs-root .shil-equipment-category > summary span {
+    flex: 0 0 auto !important;
+    color: #35566d !important;
+    -webkit-text-fill-color: #35566d !important;
+    font-size: 12px !important;
+    line-height: 1.35 !important;
+    font-weight: 850 !important;
+    white-space: nowrap !important;
+  }
+
+  #shil-calculation-inputs-root .shil-equipment-category-items {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 7px !important;
+    width: 100% !important;
+    padding: 7px !important;
+    overflow: visible !important;
+  }
+
+  #shil-calculation-inputs-root .shil-equipment-category-items .shil-equipment-option {
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: center !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 62px !important;
+    max-height: none !important;
+    padding: 10px 12px !important;
+    gap: 4px !important;
+    overflow: visible !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    color: #0b2a3d !important;
+    -webkit-text-fill-color: #0b2a3d !important;
+    text-align: right !important;
+  }
+
+  #shil-calculation-inputs-root .shil-equipment-category-items .shil-equipment-option strong,
+  #shil-calculation-inputs-root .shil-equipment-category-items .shil-equipment-option span {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    overflow: visible !important;
+    transform: none !important;
+    clip: auto !important;
+    clip-path: none !important;
+    filter: none !important;
+    white-space: normal !important;
+    text-align: right !important;
+  }
+
+  #shil-calculation-inputs-root .shil-equipment-category-items .shil-equipment-option strong {
+    color: #0b2a3d !important;
+    -webkit-text-fill-color: #0b2a3d !important;
+    font-size: 13px !important;
+    line-height: 1.4 !important;
+    font-weight: 950 !important;
+  }
+
+  #shil-calculation-inputs-root .shil-equipment-category-items .shil-equipment-option span {
+    color: #526f83 !important;
+    -webkit-text-fill-color: #526f83 !important;
+    font-size: 11px !important;
+    line-height: 1.4 !important;
+    font-weight: 750 !important;
+  }
+}
