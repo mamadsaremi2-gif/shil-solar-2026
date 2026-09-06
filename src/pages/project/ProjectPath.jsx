@@ -1,5 +1,6 @@
 import ShilPrimaryButton from "../../components/project/ShilPrimaryButton";
-﻿import React, { useEffect, useMemo, useState } from "react";
+import { readLocalOrSessionItem, safeLocalSetItem, safeLocalRemoveItem } from "../../services/storageQuotaGuard.js";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { approveProjectStep } from "../../workflow/projectWorkflow.js";
 import { clearScenarioFlow, startUtilityGateway, setWorkflowMode, FLOW_MODES } from "../../workflow/flowIsolation.js";
@@ -69,9 +70,9 @@ export default function ProjectPath() {
       return "";
     }
     try {
-      const saved = JSON.parse(localStorage.getItem("shil:selectedProjectPath") || "null");
-      return saved?.key || localStorage.getItem("shil:projectPath") || "";
-    } catch { return localStorage.getItem("shil:projectPath") || ""; }
+      const saved = JSON.parse(readLocalOrSessionItem("shil:selectedProjectPath") || "null");
+      return saved?.key || readLocalOrSessionItem("shil:projectPath") || "";
+    } catch { return readLocalOrSessionItem("shil:projectPath") || ""; }
   });
   const [warning, setWarning] = useState("");
   const [options, setOptions] = useState(() => normalizeCards(readAdminProjectPathCards()));
@@ -108,9 +109,9 @@ export default function ProjectPath() {
     if (!selected) return;
     const option = options.find((item) => item.key === selected);
     if (!option) return;
-    localStorage.setItem("shil:projectPath", option.key);
-    localStorage.setItem("shil:selectedProjectPath", JSON.stringify(option));
-    localStorage.setItem("shil:calculationDomain", option.calculationDomain || option.key);
+    safeLocalSetItem("shil:projectPath", option.key);
+    safeLocalSetItem("shil:selectedProjectPath", JSON.stringify(option));
+    safeLocalSetItem("shil:calculationDomain", option.calculationDomain || option.key);
   }, [selected, options]);
 
   const mainOptions = useMemo(
@@ -138,16 +139,16 @@ export default function ProjectPath() {
 
     clearScenarioFlow();
     setWorkflowMode(domain === "utility" ? FLOW_MODES.UTILITY : FLOW_MODES.MANUAL);
-    localStorage.setItem("shil:projectPath", selectedOption.key);
-    localStorage.setItem("shil:selectedProjectPath", JSON.stringify(selectedOption));
-    localStorage.setItem("shil:executionMethod", selectedOption.key);
-    localStorage.setItem("shil:calculationDomain", domain);
+    safeLocalSetItem("shil:projectPath", selectedOption.key);
+    safeLocalSetItem("shil:selectedProjectPath", JSON.stringify(selectedOption));
+    safeLocalSetItem("shil:executionMethod", selectedOption.key);
+    safeLocalSetItem("shil:calculationDomain", domain);
     approveProjectStep("path");
 
     if (domain === "utility") {
-      localStorage.setItem("shil:scenarioDomain", "utility");
+      safeLocalSetItem("shil:scenarioDomain", "utility");
     } else {
-      localStorage.removeItem("shil:scenarioDomain");
+      safeLocalRemoveItem("shil:scenarioDomain");
     }
 
     if (domain === "future") {
@@ -158,18 +159,18 @@ export default function ProjectPath() {
     if (domain === "utility") {
       approveProjectStep("method");
       approveProjectStep("inputs");
-      localStorage.setItem("shil:selectedCalculationMethod", JSON.stringify({ key: "utility_scale", title: "نیروگاهی" }));
-      localStorage.setItem("shil:calculationMethod", "utility_scale");
+      safeLocalSetItem("shil:selectedCalculationMethod", JSON.stringify({ key: "utility_scale", title: "نیروگاهی" }));
+      safeLocalSetItem("shil:calculationMethod", "utility_scale");
       startUtilityGateway("project-path");
       navigate("/new-project/info");
       return;
     }
 
     if (domain === "emergency") {
-      localStorage.setItem("shil:selectedCalculationMethod", JSON.stringify({ key: "emergency", title: "برق اضطراری" }));
-      localStorage.setItem("shil:calculationMethod", "equipment");
+      safeLocalSetItem("shil:selectedCalculationMethod", JSON.stringify({ key: "emergency", title: "برق اضطراری" }));
+      safeLocalSetItem("shil:calculationMethod", "equipment");
       const adminDefaults = readAdminDefaults();
-      localStorage.setItem("shil:emergencyPowerSettings", JSON.stringify({ requiredEmergencyHours: adminDefaults.emergencyRequiredHours || 3, safetyFactor: adminDefaults.emergencySafetyFactor || 1.25, autoMode: true }));
+      safeLocalSetItem("shil:emergencyPowerSettings", JSON.stringify({ requiredEmergencyHours: adminDefaults.emergencyRequiredHours || 3, safetyFactor: adminDefaults.emergencySafetyFactor || 1.25, autoMode: true }));
       navigate("/new-project/info");
       return;
     }

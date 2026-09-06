@@ -1,4 +1,5 @@
 import { supabase } from "../backend/db/supabaseClient.js";
+import { safeLocalSetItem } from "./storageQuotaGuard.js";
 
 export const RUNTIME_APP_DATA_TABLE = "shil_app_data";
 export const RUNTIME_KEYS = Object.freeze({
@@ -24,7 +25,7 @@ export function getCachedRuntimeData(key, fallback = null) {
 
 export function setCachedRuntimeData(key, value) {
   if (typeof localStorage === "undefined") return value;
-  try { localStorage.setItem(`${PREFIX}${key}`, JSON.stringify(value)); } catch (error) { console.warn("SHIL runtime cache:", error?.message || error); }
+  const cached = safeLocalSetItem(`${PREFIX}${key}`, JSON.stringify(value)); if (!cached) console.warn("SHIL runtime cache skipped:", key);
   window.dispatchEvent(new CustomEvent(EVENT, { detail: { key, value } }));
   return value;
 }

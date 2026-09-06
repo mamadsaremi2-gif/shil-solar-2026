@@ -1,0 +1,83 @@
+/* V8: ready-scenarios search, engineering units and long header titles. Keep absolute last. */
+
+.shil-page--scenarios .shil-fixed-header .shil-header-title {
+  min-width: 0 !important;
+  max-width: min(52vw, 460px) !important;
+  padding-inline: 14px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  line-height: 1.15 !important;
+}
+
+.shil-page--scenarios .shil-fixed-header .shil-header-title--long {
+  font-size: clamp(14px, 3.2vw, 22px) !important;
+  letter-spacing: -0.02em !important;
+}
+
+#shil-scenarios-root .shil-scenario-search-results {
+  display: grid !important;
+  gap: 8px !important;
+  width: 100% !important;
+  margin-top: 10px !important;
+  max-height: 320px !important;
+  overflow-y: auto !important;
+  padding: 4px !important;
+  scrollbar-width: thin;
+}
+
+#shil-scenarios-root .shil-scenario-search-result {
+  width: 100% !important;
+  min-height: 58px !important;
+  display: grid !important;
+  gap: 3px !important;
+  justify-items: start !important;
+  text-align: right !important;
+  padding: 9px 12px !important;
+  border: 1px solid rgba(39, 164, 117, .38) !important;
+  border-radius: 14px !important;
+  background: rgba(239, 255, 246, .95) !important;
+  color: #0b2138 !important;
+  cursor: pointer !important;
+}
+
+#shil-scenarios-root .shil-scenario-search-result strong {
+  font-size: 14px !important;
+  font-weight: 900 !important;
+  color: #0b2138 !important;
+}
+
+#shil-scenarios-root .shil-scenario-search-result span {
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  color: #3f5968 !important;
+  direction: rtl !important;
+}
+
+#shil-scenarios-root .shil-scenario-search-empty,
+#shil-scenarios-root .shil-scenario-search-more {
+  padding: 9px 12px !important;
+  border-radius: 12px !important;
+  background: rgba(255,255,255,.74) !important;
+  color: #415463 !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+}
+
+#shil-scenarios-root .shil-scenario-detail-grid > strong[dir="ltr"] {
+  unicode-bidi: isolate !important;
+  direction: ltr !important;
+  text-align: center !important;
+  letter-spacing: .01em !important;
+}
+
+@media (max-width: 520px) {
+  .shil-page--scenarios .shil-fixed-header .shil-header-title {
+    max-width: 48vw !important;
+    font-size: 16px !important;
+    padding-inline: 8px !important;
+  }
+  .shil-page--scenarios .shil-fixed-header .shil-header-title--long {
+    font-size: 13px !important;
+  }
+}

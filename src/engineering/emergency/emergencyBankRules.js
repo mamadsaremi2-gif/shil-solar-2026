@@ -6,16 +6,69 @@ function emergencyBatteryEnergyWh(item = {}) {
   return batteryEnergyKWh(item) * 1000;
 }
 
-export function filterEmergencyInverters(inverters = [], requiredPowerW = 0) {
-  const required = Math.max(0, toNumber(requiredPowerW, 0));
+function normalizeEmergencyPhase(value = "") {
+  const raw = String(value || "").toLowerCase();
+  if (raw.includes("three") || raw.includes("3p") || raw === "3" || raw.includes("سه")) return "three";
+  if (raw.includes("single") || raw.includes("1p") || raw === "1" || raw.includes("تک")) return "single";
+  return "";
+}
+
+function emergencyInverterPhase(item = {}) {
+  const explicit = normalizeEmergencyPhase(item.phaseAC || item.phase || item.outputPhase || item.phases || item.phaseType);
+  if (explicit) return explicit;
+  const outputV = toNumber(item.outputVoltage || item.outputVoltageV || item.acVoltage || item.ratedAcVoltageV, 0);
+  return outputV >= 380 ? "three" : "single";
+}
+
+function validEmergencyDcBus(item = {}) {
+  return toNumber(item.batteryVoltage || item.dcVoltage || item.nominalDcVoltage || item.batteryVoltageV, 0);
+}
+
+function isLowVoltageBatteryInverter(item = {}) {
+  const dc = validEmergencyDcBus(item);
+  const architecture = String(item.batteryArchitecture || "").toUpperCase();
+  return architecture === "LV" || (dc >= 40 && dc <= 60);
+}
+
+function isBatteryBackedEmergencyInverter(item = {}) {
+  const type = String(item.type || item.systemType || item.series || "").toLowerCase();
+  const dcBus = validEmergencyDcBus(item);
+  const pvOnly = item.noBatteryRequired === true || item.batteryRequired === false || item.gridTieOnly === true || type.includes("on grid") || type.includes("ongrid") || type.includes("string inverter") || type === "utility";
+  const emergencyCapable = item.emergencyOnly === true || item.backupCapable === true || type.includes("off") || type.includes("hybrid") || type.includes("ups") || type.includes("emergency");
+  return !pvOnly && emergencyCapable && dcBus > 0;
+}
+
+export function filterEmergencyInverters(inverters = [], requiredPowerW = 0, options = {}) {
+  const requestedPhase = normalizeEmergencyPhase(options.phaseAC || options.phase || (toNumber(options.voltageAC, 0) >= 380 ? "three" : "single"));
   return (Array.isArray(inverters) ? inverters : [])
     .filter((item) => {
-      const type = String(item.type || item.systemType || "").toLowerCase();
-      const hasBatteryBus = Boolean(item.batteryVoltage || item.dcVoltage || item.batteryMinVoltage || item.batteryMaxVoltage);
-      const backupCapable = type.includes("off") || type.includes("hybrid") || hasBatteryBus;
-      return backupCapable && toNumber(item.ratedPowerW || item.powerW, 0) >= Math.max(1, required * 0.8);
+      if (!isBatteryBackedEmergencyInverter(item)) return false;
+      if (requestedPhase && emergencyInverterPhase(item) !== requestedPhase) return false;
+      if (requestedPhase === "three" && !isLowVoltageBatteryInverter(item)) return false;
+      return toNumber(item.ratedPowerW || item.powerW, 0) > 0;
     })
     .sort((a, b) => toNumber(a.ratedPowerW || a.powerW, 0) - toNumber(b.ratedPowerW || b.powerW, 0));
+}
+
+export function emergencyInverterParallelCount(item = {}, requiredPowerW = 0) {
+  const rated = Math.max(1, toNumber(item.ratedPowerW || item.powerW, 0));
+  const required = Math.max(0, toNumber(requiredPowerW, 0));
+  return Math.max(1, Math.ceil(required / rated));
+}
+
+export function pickEmergencyInverter(inverters = [], requiredPowerW = 0, options = {}) {
+  const required = positive(requiredPowerW, 0);
+  const filtered = filterEmergencyInverters(inverters, required, options);
+  const ranked = filtered
+    .filter((item) => emergencyInverterParallelCount(item, required) === 1 || item.parallelCapable !== false)
+    .map((item) => {
+      const rated = Math.max(1, toNumber(item.ratedPowerW || item.powerW, 0));
+      const count = emergencyInverterParallelCount(item, required);
+      const installed = rated * count;
+      return { item, count, installed, oversize: Math.max(0, installed - required) };
+    })
+    .sort((a, b) => a.count - b.count || a.oversize - b.oversize || b.item.ratedPowerW - a.item.ratedPowerW);
+  return ranked[0]?.item || null;
 }
 
 export function filterEmergencyBatteries(batteries = [], inverter = null, requiredEnergyKWh = 0, options = {}) {
@@ -46,12 +99,6 @@ export function selectEmergencyProtection(protections = [], cables = []) {
     return side.includes("battery") || side.includes("dc") || side.includes("ac");
   });
   return { protections: protectionItems, cables: cableItems };
-}
-
-export function pickEmergencyInverter(inverters = [], requiredPowerW = 0) {
-  const required = positive(requiredPowerW, 0);
-  const filtered = filterEmergencyInverters(inverters, required);
-  return filtered.find((item) => toNumber(item.ratedPowerW || item.powerW, 0) >= required) || filtered[0] || null;
 }
 
 export function pickEmergencyBattery(batteries = [], inverter = null, requiredEnergyKWh = 0) {

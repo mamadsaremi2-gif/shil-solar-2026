@@ -1,0 +1,21 @@
+--- SummaryPage.original.jsx	2026-09-05 04:38:53.683918079 +0000
++++ SummaryPage.jsx	2026-09-05 04:38:54.122392829 +0000
+@@ -12,6 +12,7 @@
+ } from "../../engines/projectFlowData.js";
+ import { getProjectDesignState } from "../../engineering/core/projectDesignState.js";
+ import { formatEngineeringText } from "../../utils/safeRender.js";
++import { readLocalOrSessionItem } from "../../services/storageQuotaGuard.js";
+ 
+ const faNumber = (value, digits = 0) =>
+   Number(value || 0).toLocaleString("en-US", { maximumFractionDigits: digits });
+@@ -384,8 +385,8 @@
+   const draft = useMemo(() => getSystemSettingsDraft(), []);
+   const emergencyDesign = useMemo(() => {
+     try {
+-      return JSON.parse(localStorage.getItem("shil:emergencySystemDesign") || "null")
+-        || JSON.parse(localStorage.getItem("shil:emergencySystemDesign:live") || "null")
++      return JSON.parse(readLocalOrSessionItem("shil:emergencySystemDesign") || "null")
++        || JSON.parse(readLocalOrSessionItem("shil:emergencySystemDesign:live") || "null")
+         || {};
+     } catch {
+       return {};

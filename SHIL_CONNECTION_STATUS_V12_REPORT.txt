@@ -1,0 +1,57 @@
+SHIL V12 - REAL GLOBAL CONNECTION STATUS
+========================================
+
+Problem found
+-------------
+The application had two unrelated connection indicators:
+1) Dashboard.jsx: a Dashboard-only navigator.onLine chip.
+2) OfflineStatusBadge.jsx: a global bottom-left badge that overlapped the Contact footer button.
+
+V12 changes
+-----------
+- Removed the Dashboard-only status chip.
+- Replaced the old global OfflineStatusBadge in App.jsx with GlobalConnectionStatus.
+- One indicator is now used throughout authenticated application pages.
+- Login/Register/Welcome remain visually clean.
+- Removed the old bottom-left badge from the rendered application.
+
+REAL status model
+-----------------
+The new indicator does not rely on a decorative green dot.
+It checks:
+1) Browser network state (navigator.onLine).
+2) Real Supabase SHIL Auth health endpoint: /auth/v1/health.
+3) The configured Supabase auth client can read the current auth session.
+
+States
+------
+CONNECTED:
+  Green pulsing dot + "اتصال برقرار است"
+
+CONNECTING:
+  Amber animated dot + "در حال اتصال..."
+
+DISCONNECTED:
+  Red static dot + "اتصال قطع است"
+
+Re-check triggers
+-----------------
+- Initial application load.
+- Every 20 seconds.
+- Browser online/offline event.
+- Returning to the browser tab.
+- Supabase auth state changes.
+
+Files changed
+-------------
+src/app/App.jsx
+src/pages/Dashboard.jsx
+src/components/offline/GlobalConnectionStatus.jsx (new)
+src/appearance/styles/shil-global-connection-v12-final.css (new)
+src/main.jsx
+
+Placement
+---------
+Dashboard: top-right.
+Engineering/inner pages: immediately below the fixed header so Back/Dashboard controls are not covered.
+The old bottom-left status element is suppressed and no longer overlaps the Contact footer button.

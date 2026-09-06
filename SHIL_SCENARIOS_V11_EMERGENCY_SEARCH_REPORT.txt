@@ -1,0 +1,21 @@
+SHIL V11 - Emergency Ready Scenarios Search
+===========================================
+Base: V10 solar global search package.
+
+Emergency ready scenarios now provide three dedicated filters:
+1) Power: accepts forms such as 3KW, 3000 W, ۳ کیلو وات, سه کیلو وات.
+2) Total current: accepts forms such as 25A, ۲۵ آمپر, بیست و پنج آمپر.
+3) Backup hours: accepts forms such as 3 ساعت, سه ساعت.
+
+Behavior:
+- The three filters are available on the top-level Emergency scenarios page and inside each Light/Medium/Heavy level.
+- Filters can be used independently or together; when combined, results satisfy all active filters.
+- Once any filter is active, the 100-scenario level cards/full unfiltered list is hidden and only matching scenarios remain.
+- Scenario detail accordions remain closed by default.
+- Emergency details include approximate power, total AC current, backup duration, city, inverter and battery data.
+- Solar V10 search behavior remains unchanged.
+
+Generated emergency scenario current model:
+- Light/Medium: 220 V single-phase, I = P / V.
+- Heavy: 380 V three-phase, I = P / (sqrt(3) * V).
+- Admin-published scenarios use recorded current/phase/voltage where available and derive a fallback only when missing.

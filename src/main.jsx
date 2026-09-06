@@ -294,3 +294,18 @@ import "./styles/shil-admin-review-runtime-final-v2518.css";
 
 /* V25.20: Admin Users = Engineering Review visual parity. MUST stay absolute last. */
 import "./styles/shil-admin-users-review-parity-v2520.css";
+
+/* V4: final toast/status contrast fix. MUST stay absolute last. */
+import "./appearance/styles/shil-toast-contrast-v4-final.css";
+
+/* V8: ready scenarios search/units/header final override. MUST stay absolute last. */
+import "./appearance/styles/shil-scenarios-v8-search-units-header-final.css";
+
+// V9 ready scenarios priority search + accordion final override
+import "./appearance/styles/shil-scenarios-v9-priority-search-accordion-final.css";
+
+/* V11: emergency ready scenarios triple search. MUST stay absolute last. */
+import "./appearance/styles/shil-scenarios-v11-emergency-triple-search-final.css";
+
+/* V12: single real global SHIL/Supabase connection status. MUST stay absolute last. */
+import "./appearance/styles/shil-global-connection-v12-final.css";

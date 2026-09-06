@@ -51,20 +51,22 @@ export function pruneNonCriticalLocalStorage() {
 export function safeLocalSetItem(key, value, { fallbackToSession = true } = {}) {
   if (typeof window === "undefined") return false;
 
+  let localError = null;
   try {
     window.localStorage?.setItem(key, value);
     return true;
   } catch (error) {
-    if (!isQuotaError(error)) throw error;
+    localError = error;
   }
 
-  pruneNonCriticalLocalStorage();
+  if (isQuotaError(localError)) pruneNonCriticalLocalStorage();
 
   try {
     window.localStorage?.setItem(key, value);
     return true;
-  } catch (error) {
-    if (!isQuotaError(error)) throw error;
+  } catch {
+    // Quota, privacy/security restrictions, or a temporarily unavailable
+    // storage backend must never block the project wizard.
   }
 
   if (fallbackToSession) {

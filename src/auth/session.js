@@ -46,7 +46,7 @@ function base64ToBytes(value) {
 }
 
 async function deriveSecret(secret, salt, iterations = PBKDF2_ITERATIONS) {
-  if (!globalThis.crypto?.subtle) throw new Error("Secure Web Crypto در این مرورگر در دسترس نیست.");
+  if (!globalThis.crypto?.subtle) throw new Error("Secure Web Crypto Ø¯Ø± Ø§ÛŒÙ† Ù…Ø±ÙˆØ±Ú¯Ø± Ø¯Ø± Ø¯Ø³ØªØ±Ø³ Ù†ÛŒØ³Øª.");
   const encoder = new TextEncoder();
   const key = await crypto.subtle.importKey("raw", encoder.encode(secret), "PBKDF2", false, ["deriveBits"]);
   const bits = await crypto.subtle.deriveBits({ name: "PBKDF2", hash: "SHA-256", salt, iterations }, key, 256);
@@ -113,18 +113,18 @@ export async function saveAdminLoginCredentials(credentials = []) {
     .map((item) => ({ login: String(item.login || "").trim(), password: String(item.password || "") }))
     .filter((item) => item.login);
 
-  if (!cleanInput.length) throw new Error("حداقل یک یوزر ادمین محلی باید ثبت شود یا دسترسی محلی را کاملاً حذف کنید.");
+  if (!cleanInput.length) throw new Error("Ø­Ø¯Ø§Ù‚Ù„ ÛŒÚ© ÛŒÙˆØ²Ø± Ø§Ø¯Ù…ÛŒÙ† Ù…Ø­Ù„ÛŒ Ø¨Ø§ÛŒØ¯ Ø«Ø¨Øª Ø´ÙˆØ¯ ÛŒØ§ Ø¯Ø³ØªØ±Ø³ÛŒ Ù…Ø­Ù„ÛŒ Ø±Ø§ Ú©Ø§Ù…Ù„Ø§Ù‹ Ø­Ø°Ù Ú©Ù†ÛŒØ¯.");
 
   const next = [];
   for (const item of cleanInput) {
     const previous = existingByLogin.get(normalizeLogin(item.login));
     if (item.password) {
-      if (item.password.length < 10) throw new Error("پسورد ادمین محلی باید حداقل ۱۰ کاراکتر باشد.");
+      if (item.password.length < 10) throw new Error("Ù¾Ø³ÙˆØ±Ø¯ Ø§Ø¯Ù…ÛŒÙ† Ù…Ø­Ù„ÛŒ Ø¨Ø§ÛŒØ¯ Ø­Ø¯Ø§Ù‚Ù„ Û±Û° Ú©Ø§Ø±Ø§Ú©ØªØ± Ø¨Ø§Ø´Ø¯.");
       next.push(await makeCredentialRecord(item.login, item.password));
     } else if (previous?.passwordHash && previous?.salt) {
       next.push({ ...previous, login: item.login, password: undefined });
     } else {
-      throw new Error(`برای یوزر ${item.login} یک پسورد جدید وارد کنید.`);
+      throw new Error(`Ø¨Ø±Ø§ÛŒ ÛŒÙˆØ²Ø± ${item.login} ÛŒÚ© Ù¾Ø³ÙˆØ±Ø¯ Ø¬Ø¯ÛŒØ¯ ÙˆØ§Ø±Ø¯ Ú©Ù†ÛŒØ¯.`);
     }
   }
 
@@ -187,7 +187,7 @@ export function createSession({ role = "user", accessRole = "viewer", login = ""
     sessionInstanceId: providedSessionInstanceId || reusableSessionId || makeId("session"),
     login: role === "guest" ? "guest" : normalizeLogin(login),
     authType,
-    displayName: displayName || (role === "guest" ? "کاربر مهمان" : login),
+    displayName: displayName || (role === "guest" ? "Ú©Ø§Ø±Ø¨Ø± Ù…Ù‡Ù…Ø§Ù†" : login),
     online: navigator.onLine,
     createdAt: new Date().toISOString(),
   };
@@ -215,7 +215,7 @@ export function clearSession() {
 export function appendUserRecord(baseKey, record) {
   const session = getCurrentSession() || createSession({ role: "guest", authType: "guest" });
   const key = getUserScopedKey(baseKey, session.userId);
-  const list = safeParse(localStorage.getItem(key), []);
+  const list = safeParse(readLocalOrSessionItem(key), []);
   const nextRecord = {
     ...record,
     id: makeId(baseKey),
@@ -224,14 +224,14 @@ export function appendUserRecord(baseKey, record) {
     userLogin: session.login,
     createdAt: new Date().toISOString(),
   };
-  localStorage.setItem(key, JSON.stringify([nextRecord, ...list]));
+  safeLocalSetItem(key, JSON.stringify([nextRecord, ...list]));
   mirrorCloudWrite(() => upsertCloudRecord(baseKey, nextRecord));
   return nextRecord;
 }
 
 export function readUserRecords(baseKey, fallback = []) {
   const key = getUserScopedKey(baseKey);
-  return safeParse(localStorage.getItem(key), fallback);
+  return safeParse(readLocalOrSessionItem(key), fallback);
 }
 
 export function readAllUserRecords(baseKey) {
@@ -245,14 +245,14 @@ export function readAllUserRecords(baseKey) {
 export function upsertUserRecord(baseKey, matcher, patch) {
   const session = getCurrentSession() || createSession({ role: "guest", authType: "guest" });
   const key = getUserScopedKey(baseKey, session.userId);
-  const list = safeParse(localStorage.getItem(key), []);
+  const list = safeParse(readLocalOrSessionItem(key), []);
   const index = list.findIndex((item) => matcher(item));
   const now = new Date().toISOString();
   if (index >= 0) {
     const updated = { ...list[index], ...patch, updatedAt: now };
     const next = [...list];
     next[index] = updated;
-    localStorage.setItem(key, JSON.stringify(next));
+    safeLocalSetItem(key, JSON.stringify(next));
     mirrorCloudWrite(() => upsertCloudRecord(baseKey, updated));
     return updated;
   }
@@ -265,7 +265,7 @@ export function upsertUserRecord(baseKey, matcher, patch) {
     createdAt: now,
     updatedAt: now,
   };
-  localStorage.setItem(key, JSON.stringify([nextRecord, ...list]));
+  safeLocalSetItem(key, JSON.stringify([nextRecord, ...list]));
   mirrorCloudWrite(() => upsertCloudRecord(baseKey, nextRecord));
   return nextRecord;
 }
@@ -274,14 +274,14 @@ export function upsertUserRecord(baseKey, matcher, patch) {
 export function updateUserRecord(baseKey, matcher, updater) {
   const session = getCurrentSession() || createSession({ role: "guest", authType: "guest" });
   const key = getUserScopedKey(baseKey, session.userId);
-  const list = safeParse(localStorage.getItem(key), []);
+  const list = safeParse(readLocalOrSessionItem(key), []);
   const now = new Date().toISOString();
   const next = list.map((item) => {
     if (!matcher(item)) return item;
     const patch = typeof updater === "function" ? updater(item) : updater;
     return { ...item, ...patch, updatedAt: now };
   });
-  localStorage.setItem(key, JSON.stringify(next));
+  safeLocalSetItem(key, JSON.stringify(next));
   next.filter((item) => matcher(item)).forEach((item) => mirrorCloudWrite(() => upsertCloudRecord(baseKey, item)));
   return next;
 }
@@ -289,10 +289,10 @@ export function updateUserRecord(baseKey, matcher, updater) {
 export function deleteUserRecord(baseKey, matcher) {
   const session = getCurrentSession() || createSession({ role: "guest", authType: "guest" });
   const key = getUserScopedKey(baseKey, session.userId);
-  const list = safeParse(localStorage.getItem(key), []);
+  const list = safeParse(readLocalOrSessionItem(key), []);
   const removed = list.filter((item) => matcher(item));
   const next = list.filter((item) => !matcher(item));
-  localStorage.setItem(key, JSON.stringify(next));
+  safeLocalSetItem(key, JSON.stringify(next));
   removed.forEach((item) => mirrorCloudWrite(() => deleteCloudRecord(baseKey, item.id)));
   return next;
 }

@@ -12,6 +12,7 @@ import {
 } from "../../engines/projectFlowData.js";
 import { getProjectDesignState } from "../../engineering/core/projectDesignState.js";
 import { formatEngineeringText } from "../../utils/safeRender.js";
+import { readLocalOrSessionItem } from "../../services/storageQuotaGuard.js";
 
 const faNumber = (value, digits = 0) =>
   Number(value || 0).toLocaleString("en-US", { maximumFractionDigits: digits });
@@ -349,9 +350,11 @@ function EmergencySummary({ draft }) {
           ["ظرفیت بانک", `${faNumber(battery.bankCapacityAh)} AH`],
           ["انرژی خام بانک", `${faNumber(battery.grossBankEnergyKWh || (Number(battery.count||0) * Number(battery.unitEnergyKWh||0)), 2)} KWH`],
           ["انرژی قابل استفاده", `${faNumber(battery.usableEnergyKWh, 2)} KWH`],
-          ["جریان DC طراحی", `${faNumber(electrical.dcCurrentA || ((Number(inverter.designPowerW||inverter.ratedPowerW||0))/(Number(electrical.dcBusVoltage||inverter.dcVoltage||inverter.batteryVoltage||48)*0.93)), 1)} A`],
-          ["حفاظت DC", `${faNumber(protection.dcBreakerA)} A`],
-          ["کابل DC", `${faNumber(protection.dcCableMm2,1)} mm²`],
+          ["جریان DC کل طراحی", `${faNumber(electrical.dcCurrentA || ((Number(inverter.installedPowerW||inverter.designPowerW||inverter.ratedPowerW||0))/(Number(electrical.dcBusVoltage||inverter.dcVoltage||inverter.batteryVoltage||48)*0.93)), 1)} A`],
+          ["تعداد فیدر DC باتری", `${faNumber(protection.dcFeederCount || protection.batteryDc?.feederCount || 1)} فیدر`],
+          ["جریان هر فیدر DC", `${faNumber(protection.dcFeederCurrentA || protection.batteryDc?.operatingCurrentA, 1)} A`],
+          ["حفاظت هر فیدر DC", `${faNumber(protection.dcBreakerA)} A`],
+          ["کابل هر فیدر DC", `${faNumber(protection.dcCableMm2,1)} mm²`],
           ["حفاظت AC", `${faNumber(protection.acBreakerA)} A`],
           ["کابل AC", `${faNumber(protection.acCableMm2,1)} mm²`],
           ["وضعیت طراحی", design.valid ? "قابل اجرا" : "نیازمند بازبینی"],
@@ -384,8 +387,8 @@ export default function SummaryPage() {
   const draft = useMemo(() => getSystemSettingsDraft(), []);
   const emergencyDesign = useMemo(() => {
     try {
-      return JSON.parse(localStorage.getItem("shil:emergencySystemDesign") || "null")
-        || JSON.parse(localStorage.getItem("shil:emergencySystemDesign:live") || "null")
+      return JSON.parse(readLocalOrSessionItem("shil:emergencySystemDesign") || "null")
+        || JSON.parse(readLocalOrSessionItem("shil:emergencySystemDesign:live") || "null")
         || {};
     } catch {
       return {};
@@ -397,8 +400,9 @@ export default function SummaryPage() {
   });
 
   const run = () => {
-    approveProjectStep("summary");
-    navigate(`/new-project/run/${domain}`);
+    try { approveProjectStep("summary"); } catch (error) { console.warn("[SHIL] summary approval persistence skipped", error); }
+    const target = `/new-project/run/${domain}`;
+    try { navigate(target); } catch { window.location.assign(target); }
   };
 
   return (

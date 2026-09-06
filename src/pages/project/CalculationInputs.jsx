@@ -11,9 +11,10 @@ import { METHOD_LABELS, persistSurfaceLoadPreview as persistLoadEngineResult, ru
 import { SHIL_SOLAR_PANELS } from "../../data/shilSolarBanks.js";
 import { isScenarioFlowFor, startUtilityGateway } from "../../workflow/flowIsolation.js";
 import { readAdminDefaults } from "../../admin/adminStore.js";
+import { readLocalOrSessionItem, safeLocalSetItem, safeLocalRemoveItem } from "../../services/storageQuotaGuard.js";
 
 function readDraft(key) {
-  try { return JSON.parse(localStorage.getItem(key) || "null"); }
+  try { return JSON.parse(readLocalOrSessionItem(key) || "null"); }
   catch { return null; }
 }
 
@@ -235,9 +236,9 @@ function buildScenarioEquipmentOverrides(scenario, items) {
 export default function CalculationInputs() {
   const navigate = useNavigate();
   const params = useParams();
-  const domain = params.domain || localStorage.getItem("shil:calculationDomain") || localStorage.getItem("shil:scenarioDomain") || "solar";
+  const domain = params.domain || readLocalOrSessionItem("shil:calculationDomain") || readLocalOrSessionItem("shil:scenarioDomain") || "solar";
   const adminDefaults = React.useMemo(() => readAdminDefaults(), []);
-  const requestedMethod = params.method || localStorage.getItem("shil:calculationMethod") || "equipment";
+  const requestedMethod = params.method || readLocalOrSessionItem("shil:calculationMethod") || "equipment";
   const allowedMethodsByDomain = React.useMemo(() => ({
     emergency: ["current", "power", "equipment"],
     utility: ["utility_scale", "solar_panel_power"],
@@ -253,17 +254,17 @@ export default function CalculationInputs() {
 
   React.useEffect(() => {
     if (requestedMethod !== method) {
-      localStorage.setItem("shil:calculationMethod", method);
-      localStorage.setItem("shil:calculationDomain", domain);
+      safeLocalSetItem("shil:calculationMethod", method);
+      safeLocalSetItem("shil:calculationDomain", domain);
     }
   }, [requestedMethod, method, domain]);
 
   const persistedInputDraft = React.useMemo(() => {
-    const projectKey = localStorage.getItem("shil:activeProjectKey") || "active-draft";
+    const projectKey = readLocalOrSessionItem("shil:activeProjectKey") || "active-draft";
     return readDraft(`shil:calculation-inputs-state:v2:${projectKey}:${domain}:${method}`) || {};
   }, [domain, method]);
   const inputDraftKey = React.useMemo(() => {
-    const projectKey = localStorage.getItem("shil:activeProjectKey") || "active-draft";
+    const projectKey = readLocalOrSessionItem("shil:activeProjectKey") || "active-draft";
     return `shil:calculation-inputs-state:v2:${projectKey}:${domain}:${method}`;
   }, [domain, method]);
 
@@ -308,9 +309,15 @@ export default function CalculationInputs() {
   const [acVoltageRoute, setAcVoltageRoute] = React.useState(persistedInputDraft.acVoltageRoute ?? String(adminDefaults.solarDefaultAcVoltageV || 220));
   const [inverterSplitCount, setInverterSplitCount] = React.useState(persistedInputDraft.inverterSplitCount ?? String(adminDefaults.solarDefaultInverterCount || 1));
   const [forceAutonomyBattery, setForceAutonomyBattery] = React.useState(persistedInputDraft.forceAutonomyBattery ?? (domain === "emergency"));
-  const [autonomyHours, setAutonomyHours] = React.useState(() => domain === "emergency"
-    ? String(clampEmergencyBackupHours(persistedInputDraft.autonomyHours, adminDefaults.emergencyRequiredHours || EMERGENCY_DEFAULT_BACKUP_HOURS))
-    : (persistedInputDraft.autonomyHours ?? ""));
+  const [autonomyHours, setAutonomyHours] = React.useState(() => {
+    if (domain !== "emergency") return persistedInputDraft.autonomyHours ?? "";
+    const initial = clampEmergencyBackupHours(
+      persistedInputDraft.autonomyHours,
+      adminDefaults.emergencyRequiredHours || EMERGENCY_DEFAULT_BACKUP_HOURS
+    );
+    return String(Math.min(12, Math.max(1, Number(initial) || EMERGENCY_DEFAULT_BACKUP_HOURS)));
+  });
+  const [backupHoursOpen, setBackupHoursOpen] = React.useState(false);
   const [autonomyDays, setAutonomyDays] = React.useState(persistedInputDraft.autonomyDays ?? "");
 
   const items = React.useMemo(() => {
@@ -367,7 +374,7 @@ export default function CalculationInputs() {
       inverterSplitCount, forceAutonomyBattery, autonomyHours, autonomyDays,
       showManualPanelSplit, manualPanelDistribution, savedAt: new Date().toISOString(),
     };
-    localStorage.setItem(inputDraftKey, JSON.stringify(payload));
+    safeLocalSetItem(inputDraftKey, JSON.stringify(payload));
   }, [inputDraftKey, selectedIds, itemOverrides, showExpert, manualEnergyKWh, manualPowerW,
       manualCurrentA, manualVoltage, manualHours, profileVoltage, profilePowerW,
       profileMorningKWh, profileNoonKWh, profileEveningKWh, profileNightKWh,
@@ -474,7 +481,7 @@ export default function CalculationInputs() {
   const contextScenarioLabel = scenario?.title || "دستی";
   const contextCityLabel = environment?.city || "اصفهان";
   const manualVoltageNumber = toNumber(manualVoltage || 220, 220);
-  const manualPhaseLabel = manualVoltageNumber >= 380 ? "380 ولت سه‌فاز" : "220 ولت تک‌فاز";
+  const manualPhaseLabel = manualVoltageNumber >= 380 ? "380 V" : "220 V";
   const currentDerivedPowerW = Math.round(toNumber(manualCurrentA, 0) * manualVoltageNumber * (manualVoltageNumber >= 380 ? Math.sqrt(3) : 1));
   const selectedEquipmentTitles = selectedItems.map((item) => item.title).filter(Boolean).join("، ");
   const equipmentTraces = React.useMemo(() => {
@@ -539,6 +546,7 @@ export default function CalculationInputs() {
     const surgePowerW = Math.round(toNumber(
       method === "equipment" ? equipmentStats.surgePowerW :
       method === "profile" ? profileSurgePowerW :
+      (effectiveDomain === "emergency" && (method === "power" || method === "current")) ? totalPowerW :
       finalResult?.surgePowerW || totalPowerW,
       totalPowerW
     ));
@@ -723,7 +731,7 @@ export default function CalculationInputs() {
         needsBattery: autonomySnapshot.required ? true : targetDomain === "solar" ? "depends_on_scenario" : false,
         batteryReason: autonomySnapshot.reason,
         needsInverter: true,
-        preferredSystemType: targetDomain === "emergency" ? "battery_inverter_backup" : targetDomain === "utility" ? "utility_scale_pv" : localStorage.getItem("shil:solarSystemType") || "offgrid",
+        preferredSystemType: targetDomain === "emergency" ? "battery_inverter_backup" : targetDomain === "utility" ? "utility_scale_pv" : readLocalOrSessionItem("shil:solarSystemType") || "offgrid",
         sizingBasis,
         nextSystemRoute,
       },
@@ -782,6 +790,7 @@ export default function CalculationInputs() {
   };
 
   const confirmLoad = () => {
+    try {
     if (method === "solar_panel_power" && distributionMismatch) {
       setScaleWarning(`جمع پنل‌های تقسیم‌شده باید برابر ${panelCountNormalized} باشد. مقدار فعلی ${distributionTotal} است.`);
       return;
@@ -791,12 +800,12 @@ export default function CalculationInputs() {
     }
 
     if (method !== "solar_panel_power") {
-      localStorage.removeItem("shil:solarPanelPowerInput");
-      localStorage.removeItem("shil:solarPanelPowerPreview");
+      safeLocalRemoveItem("shil:solarPanelPowerInput");
+      safeLocalRemoveItem("shil:solarPanelPowerPreview");
     }
 
     if (method === "solar_panel_power") {
-      localStorage.setItem("shil:solarPanelPowerInput", JSON.stringify({
+      safeLocalSetItem("shil:solarPanelPowerInput", JSON.stringify({
         selectedPanelId,
         panelTitle: selectedPanel.title,
         panelPowerW: Number(panelPowerW || 0),
@@ -823,8 +832,8 @@ export default function CalculationInputs() {
         isUtilityPanelScale,
         utilityScaleBasis: "effective_after_losses",
       }));
-      localStorage.setItem("shil:solarPanelPowerPreview", JSON.stringify(solarPanelPreview));
-      localStorage.setItem("shil:unifiedPvEngineResult:input", JSON.stringify(solarPanelPreview));
+      safeLocalSetItem("shil:solarPanelPowerPreview", JSON.stringify(solarPanelPreview));
+      safeLocalSetItem("shil:unifiedPvEngineResult:input", JSON.stringify(solarPanelPreview));
     }
 
     const result = persistLoadEngineResult({
@@ -847,7 +856,7 @@ export default function CalculationInputs() {
     });
 
     if (method === "profile") {
-      localStorage.setItem("shil:profileConsumptionInput", JSON.stringify({
+      safeLocalSetItem("shil:profileConsumptionInput", JSON.stringify({
         voltageAC: toNumber(profileVoltage, 220),
         basePowerW: toNumber(profilePowerW, 0),
         startFactor: toNumber(profileStartFactor, 1.6),
@@ -873,22 +882,122 @@ export default function CalculationInputs() {
       softStarterCount: equipmentStats.softStarterCount,
       equipmentStats,
     } : result;
-    localStorage.setItem("shil:loadEngineResult", JSON.stringify(finalResult));
+    safeLocalSetItem("shil:loadEngineResult", JSON.stringify(finalResult));
     const systemSetupHandoff = buildSystemSetupHandoff(finalResult);
-    localStorage.setItem("shil:systemSetupHandoff", JSON.stringify(systemSetupHandoff));
-    localStorage.setItem(`shil:systemSetupHandoff:${domain}:${method}`, JSON.stringify(systemSetupHandoff));
+    safeLocalSetItem("shil:systemSetupHandoff", JSON.stringify(systemSetupHandoff));
+    safeLocalSetItem(`shil:systemSetupHandoff:${domain}:${method}`, JSON.stringify(systemSetupHandoff));
     if (method === "equipment") {
-      localStorage.setItem("shil:selectedEquipmentItems", JSON.stringify(selectedItems));
-      localStorage.setItem("shil:equipmentCalculationStats", JSON.stringify(equipmentStats));
+      safeLocalSetItem("shil:selectedEquipmentItems", JSON.stringify(selectedItems));
+      safeLocalSetItem("shil:equipmentCalculationStats", JSON.stringify(equipmentStats));
     }
-    buildScenarioCalculationInput();
+    // Ready-scenario data is auxiliary in the normal solar/emergency flow.
+    // A stale or malformed scenario draft must never block the main confirm action.
+    try {
+      buildScenarioCalculationInput();
+    } catch (scenarioError) {
+      console.warn("[SHIL] scenario calculation draft was skipped during confirm", scenarioError);
+    }
     if (isReadyScenarioEquipmentFlow) {
-      localStorage.setItem("shil:scenarioEquipmentConfirmed", "true");
-      localStorage.setItem("shil:scenarioNextStep", "system-settings");
-      localStorage.setItem("shil:scenarioEquipmentBranch", domain);
+      safeLocalSetItem("shil:scenarioEquipmentConfirmed", "true");
+      safeLocalSetItem("shil:scenarioNextStep", "system-settings");
+      safeLocalSetItem("shil:scenarioEquipmentBranch", domain);
     }
     const nextDomain = systemSetupHandoff?.systemHints?.domain || effectiveDomain;
     navigate(`/new-project/system/${nextDomain}?from=calculation-inputs${isReadyScenarioEquipmentFlow ? "&scenarioFlow=1" : ""}`);
+    } catch (confirmError) {
+      console.error("[SHIL] CalculationInputs confirm failed", confirmError);
+
+      // Fail-safe for the main project flow: preserve the user's current input
+      // and continue to the correct system-settings page instead of leaving a
+      // visually active button with no response.
+      const fallbackDomain = effectiveDomain === "utility" ? "utility" : effectiveDomain === "emergency" ? "emergency" : "solar";
+      const voltage = toNumber(method === "solar_panel_power" ? acVoltageRoute : method === "profile" ? profileVoltage : manualVoltage || 220, 220);
+      const phase = voltage >= 380 ? "three" : "single";
+      const phaseFactor = phase === "three" ? Math.sqrt(3) : 1;
+      const fallbackPowerW = Math.round(toNumber(
+        method === "equipment" ? equipmentStats.totalPowerW :
+        method === "current" ? currentDerivedPowerW :
+        method === "profile" ? profilePeakPowerW :
+        method === "solar_panel_power" ? totalPanelPowerW :
+        manualPowerW,
+        0
+      ));
+      const fallbackEnergyKWh = Number(toNumber(
+        method === "equipment" ? (fallbackDomain === "emergency" ? equipmentStats.backupEnergyKWh : equipmentStats.totalEnergyKWh) :
+        method === "energy" ? manualEnergyKWh :
+        method === "profile" ? profileTotalEnergyWh / 1000 :
+        method === "solar_panel_power" ? calculatedPvDailyKWh :
+        (fallbackPowerW * Math.max(0, toNumber(manualHours, 0))) / 1000,
+        0
+      ).toFixed(2));
+      const fallbackCurrentA = Number(toNumber(
+        method === "current" ? manualCurrentA :
+        method === "equipment" ? equipmentStats.acCurrentA :
+        voltage > 0 ? fallbackPowerW / Math.max(1, voltage * phaseFactor) : 0,
+        0
+      ).toFixed(2));
+      const fallbackHandoff = {
+        schemaVersion: 2,
+        source: {
+          domain: fallbackDomain,
+          originalDomain: domain,
+          method,
+          methodTitle: METHOD_LABELS[method] || method,
+          from: "calculation-inputs-failsafe",
+          createdAt: new Date().toISOString(),
+        },
+        normalizedLoad: {
+          totalPowerW: fallbackPowerW,
+          dailyEnergyKWh: fallbackEnergyKWh,
+          dailyEnergyWh: Math.round(fallbackEnergyKWh * 1000),
+          voltageAC: voltage,
+          phaseAC: phase,
+          currentA: fallbackCurrentA,
+          totalCurrentA: fallbackCurrentA,
+          powerFactorAC: (method === "power" || method === "current") ? 1 : undefined,
+          surgePowerW: Math.round(fallbackDomain === "emergency" && (method === "power" || method === "current") ? fallbackPowerW : Math.max(fallbackPowerW, fallbackPowerW * 1.25)),
+        },
+        environmentSnapshot: {
+          ...environment,
+          assessment: environmentAssessment,
+          solarDefaults: envSolarDefaults,
+        },
+        autonomy: autonomySnapshot,
+        systemHints: {
+          domain: fallbackDomain,
+          originalDomain: domain,
+          needsPv: fallbackDomain !== "emergency",
+          needsBattery: autonomySnapshot.required ? true : fallbackDomain === "solar" ? "depends_on_scenario" : false,
+          needsInverter: true,
+          preferredSystemType: fallbackDomain === "emergency" ? "battery_inverter_backup" : fallbackDomain === "utility" ? "utility_scale_pv" : readLocalOrSessionItem("shil:solarSystemType") || "offgrid",
+          sizingBasis: fallbackDomain === "emergency" ? "backup_load" : "load_consumption",
+          nextSystemRoute: `/new-project/system/${fallbackDomain}`,
+        },
+        engineResult: {
+          valid: true,
+          totalPowerW: fallbackPowerW,
+          totalEnergyKWh: fallbackEnergyKWh,
+          acCurrentA: fallbackCurrentA,
+          voltageAC: voltage,
+        },
+      };
+
+      try {
+        safeLocalSetItem("shil:systemSetupHandoff", JSON.stringify(fallbackHandoff));
+        safeLocalSetItem(`shil:systemSetupHandoff:${domain}:${method}`, JSON.stringify(fallbackHandoff));
+        safeLocalSetItem("shil:lastCalculationInputsConfirmError", String(confirmError?.message || confirmError));
+      } catch (storageError) {
+        console.warn("[SHIL] confirm fallback storage failed", storageError);
+      }
+
+      const fallbackRoute = `/new-project/system/${fallbackDomain}?from=calculation-inputs&fallback=1`;
+      try {
+        navigate(fallbackRoute);
+      } catch (navigationError) {
+        console.error("[SHIL] router navigation failed; using location fallback", navigationError);
+        window.location.assign(fallbackRoute);
+      }
+    }
   };
 
   const inputConfirmSlotRef = React.useRef(null);
@@ -1058,7 +1167,7 @@ export default function CalculationInputs() {
                 {method === "power" ? <label>توان مدنظر پروژه W<input className="shil-input" value={manualPowerW} onChange={(e) => setManualPowerW(e.target.value)} placeholder="مثلاً 3500" inputMode="numeric" /></label> : null}
                 {method === "current" ? <label>جریان کل A<input className="shil-input" value={manualCurrentA} onChange={(e) => setManualCurrentA(e.target.value)} placeholder="مثلاً 16" inputMode="decimal" /></label> : null}
                 {(method === "power" || method === "current") ? (
-                  <label>ولتاژ شبکه<select className="shil-input" value={manualVoltage} onChange={(e) => setManualVoltage(e.target.value)}><option value="220">220 ولت تک‌فاز</option><option value="380">380 ولت سه‌فاز</option></select></label>
+                  <label>ولتاژ شبکه<select className="shil-input" value={manualVoltage} onChange={(e) => setManualVoltage(e.target.value)}><option value="220">220 V</option><option value="380">380 V</option></select></label>
                 ) : (
                   <label>ولتاژ AC<input className="shil-input" value={manualVoltage} onChange={(e) => setManualVoltage(e.target.value)} inputMode="numeric" /></label>
                 )}
@@ -1222,7 +1331,77 @@ export default function CalculationInputs() {
           <section className="shil-env-card">
             <h3 className="shil-section-title">خودکفایی و الزام باتری</h3>
             <div className="shil-form-grid">
-              <label>ساعت پشتیبانی برق اضطراری<input className="shil-input" type="number" min={effectiveDomain === "emergency" ? EMERGENCY_MIN_BACKUP_HOURS : undefined} max={effectiveDomain === "emergency" ? EMERGENCY_MAX_BACKUP_HOURS : undefined} step="1" value={autonomyHours} onChange={(e) => setAutonomyHours(effectiveDomain === "emergency" ? String(clampEmergencyBackupHours(e.target.value)) : e.target.value)} placeholder={effectiveDomain === "emergency" ? "3" : "اختیاری"} inputMode="numeric" /></label>
+              <label>
+                ساعت پشتیبانی برق اضطراری
+                <div className="shil-backup-hours-control">
+                  <input
+                    className="shil-input"
+                    type="number"
+                    min={effectiveDomain === "emergency" ? EMERGENCY_MIN_BACKUP_HOURS : undefined}
+                    max={effectiveDomain === "emergency" ? EMERGENCY_MAX_BACKUP_HOURS : undefined}
+                    step="1"
+                    value={autonomyHours}
+                    onChange={(e) => {
+                      if (effectiveDomain !== "emergency") {
+                        setAutonomyHours(e.target.value);
+                        return;
+                      }
+                      const raw = e.target.value;
+                      if (raw === "") {
+                        setAutonomyHours("");
+                        return;
+                      }
+                      const numeric = Number(raw);
+                      if (Number.isFinite(numeric)) {
+                        setAutonomyHours(String(Math.min(EMERGENCY_MAX_BACKUP_HOURS, Math.max(EMERGENCY_MIN_BACKUP_HOURS, Math.round(numeric)))));
+                      }
+                    }}
+                    onBlur={() => {
+                      if (effectiveDomain === "emergency") {
+                        const numeric = Number(autonomyHours);
+                        setAutonomyHours(String(Number.isFinite(numeric) ? Math.min(EMERGENCY_MAX_BACKUP_HOURS, Math.max(EMERGENCY_MIN_BACKUP_HOURS, Math.round(numeric))) : EMERGENCY_DEFAULT_BACKUP_HOURS));
+                      }
+                    }}
+                    placeholder={effectiveDomain === "emergency" ? String(EMERGENCY_DEFAULT_BACKUP_HOURS) : "اختیاری"}
+                    inputMode="numeric"
+                  />
+                  {effectiveDomain === "emergency" ? (
+                    <>
+                      <button
+                        type="button"
+                        className="shil-backup-hours-toggle"
+                        aria-expanded={backupHoursOpen}
+                        aria-controls="shil-backup-hours-options"
+                        onClick={() => setBackupHoursOpen((open) => !open)}
+                      >
+                        <span>انتخاب ساعت از لیست</span>
+                        <span aria-hidden="true">{backupHoursOpen ? "▲" : "▼"}</span>
+                      </button>
+                      <div
+                        id="shil-backup-hours-options"
+                        className={backupHoursOpen ? "shil-backup-hours-options open" : "shil-backup-hours-options"}
+                        aria-hidden={!backupHoursOpen}
+                      >
+                        <div className="shil-backup-hours-grid">
+                          {Array.from({ length: EMERGENCY_MAX_BACKUP_HOURS }, (_, index) => index + EMERGENCY_MIN_BACKUP_HOURS).map((hour) => (
+                            <button
+                              key={hour}
+                              type="button"
+                              className={Number(autonomyHours) === hour ? "shil-backup-hour-option selected" : "shil-backup-hour-option"}
+                              onClick={() => {
+                                setAutonomyHours(String(hour));
+                                setBackupHoursOpen(false);
+                              }}
+                            >
+                              {hour}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </>
+                  ) : null}
+                </div>
+              </label>
               {effectiveDomain !== "emergency" ? <label>روز خودکفایی<input className="shil-input" value={autonomyDays} onChange={(e) => setAutonomyDays(e.target.value)} placeholder="مثلاً 1" inputMode="decimal" /></label> : null}
               {effectiveDomain === "emergency" ? (
                 <div className="shil-check-row shil-required-battery-note" role="status">✓ باتری و ذخیره‌ساز انرژی در طراحی برق اضطراری الزامی است.</div>
@@ -1234,8 +1413,20 @@ export default function CalculationInputs() {
               )}
             </div>
             <p className="shil-muted-note">
-              {effectiveDomain === "emergency" ? `باتری و اینورتر در این مسیر الزامی هستند. زمان پشتیبانی هدف: ${autonomySnapshot.hours} ساعت (قابل تنظیم از 1 تا 24 ساعت). ظرفیت باتری دقیقاً بر اساس همین مقدار محاسبه می‌شود.` : autonomySnapshot.required ? `باتری الزامی است؛ زمان پشتیبانی هدف: ${autonomySnapshot.hours} ساعت.` : "اگر ساعت یا روز خودکفایی وارد شود، صفحه تنظیمات باتری را اجباری در نظر می‌گیرد."}
+              {effectiveDomain === "emergency" ? `باتری و اینورتر در این مسیر الزامی هستند. زمان پشتیبانی هدف: ${autonomySnapshot.hours} ساعت (قابل تنظیم از 1 تا 12 ساعت). ظرفیت باتری دقیقاً بر اساس همین مقدار محاسبه می‌شود.` : autonomySnapshot.required ? `باتری الزامی است؛ زمان پشتیبانی هدف: ${autonomySnapshot.hours} ساعت.` : "اگر ساعت یا روز خودکفایی وارد شود، صفحه تنظیمات باتری را اجباری در نظر می‌گیرد."}
             </p>
+            {effectiveDomain === "emergency" ? (
+              <style>{`
+                #shil-calculation-inputs-root .shil-backup-hours-control{display:flex;flex-direction:column;gap:8px;width:100%;margin-top:8px}
+                #shil-calculation-inputs-root .shil-backup-hours-toggle{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:42px;padding:8px 12px;border:1px solid #b9cde0;border-radius:12px;background:rgba(255,255,255,.92);color:#173254;font:800 14px/1.4 inherit;cursor:pointer}
+                #shil-calculation-inputs-root .shil-backup-hours-options{max-height:0;opacity:0;overflow:hidden;transition:max-height .22s ease,opacity .18s ease}
+                #shil-calculation-inputs-root .shil-backup-hours-options.open{max-height:190px;opacity:1}
+                #shil-calculation-inputs-root .shil-backup-hours-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:7px;padding-top:8px}
+                #shil-calculation-inputs-root .shil-backup-hour-option{min-height:38px;border:1px solid #bfd0e2;border-radius:10px;background:#fff;color:#173254;font:900 14px/1 inherit;cursor:pointer}
+                #shil-calculation-inputs-root .shil-backup-hour-option.selected{border-color:#557be8;background:#e9efff;color:#102b62}
+                @media (max-width:640px){#shil-calculation-inputs-root .shil-backup-hours-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+              `}</style>
+            ) : null}
           </section>
         ) : (
           <section className="shil-env-card">

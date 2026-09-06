@@ -1,3 +1,4 @@
+import { readLocalOrSessionItem, safeLocalSetItem } from "../../services/storageQuotaGuard.js";
 import { EMERGENCY_BASE_LOAD_HOURS, EMERGENCY_DEFAULT_BACKUP_HOURS, clampEmergencyBackupHours, emergencyBackupEnergyWh } from "./emergencySizingRules.js";
 export const METHOD_LABELS = {
   equipment: "لیست تجهیزات",
@@ -108,7 +109,7 @@ export function buildLoadProfile(items = [], options = {}) {
 }
 
 export function runLoadEngine(input = {}) {
-  const domain = input.domain || localStorage.getItem("shil:scenarioDomain") || "solar";
+  const domain = input.domain || readLocalOrSessionItem("shil:scenarioDomain") || "solar";
   const method = input.method || "equipment";
   const voltageAC = Number(input.voltageAC ?? 220) || 220;
   const phaseAC = input.phaseAC || (voltageAC >= 380 ? "three" : "single");
@@ -116,7 +117,8 @@ export function runLoadEngine(input = {}) {
   const powerFactorAC = Number(input.powerFactorAC ?? (directElectricalMethod ? 1 : 0.95)) || (directElectricalMethod ? 1 : 0.95);
   const manualCurrentA = Math.max(0, Number(input.manualCurrentA ?? input.totalCurrentA ?? 0) || 0);
   const phaseFactorAC = phaseAC === "three" ? Math.sqrt(3) : 1;
-  const dcBusVoltage = Number(input.dcBusVoltage ?? (domain === "solar" ? 48 : 24)) || 48;
+  const requestedDcBusVoltage = Number(input.dcBusVoltage);
+  const dcBusVoltage = domain === "emergency" ? (Number.isFinite(requestedDcBusVoltage) && requestedDcBusVoltage > 0 ? requestedDcBusVoltage : 0) : (Number(input.dcBusVoltage ?? 48) || 48);
   const selectedItems = (input.selectedItems || []).map((item) => normalizeLoadItem(item, { domain }));
   const scenario = input.scenario || null;
   const fallbackPowerW = Number(scenario?.loadEstimate ?? input.manualPowerW ?? 1000) || 1000;
@@ -147,7 +149,7 @@ export function runLoadEngine(input = {}) {
       ? round(totalRunningCurrentA, 2)
       : round(fallbackCurrentA, 2);
   const startCurrentA = selectedItems.length ? round(totalStartCurrentA, 2) : round(acCurrentA * 1.6, 2);
-  const dcCurrentA = round(totalPowerW / dcBusVoltage, 2);
+  const dcCurrentA = dcBusVoltage > 0 ? round(totalPowerW / dcBusVoltage, 2) : 0;
   const loadProfile = input.loadProfile || buildLoadProfile(selectedItems, input);
   const motorCount = selectedItems.filter((item) => item.isMotor).length;
   const softStarterCount = selectedItems.filter((item) => item.isMotor && item.hasSoftStarter).length;
@@ -209,9 +211,9 @@ function buildLoadWarnings({ totalPowerW, totalEnergyWh, surgePowerW, selectedIt
 
 export function persistLoadEngineResult(payload) {
   const result = runLoadEngine(payload);
-  localStorage.setItem("shil:loadCalculationDraft", JSON.stringify(result));
-  localStorage.setItem("shil:calculationMethod", result.method);
-  localStorage.setItem("shil:equipmentDraft", JSON.stringify({
+  safeLocalSetItem("shil:loadCalculationDraft", JSON.stringify(result));
+  safeLocalSetItem("shil:calculationMethod", result.method);
+  safeLocalSetItem("shil:equipmentDraft", JSON.stringify({
     selectedItems: result.selectedItems,
     totalPowerW: result.totalPowerW,
     totalDailyWh: result.totalEnergyWh,

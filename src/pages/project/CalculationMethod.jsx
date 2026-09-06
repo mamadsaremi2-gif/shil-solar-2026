@@ -1,5 +1,6 @@
 import ShilPrimaryButton from "../../components/project/ShilPrimaryButton";
-﻿import * as React from "react";
+import { readLocalOrSessionItem, safeLocalSetItem, safeLocalRemoveItem } from "../../services/storageQuotaGuard.js";
+import * as React from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { approveProjectStep } from "../../workflow/projectWorkflow.js";
 import EngineeringPageShell from "../../components/EngineeringPageShell.jsx";
@@ -31,7 +32,7 @@ const DOMAIN_LABELS = {
 
 function readDraft(key) {
   try {
-    return JSON.parse(localStorage.getItem(key) || "null");
+    return JSON.parse(readLocalOrSessionItem(key) || "null");
   } catch {
     return null;
   }
@@ -66,8 +67,8 @@ export default function CalculationMethod() {
     params.domain ||
     query.get("domain") ||
     getProjectPathDomain() ||
-    localStorage.getItem("shil:calculationDomain") ||
-    localStorage.getItem("shil:scenarioDomain") ||
+    readLocalOrSessionItem("shil:calculationDomain") ||
+    readLocalOrSessionItem("shil:scenarioDomain") ||
     "solar"
   );
 
@@ -96,15 +97,15 @@ export default function CalculationMethod() {
     if (!selectedMethod) return;
 
     approveProjectStep("method");
-    localStorage.setItem("shil:calculationMethod", selectedMethod);
-    localStorage.setItem("shil:selectedCalculationMethod", selectedMethod);
-    localStorage.setItem("shil:calculationDomain", domain);
-    localStorage.setItem("shil:scenarioDomain", domain);
+    safeLocalSetItem("shil:calculationMethod", selectedMethod);
+    safeLocalSetItem("shil:selectedCalculationMethod", selectedMethod);
+    safeLocalSetItem("shil:calculationDomain", domain);
+    safeLocalSetItem("shil:scenarioDomain", domain);
 
     if (domain === "emergency") {
-      localStorage.removeItem("shil:solarPanelPowerInput");
-      localStorage.removeItem("shil:solarPanelPowerPreview");
-      localStorage.removeItem("shil:unifiedPvEngineResult:input");
+      safeLocalRemoveItem("shil:solarPanelPowerInput");
+      safeLocalRemoveItem("shil:solarPanelPowerPreview");
+      safeLocalRemoveItem("shil:unifiedPvEngineResult:input");
     }
 
     if (selectedMethod === "utility_scale") {

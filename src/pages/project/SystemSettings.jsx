@@ -383,8 +383,10 @@ export default function SystemSettings() {
   const confirm = () => {
     if (!design.valid) {
       setWarning(design.warnings[0] || "پیکربندی نیازمند اصلاح است.");
+      window.dispatchEvent(new CustomEvent("shil-ux-toast", { detail: { type: "warning", message: design.warnings[0] || "پیکربندی نیازمند اصلاح است." } }));
       return;
     }
+    try {
     const draft = {
       version: 3,
       domain: "solar",
@@ -402,6 +404,12 @@ export default function SystemSettings() {
     saveProjectDesignState(centralState);
     approveProjectStep("system");
     navigate("/new-project/summary/solar");
+    } catch (error) {
+      console.error("[SHIL] solar system confirm failed", error);
+      setWarning("ذخیره محلی با خطا روبه‌رو شد؛ مسیر طراحی با نسخه موقت ادامه پیدا می‌کند.");
+      try { navigate("/new-project/summary/solar"); }
+      catch { window.location.assign("/new-project/summary/solar"); }
+    }
   };
 
   return <EngineeringPageShell title="تنظیمات" activeStep="system" backTo="/new-project/inputs/solar">

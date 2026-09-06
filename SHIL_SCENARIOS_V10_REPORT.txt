@@ -1,0 +1,9 @@
+SHIL V10 - Solar Ready Scenarios Global Search
+
+- Added the same engineering scenario search to /scenarios/solar before choosing Light / Medium / Heavy.
+- Search spans all three solar scenario groups at once.
+- When query is empty, the original three level cards remain visible.
+- Once the user types a query, level cards are hidden and only matching scenarios are shown.
+- Matching cards preserve V9 behavior: power in title, details in a collapsed accordion, direct select-and-continue action.
+- Search uses the same V9 normalization for W/KW, WH/KWH, Persian digits/words, and city/province matching.
+- Each cross-level result shows its source level (Light / Medium / Heavy).

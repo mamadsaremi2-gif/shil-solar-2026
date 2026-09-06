@@ -1,5 +1,6 @@
 import { upsertUserRecord } from "../auth/session.js";
 import { captureProjectLocalState, ensureActiveProjectKey } from "./projectSessionPersistence.js";
+import { readLocalOrSessionItem, safeLocalSetItem, safeLocalRemoveItem } from "../services/storageQuotaGuard.js";
 
 export const PROJECT_PATHS = Object.freeze({
   SOLAR: "solar",
@@ -22,13 +23,13 @@ const STORAGE_KEY = "shil-project-workflow-v3";
 const LEGACY_STORAGE_KEY = "shil-project-workflow-v2";
 
 function safeJson(key, fallback = {}) {
-  try { return JSON.parse(localStorage.getItem(key) || "null") || fallback; } catch { return fallback; }
+  try { return JSON.parse(readLocalOrSessionItem(key) || "null") || fallback; } catch { return fallback; }
 }
 
 function readProjectPathDomain() {
   const path = safeJson("shil:projectPath", null) || safeJson("shil:selectedProjectPath", null);
   if (typeof path === "string") return path;
-  return path?.domain || path?.type || localStorage.getItem("shil:calculationDomain") || PROJECT_PATHS.SOLAR;
+  return path?.domain || path?.type || readLocalOrSessionItem("shil:calculationDomain") || PROJECT_PATHS.SOLAR;
 }
 
 function systemRouteForDomain(domain = readProjectPathDomain()) {
@@ -52,7 +53,7 @@ export function readWorkflowState() {
 }
 
 export function writeWorkflowState(nextState) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(nextState));
+  safeLocalSetItem(STORAGE_KEY, JSON.stringify(nextState));
   window.dispatchEvent(new CustomEvent("shil-workflow-updated", { detail: nextState }));
 }
 
@@ -124,8 +125,8 @@ export function approveProjectStep(stepKey) {
 }
 
 export function resetProjectWorkflow() {
-  localStorage.removeItem(STORAGE_KEY);
-  localStorage.removeItem(LEGACY_STORAGE_KEY);
+  safeLocalRemoveItem(STORAGE_KEY);
+  safeLocalRemoveItem(LEGACY_STORAGE_KEY);
   window.dispatchEvent(new CustomEvent("shil-workflow-updated", { detail: {} }));
 }
 

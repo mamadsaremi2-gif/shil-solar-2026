@@ -1,9 +1,10 @@
+import { readLocalOrSessionItem, safeLocalSetItem } from "../../services/storageQuotaGuard.js";
 const DESIGN_STATE_KEY = "shil:projectDesignState";
 
 function readJson(key, fallback = null) {
   try {
     if (typeof localStorage === "undefined") return fallback;
-    const value = JSON.parse(localStorage.getItem(key) || "null");
+    const value = JSON.parse(readLocalOrSessionItem(key) || "null");
     return value ?? fallback;
   } catch {
     return fallback;
@@ -12,7 +13,7 @@ function readJson(key, fallback = null) {
 
 function writeJson(key, value) {
   if (typeof localStorage !== "undefined") {
-    localStorage.setItem(key, JSON.stringify(value));
+    safeLocalSetItem(key, JSON.stringify(value));
   }
   return value;
 }

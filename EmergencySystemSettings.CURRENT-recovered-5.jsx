@@ -1,0 +1,795 @@
+import ShilPrimaryButton from "../../components/project/ShilPrimaryButton";
+import React, { useEffect, useMemo, useState } from "react";
+import { EMERGENCY_BASE_LOAD_HOURS, EMERGENCY_DEFAULT_BACKUP_HOURS, clampEmergencyBackupHours } from "../../core/calculation/emergencySizingRules.js";
+import { useNavigate } from "react-router-dom";
+import EngineeringPageShell from "../../components/EngineeringPageShell.jsx";
+import ShilWarningOverlay from "../../components/ShilWarningOverlay.jsx";
+import { approveProjectStep } from "../../workflow/projectWorkflow.js";
+import { getEnabledEquipment } from "../../data/registry/index.js";
+import {
+  emergencyInverterParallelCount,
+  filterEmergencyBatteries,
+  filterEmergencyInverters,
+  pickEmergencyBattery,
+  pickEmergencyInverter,
+  selectEmergencyProtection,
+} from "../../engines/emergencyBankRules.js";
+import { batterySeriesCountForInverter } from "../../engines/solarBankRules.js";
+import { readAdminDefaults } from "../../admin/adminStore.js";
+import { safeLocalSetItem, safeLocalRemoveItem, readLocalOrSessionItem } from "../../services/storageQuotaGuard.js";
+
+function readDraft(key, fallback = null) {
+  try { return JSON.parse(readLocalOrSessionItem(key) || "null") || fallback; }
+  catch { return fallback; }
+}
+
+const normalizePersianInput = (value) => String(value ?? "")
+  .replace(/[\u06F0-\u06F9]/g, (d) => String(d.charCodeAt(0) - 0x06F0))
+  .replace(/[\u0660-\u0669]/g, (d) => String(d.charCodeAt(0) - 0x0660))
+  .replace(/Ù«/g, ".")
+  .replace(/Ù¬|,/g, "")
+  .trim();
+
+const toNumber = (value, fallback = 0) => {
+  const normalized = normalizePersianInput(value);
+  // IMPORTANT: Number("") === 0. The old helper therefore converted missing
+  // catalog fields to zero and silently bypassed the requested fallback.
+  // This was the root cause of 6 A DC protection / 1.5 mmÂ² battery cable when
+  // minBatteryVoltageV (or a power field) was absent from an inverter record.
+  if (normalized === "") return Number(fallback) || 0;
+  const n = Number(normalized);
+  return Number.isFinite(n) ? n : (Number(fallback) || 0);
+};
+
+function resolveInverterRatedPowerW(item = {}, fallbackW = 0) {
+  const directW = [
+    item?.ratedPowerW, item?.powerW, item?.nominalPowerW, item?.outputPowerW,
+    item?.acPowerW, item?.continuousPowerW, item?.ratedOutputPowerW,
+  ].map((v) => toNumber(v, 0)).filter((v) => v > 0);
+  const directKW = [
+    item?.ratedPowerKW, item?.powerKW, item?.nominalPowerKW, item?.capacityKW,
+    item?.ratedKw, item?.kw,
+  ].map((v) => toNumber(v, 0) * 1000).filter((v) => v > 0);
+
+  // Some legacy bank rows only publish the power in their model/title.
+  const text = [item?.title, item?.model, item?.name, item?.label].filter(Boolean).join(" ");
+  const matchKW = text.match(/(?:^|\s)(\d+(?:[.,]\d+)?)\s*k\s*w\b/i);
+  const textW = matchKW ? toNumber(matchKW[1], 0) * 1000 : 0;
+
+  const candidates = [...directW, ...directKW, textW, toNumber(fallbackW, 0)].filter((v) => v > 0);
+  return candidates.length ? Math.max(...candidates) : 0;
+}
+
+function resolveBatteryBusVoltageV(inverter = {}, battery = {}, fallbackV = 48) {
+  const candidates = [
+    inverter?.dcVoltage, inverter?.batteryVoltage, inverter?.nominalDcVoltageV,
+    inverter?.dcBusVoltageV, battery?.packVoltage, battery?.nominalVoltage,
+  ].map((v) => toNumber(v, 0)).filter((v) => v > 0);
+  return candidates[0] || toNumber(fallbackV, 48);
+}
+
+const faNumber = (value, digits = 0) => Number(value || 0).toLocaleString("en-US", { maximumFractionDigits: digits });
+const enNumber = (value, digits = 0) => Number(value || 0).toLocaleString("en-US", { maximumFractionDigits: digits });
+
+function optionTitle(item) {
+  return item?.title || item?.model || item?.name || item?.id || "-";
+}
+
+function getBatteryEnergyWh(item) {
+  return toNumber(item?.energyWh || toNumber(item?.nominalVoltage, 0) * toNumber(item?.capacityAh, 0), 0);
+}
+
+function protectionRange(item = {}) {
+  const raw = item?.currentRangeA ?? item?.ratedCurrentRangeA ?? item?.ratedCurrentA ?? item?.currentA;
+  if (Array.isArray(raw)) {
+    const values = raw.map(Number).filter(Number.isFinite);
+    return values.length ? [Math.min(...values), Math.max(...values)] : [0, Infinity];
+  }
+  const value = Number(raw);
+  return Number.isFinite(value) && value > 0 ? [value, value] : [0, Infinity];
+}
+
+function chooseProtection(items = [], { group = "", types = [], side = "", currentA = 0, voltageV = 0, batteryBus = false } = {}) {
+  const wantedGroup = String(group || "").toLowerCase();
+  const wantedSide = String(side || "").toLowerCase();
+  const wantedTypes = (Array.isArray(types) ? types : [types]).map((value) => String(value || "").toLowerCase()).filter(Boolean);
+  const current = Math.max(0, Number(currentA || 0));
+  const requiredVoltage = Math.max(0, Number(voltageV || 0));
+  const candidates = (Array.isArray(items) ? items : []).filter((item) => {
+    const itemGroup = String(item?.group || "").toLowerCase();
+    const itemType = String(item?.deviceType || item?.type || "").toLowerCase();
+    const itemSide = String(item?.side || "").toLowerCase();
+    if (wantedGroup && !itemGroup.includes(wantedGroup)) return false;
+    if (wantedSide && itemSide && !itemSide.includes(wantedSide)) return false;
+    if (wantedTypes.length && !wantedTypes.some((type) => itemType.includes(type))) return false;
+    const [, maxA] = protectionRange(item);
+    const rawV = item?.ratedVoltageV ?? item?.ratedVoltageVdc ?? item?.ucV;
+    const voltages = (Array.isArray(rawV) ? rawV : [rawV]).map(Number).filter(Number.isFinite);
+    const maxV = voltages.length ? Math.max(...voltages) : Infinity;
+    if (requiredVoltage && maxV < requiredVoltage) return false;
+    // Battery buses are low-voltage DC. If the bank only contains a radically higher-voltage
+    // family (for example 1500 V PV MCCB for a 48 V battery), do not claim a catalog match.
+    // The calculated fallback is safer and makes the missing catalog family explicit.
+    if ((batteryBus || wantedSide.includes("battery")) && requiredVoltage > 0 && maxV > Math.max(125, requiredVoltage * 4)) return false;
+    return !current || current <= maxA;
+  });
+  return candidates.sort((a, b) => {
+    const [, aMax] = protectionRange(a);
+    const [, bMax] = protectionRange(b);
+    const rawAV = a?.ratedVoltageV ?? a?.ratedVoltageVdc ?? a?.ucV;
+    const rawBV = b?.ratedVoltageV ?? b?.ratedVoltageVdc ?? b?.ucV;
+    const aVoltages = (Array.isArray(rawAV) ? rawAV : [rawAV]).map(Number).filter(Number.isFinite);
+    const bVoltages = (Array.isArray(rawBV) ? rawBV : [rawBV]).map(Number).filter(Number.isFinite);
+    const aV = aVoltages.length ? Math.min(...aVoltages.filter((v) => !requiredVoltage || v >= requiredVoltage)) || Math.max(...aVoltages) : 999999;
+    const bV = bVoltages.length ? Math.min(...bVoltages.filter((v) => !requiredVoltage || v >= requiredVoltage)) || Math.max(...bVoltages) : 999999;
+    // For battery/DC protection prefer the closest adequate voltage class first.
+    // A 1500 V PV MCCB must not beat a calculated 48 V battery device merely because its current range is close.
+    const voltageDelta = Math.abs(aV - requiredVoltage) - Math.abs(bV - requiredVoltage);
+    if (requiredVoltage && voltageDelta !== 0) return voltageDelta;
+    const currentDelta = Math.abs(aMax - current) - Math.abs(bMax - current);
+    if (currentDelta !== 0) return currentDelta;
+    return aV - bV;
+  })[0] || null;
+}
+
+function protectionSelection(item, quantity = 1, design = {}) {
+  const ratedCurrentA = toNumber(design.currentA, 0);
+  const requiredVoltageV = toNumber(design.voltageV, 0);
+  const deviceType = design.deviceType || item?.deviceType || item?.type || "PROTECTION";
+  const standard = design.standard || item?.standard || "";
+  const polesRequired = design.poles || null;
+
+  if (!item) {
+    return {
+      id: `calculated-${String(deviceType).toLowerCase()}-${ratedCurrentA || "na"}`,
+      label: design.label || `${ratedCurrentA || "-"} A ${deviceType}`,
+      title: design.label || `${ratedCurrentA || "-"} A ${deviceType}`,
+      deviceType,
+      ratedCurrentA: ratedCurrentA || null,
+      requiredVoltageV: requiredVoltageV || null,
+      polesRequired,
+      standard,
+      quantity: Math.max(1, Number(quantity || 1)),
+      bankMatched: false,
+      selectionReason: "Ø±ÛŒØªÛŒÙ†Ú¯ Ù…Ù‡Ù†Ø¯Ø³ÛŒ Ù…Ø­Ø§Ø³Ø¨Ù‡ Ø´Ø¯Ù‡ Ø§Ø³ØªØ› Ø®Ø§Ù†ÙˆØ§Ø¯Ù‡ Ø¯Ù‚ÛŒÙ‚ Ú©Ø§ØªØ§Ù„ÙˆÚ¯ÛŒ Ø¯Ø± Ø¨Ø§Ù†Ú© Ù…Ù†ØªØ´Ø±Ø´Ø¯Ù‡ Ù…ÙˆØ¬ÙˆØ¯ Ù†Ø¨ÙˆØ¯.",
+    };
+  }
+
+  const rawVoltage = item?.ratedVoltageV ?? item?.ucV;
+  const voltageValues = (Array.isArray(rawVoltage) ? rawVoltage : [rawVoltage]).map(Number).filter(Number.isFinite);
+  const ratedVoltageV = voltageValues.length
+    ? (voltageValues.find((v) => v >= requiredVoltageV) ?? Math.max(...voltageValues))
+    : null;
+  const range = protectionRange(item);
+  const labelBase = item?.label || item?.title || item?.model || item?.engineeringClass || item?.id || "ØªØ¬Ù‡ÛŒØ² Ø­ÙØ§Ø¸ØªÛŒ";
+
+  return {
+    ...item,
+    label: ratedCurrentA > 0 ? `${ratedCurrentA} A Â· ${labelBase}` : labelBase,
+    quantity: Math.max(1, Number(quantity || 1)),
+    ratedCurrentA: ratedCurrentA || toNumber(item?.ratedCurrentA ?? item?.currentA, 0) || null,
+    ratedVoltageV,
+    requiredVoltageV: requiredVoltageV || null,
+    polesRequired,
+    designCurrentA: ratedCurrentA || null,
+    operatingCurrentA: toNumber(design.operatingCurrentA, 0) || null,
+    designFactor: toNumber(design.designFactor, 0) || null,
+    catalogFamilyTitle: labelBase,
+    ratedCurrentRangeA: Number.isFinite(range[1]) ? range : item?.ratedCurrentRangeA,
+    standard,
+    bankMatched: true,
+    selectionReason: design.reason || `Ø±ÛŒØªÛŒÙ†Ú¯ ${ratedCurrentA || "Ù…ÙˆØ±Ø¯Ù†ÛŒØ§Ø²"} Ø¢Ù…Ù¾Ø± Ø¯Ø§Ø®Ù„ Ù…Ø­Ø¯ÙˆØ¯Ù‡ Ø®Ø§Ù†ÙˆØ§Ø¯Ù‡ Ú©Ø§ØªØ§Ù„ÙˆÚ¯ÛŒ Ø§Ù†ØªØ®Ø§Ø¨ Ø´Ø¯.`,
+  };
+}
+
+
+function resolveBatteryBusVoltage(inverter, battery = null, fallbackVoltage = 48) {
+  const candidates = [
+    inverter?.recommendedBatteryVoltageV,
+    inverter?.nominalBatteryVoltageV,
+    inverter?.batteryVoltageV,
+    inverter?.batteryVoltage,
+    inverter?.nominalDcVoltage,
+    battery?.nominalVoltageV,
+    battery?.voltageV,
+    battery?.voltage
+  ];
+
+  for (const value of candidates) {
+    const voltage = Number(value);
+
+    if (Number.isFinite(voltage) && voltage >= 40 && voltage <= 60) {
+      return voltage;
+    }
+  }
+
+  return Number(fallbackVoltage) || 48;
+}
+function buildEmergencyDesign({ handoff, backupHours, reserveFactor, dodPercent, inverterId, batteryId, manualMode, banks, cableLengthM = 10, lengthFactor = 1.15 }) {
+  const load = handoff?.normalizedLoad || readDraft("shil:loadEngineResult", {});
+  const totalPowerW = toNumber(load.totalPowerW, 0);
+  const surgePowerW = Math.max(totalPowerW, toNumber(load.surgePowerW, 0));
+  const voltageAC = toNumber(load.voltageAC, 220);
+  const phaseAC = String(load.phaseAC || (voltageAC >= 380 ? "three" : "single")).toLowerCase().includes("three") || voltageAC >= 380 ? "three" : "single";
+  const powerFactorAC = Math.max(0.1, Math.min(1, toNumber(load.powerFactorAC, 1)));
+  const designPowerW = Math.max(totalPowerW, surgePowerW) * toNumber(reserveFactor, 1.25);
+  const requestedBackupHours = clampEmergencyBackupHours(backupHours, EMERGENCY_DEFAULT_BACKUP_HOURS);
+  const requiredEnergyKWh = (totalPowerW * requestedBackupHours) / 1000;
+  const usableFactor = Math.max(0.2, Math.min(0.98, toNumber(dodPercent, 80) / 100));
+  const inverterEfficiency = 0.93;
+  const batteryEfficiency = 0.96;
+  const systemEfficiency = inverterEfficiency * batteryEfficiency;
+  const rawBatteryKWh = requiredEnergyKWh / Math.max(0.1, usableFactor * systemEfficiency);
+
+  const inverterFilterOptions = { phaseAC, voltageAC };
+  const emergencyInverters = filterEmergencyInverters(banks.inverters, designPowerW, inverterFilterOptions);
+  const smartInverter = pickEmergencyInverter(emergencyInverters, designPowerW, inverterFilterOptions);
+  const selectedInverter = manualMode ? (emergencyInverters.find((item) => item.id === inverterId) || smartInverter) : smartInverter;
+  const inverterUnitPowerW = Math.max(1, toNumber(selectedInverter?.ratedPowerW || selectedInverter?.powerW, 0));
+  const inverterCount = selectedInverter ? emergencyInverterParallelCount(selectedInverter, designPowerW) : 0;
+  const installedInverterPowerW = inverterUnitPowerW * Math.max(1, inverterCount);
+  // V25.23 unified LV battery architecture.
+  // AC phase/voltage never determines the battery DC bus.
+  const dcBusVoltage = resolveBatteryBusVoltage(selectedInverter, null, 48);
+
+  const inverterRatedPowerW = resolveInverterRatedPowerW(selectedInverter, designPowerW);
+
+  const publishedMinBatteryVoltageV = toNumber(
+    selectedInverter?.minBatteryVoltageV ||
+    selectedInverter?.batteryMinVoltageV ||
+    selectedInverter?.dcInputMinV,
+    0
+  );
+
+  const minBatteryVoltageV = publishedMinBatteryVoltageV > 0
+    ? publishedMinBatteryVoltageV
+    : (dcBusVoltage * 0.90);
+
+  const dcCurrentA = (inverterRatedPowerW > 0 && minBatteryVoltageV > 0)
+    ? inverterRatedPowerW / minBatteryVoltageV / inverterEfficiency
+    : 0;
+
+  const emergencyBatteries = filterEmergencyBatteries(banks.batteries, selectedInverter, rawBatteryKWh);
+  const smartBattery = pickEmergencyBattery(emergencyBatteries, selectedInverter, rawBatteryKWh);
+  const selectedBattery = manualMode ? (emergencyBatteries.find((item) => item.id === batteryId) || smartBattery) : smartBattery;
+
+  const unitBatteryKWh = Math.max(0.1, getBatteryEnergyWh(selectedBattery) / 1000);
+  const batterySeriesCount = selectedBattery ? batterySeriesCountForInverter(selectedBattery, selectedInverter || {}) : 0;
+  const seriesStringEnergyKWh = unitBatteryKWh * Math.max(1, batterySeriesCount);
+  const energyParallelCount = seriesStringEnergyKWh > 0 ? Math.max(1, Math.ceil(rawBatteryKWh / seriesStringEnergyKWh)) : 0;
+  const unitMaxDischargeA = Math.max(1, toNumber(selectedBattery?.maxDischargeCurrentA || selectedBattery?.continuousDischargeCurrentA, 100));
+  const currentParallelCount = dcCurrentA > 0 ? Math.max(1, Math.ceil((dcCurrentA * 1.05) / unitMaxDischargeA)) : 1;
+  const batteryParallelCount = Math.max(energyParallelCount, currentParallelCount);
+  const batteryCount = selectedBattery ? Math.max(1, batterySeriesCount) * Math.max(1, batteryParallelCount) : 0;
+  const grossBankEnergyKWh = batteryCount * unitBatteryKWh;
+  const actualEnergyKWh = grossBankEnergyKWh * usableFactor * systemEfficiency;
+  const runtimeHours = totalPowerW > 0 ? (actualEnergyKWh * 1000) / totalPowerW : 0;
+  const bankCapacityAh = toNumber(selectedBattery?.capacityAh, 0) * Math.max(1, batteryParallelCount);
+  const standardSizes = [1.5,2.5,4,6,10,16,25,35,50,70,95,120,150,185,240];
+  const standardAmps = [6,10,16,20,25,32,40,50,63,80,100,125,160,200,250,315,400,500,630];
+  const effectiveLengthM = Math.max(1, toNumber(cableLengthM, 10) * Math.max(1, toNumber(lengthFactor, 1.15)));
+  // AC protection must follow the actual simultaneous emergency load, not inverter reserve/surge sizing.
+  // Example: 3000 W / 220 V = 13.64 A -> next standard MCB = C16 A.
+  const phaseFactorAC = phaseAC === "three" ? Math.sqrt(3) : 1;
+  const reportedAcCurrentA = toNumber(load.totalCurrentA ?? load.currentA ?? load.acCurrentA, 0);
+  const acCurrentA = reportedAcCurrentA > 0
+    ? reportedAcCurrentA
+    : (voltageAC > 0 ? totalPowerW / Math.max(1, voltageAC * phaseFactorAC) : 0);
+  const acProtectionCurrentA = acCurrentA;
+  const copperRho = 0.0175;
+  const dcDropV = Math.max(0.5, dcBusVoltage * 0.02);
+  const acDropV = Math.max(1, voltageAC * 0.03);
+  const calcSection = (current, dropV) => (2 * copperRho * effectiveLengthM * current) / dropV;
+  const nextSize = (v) => standardSizes.find((x) => x >= v) || null;
+  const nextAmp = (v) => standardAmps.find((x) => x >= v) || null;
+  const rawProtection = selectEmergencyProtection(banks.protections, banks.cables);
+  // V25.24 LV battery architecture: split high DC current across parallel feeders.
+  const MAX_DC_FEEDER_OPERATING_A = 250;
+
+  const dcFeederCount = dcCurrentA > 0
+    ? Math.max(
+        1,
+        batteryParallelCount || 1,
+        Math.ceil(dcCurrentA / MAX_DC_FEEDER_OPERATING_A)
+      )
+    : 1;
+
+  const dcFeederCurrentA = dcCurrentA > 0
+    ? dcCurrentA / dcFeederCount
+    : 0;
+
+  const dcBreakerRequiredA = dcFeederCurrentA * 1.25;
+  const dcBreakerA = nextAmp(dcBreakerRequiredA);
+  const dcProtectionRangeExceeded = dcFeederCurrentA > 0 && !dcBreakerA;
+
+  // AC protection follows actual emergency load current.
+  const acBreakerA = nextAmp(acProtectionCurrentA) || standardAmps[standardAmps.length - 1];
+
+  // Transfer switch carries the complete AC load with 25% engineering margin.
+  const changeoverA = nextAmp(acProtectionCurrentA * 1.25) || standardAmps[standardAmps.length - 1];
+
+  const copperAmpacityA = {
+    1.5: 18, 2.5: 24, 4: 32, 6: 41, 10: 57, 16: 76,
+    25: 101, 35: 125, 50: 151, 70: 192, 95: 232,
+    120: 269, 150: 309, 185: 353, 240: 415
+  };
+
+  const sizeForAmpacity = (current) =>
+    standardSizes.find((size) => (copperAmpacityA[size] || 0) >= current) || null;
+
+  const largerSize = (a, b) => {
+    if (!a || !b) return a || b || null;
+    return standardSizes[Math.max(standardSizes.indexOf(a), standardSizes.indexOf(b))] || null;
+  };
+
+  // IEC feeder coordination: Ib <= In <= Iz for EACH parallel DC feeder.
+  const dcDropSizeMm2 = nextSize(calcSection(dcFeederCurrentA, dcDropV));
+  const dcAmpacitySizeMm2 = dcBreakerA ? sizeForAmpacity(dcBreakerA) : null;
+  const dcCableMm2 = largerSize(dcDropSizeMm2, dcAmpacitySizeMm2);
+  const dcCableAmpacityA = dcCableMm2 ? (copperAmpacityA[dcCableMm2] || 0) : 0;
+
+  const dcCableRangeExceeded =
+    dcFeederCurrentA > 0 &&
+    (!dcDropSizeMm2 || (dcBreakerA && !dcAmpacitySizeMm2));
+
+  const dcCoordinationPass = Boolean(
+    dcBreakerA &&
+    dcCableMm2 &&
+    dcFeederCurrentA <= dcBreakerA &&
+    dcBreakerA <= dcCableAmpacityA
+  );
+  const acCableMm2 = largerSize(nextSize(calcSection(acCurrentA, acDropV)), sizeForAmpacity(acBreakerA)) || standardSizes[standardSizes.length - 1];
+  const dcSelectionCurrentA = dcBreakerA || Math.ceil(dcBreakerRequiredA);
+  const batteryFuseSelection = protectionSelection(
+    chooseProtection(rawProtection.protections, { types: ["battery_fuse", "fuse"], currentA: dcSelectionCurrentA, voltageV: dcBusVoltage, batteryBus: true }),
+    1,
+    { currentA: dcSelectionCurrentA, operatingCurrentA: dcFeederCurrentA, voltageV: dcBusVoltage, designFactor: 1.25, deviceType: "BATTERY_FUSE", standard: "IEC 60269", poles: "2P", label: dcProtectionRangeExceeded ? `>${standardAmps[standardAmps.length - 1]} A Battery DC Fuse - ENGINEERING REVIEW` : `${dcSelectionCurrentA} A Battery DC Fuse` }
+  );
+  const batteryIsolatorSelection = protectionSelection(
+    chooseProtection(rawProtection.protections, { types: ["battery_isolator", "isolator", "load_disconnector"], currentA: dcSelectionCurrentA, voltageV: dcBusVoltage, batteryBus: true }),
+    1,
+    { currentA: dcSelectionCurrentA, operatingCurrentA: dcFeederCurrentA, voltageV: dcBusVoltage, designFactor: 1.25, deviceType: "DC_ISOLATOR", standard: "IEC 60947-3", poles: "2P", label: dcProtectionRangeExceeded ? `>${standardAmps[standardAmps.length - 1]} A Battery DC Isolator - ENGINEERING REVIEW` : `${dcSelectionCurrentA} A Battery DC Isolator` }
+  );
+  const batteryBreakerSelection = protectionSelection(
+    chooseProtection(rawProtection.protections, { types: ["dc_mccb", "dc_mcb"], currentA: dcSelectionCurrentA, voltageV: dcBusVoltage, batteryBus: true }),
+    1,
+    { currentA: dcSelectionCurrentA, operatingCurrentA: dcFeederCurrentA, voltageV: dcBusVoltage, designFactor: 1.25, deviceType: "DC_MCCB", standard: "IEC 60947-2", poles: "2P", label: dcProtectionRangeExceeded ? `>${standardAmps[standardAmps.length - 1]} A Battery DC Breaker - ENGINEERING REVIEW` : `${dcSelectionCurrentA} A Battery DC Breaker` }
+  );
+  const acBreakerSelection = protectionSelection(
+    chooseProtection(rawProtection.protections, { types: ["ac_breaker", "ac_mccb", "mcb", "mccb"], side: "ac", currentA: acBreakerA, voltageV: voltageAC }),
+    1,
+    { currentA: acBreakerA, operatingCurrentA: acCurrentA, voltageV: voltageAC, designFactor: 1, deviceType: "AC_BREAKER", standard: "IEC 60947-2", poles: phaseAC === "three" ? "3P/4P" : "1P+N/2P", label: `${acBreakerA <= 125 ? `MCB C${acBreakerA}` : `${acBreakerA} A MCCB`}` }
+  );
+  const acSpdSelection = protectionSelection(
+    chooseProtection(rawProtection.protections, { types: ["spd"], side: "ac" }),
+    1,
+    { voltageV: voltageAC, deviceType: "SPD", standard: "IEC 61643-11", poles: phaseAC === "three" ? "3P+N" : "1P+N", label: "SPD Type II" }
+  );
+  const residualProtectionBase = protectionSelection(
+      chooseProtection(rawProtection.protections, { types: ["rcbo", "rcd"], side: "ac", currentA: acBreakerA }),
+      1,
+      { currentA: acBreakerA, operatingCurrentA: acCurrentA, voltageV: voltageAC, deviceType: "RCBO", standard: "IEC 61009-1", poles: phaseAC === "three" ? "4P" : "1P+N/2P", label: `RCBO Type A | ${acBreakerA} A | 30 mA` }
+    );
+  const residualProtection = {
+    ...residualProtectionBase,
+    label: `RCBO Type A | ${acBreakerA} A | 30 mA`,
+    title: `${acBreakerA} A / 30mA RCBO Type A`,
+    sensitivityMA: 30,
+    rcdType: "A",
+  };
+  const changeoverSelection = protectionSelection(
+    chooseProtection(rawProtection.protections, { types: ["changeover_switch", "transfer_switch", "changeover"], side: "ac", currentA: changeoverA }),
+    1,
+    { currentA: changeoverA, operatingCurrentA: acCurrentA, voltageV: voltageAC, designFactor: 1.25, deviceType: "CHANGEOVER_SWITCH", standard: "IEC 60947-6-1", poles: phaseAC === "three" ? "4P" : "2P", label: `${changeoverA} A Changeover Switch` }
+  );
+  const protection = {
+    ...rawProtection,
+    source: "SHIL_EMERGENCY_PROTECTION_V25_7_CANONICAL",
+    effectiveLengthM,
+    lengthFactor: toNumber(lengthFactor, 1.15),
+    dcBreakerA: dcBreakerA || null,
+    dcBreakerRequiredA,
+    dcProtectionRangeExceeded,
+    dcCableRangeExceeded,
+    acBreakerA,
+    dcCableMm2,
+    acCableMm2,
+    acCurrentA,
+    batteryCurrentA: dcCurrentA,
+    dcFeederCount,
+    dcFeederCurrentA,
+    batteryVoltage: dcBusVoltage,
+    batteryMinDesignVoltageV: minBatteryVoltageV,
+    inverterRatedPowerW,
+    dcCableAmpacityA,
+    dcCoordinationPass,
+    acVoltage: voltageAC,
+    batteryDc: {
+      required: true,
+      designVoltageV: dcBusVoltage,
+      operatingCurrentA: dcFeederCurrentA,
+      totalOperatingCurrentA: dcCurrentA,
+      feederCount: dcFeederCount,
+      minDesignVoltageV: minBatteryVoltageV,
+      inverterRatedPowerW,
+      cableAmpacityA: dcCableAmpacityA,
+      coordinationPass: dcCoordinationPass,
+      currentA: dcSelectionCurrentA,
+      calculatedBreakerA: dcBreakerA || null,
+      requiredProtectionA: dcBreakerRequiredA,
+      rangeExceeded: dcProtectionRangeExceeded || dcCableRangeExceeded,
+      fuseA: dcSelectionCurrentA,
+      breakerA: dcSelectionCurrentA,
+      fuseSelection: batteryFuseSelection,
+      breakerSelection: batteryBreakerSelection,
+      isolatorSelection: batteryIsolatorSelection,
+      fuse: batteryFuseSelection?.label || `${dcSelectionCurrentA} A Battery DC Fuse`,
+      breaker: batteryBreakerSelection?.label || `${dcSelectionCurrentA} A Battery DC Breaker`,
+      isolator: batteryIsolatorSelection?.label || `${dcSelectionCurrentA} A Battery DC Isolator`,
+      cable: dcCableMm2 ? `${dcCableMm2} mmÂ² Battery/DC Cable` : "Battery/DC Cable - PARALLEL OR ENGINEERED FEEDER REQUIRED",
+      quantity: dcFeederCount,
+    },
+    ac: {
+      required: true,
+      designVoltageV: voltageAC,
+      operatingCurrentA: acCurrentA,
+      currentA: acBreakerA,
+      breakerA: acBreakerA,
+      breakerSelection: acBreakerSelection,
+      spdSelection: acSpdSelection,
+      residualProtection,
+      breakerType: acBreakerA <= 125 ? "MCB" : "MCCB",
+      breakerCurve: acBreakerA <= 125 ? "C" : null,
+      breaker: acBreakerSelection?.label || (acBreakerA <= 125 ? `MCB C${acBreakerA}` : `${acBreakerA} A MCCB`),
+      spd: acSpdSelection?.label || "SPD Type II",
+      spdSelection: { ...acSpdSelection, spdType: acSpdSelection?.spdType || "T2" },
+      residualProtection,
+      changeoverA,
+      changeover: changeoverSelection?.label || `${changeoverA} A Changeover Switch`,
+      changeoverSelection,
+      poles: phaseAC === "three" ? "3P/4P" : "1P+N/2P",
+      cable: `${acCableMm2} mmÂ² AC Cable`,
+      quantity: 1,
+    },
+    cables: {
+      battery: dcCableMm2 ? `${dcCableMm2} mmÂ² Battery/DC Cable` : "Battery/DC Cable - PARALLEL OR ENGINEERED FEEDER REQUIRED",
+      ac: `${acCableMm2} mmÂ² AC Cable`,
+    },
+    cableDetails: {
+      battery: { areaMm2: dcCableMm2, currentA: dcFeederCurrentA, totalCurrentA: dcCurrentA, feederCount: dcFeederCount, ampacityA: dcCableAmpacityA, breakerA: dcBreakerA, coordinationPass: dcCoordinationPass, minDesignVoltageV: minBatteryVoltageV, lengthM: effectiveLengthM, voltageDropPercent: 2, label: dcCableMm2 ? `${dcCableMm2} mmÂ² Battery/DC Cable` : "Battery/DC Cable - PARALLEL OR ENGINEERED FEEDER REQUIRED" },
+      ac: { areaMm2: acCableMm2, currentA: acCurrentA, lengthM: effectiveLengthM, voltageDropPercent: 3, label: `${acCableMm2} mmÂ² AC Cable` },
+    },
+    allowedDcDropPercent: 2,
+    allowedAcDropPercent: 3,
+  };
+  const baseValid = totalPowerW > 0 && batteryCount > 0 && Boolean(selectedInverter?.id) && Boolean(selectedBattery?.id);
+  const valid = baseValid && !dcProtectionRangeExceeded && !dcCableRangeExceeded && dcCoordinationPass;
+
+  return {
+    domain: "emergency",
+    calculationModel: "ups_like_battery_inverter",
+    sourceMethod: handoff?.source?.method || localStorage.getItem("shil:calculationMethod") || "equipment",
+    load: { totalPowerW, surgePowerW, voltageAC, phaseAC, totalCurrentA: acCurrentA, currentA: acCurrentA, electricalBasisSource: load.electricalBasisSource || "emergency_handoff" },
+    settings: { backupHours: requestedBackupHours, reserveFactor: toNumber(reserveFactor, 1.25), dodPercent: toNumber(dodPercent, 80), manualMode, cableLengthM: toNumber(cableLengthM, 10), lengthFactor: toNumber(lengthFactor, 1.15) },
+    inverter: { ...selectedInverter, designPowerW: Math.round(designPowerW), count: inverterCount, installedPowerW: Math.round(installedInverterPowerW), batteryArchitecture: selectedInverter?.batteryArchitecture || (dcBusVoltage <= 60 ? "LV" : "HV") },
+    battery: { ...selectedBattery, unitEnergyKWh: unitBatteryKWh, count: batteryCount, seriesCount: batterySeriesCount, parallelCount: batteryParallelCount, energyParallelCount, currentParallelCount, unitMaxDischargeA, bankCapacityAh, grossBankEnergyKWh, packVoltage: Math.round(toNumber(selectedBattery?.nominalVoltage, 0) * Math.max(1, batterySeriesCount) * 10) / 10, requiredRawKWh: rawBatteryKWh, usableEnergyKWh: actualEnergyKWh, runtimeHours, systemEfficiency },
+    emergencyBanks: { inverterCount: emergencyInverters.length, batteryCount: emergencyBatteries.length, protectionCount: protection.protections.length, cableCount: protection.cables.length },
+    electrical: { dcBusVoltage, dcCurrentA, inverterEfficiency, batteryEfficiency },
+    protection,
+    valid,
+    warnings: [
+      ...(!baseValid ? ["Ø¨Ø±Ø§ÛŒ Ù¾ÛŒÚ©Ø±Ø¨Ù†Ø¯ÛŒ Ø¨Ø±Ù‚ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ Ø¨Ø§ÛŒØ¯ Ø­Ø¯Ø§Ù‚Ù„ ØªÙˆØ§Ù† Ù…ØµØ±ÙÛŒ Ù…Ø¹ØªØ¨Ø± Ø«Ø¨Øª Ø´Ø¯Ù‡ Ø¨Ø§Ø´Ø¯."] : []),
+      ...(dcProtectionRangeExceeded ? [`Ø¬Ø±ÛŒØ§Ù† Ø­ÙØ§Ø¸Øª DC Ù…ÙˆØ±Ø¯Ù†ÛŒØ§Ø² (${Math.round(dcBreakerRequiredA)} A) Ø§Ø² Ù…Ø­Ø¯ÙˆØ¯Ù‡ Ø±ÛŒØªÛŒÙ†Ú¯ ØªÚ©â€ŒÚ©Ù„ÛŒØ¯ Ø¯Ø§Ø®Ù„ÛŒ Ù…ÙˆØªÙˆØ± Ø¨ÛŒØ´ØªØ± Ø§Ø³ØªØ› Ø·Ø±Ø§Ø­ÛŒ Ú©Ù„ÛŒØ¯/ÙÛŒØ¯Ø± Ù…ÙˆØ§Ø²ÛŒ Ù„Ø§Ø²Ù… Ø§Ø³Øª.`] : []),
+      ...(dcCableRangeExceeded ? ["Ø³Ø·Ø­ Ù…Ù‚Ø·Ø¹ Ù…ÙˆØ±Ø¯Ù†ÛŒØ§Ø² Ø¨Ø§Ø³ Ø¨Ø§ØªØ±ÛŒ Ø§Ø² Ù…Ø­Ø¯ÙˆØ¯Ù‡ Ú©Ø§Ø¨Ù„ ØªÚ©â€ŒØ±Ø´ØªÙ‡ Ø¯Ø§Ø®Ù„ÛŒ Ù…ÙˆØªÙˆØ± Ø¨ÛŒØ´ØªØ± Ø§Ø³ØªØ› Ø·Ø±Ø§Ø­ÛŒ Ú©Ø§Ø¨Ù„ Ù…ÙˆØ§Ø²ÛŒ ÛŒØ§ Ø´ÛŒÙ†Ù‡ Ù…Ù‡Ù†Ø¯Ø³ÛŒ Ù„Ø§Ø²Ù… Ø§Ø³Øª."] : []),
+      ...(!dcCoordinationPass && !dcProtectionRangeExceeded && !dcCableRangeExceeded ? ["Ù‡Ù…Ø§Ù‡Ù†Ú¯ÛŒ Ib â‰¤ In â‰¤ Iz Ø¨Ø±Ø§ÛŒ Ù…Ø¯Ø§Ø± Ø¨Ø§ØªØ±ÛŒ Ø¨Ø±Ù‚Ø±Ø§Ø± Ù†Ø´Ø¯Ù‡ Ø§Ø³Øª."] : []),
+    ],
+    confirmedAt: null,
+  };
+}
+
+function SettingsGrid({ rows = [], editable = false }) {
+  return (
+    <div className="shil-summary-kv-grid">
+      {rows.filter(Boolean).map(([label, value, control], index) => (
+        <article className={`shil-summary-kv-card${editable ? " is-editable" : ""}`} key={`${label}-${index}`}>
+          <span className="shil-summary-kv-label">{label}</span>
+          {control || <strong className="shil-summary-kv-value" dir="ltr" style={{ unicodeBidi: "isolate" }}>{value || "-"}</strong>}
+        </article>
+      ))}
+    </div>
+  );
+}
+
+function SettingsSection({ title, meta, children }) {
+  return (
+    <section className="shil-summary-section" aria-label={title}>
+      <header className="shil-summary-section-title">
+        <h2>{title}</h2>
+        {meta ? <span>{meta}</span> : null}
+      </header>
+      {children}
+    </section>
+  );
+}
+
+function BankSelect({ title, value, onChange, items, selectedItem, smartMeta, detailRows = [], kind = "equipment" }) {
+  const [open, setOpen] = useState(false);
+  const activeItem = selectedItem || items.find((item) => item.id === value) || null;
+  return (
+    <SettingsSection title={title} meta={kind === "battery" ? "Ø¨Ø§Ù†Ú© Ø¨Ø§ØªØ±ÛŒ" : "Ø§ÛŒÙ†ÙˆØ±ØªØ±"}>
+      <div className="shil-summary-data" data-keep-card="true">
+        <SettingsGrid rows={[
+          [kind === "battery" ? "Ù…Ø¯Ù„ Ø¨Ø§ØªØ±ÛŒ Ù¾ÛŒØ´Ù†Ù‡Ø§Ø¯ÛŒ" : "Ù…Ø¯Ù„ Ø§ÛŒÙ†ÙˆØ±ØªØ± Ù¾ÛŒØ´Ù†Ù‡Ø§Ø¯ÛŒ", optionTitle(activeItem)],
+          [kind === "battery" ? "ØªØ¹Ø¯Ø§Ø¯ Ú©Ù„" : "ØªØ¹Ø¯Ø§Ø¯ Ø§ÛŒÙ†ÙˆØ±ØªØ±", kind === "battery" ? `${faNumber(activeItem?.count || 0)} Ø¹Ø¯Ø¯` : `${faNumber(activeItem?.count || 1)} Ø¹Ø¯Ø¯`],
+          ["ÙˆØ¶Ø¹ÛŒØª Ø§Ù†ØªØ®Ø§Ø¨", "Ø§Ù†ØªØ®Ø§Ø¨ Ù‡ÙˆØ´Ù…Ù†Ø¯"],
+          ["Ø®Ù„Ø§ØµÙ‡ ÙÙ†ÛŒ", smartMeta || "-"],
+        ]} />
+        <button type="button" className="shil-summary-accordion-chip" aria-expanded={open} onClick={() => setOpen((v) => !v)}>
+          {open ? "â–² Ø¨Ø³ØªÙ† Ø§Ù†ØªØ®Ø§Ø¨ Ùˆ Ø¬Ø²Ø¦ÛŒØ§Øª" : "â–¼ ØªØºÛŒÛŒØ± Ø§Ù†ØªØ®Ø§Ø¨ Ùˆ Ù…Ø´Ø§Ù‡Ø¯Ù‡ Ø¬Ø²Ø¦ÛŒØ§Øª"}
+        </button>
+        <div className={open ? "shil-summary-accordion open" : "shil-summary-accordion"}>
+          <div className="shil-settings-select-wrap">
+            <label>
+              <span>Ø§Ù†ØªØ®Ø§Ø¨ Ø¯Ø³ØªÛŒ Ø§Ø² Ø¨Ø§Ù†Ú© ØªØ¬Ù‡ÛŒØ²Ø§Øª</span>
+              <select value={value || activeItem?.id || ""} onChange={(e) => onChange(e.target.value)}>
+                {items.map((item) => <option key={item.id} value={item.id}>{optionTitle(item)}</option>)}
+              </select>
+            </label>
+          </div>
+          <SettingsGrid rows={detailRows} />
+        </div>
+      </div>
+    </SettingsSection>
+  );
+}
+
+export default function EmergencySystemSettings() {
+  const navigate = useNavigate();
+  const handoff = useMemo(() => readDraft("shil:systemSetupHandoff", null), []);
+  const adminDefaults = readAdminDefaults();
+  const defaults = {
+    requiredEmergencyHours: adminDefaults.emergencyRequiredHours || 3,
+    safetyFactor: adminDefaults.emergencySafetyFactor || 1.25,
+    cableLengthM: adminDefaults.emergencyCableLengthM || 10,
+    lengthFactor: adminDefaults.emergencyCableLengthFactor || 1.15,
+    ...readDraft("shil:emergencyPowerSettings", {}),
+  };
+  const banks = useMemo(() => ({
+    inverters: getEnabledEquipment("inverters"),
+    batteries: getEnabledEquipment("batteries"),
+    protections: getEnabledEquipment("protections"),
+    cables: getEnabledEquipment("cables"),
+  }), []);
+
+  const inputDraft = readDraft("shil:calculationInputsDraft", readDraft("shil:calculationInputDraft", {}));
+  const specificHandoff = readDraft(`shil:systemSetupHandoff:emergency:${handoff?.source?.method || localStorage.getItem("shil:calculationMethod") || "equipment"}`, null);
+  const defaultHours = clampEmergencyBackupHours(
+    toNumber(specificHandoff?.autonomy?.inputHours, 0)
+      || toNumber(specificHandoff?.autonomy?.hours, 0)
+      || toNumber(handoff?.autonomy?.inputHours, 0)
+      || toNumber(handoff?.autonomy?.hours, 0)
+      || toNumber(inputDraft?.autonomyHours, 0)
+      || EMERGENCY_DEFAULT_BACKUP_HOURS
+  );
+  const [backupHours, setBackupHours] = useState(defaultHours);
+  const [reserveFactor, setReserveFactor] = useState(defaults.safetyFactor || 1.25);
+  const [dodPercent, setDodPercent] = useState(toNumber(adminDefaults.emergencyDefaultDodPercent, 80));
+  const [cableLengthM, setCableLengthM] = useState(toNumber(defaults.cableLengthM, 10));
+  const [lengthFactor, setLengthFactor] = useState(toNumber(defaults.lengthFactor, 1.15));
+  const [manualMode, setManualMode] = useState(false);
+  const [inverterId, setInverterId] = useState("");
+  const [batteryId, setBatteryId] = useState("");
+  const [liveSaved, setLiveSaved] = useState(false);
+  const [confirmError, setConfirmError] = useState("");
+
+  const design = useMemo(() => buildEmergencyDesign({ handoff, backupHours, reserveFactor, dodPercent, inverterId, batteryId, manualMode, banks, cableLengthM, lengthFactor }), [handoff, backupHours, reserveFactor, dodPercent, inverterId, batteryId, manualMode, banks, cableLengthM, lengthFactor]);
+  const inverterOptions = useMemo(() => filterEmergencyInverters(banks.inverters, design.inverter.designPowerW || design.load.surgePowerW, { phaseAC: design.load.phaseAC, voltageAC: design.load.voltageAC }), [banks.inverters, design.inverter.designPowerW, design.load.surgePowerW]);
+  const batteryOptions = useMemo(() => filterEmergencyBatteries(banks.batteries, design.inverter, design.battery.requiredRawKWh), [banks.batteries, design.inverter, design.battery.requiredRawKWh]);
+  const emergencyInverterDetailRows = [
+    ["ØªÙˆØ§Ù† Ø·Ø±Ø§Ø­ÛŒ", `${faNumber(design.inverter.designPowerW)} W`],
+    ["ØªÙˆØ§Ù† Ù†Ø§Ù…ÛŒ", `${faNumber(design.inverter.ratedPowerW)} W`],
+    ["Ø¨Ø§Ø³ Ø¨Ø§ØªØ±ÛŒ DC", `${faNumber(design.inverter.dcVoltage || design.inverter.batteryVoltage)} V`],
+    ["MPPT", `${faNumber(design.inverter.mpptCount || 1)} ÙˆØ±ÙˆØ¯ÛŒ`],
+    ["Ø­Ø¯Ø§Ú©Ø«Ø± ØªÙˆØ§Ù† PV", design.inverter.maxPvPowerW ? `${faNumber(design.inverter.maxPvPowerW)} W` : "ÙˆØ§Ø¨Ø³ØªÙ‡ Ø¨Ù‡ Ù…Ø³ÛŒØ± PV"],
+    ["Ù‚Ø§Ø¨Ù„ÛŒØª Ù¾Ø§Ø±Ø§Ù„Ù„", design.inverter.parallelCapable ? "Ø¯Ø§Ø±Ø¯" : "Ù†Ø¯Ø§Ø±Ø¯"],
+  ];
+
+  const emergencyBatteryDetailRows = [
+    ["ÙˆÙ„ØªØ§Ú˜ Ø¨Ø§ØªØ±ÛŒ", `${faNumber(design.battery.nominalVoltage, 1)} V`],
+    ["Ø¸Ø±ÙÛŒØª", `${faNumber(design.battery.capacityAh)} AH`],
+    ["Ø§Ù†Ø±Ú˜ÛŒ Ù‡Ø± Ø¨Ø§ØªØ±ÛŒ", `${enNumber(design.battery.unitEnergyKWh, 2)} KWH`],
+    ["Ø¢Ø±Ø§ÛŒØ´ Ø³Ø±ÛŒ/Ù…ÙˆØ§Ø²ÛŒ", `${faNumber(design.battery.seriesCount || 0)} Ø³Ø±ÛŒ Ã— ${faNumber(design.battery.parallelCount || 0)} Ù…ÙˆØ§Ø²ÛŒ`],
+    ["ÙˆÙ„ØªØ§Ú˜ Ù¾Ú©", `${faNumber(design.battery.packVoltage, 1)} V`],
+    ["ØªØ¹Ø¯Ø§Ø¯ Ú©Ù„", `${faNumber(design.battery.count)} Ø¹Ø¯Ø¯`],
+    ["Ø¸Ø±ÙÛŒØª Ø¨Ø§Ù†Ú©", `${faNumber(design.battery.bankCapacityAh)} AH`],
+    ["Ø§Ù†Ø±Ú˜ÛŒ Ø®Ø§Ù… Ø¨Ø§Ù†Ú©", `${enNumber(design.battery.grossBankEnergyKWh, 2)} KWH`],
+    ["Ø²Ù…Ø§Ù† Ù¾Ø´ØªÛŒØ¨Ø§Ù†ÛŒ", `${enNumber(design.battery.runtimeHours, 2)} Ø³Ø§Ø¹Øª`],
+  ];
+
+  useEffect(() => {
+    if (manualMode) return;
+    setInverterId(design.inverter.id || "");
+    setBatteryId(design.battery.id || "");
+  }, [manualMode, design.inverter.id, design.battery.id]);
+
+  useEffect(() => {
+    safeLocalSetItem("shil:emergencySystemDesign:live", JSON.stringify(design));
+    safeLocalSetItem("shil:systemSettingsDraft:live", JSON.stringify({ domain: "emergency", design, sourceHandoff: handoff }));
+    setLiveSaved(true);
+    const timer = setTimeout(() => setLiveSaved(false), 900);
+    return () => clearTimeout(timer);
+  }, [design, handoff]);
+
+  const confirm = () => {
+    if (!design.valid) {
+      const reason = Array.isArray(design.warnings) && design.warnings.length
+        ? design.warnings.join(" | ")
+        : "????? ???? ????? ??? ???? ???? ????? ?? ?????. ?????? ???????? ????? ? ??????? ????? DC ?? ????? ????.";
+      setConfirmError(reason);
+      return;
+    }
+    setConfirmError("");
+    const finalDesign = { ...design, confirmedAt: new Date().toISOString() };
+    approveProjectStep("system");
+    safeLocalSetItem("shil:emergencySystemDesign", JSON.stringify(finalDesign));
+    safeLocalRemoveItem("shil:solarSystemDesign");
+    safeLocalRemoveItem("shil:solarPanelPowerInput");
+    safeLocalRemoveItem("shil:solarPanelPowerPreview");
+    safeLocalSetItem("shil:systemSettingsDraft", JSON.stringify({ domain: "emergency", displayName: "??? ??????? ?? ??????? ? ?????", calculationModel: "ups_like_battery_inverter", design: finalDesign, sourceHandoff: handoff }));
+    navigate("/new-project/summary/emergency");
+  };
+
+  return (
+    <EngineeringPageShell
+      title="ØªÙ†Ø¸ÛŒÙ…Ø§Øª Ø¨Ø±Ù‚ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ"
+      className="shil-summary-clear-engineering"
+    >
+      <style>{`
+        .shil-settings-summary-page{
+          direction:rtl!important;width:100%!important;margin:0!important;padding:8px 0 18px!important;
+          display:flex!important;flex-direction:column!important;gap:18px!important;background:transparent!important;
+          background-image:none!important;border:0!important;box-shadow:none!important;min-height:0!important;
+        }
+        .shil-settings-summary-page::before,.shil-settings-summary-page::after{content:none!important;display:none!important}
+        .shil-settings-summary-page .shil-summary-section{
+          width:100%!important;margin:0!important;padding:0!important;background:transparent!important;background-image:none!important;
+          border:0!important;border-radius:0!important;box-shadow:none!important;backdrop-filter:none!important;
+        }
+        .shil-settings-summary-page .shil-summary-section + .shil-summary-section{
+          padding-top:16px!important;border-top:1px solid rgba(15,23,42,.12)!important;
+        }
+        .shil-settings-summary-page .shil-summary-section-title{
+          display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;min-height:0!important;
+          margin:0 0 9px!important;padding:0!important;background:transparent!important;background-image:none!important;
+          border:0!important;border-radius:0!important;box-shadow:none!important;
+        }
+        .shil-settings-summary-page .shil-summary-section-title h2{
+          margin:0!important;color:#111827!important;font-size:14px!important;font-weight:900!important;line-height:1.5!important;
+        }
+        .shil-settings-summary-page .shil-summary-section-title span{
+          margin:0!important;padding:0!important;color:#64748b!important;font-size:11px!important;font-weight:700!important;
+          line-height:1.4!important;white-space:nowrap!important;background:transparent!important;border:0!important;
+        }
+        .shil-settings-summary-page .shil-summary-data{
+          width:100%!important;margin:0!important;padding:0!important;background:transparent!important;border:0!important;
+          border-radius:0!important;box-shadow:none!important;
+        }
+        .shil-settings-summary-page .shil-summary-kv-grid{
+          display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:6px!important;width:100%!important;
+          margin:0!important;padding:0!important;
+        }
+        .shil-settings-summary-page .shil-summary-kv-card{
+          min-width:0!important;min-height:56px!important;margin:0!important;padding:7px 8px!important;gap:4px!important;
+          display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
+          text-align:center!important;color:#0f172a!important;background:rgba(255,255,255,.95)!important;background-image:none!important;
+          border:1px solid #c8dceb!important;border-radius:11px!important;box-shadow:none!important;overflow:hidden!important;
+        }
+        .shil-settings-summary-page .shil-summary-kv-label{
+          display:block!important;max-width:100%!important;margin:0!important;color:#334155!important;font-size:11px!important;
+          font-weight:800!important;line-height:1.35!important;overflow-wrap:anywhere!important;
+        }
+        .shil-settings-summary-page .shil-summary-kv-value{
+          display:block!important;max-width:100%!important;margin:0!important;color:#0f172a!important;font-size:12px!important;
+          font-weight:900!important;line-height:1.35!important;overflow-wrap:anywhere!important;word-break:break-word!important;
+        }
+        .shil-settings-summary-page .shil-summary-kv-card input{
+          width:100%!important;min-width:0!important;min-height:34px!important;height:34px!important;margin:0!important;padding:4px 7px!important;
+          text-align:center!important;color:#0f172a!important;-webkit-text-fill-color:#0f172a!important;font:900 12px/1.35 inherit!important;
+          background:#fff!important;background-image:none!important;border:1px solid #cbd5e1!important;border-radius:9px!important;
+          box-shadow:none!important;outline:none!important;
+        }
+        .shil-settings-summary-page .shil-summary-kv-card input:focus{border-color:#7c6ce7!important}
+        .shil-settings-summary-page .shil-summary-accordion-chip{
+          display:block!important;min-height:34px!important;height:auto!important;margin:8px auto 0!important;padding:5px 11px!important;
+          border:1px solid #cbd5e1!important;border-radius:8px!important;background:#fff!important;background-image:none!important;
+          color:#334155!important;font:800 11px/1.4 inherit!important;cursor:pointer!important;box-shadow:none!important;
+        }
+        .shil-settings-summary-page .shil-summary-accordion{max-height:0!important;opacity:0!important;overflow:hidden!important;margin-top:0!important;transition:max-height 220ms ease,opacity 220ms ease,margin-top 220ms ease!important}
+        .shil-settings-summary-page .shil-summary-accordion.open{max-height:1400px!important;opacity:1!important;overflow:visible!important;margin-top:8px!important}
+        .shil-settings-select-wrap{margin:0 0 8px!important}
+        .shil-settings-select-wrap label{display:block!important;margin:0!important;color:#334155!important;font-size:11px!important;font-weight:800!important}
+        .shil-settings-select-wrap label span{display:block!important;margin:0 0 5px!important;font-size:11px!important}
+        .shil-settings-select-wrap select{width:100%!important;min-height:36px!important;height:36px!important;padding:5px 8px!important;border:1px solid #cbd5e1!important;border-radius:9px!important;background:#fff!important;color:#0f172a!important;font:800 12px/1.35 inherit!important}
+        .shil-settings-summary-page .shil-settings-mode-row{display:flex!important;justify-content:center!important;margin-top:8px!important}
+        .shil-settings-summary-page .shil-soft-button{min-height:34px!important;height:auto!important;padding:5px 11px!important;border-radius:8px!important;font-size:11px!important;box-shadow:none!important}
+        .shil-settings-summary-page .shil-muted-line{margin:7px 0 0!important;text-align:center!important;color:#64748b!important;font-size:11px!important;line-height:1.55!important}
+        .shil-settings-summary-page .shil-env-content-confirm-slot{position:static!important;display:flex!important;justify-content:center!important;width:100%!important;margin:0!important;padding:2px 0 0!important;background:transparent!important;border:0!important;box-shadow:none!important}
+        .shil-settings-summary-page .shil-env-content-confirm-button{position:static!important;width:max-content!important;min-width:0!important;margin:0!important;padding-inline:14px!important;white-space:nowrap!important}
+        @media(max-width:700px){
+          .shil-settings-summary-page{gap:15px!important;padding-top:4px!important}
+          .shil-settings-summary-page .shil-summary-section + .shil-summary-section{padding-top:13px!important}
+          .shil-settings-summary-page .shil-summary-section-title{align-items:flex-start!important;gap:6px!important}
+          .shil-settings-summary-page .shil-summary-section-title h2{font-size:13px!important}
+          .shil-settings-summary-page .shil-summary-section-title span{font-size:10px!important}
+          .shil-settings-summary-page .shil-summary-kv-grid{gap:6px!important}
+          .shil-settings-summary-page .shil-summary-kv-card{min-height:56px!important;padding:7px 8px!important;border-radius:11px!important}
+          .shil-settings-summary-page .shil-summary-kv-label{font-size:10.5px!important}
+          .shil-settings-summary-page .shil-summary-kv-value,.shil-settings-summary-page .shil-summary-kv-card input{font-size:12px!important}
+        }
+      `}</style>
+
+      <div id="shil-emergency-settings-root" className="shil-page-scroll shil-settings-summary-page shil-emergency-parity-page">
+        <SettingsSection title="Ù¾Ø§Ø±Ø§Ù…ØªØ±Ù‡Ø§ÛŒ Ø·Ø±Ø§Ø­ÛŒ" meta={manualMode ? "ÙˆØ±ÙˆØ¯ Ø¯Ø³ØªÛŒ ØªØ¬Ù‡ÛŒØ²Ø§Øª ÙØ¹Ø§Ù„" : "Ø§Ù†ØªØ®Ø§Ø¨ Ù‡ÙˆØ´Ù…Ù†Ø¯ ÙØ¹Ø§Ù„"}>
+          <div className="shil-summary-data">
+            <SettingsGrid editable rows={[
+              ["Ø³Ø§Ø¹Øª Ù…Ø¨Ù†Ø§ÛŒ ØªØ¬Ù‡ÛŒØ²Ø§Øª", `${EMERGENCY_BASE_LOAD_HOURS} Ø³Ø§Ø¹Øª`, null],
+              ["Ø²Ù…Ø§Ù† Ù¾Ø´ØªÛŒØ¨Ø§Ù†ÛŒ Ù‡Ø¯Ù", null, <input key="hours" value={backupHours} readOnly aria-readonly="true" />],
+              ["Ø¶Ø±ÛŒØ¨ Ø§Ø·Ù…ÛŒÙ†Ø§Ù† Ø§ÛŒÙ†ÙˆØ±ØªØ±", null, <input key="reserve" value={reserveFactor} inputMode="decimal" onChange={(e) => setReserveFactor(e.target.value)} />],
+              ["Ø¹Ù…Ù‚ Ø¯Ø´Ø§Ø±Ú˜ Ù…Ø¬Ø§Ø² %", null, <input key="dod" value={dodPercent} inputMode="decimal" onChange={(e) => setDodPercent(e.target.value)} />],
+              ["Ø·ÙˆÙ„ ÛŒÚ©â€ŒØ·Ø±ÙÙ‡ Ú©Ø§Ø¨Ù„ (m)", null, <input key="length" value={cableLengthM} inputMode="decimal" onChange={(e) => setCableLengthM(e.target.value)} />],
+              ["Ø¶Ø±ÛŒØ¨ Ø§ÙØ²Ø§ÛŒØ´ Ù…ØªØ±Ø§Ú˜", null, <input key="factor" value={lengthFactor} inputMode="decimal" onChange={(e) => setLengthFactor(e.target.value)} />],
+              ["Ø±ÙˆØ´ ÙˆØ±ÙˆØ¯ÛŒ", handoff?.source?.methodTitle || design.sourceMethod],
+            ]} />
+          </div>
+        </SettingsSection>
+
+        <SettingsSection title="Ù†ØªØ§ÛŒØ¬ Ø§ØµÙ„ÛŒ Ø·Ø±Ø§Ø­ÛŒ" meta="Ù…Ø­Ø§Ø³Ø¨Ù‡ Ø²Ù†Ø¯Ù‡">
+          <div className="shil-summary-data">
+            <SettingsGrid rows={[
+              ["ØªÙˆØ§Ù† Ø¨Ø§Ø± Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ", `${faNumber(design.load.totalPowerW)} W`],
+              ["Ù¾ÛŒÚ© Ø±Ø§Ù‡â€ŒØ§Ù†Ø¯Ø§Ø²ÛŒ", `${faNumber(design.load.surgePowerW)} W`],
+              ["ØªÙˆØ§Ù† Ø·Ø±Ø§Ø­ÛŒ Ø§ÛŒÙ†ÙˆØ±ØªØ±", `${faNumber(design.inverter.designPowerW)} W`],
+              ["Ø§Ù†Ø±Ú˜ÛŒ Ø®Ø§Ù… Ø¨Ø§ØªØ±ÛŒ Ù„Ø§Ø²Ù…", `${enNumber(design.battery.requiredRawKWh, 2)} KWH`],
+              ["Ø¸Ø±ÙÛŒØª Ù‚Ø§Ø¨Ù„ Ø§Ø³ØªÙØ§Ø¯Ù‡", `${enNumber(design.battery.usableEnergyKWh, 2)} KWH`],
+              ["Ù¾Ø´ØªÛŒØ¨Ø§Ù†ÛŒ ÙˆØ§Ù‚Ø¹ÛŒ", `${enNumber(design.battery.runtimeHours, 2)} Ø³Ø§Ø¹Øª`],
+            ]} />
+            <div className="shil-settings-mode-row">
+              <button type="button" className={manualMode ? "shil-soft-button active" : "shil-soft-button"} onClick={() => setManualMode((v) => !v)}>
+                {manualMode ? "Ø­Ø§Ù„Øª Ø¯Ø³ØªÛŒ ÙØ¹Ø§Ù„" : "ÙˆØ±ÙˆØ¯ Ø¯Ø³ØªÛŒ ØªØ¬Ù‡ÛŒØ²Ø§Øª"}
+              </button>
+            </div>
+            <p className="shil-muted-line">{liveSaved ? "Ø°Ø®ÛŒØ±Ù‡ Ø²Ù†Ø¯Ù‡ Ø§Ù†Ø¬Ø§Ù… Ø´Ø¯." : "Ø§Ù†ØªØ®Ø§Ø¨â€ŒÙ‡Ø§ Ø¨Ø±Ø§Ø³Ø§Ø³ ØªÙˆØ§Ù†ØŒ Ù¾ÛŒÚ© Ùˆ Ø²Ù…Ø§Ù† Ù¾Ø´ØªÛŒØ¨Ø§Ù†ÛŒ Ø¨Ù‡â€ŒØ±ÙˆØ²Ø±Ø³Ø§Ù†ÛŒ Ù…ÛŒâ€ŒØ´ÙˆÙ†Ø¯."}</p>
+          </div>
+        </SettingsSection>
+
+        <BankSelect kind="inverter" title="Ø§ÛŒÙ†ÙˆØ±ØªØ± Ø¨Ø±Ù‚ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ" value={inverterId} onChange={(v) => { setManualMode(true); setInverterId(v); }} items={inverterOptions} selectedItem={design.inverter} smartMeta={`${faNumber(design.inverter.ratedPowerW)} W / DC ${faNumber(design.inverter.dcVoltage || design.inverter.batteryVoltage)} V`} detailRows={emergencyInverterDetailRows} />
+
+        <BankSelect kind="battery" title="Ø¨Ø§Ù†Ú© Ø°Ø®ÛŒØ±Ù‡â€ŒØ³Ø§Ø² Ø§Ù†Ø±Ú˜ÛŒ" value={batteryId} onChange={(v) => { setManualMode(true); setBatteryId(v); }} items={batteryOptions} selectedItem={design.battery} smartMeta={`${faNumber(design.battery.seriesCount || 0)} Ø³Ø±ÛŒ Ã— ${faNumber(design.battery.parallelCount || 0)} Ù…ÙˆØ§Ø²ÛŒ`} detailRows={emergencyBatteryDetailRows} />
+
+        <SettingsSection title="Ø­ÙØ§Ø¸Øª Ùˆ Ú©Ø§Ø¨Ù„ Ù¾ÛŒØ´Ù†Ù‡Ø§Ø¯ÛŒ" meta="Ø¨Ø± Ù…Ø¨Ù†Ø§ÛŒ Ù…Ø­Ø§Ø³Ø¨Ø§Øª">
+          <div className="shil-summary-data">
+            <SettingsGrid rows={[
+              ["Ú©Ù„ÛŒØ¯ ÛŒØ§ ÙÛŒÙˆØ² DC Ø¨Ø§ØªØ±ÛŒ", `${faNumber(design.protection.dcBreakerA)} A DC`],
+              ["Ú©Ù„ÛŒØ¯ Ø®Ø±ÙˆØ¬ÛŒ AC", `${faNumber(design.protection.acBreakerA)} A AC`],
+              ["Ú©Ø§Ø¨Ù„ DC Ø¨Ø§ØªØ±ÛŒ", `Ù…Ø³ÛŒ ${faNumber(design.protection.dcCableMm2, 1)} mmÂ²`],
+              ["Ú©Ø§Ø¨Ù„ Ø®Ø±ÙˆØ¬ÛŒ AC", `Ù…Ø³ÛŒ ${faNumber(design.protection.acCableMm2, 1)} mmÂ²`],
+              ["Ø·ÙˆÙ„ Ù…Ø¤Ø«Ø± Ù…Ø­Ø§Ø³Ø¨Ø§Øª", `${faNumber(design.protection.effectiveLengthM, 1)} m`],
+              ["Ø§ÙØª ÙˆÙ„ØªØ§Ú˜ Ù…Ø¬Ø§Ø²", "DC 2% / AC 3%"],
+            ]} />
+          </div>
+        </SettingsSection>
+
+        <ShilWarningOverlay messages={design.warnings} inline />
+
+        {confirmError ? <div role="alert" style={{ margin: "12px 0", padding: "12px 14px", borderRadius: 12, background: "rgba(180, 40, 40, 0.10)", lineHeight: 1.9 }}>
+          <strong>????? ????? ????? ???? ?????:</strong> {confirmError}
+        </div> : null}
+
+        <div className="shil-env-content-confirm-slot" aria-label="ØªØ£ÛŒÛŒØ¯ ØªÙ†Ø¸ÛŒÙ…Ø§Øª Ø¨Ø±Ù‚ Ø§Ø¶Ø·Ø±Ø§Ø±ÛŒ">
+          <ShilPrimaryButton className="shil-env-content-confirm-button" onClick={confirm} label={design.valid ? "?????" : "????? ???? ?????"} />
+        </div>
+      </div>
+    </EngineeringPageShell>
+  );
+}
+

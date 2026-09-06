@@ -8,6 +8,7 @@ import { analyzeEnvironmentForEngineering, analyzeInstallationArrays, estimateRe
 import { approveProjectStep } from "../../workflow/projectWorkflow.js";
 import { clearScenarioFlow, isScenarioFlowFor } from "../../workflow/flowIsolation.js";
 import { readAdminDefaults } from "../../admin/adminStore.js";
+import { readLocalOrSessionItem, safeLocalSetItem, safeLocalRemoveItem } from "../../services/storageQuotaGuard.js";
 
 const directionOptions = [
   { key: "north", label: "شمال", deg: 0 },
@@ -172,20 +173,20 @@ export default function Environment() {
     };
   }, []);
 const navigate = useNavigate();
-  const { domain = localStorage.getItem("shil:scenarioDomain") || "solar" } = useParams();
+  const { domain = readLocalOrSessionItem("shil:scenarioDomain") || "solar" } = useParams();
   const adminDefaults = useMemo(() => readAdminDefaults(), []);
   const configuredCity = findIranCityByName(adminDefaults.solarDefaultCity) || isfahan || null;
 
   const environmentDraftKey = useMemo(() => {
-    const projectKey = localStorage.getItem("shil:activeProjectKey") || "active-draft";
+    const projectKey = readLocalOrSessionItem("shil:activeProjectKey") || "active-draft";
     return `shil:environment-state:v3:${projectKey}:${domain}`;
   }, [domain]);
 
   const persistedEnvironment = useMemo(() => {
     try {
       const raw = JSON.parse(
-        localStorage.getItem(environmentDraftKey) ||
-        localStorage.getItem("shil:environmentDraft") ||
+        readLocalOrSessionItem(environmentDraftKey) ||
+        readLocalOrSessionItem("shil:environmentDraft") ||
         "null"
       ) || {};
 
@@ -224,8 +225,8 @@ const navigate = useNavigate();
   const [compassPreview, setCompassPreview] = useState("");
   const [sitePreviews, setSitePreviews] = useState([]);
   const [activeSitePreview, setActiveSitePreview] = useState("");
-  const [savedSiteImageCount, setSavedSiteImageCount] = useState(() => Number(localStorage.getItem("shil:environmentSiteImageCount") || 0));
-  const [savedCompassImage, setSavedCompassImage] = useState(() => localStorage.getItem("shil:environmentCompassSaved") === "true");
+  const [savedSiteImageCount, setSavedSiteImageCount] = useState(() => Number(readLocalOrSessionItem("shil:environmentSiteImageCount") || 0));
+  const [savedCompassImage, setSavedCompassImage] = useState(() => readLocalOrSessionItem("shil:environmentCompassSaved") === "true");
   const [compassUploadChoice, setCompassUploadChoice] = useState("ask");
   const [gpsStatus, setGpsStatus] = useState("");
   const [validationMessage, setValidationMessage] = useState("");
@@ -325,8 +326,8 @@ const navigate = useNavigate();
       installTiltDeg, installAzimuthDeg, installationMode, installationArrays, directionSlots, manualOverride,
       savedAt: new Date().toISOString(),
     };
-    localStorage.setItem(environmentDraftKey, JSON.stringify(payload));
-    localStorage.setItem("shil:environmentDraft", JSON.stringify(payload));
+    safeLocalSetItem(environmentDraftKey, JSON.stringify(payload));
+    safeLocalSetItem("shil:environmentDraft", JSON.stringify(payload));
   }, [domain, city, selectedCity, address, gpsMode, latitude, longitude, installType,
       manualClimate, installTiltDeg, installAzimuthDeg, installationMode, installationArrays, directionSlots, manualOverride]);
 
@@ -486,10 +487,10 @@ const navigate = useNavigate();
 
   const saveInstallationImages = () => {
     try {
-      localStorage.setItem("shil:environmentSiteImages", JSON.stringify(sitePreviews));
-      localStorage.setItem("shil:environmentSiteImageCount", String(sitePreviews.length));
-      localStorage.setItem("shil:environmentCompassPreview", compassPreview || "");
-      localStorage.setItem("shil:environmentCompassSaved", compassPreview ? "true" : "false");
+      safeLocalSetItem("shil:environmentSiteImages", JSON.stringify(sitePreviews));
+      safeLocalSetItem("shil:environmentSiteImageCount", String(sitePreviews.length));
+      safeLocalSetItem("shil:environmentCompassPreview", compassPreview || "");
+      safeLocalSetItem("shil:environmentCompassSaved", compassPreview ? "true" : "false");
       setSavedSiteImageCount(sitePreviews.length);
       setSavedCompassImage(Boolean(compassPreview));
     } catch {
@@ -624,23 +625,23 @@ const navigate = useNavigate();
       savedAt: new Date().toISOString(),
     };
 
-    localStorage.setItem(environmentDraftKey, JSON.stringify(persistentEnvironmentDraft));
-    localStorage.setItem("shil:environmentDraft", JSON.stringify(persistentEnvironmentDraft));
+    safeLocalSetItem(environmentDraftKey, JSON.stringify(persistentEnvironmentDraft));
+    safeLocalSetItem("shil:environmentDraft", JSON.stringify(persistentEnvironmentDraft));
     approveProjectStep("environment");
-    localStorage.setItem("shil:environmentAssessment", JSON.stringify(assessment));
+    safeLocalSetItem("shil:environmentAssessment", JSON.stringify(assessment));
 
     const urlParams = new URLSearchParams(window.location.search || "");
     const scenarioFlowActive = urlParams.get("from") === "scenario" && isScenarioFlowFor(domain);
     const selectedScenario = (() => {
-      try { return JSON.parse(localStorage.getItem("shil:selectedScenario") || "null"); }
+      try { return JSON.parse(readLocalOrSessionItem("shil:selectedScenario") || "null"); }
       catch { return null; }
     })();
 
     if (scenarioFlowActive && ["solar", "emergency"].includes(domain) && selectedScenario?.id) {
       const scenarioDomain = selectedScenario.domain || domain;
-      localStorage.setItem("shil:calculationMethod", "equipment");
-      localStorage.setItem("shil:scenarioNextStep", `${scenarioDomain}-equipment-list`);
-      localStorage.setItem("shil:scenarioEquipmentBranch", scenarioDomain);
+      safeLocalSetItem("shil:calculationMethod", "equipment");
+      safeLocalSetItem("shil:scenarioNextStep", `${scenarioDomain}-equipment-list`);
+      safeLocalSetItem("shil:scenarioEquipmentBranch", scenarioDomain);
       navigate("/new-project/method");
       return;
     }

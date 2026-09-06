@@ -1,0 +1,78 @@
+/* V11 - Emergency ready scenarios: power/current/backup triple search. Keep absolute last. */
+#shil-scenarios-root .shil-emergency-search-card {
+  display: grid !important;
+  gap: 12px !important;
+  padding: 14px !important;
+}
+
+#shil-scenarios-root .shil-emergency-search-title {
+  display: block !important;
+  text-align: center !important;
+  color: #0b2138 !important;
+  font-size: clamp(16px, 3.8vw, 21px) !important;
+  font-weight: 950 !important;
+  line-height: 1.45 !important;
+}
+
+#shil-scenarios-root .shil-emergency-search-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+  width: 100% !important;
+}
+
+#shil-scenarios-root .shil-emergency-search-grid > label {
+  display: grid !important;
+  gap: 7px !important;
+  min-width: 0 !important;
+  color: #0b2138 !important;
+  font-weight: 900 !important;
+  text-align: center !important;
+}
+
+#shil-scenarios-root .shil-emergency-search-grid > label > span {
+  font-size: 14px !important;
+  line-height: 1.25 !important;
+}
+
+#shil-scenarios-root .shil-emergency-search-grid input {
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 48px !important;
+  padding: 8px 10px !important;
+  border-radius: 14px !important;
+  border: 1.5px solid rgba(47, 189, 137, .72) !important;
+  background: rgba(236, 255, 244, .95) !important;
+  color: #0b2138 !important;
+  font-weight: 850 !important;
+  text-align: center !important;
+  box-sizing: border-box !important;
+}
+
+#shil-scenarios-root .shil-emergency-search-grid input::placeholder {
+  color: #657787 !important;
+  opacity: .95 !important;
+  font-size: 12px !important;
+}
+
+#shil-scenarios-root .shil-emergency-search-card > small {
+  display: block !important;
+  text-align: center !important;
+  color: #334d5e !important;
+  font-weight: 800 !important;
+  line-height: 1.7 !important;
+}
+
+@media (max-width: 720px) {
+  #shil-scenarios-root .shil-emergency-search-grid {
+    grid-template-columns: 1fr !important;
+  }
+  #shil-scenarios-root .shil-emergency-search-grid > label {
+    grid-template-columns: minmax(78px, .34fr) 1fr !important;
+    align-items: center !important;
+    text-align: right !important;
+  }
+  #shil-scenarios-root .shil-emergency-search-grid > label > span {
+    padding-inline: 4px !important;
+  }
+}

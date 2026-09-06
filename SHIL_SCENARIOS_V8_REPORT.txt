@@ -1,0 +1,49 @@
+SHIL V8 - Ready Scenarios Search / Units / Header
+=================================================
+
+Implemented on top of V7.
+
+1) Engineering unit display
+- Power is rendered as number + unit with isolated LTR order.
+- Exact 1000-multiples are compacted to KW (e.g. 2000 W -> 2 KW).
+- Energy is rendered as WH/KWH (e.g. 3048 WH, 5000 WH -> 5 KWH).
+- Prevents RTL visual reversal such as "W 635".
+
+2) Scenario search
+- Added normalized Persian/Arabic digit support.
+- Added engineering search representations for W/KW/WH/KWH/A.
+- Search includes title, description, city, province, equipment, inverter, battery, panel count, load and daily energy.
+- Added deterministic city/province metadata to generated scenarios because the UI explicitly promises city search.
+- Search results now appear directly below the search field as a compact selectable list (up to 12, with remaining count).
+- Result item click scrolls to the full scenario card.
+- Empty-result feedback is explicit.
+
+3) Header titles
+- Long ready-scenario headers are intelligently shortened:
+  "سناریوهای آماده انرژی های خورشیدی" -> "سناریوهای خورشیدی"
+  level pages -> "سناریوهای خورشیدی - سبک/متوسط/سنگین"
+  emergency equivalent is also handled.
+- Full original title remains in the HTML title attribute.
+- Added responsive font-size fallback for long scenario headers.
+
+4) Navigation resilience
+- Scenario selection draft persistence uses safeLocalSetItem rather than raw localStorage.setItem.
+
+Files added/changed
+-------------------
+src/data/scenarios/scenarioPresentation.js
+src/data/scenarios/scenarioLibrary.js
+src/pages/Scenarios.jsx
+src/components/ShilPageShell.jsx
+src/appearance/styles/shil-scenarios-v8-search-units-header-final.css
+src/main.jsx
+
+Quick search QA examples (solar/light)
+--------------------------------------
+"تهران" -> matches generated scenarios tagged Tehran
+"اصفهان" -> matches generated scenarios tagged Isfahan
+"635 W" -> matches scenario 1
+"3048 WH" -> matches scenario 1
+"2 KW" -> matches scenarios containing 2 KW in power/inverter fields
+"2 A" -> matches scenarios whose derived AC-current search representation contains 2 A
+"یخچال" -> matches scenarios whose recommended equipment contains refrigerator

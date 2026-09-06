@@ -90,6 +90,7 @@ export function selectDefaultPanel(panels = [], preferredId, targetPowerW = 0) {
 }
 
 function inverterMatchesSystemType(item = {}, systemType = "offgrid") {
+  if (item.emergencyOnly === true && !String(systemType || "").toLowerCase().includes("emergency")) return false;
   const type = String(systemType || "").toLowerCase();
   const itemType = String(item.type || item.systemType || "").toLowerCase();
   const isOnGrid = itemType.includes("on grid") || itemType.includes("ongrid") || String(item.series || "").toLowerCase() === "utility";

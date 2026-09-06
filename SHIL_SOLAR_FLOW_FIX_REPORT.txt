@@ -1,0 +1,51 @@
+SHIL SOLAR FLOW STABILIZATION - V6
+Date: 2026-09-06
+
+Scope reviewed end-to-end:
+/new-project/path
+/new-project/info
+/new-project/environment
+/new-project/method
+/new-project/input/solar/{power,current,solar_panel_power,equipment,profile,energy}
+/new-project/system/solar
+/new-project/summary/solar
+/new-project/run/solar
+
+Primary root cause found:
+The new-project wizard performs many synchronous localStorage writes before navigation. If localStorage is full (especially after environment/site image previews, project snapshots, route drafts and prior project data) or unavailable/restricted, setItem throws. Because many confirm handlers write before navigate(), the visible button remains active but execution stops before routing. This explains why the blockage appeared at different pages/methods rather than at one fixed route.
+
+A second cross-cutting risk was the UXFlowController route-draft capture. Every approveProjectStep() emits a confirmation event and UXFlowController immediately captures page state. Its route draft persistence previously used raw localStorage. Persistence/snapshot failures could therefore surface around every confirmation stage.
+
+Fixes applied:
+1. Hardened storageQuotaGuard: localStorage quota/security/backend failures now fall back to sessionStorage instead of blocking the wizard.
+2. projectFlowData now reads localStorage OR sessionStorage and writes through safe storage.
+3. projectDesignState now reads/writes through safe storage.
+4. projectWorkflow workflow state uses safe storage.
+5. UXFlowController route-draft capture uses safe storage; snapshot failures are isolated from navigation.
+6. All active solar wizard pages were migrated away from raw localStorage.setItem/removeItem/getItem where they participate in confirmation flow:
+   - ProjectPath.jsx
+   - ProjectInfo.jsx
+   - Environment.jsx
+   - CalculationMethod.jsx
+   - CalculationInputs.jsx
+7. flowIsolation now uses the same safe storage layer.
+8. surfacePreviewData load-preview persistence now uses safe storage.
+9. Solar SystemSettings confirm now reports an explicit warning when design is invalid and has a navigation fail-safe if persistence fails.
+10. Summary final-run navigation is isolated from persistence failure.
+
+Solar calculation methods individually traced:
+- power
+- current
+- solar_panel_power
+- equipment
+- profile
+- energy
+All converge on CalculationInputs.confirmLoad -> systemSetupHandoff -> /new-project/system/solar (unless solar_panel_power legitimately crosses the utility-scale threshold) -> summary -> run.
+
+Static verification performed:
+- Syntax check passed for all modified plain-JS modules.
+- Active solar path scan confirms no direct localStorage.setItem remains in the primary route pages.
+- All six solar method keys are present in the active CalculationMethod page.
+
+Build note:
+The uploaded ZIP did not include node_modules. npm ci in the inspection environment timed out and left an incomplete node_modules; therefore a full Vite build could not be completed here. Run npm install/npm run build on the target machine after extraction. Existing repository navigation/QA scripts also contain pre-existing failures unrelated to these changes (including an older hard-navigation check and incomplete dependency state).

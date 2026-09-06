@@ -3,12 +3,13 @@ import { startManualProjectFlow, PROJECT_PATHS } from "../../workflow/flowIsolat
 import EngineeringPageShell from "../../components/EngineeringPageShell.jsx";
 import StepConfirmLink from "../../components/StepConfirmLink.jsx";
 import { readAdminDefaults } from "../../admin/adminStore.js";
+import { readLocalOrSessionItem, safeLocalSetItem, safeLocalRemoveItem } from "../../services/storageQuotaGuard.js";
 
 function readProjectDomain() {
   try {
     const selected =
-      JSON.parse(localStorage.getItem("shil:selectedProjectPath") || "null") ||
-      JSON.parse(localStorage.getItem("shil:projectPath") || "null");
+      JSON.parse(readLocalOrSessionItem("shil:selectedProjectPath") || "null") ||
+      JSON.parse(readLocalOrSessionItem("shil:projectPath") || "null");
 
     if (typeof selected === "string") return selected;
 
@@ -16,11 +17,11 @@ function readProjectDomain() {
       selected?.domain ||
       selected?.type ||
       selected?.key ||
-      localStorage.getItem("shil:calculationDomain") ||
+      readLocalOrSessionItem("shil:calculationDomain") ||
       PROJECT_PATHS.SOLAR
     );
   } catch {
-    return localStorage.getItem("shil:calculationDomain") || PROJECT_PATHS.SOLAR;
+    return readLocalOrSessionItem("shil:calculationDomain") || PROJECT_PATHS.SOLAR;
   }
 }
 
@@ -69,13 +70,13 @@ export default function ProjectInfo() {
   const nextLabel = "تأیید";
   const registrationDate = getTodayPersianDateEnglish();
   const adminDefaults = readAdminDefaults();
-  const previousProject = (() => { try { return JSON.parse(localStorage.getItem("shil:projectInfoDraft") || "null") || {}; } catch { return {}; } })();
+  const previousProject = (() => { try { return JSON.parse(readLocalOrSessionItem("shil:projectInfoDraft") || "null") || {}; } catch { return {}; } })();
   const [projectName, setProjectName] = useState(previousProject.projectName || adminDefaults.defaultProjectName || "کاربر");
   const [clientName, setClientName] = useState(previousProject.clientName || adminDefaults.defaultClientName || "SHIL CO");
   const [description, setDescription] = useState(previousProject.description || "");
 
   const persistProjectInfo = () => {
-    localStorage.setItem("shil:projectInfoDraft", JSON.stringify({
+    safeLocalSetItem("shil:projectInfoDraft", JSON.stringify({
       projectName: projectName.trim(), clientName: clientName.trim(), registrationDate, description: description.trim(), domain,
     }));
   };

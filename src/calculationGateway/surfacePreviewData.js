@@ -1,5 +1,6 @@
 import { n, pick, round } from "./math.js";
 import { EMERGENCY_BASE_LOAD_HOURS, clampEmergencyBackupHours } from "../core/calculation/emergencySizingRules.js";
+import { safeLocalSetItem } from "../services/storageQuotaGuard.js";
 
 export const METHOD_LABELS = {
   equipment: "لیست تجهیزات",
@@ -16,6 +17,10 @@ function buildLoadMetrics(input = {}) {
   const domain = input.domain || "solar";
   const backupHours = domain === "emergency" ? clampEmergencyBackupHours(input.backupHours) : 0;
   const voltageAC = n(input.voltageAC, 230);
+  const phaseAC = String(input.phaseAC || (voltageAC >= 380 ? "three" : "single")).toLowerCase().includes("three") || voltageAC >= 380 ? "three" : "single";
+  const phaseFactorAC = phaseAC === "three" ? Math.sqrt(3) : 1;
+  const powerFactorAC = Math.max(0.1, Math.min(1, n(input.powerFactorAC, (method === "power" || method === "current") ? 1 : 0.95)));
+  const manualCurrentA = Math.max(0, n(input.manualCurrentA, 0));
   const selectedItems = Array.isArray(input.selectedItems) ? input.selectedItems : [];
   const itemPower = selectedItems.reduce((sum, item) => sum + n(item.ratedPowerW || item.powerW, 0) * n(item.quantity, 1) * n(item.simultaneityFactor ?? item.diversityFactor, 1), 0);
   const itemEnergy = selectedItems.reduce((sum, item) => {
@@ -26,21 +31,30 @@ function buildLoadMetrics(input = {}) {
   const manualPowerW = n(input.manualPowerW, 0);
   const manualEnergyWh = n(input.manualEnergyWh, 0);
   const manualHours = n(input.manualHours, 1) || 1;
-  const totalPowerW = Math.max(itemPower, manualPowerW, manualEnergyWh ? manualEnergyWh / manualHours : 0);
+  const currentDerivedPowerW = method === "current" && manualCurrentA > 0
+    ? manualCurrentA * voltageAC * phaseFactorAC * powerFactorAC
+    : 0;
+  const totalPowerW = Math.max(itemPower, manualPowerW, currentDerivedPowerW, manualEnergyWh ? manualEnergyWh / manualHours : 0);
   const totalEnergyWh = domain === "emergency"
     ? totalPowerW * backupHours
     : Math.max(itemEnergy, manualEnergyWh, totalPowerW * manualHours);
-  const surgePowerW = Math.max(n(input.manualSurgeW, 0), totalPowerW * 1.25);
+  const genericSurgeMultiplier = domain === "emergency" && (method === "power" || method === "current") ? 1 : 1.25;
+  const surgePowerW = Math.max(n(input.manualSurgeW, 0), totalPowerW * genericSurgeMultiplier);
+  const acCurrentA = method === "current" && manualCurrentA > 0
+    ? manualCurrentA
+    : totalPowerW / Math.max(1, voltageAC * phaseFactorAC * powerFactorAC);
   return {
     method,
     label: METHOD_LABELS[method] || method,
     totalPowerW: round(totalPowerW, 2),
     totalEnergyWh: round(totalEnergyWh, 2),
     totalEnergyKWh: round(totalEnergyWh / 1000, 2),
-    acCurrentA: round(totalPowerW / Math.max(1, voltageAC), 2),
+    acCurrentA: round(acCurrentA, 2),
     surgePowerW: round(surgePowerW, 2),
     selectedCount: selectedItems.length,
     voltageAC,
+    phaseAC,
+    powerFactorAC,
     baseLoadHours: domain === "emergency" ? EMERGENCY_BASE_LOAD_HOURS : null,
     baseLoadEnergyWh: domain === "emergency" ? itemEnergy : null,
     backupHours: domain === "emergency" ? backupHours : null,
@@ -66,7 +80,7 @@ export function runSurfaceLoadPreview(input = {}) {
 export function persistSurfaceLoadPreview(input = {}) {
   const result = runSurfaceLoadPreview(input);
   try {
-    localStorage.setItem("shil:loadEngineResult", JSON.stringify(result));
+    safeLocalSetItem("shil:loadEngineResult", JSON.stringify(result));
   } catch {}
   return result;
 }

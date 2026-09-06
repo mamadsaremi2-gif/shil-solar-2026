@@ -2,7 +2,7 @@ import React, { Suspense, lazy, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import UXFlowController from "../components/UXFlowController.jsx";
-import OfflineStatusBadge from "../components/offline/OfflineStatusBadge.jsx";
+import GlobalConnectionStatus from "../components/offline/GlobalConnectionStatus.jsx";
 import InstallAppPrompt from "../components/pwa/InstallAppPrompt.jsx";
 import WorkflowRouteGuard from "../components/WorkflowRouteGuard.jsx";
 import GlobalErrorBoundary from "../components/error/GlobalErrorBoundary.jsx";
@@ -46,7 +46,7 @@ export default function App() {
     <BrowserRouter>
       <SessionActivityManager />
       <UXFlowController />
-      <OfflineStatusBadge />
+      <GlobalConnectionStatus />
       <InstallAppPrompt />
       <WorkflowRouteGuard />
       <GlobalErrorBoundary>

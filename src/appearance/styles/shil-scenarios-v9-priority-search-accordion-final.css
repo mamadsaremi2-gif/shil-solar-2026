@@ -1,0 +1,116 @@
+/* V9 - Ready scenarios: priority engineering search + closed detail accordions. Keep last. */
+
+.shil-page--scenarios .shil-fixed-header .shil-header-title {
+  max-width: min(46vw, 380px) !important;
+  font-size: clamp(14px, 3vw, 20px) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+#shil-scenarios-root .shil-scenario-page {
+  display: grid !important;
+  gap: 12px !important;
+}
+
+#shil-scenarios-root .shil-scenario-page--filtered {
+  margin-top: 12px !important;
+}
+
+#shil-scenarios-root .shil-scenario-accordion-card {
+  padding: 12px !important;
+  overflow: visible !important;
+}
+
+#shil-scenarios-root .shil-scenario-card-heading {
+  display: grid !important;
+  gap: 7px !important;
+  justify-items: center !important;
+  text-align: center !important;
+  width: 100% !important;
+}
+
+#shil-scenarios-root .shil-scenario-card-heading > h3 {
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: clamp(15px, 3.5vw, 22px) !important;
+  line-height: 1.35 !important;
+  color: #0b2138 !important;
+}
+
+#shil-scenarios-root .shil-scenario-title-power {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 34px !important;
+  padding: 5px 12px !important;
+  border-radius: 999px !important;
+  background: rgba(225, 255, 238, .96) !important;
+  border: 1px solid rgba(39, 164, 117, .45) !important;
+  color: #0b2138 !important;
+  font-size: clamp(13px, 3vw, 17px) !important;
+  font-weight: 900 !important;
+  unicode-bidi: isolate !important;
+  direction: ltr !important;
+  white-space: nowrap !important;
+}
+
+#shil-scenarios-root .shil-scenario-details-accordion {
+  width: 100% !important;
+  margin-top: 10px !important;
+  border: 1px solid rgba(116, 159, 189, .38) !important;
+  border-radius: 14px !important;
+  background: rgba(255,255,255,.62) !important;
+  overflow: hidden !important;
+}
+
+#shil-scenarios-root .shil-scenario-details-accordion > summary {
+  list-style: none !important;
+  cursor: pointer !important;
+  min-height: 46px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  padding: 9px 14px !important;
+  color: #0b2138 !important;
+  font-size: 14px !important;
+  font-weight: 900 !important;
+  user-select: none !important;
+}
+
+#shil-scenarios-root .shil-scenario-details-accordion > summary::-webkit-details-marker { display: none !important; }
+#shil-scenarios-root .shil-scenario-details-accordion > summary::after { content: "⌄"; font-size: 18px; line-height: 1; }
+#shil-scenarios-root .shil-scenario-details-accordion[open] > summary::after { content: "⌃"; }
+
+#shil-scenarios-root .shil-scenario-accordion-body {
+  padding: 0 8px 10px !important;
+}
+
+#shil-scenarios-root .shil-scenario-accordion-body > p {
+  margin: 6px 0 10px !important;
+}
+
+#shil-scenarios-root .shil-scenario-search-card small {
+  line-height: 1.7 !important;
+}
+
+#shil-scenarios-root .shil-scenario-search-empty {
+  padding: 16px !important;
+  border-radius: 14px !important;
+  background: rgba(255,255,255,.82) !important;
+  border: 1px solid rgba(116,159,189,.35) !important;
+  color: #415463 !important;
+  font-weight: 800 !important;
+  text-align: center !important;
+}
+
+@media (max-width: 520px) {
+  .shil-page--scenarios .shil-fixed-header .shil-header-title {
+    max-width: 43vw !important;
+    font-size: 14px !important;
+    padding-inline: 6px !important;
+  }
+  #shil-scenarios-root .shil-scenario-card-heading > h3 { font-size: 15px !important; }
+  #shil-scenarios-root .shil-scenario-title-power { font-size: 13px !important; }
+}

@@ -1,3 +1,4 @@
+import { readLocalOrSessionItem, safeLocalSetItem } from "../../services/storageQuotaGuard.js";
 import ShilPrimaryButton from "../../components/project/ShilPrimaryButton";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
@@ -20,7 +21,7 @@ import {
 
 function readDraft(key, fallback = {}) {
   try {
-    return JSON.parse(localStorage.getItem(key) || "null") || fallback;
+    return JSON.parse(readLocalOrSessionItem(key) || "null") || fallback;
   } catch {
     return fallback;
   }
@@ -40,7 +41,7 @@ function makeFallbackForm(domain) {
 
 function readCalculationInput() {
   try {
-    const saved = JSON.parse(localStorage.getItem("shil:calculationInput") || "null");
+    const saved = JSON.parse(readLocalOrSessionItem("shil:calculationInput") || "null");
     if (saved?.form) return saved;
     return buildScenarioCalculationInput();
   } catch {
@@ -120,18 +121,18 @@ function FinalResultFields({ result = {}, solarDesign = {} }) {
   const cables = values.cables || fields.cables || {};
   return (
     <div className="shil-final-sheet-block shil-final-result-fields">
-      <h3>ÙÛŒÙ„Ø¯ Ù†ØªÛŒØ¬Ù‡ ØªÙÚ©ÛŒÚ©ÛŒ</h3>
+      <h3>فیلد نتیجه تفکیکی</h3>
       <div className="shil-result-field-grid">
-        <div><span>ØªØ¹Ø¯Ø§Ø¯ Ø§ÛŒÙ†ÙˆØ±ØªØ±</span><MixedValue fa>{fields.inverterCount || values.inverterCount || 1} Ø¹Ø¯Ø¯</MixedValue></div>
-        <div><span>ØªØ¹Ø¯Ø§Ø¯ Ù¾Ù†Ù„</span><MixedValue fa>{fields.panelCount || values.panelCount || 0} Ø¹Ø¯Ø¯</MixedValue></div>
-        <div><span>ØªØ¹Ø¯Ø§Ø¯ Ø¨Ø§ØªØ±ÛŒ</span><MixedValue fa>{fields.batteryCount || values.batteryCount || 0} Ø¹Ø¯Ø¯</MixedValue></div>
-        <div><span>ØªØ¹Ø¯Ø§Ø¯ MPPT</span><MixedValue fa>{fields.mpptCount || values.mpptCount || values.inverterMpptCount || 1} Ú©Ø§Ù†Ø§Ù„</MixedValue></div>
-        <div><span>ØªÙˆØ§Ù† Ù†ØµØ¨â€ŒØ´Ø¯Ù‡ PV</span><MixedValue>{values.installedPvPowerKW || summary.pv?.installedPowerKW || 0} KW</MixedValue></div>
-        <div><span>ÙØ¶Ø§ÛŒ Ù†ØµØ¨ Ú©Ù„</span><MixedValue fa>{fields.installationAreaM2 || values.installationAreaM2 || bom.space?.requiredInstallationAreaM2 || 0} Ù…ØªØ± Ù…Ø±Ø¨Ø¹</MixedValue></div>
+        <div><span>تعداد اینورتر</span><MixedValue fa>{fields.inverterCount || values.inverterCount || 1} عدد</MixedValue></div>
+        <div><span>تعداد پنل</span><MixedValue fa>{fields.panelCount || values.panelCount || 0} عدد</MixedValue></div>
+        <div><span>تعداد باتری</span><MixedValue fa>{fields.batteryCount || values.batteryCount || 0} عدد</MixedValue></div>
+        <div><span>تعداد MPPT</span><MixedValue fa>{fields.mpptCount || values.mpptCount || values.inverterMpptCount || 1} کانال</MixedValue></div>
+        <div><span>توان نصب‌شده PV</span><MixedValue>{values.installedPvPowerKW || summary.pv?.installedPowerKW || 0} KW</MixedValue></div>
+        <div><span>فضای نصب کل</span><MixedValue fa>{fields.installationAreaM2 || values.installationAreaM2 || bom.space?.requiredInstallationAreaM2 || 0} متر مربع</MixedValue></div>
       </div>
       <div className="shil-result-partitions">
-        <section><h4>ØªØ¬Ù‡ÛŒØ²Ø§Øª Ø­ÙØ§Ø¸ØªÛŒ PV</h4><p>{safeText(protection.pvDc?.breaker)} / {safeText(protection.pvDc?.spd)} / {safeText(protection.pvDc?.poles)}</p><small>ÙˆÙ„ØªØ§Ú˜: {safeText(protection.pvDc?.designVoltageV)} V | Ø¬Ø±ÛŒØ§Ù†: {safeText(protection.pvDc?.currentA)} A</small></section>
-        <section><h4>Ø­Ùاظت باتری</h4><p>{safeText(protection.batteryDc?.fuse)}</p><small>ولتاژ: {safeText(protection.batteryDc?.designVoltageV)} V | جریان: {safeText(protection.batteryDc?.currentA)} A</small></section>
+        <section><h4>تجهیزات حفاظتی PV</h4><p>{safeText(protection.pvDc?.breaker)} / {safeText(protection.pvDc?.spd)} / {safeText(protection.pvDc?.poles)}</p><small>ولتاژ: {safeText(protection.pvDc?.designVoltageV)} V | جریان: {safeText(protection.pvDc?.currentA)} A</small></section>
+        <section><h4>حفاظت باتری</h4><p>{safeText(protection.batteryDc?.fuse)}</p><small>ولتاژ: {safeText(protection.batteryDc?.designVoltageV)} V | جریان: {safeText(protection.batteryDc?.currentA)} A</small></section>
         <section><h4>حفاظت AC</h4><p>{safeText(protection.ac?.breaker)} / {safeText(protection.ac?.poles)}</p><small>ولتاژ: {safeText(protection.ac?.designVoltageV)} V | جریان: {safeText(protection.ac?.currentA)} A</small></section>
         <section><h4>کابل‌ها</h4><p>PV: {safeText(cables.pv)}</p><p>Battery: {safeText(cables.battery)}</p><p>AC: {safeText(cables.ac)}</p></section>
       </div>
@@ -501,7 +502,7 @@ function buildExecutionContext({ domain, project, summary, result, solarDesign, 
     const selectedPath = readDraft("shil:selectedProjectPath", {});
     return {
       emergency: true,
-      projectPathTitle: localStorage.getItem("shil:projectPathTitle") || selectedPath?.title || "برق اضطراری",
+      projectPathTitle: readLocalOrSessionItem("shil:projectPathTitle") || selectedPath?.title || "برق اضطراری",
       methodTitle: methodSummary?.title || design?.sourceMethod || methodKey || "لیست تجهیزات",
       coreTitle: "موتور محاسبات برق اضطراری",
       designType: "باتری + اینورتر برق اضطراری",
@@ -514,8 +515,8 @@ function buildExecutionContext({ domain, project, summary, result, solarDesign, 
       phaseAC: load?.phaseAC || (Number(load?.voltageAC) >= 380 ? "three" : "single"),
       backupHours: pick(
         settings?.backupHours,
-        readDraft(`shil:systemSetupHandoff:emergency:${design?.sourceMethod || methodKey || localStorage.getItem("shil:calculationMethod") || "equipment"}`, {})?.autonomy?.inputHours,
-        readDraft(`shil:systemSetupHandoff:emergency:${design?.sourceMethod || methodKey || localStorage.getItem("shil:calculationMethod") || "equipment"}`, {})?.autonomy?.hours,
+        readDraft(`shil:systemSetupHandoff:emergency:${design?.sourceMethod || methodKey || readLocalOrSessionItem("shil:calculationMethod") || "equipment"}`, {})?.autonomy?.inputHours,
+        readDraft(`shil:systemSetupHandoff:emergency:${design?.sourceMethod || methodKey || readLocalOrSessionItem("shil:calculationMethod") || "equipment"}`, {})?.autonomy?.hours,
         readDraft("shil:systemSetupHandoff", {})?.autonomy?.inputHours,
         readDraft("shil:systemSetupHandoff", {})?.autonomy?.hours,
         readDraft("shil:calculationInputsDraft", readDraft("shil:calculationInputDraft", {}))?.autonomyHours,
@@ -544,7 +545,7 @@ function buildExecutionContext({ domain, project, summary, result, solarDesign, 
   const environment = readDraft("shil:environmentDraft", {});
   const environmentAssessment = readDraft("shil:environmentAssessment", {});
   const selectedPath = readDraft("shil:selectedProjectPath", {});
-  const projectPathTitle = localStorage.getItem("shil:projectPathTitle") || selectedPath?.title || (domain === "emergency" ? "برق اضطراری" : "برق خورشیدی با پنل");
+  const projectPathTitle = readLocalOrSessionItem("shil:projectPathTitle") || selectedPath?.title || (domain === "emergency" ? "برق اضطراری" : "برق خورشیدی با پنل");
   const selectedMethod = readDraft("shil:selectedCalculationMethod", {});
   const registered = readDraft("shil:registeredCalculationParameters", readDraft("shil:registeredMethodParameters", {}));
   const finalParams = systemSettings?.finalParameters || systemSettings?.appliedParameters || systemSettings?.registeredParameters || registered || {};
@@ -680,6 +681,7 @@ function buildProtectionRows(ctx) {
       currentA !== undefined && currentA !== null ? `I ${formatMetric(currentA, "A", 2)}` : null,
       lengthM !== undefined && lengthM !== null ? `L ${formatMetric(lengthM, "M", 2)}` : null,
       voltageDropPercent !== undefined && voltageDropPercent !== null ? `ΔV ${formatMetric(voltageDropPercent, "%", 2)}` : null,
+      Number(detail.feederCount || 0) > 1 ? `${formatNumber(detail.feederCount, 0)} فیدر موازی` : null,
     ].filter(Boolean);
     return parts.join(" / ") || "طول مسیر و شرایط نصب برای انتخاب نهایی کابل ثبت شود";
   };
@@ -702,7 +704,7 @@ function buildProtectionRows(ctx) {
   ].filter((item) => item.value && item.value !== "-");
   const batteryItems = hasBattery ? [
     { label: "فیوز باتری", value: battery.fuse, selection: batteryNested?.fuseSelection, meta: selectionMeta(batteryNested?.fuseSelection, "IEC 60269") },
-    { label: "کلید DC", value: battery.isolator, selection: batteryNested?.breakerSelection, meta: selectionMeta(batteryNested?.breakerSelection, "IEC 60947-2") },
+    { label: "کلید حفاظتی DC", value: battery.breaker, selection: batteryNested?.breakerSelection, meta: selectionMeta(batteryNested?.breakerSelection, "IEC 60947-2") },
     batteryNested?.isolatorSelection?.label ? { label: "ایزولاتور", value: batteryNested.isolatorSelection.label, selection: batteryNested?.isolatorSelection, meta: selectionMeta(batteryNested?.isolatorSelection, "IEC 60947-3") } : null,
   ].filter(Boolean) : [];
   const acItems = [
@@ -726,7 +728,7 @@ function buildProtectionRows(ctx) {
       label: "حفاظت باتری",
       value: joinSpecs(battery.fuse, battery.isolator),
       items: batteryItems,
-      note: joinSpecs(`${formatMetric(battery.designVoltageV, "VDC", 2)} · ${formatMetric(battery.currentA, "A", 2)}`, breakingText(batteryNested?.breakerSelection), standardText(batteryNested?.breakerSelection)),
+      note: joinSpecs(`${formatMetric(battery.designVoltageV, "VDC", 2)} · ${formatMetric(battery.currentA, "A", 2)} هر فیدر`, Number(battery.feederCount || 0) > 1 ? `${formatNumber(battery.feederCount, 0)} فیدر موازی` : null, breakingText(batteryNested?.breakerSelection), standardText(batteryNested?.breakerSelection)),
     });
   }
   rows.push({
@@ -993,7 +995,7 @@ export default function RunCalculation() {
     approveProjectStep("run");
     const savedAt = new Date().toISOString();
     const payload = { domain, project, summary, result, aiPreview, savedAt };
-    localStorage.setItem("shil:finalEngineeringOutput", JSON.stringify(payload));
+    safeLocalSetItem("shil:finalEngineeringOutput", JSON.stringify(payload));
     markCurrentProjectFinal({ result, aiPreview, savedAt });
     window.dispatchEvent(new CustomEvent("shil-workflow-updated"));
   }, [domain, project, summary, result, aiPreview]);

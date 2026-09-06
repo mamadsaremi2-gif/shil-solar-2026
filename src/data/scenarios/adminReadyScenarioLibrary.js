@@ -92,6 +92,12 @@ export function projectToReadyScenario(project = {}) {
   const sourceId = project.id || project.projectKey || `project-${Date.now()}`;
   const title = project.projectName || projectInfo.projectName || projectInfo.name || project.title || (domain === "emergency" ? "سناریوی برق اضطراری" : "سناریوی خورشیدی");
   const recommendedItems = extractRecommendedEquipment(project);
+  const summary = pickSummary(project);
+  const snapshot = pickProjectSnapshot(project);
+  const phaseAC = String(result.phaseAC || summary.phaseAC || snapshot.calculationInputs?.phaseAC || "").toLowerCase().includes("three") ? "three" : "single";
+  const voltageAC = toNumber(result.voltageAC || summary.voltageAC || snapshot.calculationInputs?.voltageAC, phaseAC === "three" ? 380 : 220);
+  const explicitCurrentA = toNumber(result.totalCurrentA || result.currentA || summary.totalCurrentA || snapshot.calculationInputs?.totalCurrentA || snapshot.calculationInputs?.manualCurrentA, 0);
+  const totalCurrentA = explicitCurrentA > 0 ? explicitCurrentA : (loadEstimate > 0 ? Number((loadEstimate / (voltageAC * (phaseAC === "three" ? Math.sqrt(3) : 1))).toFixed(2)) : 0);
 
   return {
     id: `admin-${domain}-${sourceId}`,
@@ -107,8 +113,11 @@ export function projectToReadyScenario(project = {}) {
     province: projectInfo.province || project.province || "",
     loadEstimate,
     dailyEnergyWh,
-    backupHours: toNumber(result.backupHours || pickSummary(project).backupHours, domain === "emergency" ? 3 : 0),
-    autonomyDays: toNumber(result.autonomyDays || pickSummary(project).autonomyDays, 1),
+    backupHours: toNumber(result.backupHours || summary.backupHours, domain === "emergency" ? 3 : 0),
+    autonomyDays: toNumber(result.autonomyDays || summary.autonomyDays, 1),
+    phaseAC,
+    voltageAC,
+    totalCurrentA,
     inverter: result.inverter?.title || result.inverterTitle || result.inverter || (domain === "emergency" ? "اینورتر برق اضطراری" : "اینورتر خورشیدی"),
     inverterRatedW: toNumber(result.inverterRatedW || result.inverterPowerW, 0),
     batteryType: result.batteryType || result.battery?.chemistry || "",

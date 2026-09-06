@@ -29,6 +29,7 @@
     "v25.2:stage2:check": "node tools/v25-2-stage2-check.mjs",
     "v25.2:stage2:release": "npm run v25.2:stage2:check && npm run v25.2:check && npm run consumer:check && npm run engine:smoke && npm run build",
     "v25.3:emergency:check": "node tools/v25-3-emergency-backup-check.mjs",
+    "v7:emergency:check": "node tools/v7-emergency-flow-check.mjs",
     "v25.3:emergency:release": "npm run v25.3:emergency:check && npm run engine:smoke && npm run build",
     "v25.4:check": "node tools/v25-4-admin-defaults-check.mjs",
     "v25.4.1:check": "node tools/v25-4-1-admin-ui-check.mjs"

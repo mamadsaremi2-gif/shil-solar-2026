@@ -1,0 +1,10 @@
+SHIL V9 READY SCENARIOS
+
+1) Search priority: approximate power -> daily energy -> city/province -> remaining text fields.
+2) Equivalent power queries normalize to the same engineering band:
+   3KW / ۳ کیلو وات / سه کیلو وات / 3000 W / سه هزار وات -> 3000..3999 W.
+3) Energy queries use the same 1 kWh-wide bucket logic.
+4) When a query is active, only matching scenario cards are rendered.
+5) Every scenario title now includes engineering power. Loads >= 1 kW show both KW and W.
+6) All remaining scenario data is inside a native <details> accordion, closed by default.
+7) Scenario header titles are shortened further for mobile.

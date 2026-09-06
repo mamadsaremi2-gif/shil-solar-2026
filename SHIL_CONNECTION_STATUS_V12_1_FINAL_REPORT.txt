@@ -1,0 +1,14 @@
+SHIL connection status V12.1 final layout/readability fix
+
+- Keeps the real status logic introduced in V12:
+  browser online/offline + Supabase /auth/v1/health + Supabase auth client.
+- Connected = green pulsing dot.
+- Connecting = amber animated dot.
+- Disconnected = red steady dot.
+- Removes/hides legacy duplicate OfflineStatusBadge / online chip.
+- Forces high-contrast white status text with stronger selector specificity.
+- Dashboard badge remains in the intentional upper-right free area.
+- Inner pages now reserve a dedicated 38-40px lane under the fixed header.
+- The scrollable page viewport begins below that lane, so status never covers:
+  project rail, search inputs, scenario cards, project cards, or form content.
+- Footer stays untouched; no status dot can overlap the Contact button.

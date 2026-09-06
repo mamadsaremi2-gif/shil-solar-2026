@@ -1,0 +1,28 @@
+SHIL Emergency Flow V7 - Stabilization Report
+
+Reviewed active route:
+Project Path -> Project Info -> Emergency Calculation Method -> Calculation Inputs -> Emergency System Settings -> Summary -> Final Run
+
+Emergency input methods reviewed independently:
+1) Equipment list
+2) Total power
+3) Total current (single/three phase)
+
+Corrections:
+- Unified emergency backup range to 1..12 hours in UI and calculation core.
+- Fixed three-phase current calculation in active surface preview.
+- Preserved directly entered current for current method.
+- Removed duplicate generic 25% surge margin for direct emergency power/current methods; system reserveFactor remains the engineering margin.
+- Fixed multi-inverter battery/DC current to use the complete installed inverter bank, not one inverter unit.
+- Fixed three-phase AC voltage-drop conductor equation factor.
+- DC fuse/isolator/breaker selection quantities now follow parallel feeder count.
+- Emergency settings and final RunCalculation now read through localStorage/sessionStorage fallback consistently.
+- Core load persistence uses safe storage and can no longer block navigation on localStorage quota/privacy failure.
+- Emergency confirm has navigation fallback and readable error text.
+- Added V7 emergency flow QA.
+
+No change was made to the user-facing emergency method set: equipment, power, current.
+- Summary now exposes total DC current, DC feeder count, per-feeder current/protection/cable.
+- Final protection output now maps DC breaker vs isolator correctly and reports parallel feeder quantities.
+- Published inverter batteryMinVoltage is used when calculating worst-case DC current.
+- Legacy mojibake strings in the final result helper block were repaired.

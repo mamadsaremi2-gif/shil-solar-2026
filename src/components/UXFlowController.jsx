@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { captureCurrentProjectSnapshot, markCurrentProjectFinal } from "../workflow/uxFlowController.js";
+import { readLocalOrSessionItem, safeLocalSetItem } from "../services/storageQuotaGuard.js";
 
 function isProjectLandingPath(pathname) {
   return pathname === "/new-project" || pathname === "/new-project/path";
@@ -20,7 +21,7 @@ function safeParse(value, fallback = null) {
 }
 
 function currentProjectKey() {
-  return localStorage.getItem("shil:activeProjectKey") || "active-draft";
+  return readLocalOrSessionItem("shil:activeProjectKey") || "active-draft";
 }
 
 function routeDraftKey(pathname) {
@@ -94,7 +95,7 @@ function captureEngineeringPageDraft(pathname) {
     selectedChoices,
   };
 
-  localStorage.setItem(routeDraftKey(pathname), JSON.stringify(payload));
+  safeLocalSetItem(routeDraftKey(pathname), JSON.stringify(payload));
 }
 
 function setNativeValue(element, value) {
@@ -116,7 +117,7 @@ function setNativeValue(element, value) {
 
 function restoreEngineeringPageDraft(pathname) {
   if (!isEngineeringPath(pathname)) return;
-  const draft = safeParse(localStorage.getItem(routeDraftKey(pathname)), null);
+  const draft = safeParse(readLocalOrSessionItem(routeDraftKey(pathname)), null);
   if (!draft?.values) return;
 
   const fields = getPersistableFields();
@@ -172,13 +173,21 @@ export default function UXFlowController() {
   useEffect(() => {
     const confirmedHandler = (event) => {
       const pathname = event.detail?.pathname || activePathRef.current || window.location.pathname;
-      captureEngineeringPageDraft(pathname);
+      try {
+        captureEngineeringPageDraft(pathname);
+      } catch (error) {
+        console.warn("[SHIL] page draft capture skipped; navigation must continue", error);
+      }
       window.setTimeout(() => {
-        const isFinal = ["summary", "run"].includes(event.detail?.stepKey) || pathname.includes("/new-project/run/");
-        if (isFinal) markCurrentProjectFinal();
-        else captureCurrentProjectSnapshot(pathname, "running");
-        setToast({ text: isFinal ? "پروژه در پروژه‌های نهایی ذخیره شد" : "مرحله تأیید و در پروژه‌های در حال اجرا ذخیره شد", type: "success" });
-        window.setTimeout(() => setToast(null), 1800);
+        try {
+          const isFinal = ["summary", "run"].includes(event.detail?.stepKey) || pathname.includes("/new-project/run/");
+          if (isFinal) markCurrentProjectFinal();
+          else captureCurrentProjectSnapshot(pathname, "running");
+          setToast({ text: isFinal ? "پروژه در پروژه‌های نهایی ذخیره شد" : "مرحله تأیید و در پروژه‌های در حال اجرا ذخیره شد", type: "success" });
+          window.setTimeout(() => setToast(null), 1800);
+        } catch (error) {
+          console.warn("[SHIL] project snapshot persistence skipped", error);
+        }
       }, 0);
     };
 

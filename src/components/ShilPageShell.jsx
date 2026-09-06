@@ -14,7 +14,7 @@ function ShilHeader({ title }) {
         بازگشت
       </button>
 
-      <div className="shil-header-title">{normalizeShilTitle(title)}</div>
+      <div className={`shil-header-title ${String(title || "").length > 28 ? "shil-header-title--long" : ""}`} title={title}>{normalizeShilTitle(title)}</div>
 
       <Link className="shil-header-action" to="/dashboard">
         داشبورد
@@ -67,6 +67,14 @@ function normalizeShilTitle(title) {
   if (t.includes("روش طراحی")) return "روش طراحی";
   if (t.includes("تنظیمات")) return "تنظیمات";
   if (t.includes("چکیده طراحی سیستم")) return "چکیده طراحی";
+  if (t.includes("سناریوهای آماده انرژی های خورشیدی")) {
+    const level = t.includes("سبک") ? " - سبک" : t.includes("متوسط") ? " - متوسط" : t.includes("سنگین") ? " - سنگین" : "";
+    return `خورشیدی${level}`;
+  }
+  if (t.includes("سناریوهای آماده برق اضطراری")) {
+    const level = t.includes("سبک") ? " - سبک" : t.includes("متوسط") ? " - متوسط" : t.includes("سنگین") ? " - سنگین" : "";
+    return `برق اضطراری${level}`;
+  }
   return t;
 }
 

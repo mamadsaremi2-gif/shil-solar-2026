@@ -7,6 +7,7 @@ import ShilWarningOverlay from "../../components/ShilWarningOverlay.jsx";
 import { approveProjectStep } from "../../workflow/projectWorkflow.js";
 import { getEnabledEquipment } from "../../data/registry/index.js";
 import {
+  emergencyInverterParallelCount,
   filterEmergencyBatteries,
   filterEmergencyInverters,
   pickEmergencyBattery,
@@ -15,9 +16,10 @@ import {
 } from "../../engines/emergencyBankRules.js";
 import { batterySeriesCountForInverter } from "../../engines/solarBankRules.js";
 import { readAdminDefaults } from "../../admin/adminStore.js";
+import { safeLocalSetItem, safeLocalRemoveItem, readLocalOrSessionItem } from "../../services/storageQuotaGuard.js";
 
 function readDraft(key, fallback = null) {
-  try { return JSON.parse(localStorage.getItem(key) || "null") || fallback; }
+  try { return JSON.parse(readLocalOrSessionItem(key) || "null") || fallback; }
   catch { return fallback; }
 }
 
@@ -180,11 +182,36 @@ function protectionSelection(item, quantity = 1, design = {}) {
   };
 }
 
+
+function resolveBatteryBusVoltage(inverter, battery = null, fallbackVoltage = 48) {
+  const candidates = [
+    inverter?.recommendedBatteryVoltageV,
+    inverter?.nominalBatteryVoltageV,
+    inverter?.batteryVoltageV,
+    inverter?.batteryVoltage,
+    inverter?.nominalDcVoltage,
+    battery?.nominalVoltageV,
+    battery?.voltageV,
+    battery?.voltage
+  ];
+
+  for (const value of candidates) {
+    const voltage = Number(value);
+
+    if (Number.isFinite(voltage) && voltage >= 40 && voltage <= 60) {
+      return voltage;
+    }
+  }
+
+  return Number(fallbackVoltage) || 48;
+}
 function buildEmergencyDesign({ handoff, backupHours, reserveFactor, dodPercent, inverterId, batteryId, manualMode, banks, cableLengthM = 10, lengthFactor = 1.15 }) {
   const load = handoff?.normalizedLoad || readDraft("shil:loadEngineResult", {});
   const totalPowerW = toNumber(load.totalPowerW, 0);
   const surgePowerW = Math.max(totalPowerW, toNumber(load.surgePowerW, 0));
   const voltageAC = toNumber(load.voltageAC, 220);
+  const phaseAC = String(load.phaseAC || (voltageAC >= 380 ? "three" : "single")).toLowerCase().includes("three") || voltageAC >= 380 ? "three" : "single";
+  const powerFactorAC = Math.max(0.1, Math.min(1, toNumber(load.powerFactorAC, 1)));
   const designPowerW = Math.max(totalPowerW, surgePowerW) * toNumber(reserveFactor, 1.25);
   const requestedBackupHours = clampEmergencyBackupHours(backupHours, EMERGENCY_DEFAULT_BACKUP_HOURS);
   const requiredEnergyKWh = (totalPowerW * requestedBackupHours) / 1000;
@@ -194,9 +221,43 @@ function buildEmergencyDesign({ handoff, backupHours, reserveFactor, dodPercent,
   const systemEfficiency = inverterEfficiency * batteryEfficiency;
   const rawBatteryKWh = requiredEnergyKWh / Math.max(0.1, usableFactor * systemEfficiency);
 
-  const emergencyInverters = filterEmergencyInverters(banks.inverters, designPowerW);
-  const smartInverter = pickEmergencyInverter(emergencyInverters, designPowerW);
+  const inverterFilterOptions = { phaseAC, voltageAC };
+  const emergencyInverters = filterEmergencyInverters(banks.inverters, designPowerW, inverterFilterOptions);
+  const smartInverter = pickEmergencyInverter(emergencyInverters, designPowerW, inverterFilterOptions);
   const selectedInverter = manualMode ? (emergencyInverters.find((item) => item.id === inverterId) || smartInverter) : smartInverter;
+  const inverterUnitPowerW = Math.max(1, toNumber(selectedInverter?.ratedPowerW || selectedInverter?.powerW, 0));
+  const inverterCount = selectedInverter ? emergencyInverterParallelCount(selectedInverter, designPowerW) : 0;
+  const installedInverterPowerW = inverterUnitPowerW * Math.max(1, inverterCount);
+  // V25.23 unified LV battery architecture.
+  // AC phase/voltage never determines the battery DC bus.
+  const dcBusVoltage = resolveBatteryBusVoltage(selectedInverter, null, 48);
+
+  const inverterUnitRatedPowerW = resolveInverterRatedPowerW(selectedInverter, designPowerW);
+  // The battery bus feeds the complete installed inverter bank. In a parallel
+  // emergency design, sizing DC current from one inverter underestimates the
+  // battery conductors, BMS current and protection. Use the installed bank
+  // rating, while never dropping below the actual design requirement.
+  const inverterRatedPowerW = Math.max(
+    designPowerW,
+    inverterUnitRatedPowerW * Math.max(1, inverterCount)
+  );
+
+  const publishedMinBatteryVoltageV = toNumber(
+    selectedInverter?.minBatteryVoltageV ||
+    selectedInverter?.batteryMinVoltageV ||
+    selectedInverter?.batteryMinVoltage ||
+    selectedInverter?.minBatteryVoltage ||
+    selectedInverter?.dcInputMinV,
+    0
+  );
+
+  const minBatteryVoltageV = publishedMinBatteryVoltageV > 0
+    ? publishedMinBatteryVoltageV
+    : (dcBusVoltage * 0.90);
+
+  const dcCurrentA = (inverterRatedPowerW > 0 && minBatteryVoltageV > 0)
+    ? inverterRatedPowerW / minBatteryVoltageV / inverterEfficiency
+    : 0;
 
   const emergencyBatteries = filterEmergencyBatteries(banks.batteries, selectedInverter, rawBatteryKWh);
   const smartBattery = pickEmergencyBattery(emergencyBatteries, selectedInverter, rawBatteryKWh);
@@ -205,32 +266,21 @@ function buildEmergencyDesign({ handoff, backupHours, reserveFactor, dodPercent,
   const unitBatteryKWh = Math.max(0.1, getBatteryEnergyWh(selectedBattery) / 1000);
   const batterySeriesCount = selectedBattery ? batterySeriesCountForInverter(selectedBattery, selectedInverter || {}) : 0;
   const seriesStringEnergyKWh = unitBatteryKWh * Math.max(1, batterySeriesCount);
-  const batteryParallelCount = seriesStringEnergyKWh > 0 ? Math.max(1, Math.ceil(rawBatteryKWh / seriesStringEnergyKWh)) : 0;
+  const energyParallelCount = seriesStringEnergyKWh > 0 ? Math.max(1, Math.ceil(rawBatteryKWh / seriesStringEnergyKWh)) : 0;
+  const unitMaxDischargeA = Math.max(1, toNumber(selectedBattery?.maxDischargeCurrentA || selectedBattery?.continuousDischargeCurrentA, 100));
+  const currentParallelCount = dcCurrentA > 0 ? Math.max(1, Math.ceil((dcCurrentA * 1.05) / unitMaxDischargeA)) : 1;
+  const batteryParallelCount = Math.max(energyParallelCount, currentParallelCount);
   const batteryCount = selectedBattery ? Math.max(1, batterySeriesCount) * Math.max(1, batteryParallelCount) : 0;
   const grossBankEnergyKWh = batteryCount * unitBatteryKWh;
   const actualEnergyKWh = grossBankEnergyKWh * usableFactor * systemEfficiency;
   const runtimeHours = totalPowerW > 0 ? (actualEnergyKWh * 1000) / totalPowerW : 0;
-  const dcBusVoltage = resolveBatteryBusVoltageV(selectedInverter, selectedBattery, 48);
-  // Main Battery -> Inverter feeder sizing is based on the SELECTED inverter's continuous
-  // input requirement, never on a missing catalog field and never on the 6 A first step.
-  const inverterRatedPowerW = resolveInverterRatedPowerW(selectedInverter, designPowerW);
-  const publishedMinBatteryVoltageV = toNumber(
-    selectedInverter?.minBatteryVoltageV || selectedInverter?.batteryMinVoltageV || selectedInverter?.dcInputMinV,
-    0
-  );
-  const minBatteryVoltageV = publishedMinBatteryVoltageV > 0
-    ? publishedMinBatteryVoltageV
-    : dcBusVoltage * 0.90;
-  const dcCurrentA = (inverterRatedPowerW > 0 && minBatteryVoltageV > 0)
-    ? inverterRatedPowerW / minBatteryVoltageV / inverterEfficiency
-    : 0;
   const bankCapacityAh = toNumber(selectedBattery?.capacityAh, 0) * Math.max(1, batteryParallelCount);
   const standardSizes = [1.5,2.5,4,6,10,16,25,35,50,70,95,120,150,185,240];
   const standardAmps = [6,10,16,20,25,32,40,50,63,80,100,125,160,200,250,315,400,500,630];
   const effectiveLengthM = Math.max(1, toNumber(cableLengthM, 10) * Math.max(1, toNumber(lengthFactor, 1.15)));
   // AC protection must follow the actual simultaneous emergency load, not inverter reserve/surge sizing.
   // Example: 3000 W / 220 V = 13.64 A -> next standard MCB = C16 A.
-  const phaseFactorAC = voltageAC >= 380 ? Math.sqrt(3) : 1;
+  const phaseFactorAC = phaseAC === "three" ? Math.sqrt(3) : 1;
   const reportedAcCurrentA = toNumber(load.totalCurrentA ?? load.currentA ?? load.acCurrentA, 0);
   const acCurrentA = reportedAcCurrentA > 0
     ? reportedAcCurrentA
@@ -239,64 +289,97 @@ function buildEmergencyDesign({ handoff, backupHours, reserveFactor, dodPercent,
   const copperRho = 0.0175;
   const dcDropV = Math.max(0.5, dcBusVoltage * 0.02);
   const acDropV = Math.max(1, voltageAC * 0.03);
-  const calcSection = (current, dropV) => (2 * copperRho * effectiveLengthM * current) / dropV;
+  const calcDcSection = (current, dropV) => (2 * copperRho * effectiveLengthM * current) / dropV;
+  const calcAcSection = (current, dropV) => ((phaseAC === "three" ? Math.sqrt(3) : 2) * copperRho * effectiveLengthM * current) / dropV;
   const nextSize = (v) => standardSizes.find((x) => x >= v) || null;
   const nextAmp = (v) => standardAmps.find((x) => x >= v) || null;
   const rawProtection = selectEmergencyProtection(banks.protections, banks.cables);
-  const dcBreakerRequiredA = dcCurrentA * 1.25;
+  // V25.24 LV battery architecture: split high DC current across parallel feeders.
+  const MAX_DC_FEEDER_OPERATING_A = 250;
+
+  const dcFeederCount = dcCurrentA > 0
+    ? Math.max(
+        1,
+        batteryParallelCount || 1,
+        Math.ceil(dcCurrentA / MAX_DC_FEEDER_OPERATING_A)
+      )
+    : 1;
+
+  const dcFeederCurrentA = dcCurrentA > 0
+    ? dcCurrentA / dcFeederCount
+    : 0;
+
+  const dcBreakerRequiredA = dcFeederCurrentA * 1.25;
   const dcBreakerA = nextAmp(dcBreakerRequiredA);
-  const dcProtectionRangeExceeded = dcCurrentA > 0 && !dcBreakerA;
-  // MCB/RCBO rating follows actual load current. Reserve is already applied to inverter sizing.
+  const dcProtectionRangeExceeded = dcFeederCurrentA > 0 && !dcBreakerA;
+
+  // AC protection follows actual emergency load current.
   const acBreakerA = nextAmp(acProtectionCurrentA) || standardAmps[standardAmps.length - 1];
-  // Transfer switch carries the complete load with 25% engineering margin.
+
+  // Transfer switch carries the complete AC load with 25% engineering margin.
   const changeoverA = nextAmp(acProtectionCurrentA * 1.25) || standardAmps[standardAmps.length - 1];
-  // Cable must satisfy BOTH voltage-drop sizing and conservative ampacity sizing.
-  // Ampacity table is intentionally explicit so a short cable can never collapse to an unsafe small section.
-  const copperAmpacityA = { 1.5: 18, 2.5: 24, 4: 32, 6: 41, 10: 57, 16: 76, 25: 101, 35: 125, 50: 151, 70: 192, 95: 232, 120: 269, 150: 309, 185: 353, 240: 415 };
-  const sizeForAmpacity = (current) => standardSizes.find((size) => (copperAmpacityA[size] || 0) >= current) || null;
+
+  const copperAmpacityA = {
+    1.5: 18, 2.5: 24, 4: 32, 6: 41, 10: 57, 16: 76,
+    25: 101, 35: 125, 50: 151, 70: 192, 95: 232,
+    120: 269, 150: 309, 185: 353, 240: 415
+  };
+
+  const sizeForAmpacity = (current) =>
+    standardSizes.find((size) => (copperAmpacityA[size] || 0) >= current) || null;
+
   const largerSize = (a, b) => {
     if (!a || !b) return a || b || null;
     return standardSizes[Math.max(standardSizes.indexOf(a), standardSizes.indexOf(b))] || null;
   };
-  // IEC coordination invariant: Ib <= In <= Iz. If a single listed breaker/cable
-  // cannot satisfy it, do NOT cap to the largest item and pretend coordination passed.
-  const dcDropSizeMm2 = nextSize(calcSection(dcCurrentA, dcDropV));
+
+  // IEC feeder coordination: Ib <= In <= Iz for EACH parallel DC feeder.
+  const dcDropSizeMm2 = nextSize(calcDcSection(dcFeederCurrentA, dcDropV));
   const dcAmpacitySizeMm2 = dcBreakerA ? sizeForAmpacity(dcBreakerA) : null;
   const dcCableMm2 = largerSize(dcDropSizeMm2, dcAmpacitySizeMm2);
   const dcCableAmpacityA = dcCableMm2 ? (copperAmpacityA[dcCableMm2] || 0) : 0;
-  const dcCableRangeExceeded = dcCurrentA > 0 && (!dcDropSizeMm2 || (dcBreakerA && !dcAmpacitySizeMm2));
-  const dcCoordinationPass = Boolean(dcBreakerA && dcCableMm2 && dcCurrentA <= dcBreakerA && dcBreakerA <= dcCableAmpacityA);
-  const acCableMm2 = largerSize(nextSize(calcSection(acCurrentA, acDropV)), sizeForAmpacity(acBreakerA)) || standardSizes[standardSizes.length - 1];
+
+  const dcCableRangeExceeded =
+    dcFeederCurrentA > 0 &&
+    (!dcDropSizeMm2 || (dcBreakerA && !dcAmpacitySizeMm2));
+
+  const dcCoordinationPass = Boolean(
+    dcBreakerA &&
+    dcCableMm2 &&
+    dcFeederCurrentA <= dcBreakerA &&
+    dcBreakerA <= dcCableAmpacityA
+  );
+  const acCableMm2 = largerSize(nextSize(calcAcSection(acCurrentA, acDropV)), sizeForAmpacity(acBreakerA)) || standardSizes[standardSizes.length - 1];
   const dcSelectionCurrentA = dcBreakerA || Math.ceil(dcBreakerRequiredA);
   const batteryFuseSelection = protectionSelection(
     chooseProtection(rawProtection.protections, { types: ["battery_fuse", "fuse"], currentA: dcSelectionCurrentA, voltageV: dcBusVoltage, batteryBus: true }),
-    1,
-    { currentA: dcSelectionCurrentA, operatingCurrentA: dcCurrentA, voltageV: dcBusVoltage, designFactor: 1.25, deviceType: "BATTERY_FUSE", standard: "IEC 60269", poles: "2P", label: dcProtectionRangeExceeded ? `>${standardAmps[standardAmps.length - 1]} A Battery DC Fuse - ENGINEERING REVIEW` : `${dcSelectionCurrentA} A Battery DC Fuse` }
+    dcFeederCount,
+    { currentA: dcSelectionCurrentA, operatingCurrentA: dcFeederCurrentA, voltageV: dcBusVoltage, designFactor: 1.25, deviceType: "BATTERY_FUSE", standard: "IEC 60269", poles: "2P", label: dcProtectionRangeExceeded ? `>${standardAmps[standardAmps.length - 1]} A Battery DC Fuse - ENGINEERING REVIEW` : `${dcSelectionCurrentA} A Battery DC Fuse` }
   );
   const batteryIsolatorSelection = protectionSelection(
     chooseProtection(rawProtection.protections, { types: ["battery_isolator", "isolator", "load_disconnector"], currentA: dcSelectionCurrentA, voltageV: dcBusVoltage, batteryBus: true }),
-    1,
-    { currentA: dcSelectionCurrentA, operatingCurrentA: dcCurrentA, voltageV: dcBusVoltage, designFactor: 1.25, deviceType: "DC_ISOLATOR", standard: "IEC 60947-3", poles: "2P", label: dcProtectionRangeExceeded ? `>${standardAmps[standardAmps.length - 1]} A Battery DC Isolator - ENGINEERING REVIEW` : `${dcSelectionCurrentA} A Battery DC Isolator` }
+    dcFeederCount,
+    { currentA: dcSelectionCurrentA, operatingCurrentA: dcFeederCurrentA, voltageV: dcBusVoltage, designFactor: 1.25, deviceType: "DC_ISOLATOR", standard: "IEC 60947-3", poles: "2P", label: dcProtectionRangeExceeded ? `>${standardAmps[standardAmps.length - 1]} A Battery DC Isolator - ENGINEERING REVIEW` : `${dcSelectionCurrentA} A Battery DC Isolator` }
   );
   const batteryBreakerSelection = protectionSelection(
     chooseProtection(rawProtection.protections, { types: ["dc_mccb", "dc_mcb"], currentA: dcSelectionCurrentA, voltageV: dcBusVoltage, batteryBus: true }),
-    1,
-    { currentA: dcSelectionCurrentA, operatingCurrentA: dcCurrentA, voltageV: dcBusVoltage, designFactor: 1.25, deviceType: "DC_MCCB", standard: "IEC 60947-2", poles: "2P", label: dcProtectionRangeExceeded ? `>${standardAmps[standardAmps.length - 1]} A Battery DC Breaker - ENGINEERING REVIEW` : `${dcSelectionCurrentA} A Battery DC Breaker` }
+    dcFeederCount,
+    { currentA: dcSelectionCurrentA, operatingCurrentA: dcFeederCurrentA, voltageV: dcBusVoltage, designFactor: 1.25, deviceType: "DC_MCCB", standard: "IEC 60947-2", poles: "2P", label: dcProtectionRangeExceeded ? `>${standardAmps[standardAmps.length - 1]} A Battery DC Breaker - ENGINEERING REVIEW` : `${dcSelectionCurrentA} A Battery DC Breaker` }
   );
   const acBreakerSelection = protectionSelection(
     chooseProtection(rawProtection.protections, { types: ["ac_breaker", "ac_mccb", "mcb", "mccb"], side: "ac", currentA: acBreakerA, voltageV: voltageAC }),
     1,
-    { currentA: acBreakerA, operatingCurrentA: acCurrentA, voltageV: voltageAC, designFactor: 1, deviceType: "AC_BREAKER", standard: "IEC 60947-2", poles: voltageAC >= 380 ? "3P/4P" : "1P+N/2P", label: `${acBreakerA <= 125 ? `MCB C${acBreakerA}` : `${acBreakerA} A MCCB`}` }
+    { currentA: acBreakerA, operatingCurrentA: acCurrentA, voltageV: voltageAC, designFactor: 1, deviceType: "AC_BREAKER", standard: "IEC 60947-2", poles: phaseAC === "three" ? "3P/4P" : "1P+N/2P", label: `${acBreakerA <= 125 ? `MCB C${acBreakerA}` : `${acBreakerA} A MCCB`}` }
   );
   const acSpdSelection = protectionSelection(
     chooseProtection(rawProtection.protections, { types: ["spd"], side: "ac" }),
     1,
-    { voltageV: voltageAC, deviceType: "SPD", standard: "IEC 61643-11", poles: voltageAC >= 380 ? "3P+N" : "1P+N", label: "SPD Type II" }
+    { voltageV: voltageAC, deviceType: "SPD", standard: "IEC 61643-11", poles: phaseAC === "three" ? "3P+N" : "1P+N", label: "SPD Type II" }
   );
   const residualProtectionBase = protectionSelection(
       chooseProtection(rawProtection.protections, { types: ["rcbo", "rcd"], side: "ac", currentA: acBreakerA }),
       1,
-      { currentA: acBreakerA, operatingCurrentA: acCurrentA, voltageV: voltageAC, deviceType: "RCBO", standard: "IEC 61009-1", poles: voltageAC >= 380 ? "4P" : "1P+N/2P", label: `RCBO Type A | ${acBreakerA} A | 30 mA` }
+      { currentA: acBreakerA, operatingCurrentA: acCurrentA, voltageV: voltageAC, deviceType: "RCBO", standard: "IEC 61009-1", poles: phaseAC === "three" ? "4P" : "1P+N/2P", label: `RCBO Type A | ${acBreakerA} A | 30 mA` }
     );
   const residualProtection = {
     ...residualProtectionBase,
@@ -308,7 +391,7 @@ function buildEmergencyDesign({ handoff, backupHours, reserveFactor, dodPercent,
   const changeoverSelection = protectionSelection(
     chooseProtection(rawProtection.protections, { types: ["changeover_switch", "transfer_switch", "changeover"], side: "ac", currentA: changeoverA }),
     1,
-    { currentA: changeoverA, operatingCurrentA: acCurrentA, voltageV: voltageAC, designFactor: 1.25, deviceType: "CHANGEOVER_SWITCH", standard: "IEC 60947-6-1", poles: voltageAC >= 380 ? "4P" : "2P", label: `${changeoverA} A Changeover Switch` }
+    { currentA: changeoverA, operatingCurrentA: acCurrentA, voltageV: voltageAC, designFactor: 1.25, deviceType: "CHANGEOVER_SWITCH", standard: "IEC 60947-6-1", poles: phaseAC === "three" ? "4P" : "2P", label: `${changeoverA} A Changeover Switch` }
   );
   const protection = {
     ...rawProtection,
@@ -324,6 +407,8 @@ function buildEmergencyDesign({ handoff, backupHours, reserveFactor, dodPercent,
     acCableMm2,
     acCurrentA,
     batteryCurrentA: dcCurrentA,
+    dcFeederCount,
+    dcFeederCurrentA,
     batteryVoltage: dcBusVoltage,
     batteryMinDesignVoltageV: minBatteryVoltageV,
     inverterRatedPowerW,
@@ -333,7 +418,9 @@ function buildEmergencyDesign({ handoff, backupHours, reserveFactor, dodPercent,
     batteryDc: {
       required: true,
       designVoltageV: dcBusVoltage,
-      operatingCurrentA: dcCurrentA,
+      operatingCurrentA: dcFeederCurrentA,
+      totalOperatingCurrentA: dcCurrentA,
+      feederCount: dcFeederCount,
       minDesignVoltageV: minBatteryVoltageV,
       inverterRatedPowerW,
       cableAmpacityA: dcCableAmpacityA,
@@ -351,7 +438,7 @@ function buildEmergencyDesign({ handoff, backupHours, reserveFactor, dodPercent,
       breaker: batteryBreakerSelection?.label || `${dcSelectionCurrentA} A Battery DC Breaker`,
       isolator: batteryIsolatorSelection?.label || `${dcSelectionCurrentA} A Battery DC Isolator`,
       cable: dcCableMm2 ? `${dcCableMm2} mm² Battery/DC Cable` : "Battery/DC Cable - PARALLEL OR ENGINEERED FEEDER REQUIRED",
-      quantity: 1,
+      quantity: dcFeederCount,
     },
     ac: {
       required: true,
@@ -371,7 +458,7 @@ function buildEmergencyDesign({ handoff, backupHours, reserveFactor, dodPercent,
       changeoverA,
       changeover: changeoverSelection?.label || `${changeoverA} A Changeover Switch`,
       changeoverSelection,
-      poles: voltageAC >= 380 ? "3P/4P" : "1P+N/2P",
+      poles: phaseAC === "three" ? "3P/4P" : "1P+N/2P",
       cable: `${acCableMm2} mm² AC Cable`,
       quantity: 1,
     },
@@ -380,7 +467,7 @@ function buildEmergencyDesign({ handoff, backupHours, reserveFactor, dodPercent,
       ac: `${acCableMm2} mm² AC Cable`,
     },
     cableDetails: {
-      battery: { areaMm2: dcCableMm2, currentA: dcCurrentA, ampacityA: dcCableAmpacityA, breakerA: dcBreakerA, coordinationPass: dcCoordinationPass, minDesignVoltageV: minBatteryVoltageV, lengthM: effectiveLengthM, voltageDropPercent: 2, label: dcCableMm2 ? `${dcCableMm2} mm² Battery/DC Cable` : "Battery/DC Cable - PARALLEL OR ENGINEERED FEEDER REQUIRED" },
+      battery: { areaMm2: dcCableMm2, currentA: dcFeederCurrentA, totalCurrentA: dcCurrentA, feederCount: dcFeederCount, ampacityA: dcCableAmpacityA, breakerA: dcBreakerA, coordinationPass: dcCoordinationPass, minDesignVoltageV: minBatteryVoltageV, lengthM: effectiveLengthM, voltageDropPercent: 2, label: dcCableMm2 ? `${dcCableMm2} mm² Battery/DC Cable` : "Battery/DC Cable - PARALLEL OR ENGINEERED FEEDER REQUIRED" },
       ac: { areaMm2: acCableMm2, currentA: acCurrentA, lengthM: effectiveLengthM, voltageDropPercent: 3, label: `${acCableMm2} mm² AC Cable` },
     },
     allowedDcDropPercent: 2,
@@ -392,13 +479,13 @@ function buildEmergencyDesign({ handoff, backupHours, reserveFactor, dodPercent,
   return {
     domain: "emergency",
     calculationModel: "ups_like_battery_inverter",
-    sourceMethod: handoff?.source?.method || localStorage.getItem("shil:calculationMethod") || "equipment",
-    load: { totalPowerW, surgePowerW, voltageAC, phaseAC: voltageAC >= 380 ? "three" : "single", totalCurrentA: acCurrentA, currentA: acCurrentA, electricalBasisSource: load.electricalBasisSource || "emergency_handoff" },
+    sourceMethod: handoff?.source?.method || readLocalOrSessionItem("shil:calculationMethod") || "equipment",
+    load: { totalPowerW, surgePowerW, voltageAC, phaseAC, totalCurrentA: acCurrentA, currentA: acCurrentA, electricalBasisSource: load.electricalBasisSource || "emergency_handoff" },
     settings: { backupHours: requestedBackupHours, reserveFactor: toNumber(reserveFactor, 1.25), dodPercent: toNumber(dodPercent, 80), manualMode, cableLengthM: toNumber(cableLengthM, 10), lengthFactor: toNumber(lengthFactor, 1.15) },
-    inverter: { ...selectedInverter, designPowerW: Math.round(designPowerW), count: 1 },
-    battery: { ...selectedBattery, unitEnergyKWh: unitBatteryKWh, count: batteryCount, seriesCount: batterySeriesCount, parallelCount: batteryParallelCount, bankCapacityAh, grossBankEnergyKWh, packVoltage: Math.round(toNumber(selectedBattery?.nominalVoltage, 0) * Math.max(1, batterySeriesCount) * 10) / 10, requiredRawKWh: rawBatteryKWh, usableEnergyKWh: actualEnergyKWh, runtimeHours, systemEfficiency },
+    inverter: { ...selectedInverter, designPowerW: Math.round(designPowerW), count: inverterCount, installedPowerW: Math.round(installedInverterPowerW), batteryArchitecture: selectedInverter?.batteryArchitecture || (dcBusVoltage <= 60 ? "LV" : "HV") },
+    battery: { ...selectedBattery, unitEnergyKWh: unitBatteryKWh, count: batteryCount, seriesCount: batterySeriesCount, parallelCount: batteryParallelCount, energyParallelCount, currentParallelCount, unitMaxDischargeA, bankCapacityAh, grossBankEnergyKWh, packVoltage: Math.round(toNumber(selectedBattery?.nominalVoltage, 0) * Math.max(1, batterySeriesCount) * 10) / 10, requiredRawKWh: rawBatteryKWh, usableEnergyKWh: actualEnergyKWh, runtimeHours, systemEfficiency },
     emergencyBanks: { inverterCount: emergencyInverters.length, batteryCount: emergencyBatteries.length, protectionCount: protection.protections.length, cableCount: protection.cables.length },
-    electrical: { dcBusVoltage, dcCurrentA, inverterEfficiency, batteryEfficiency },
+    electrical: { dcBusVoltage, dcCurrentA, inverterUnitRatedPowerW, inverterBankRatedPowerW: inverterRatedPowerW, inverterEfficiency, batteryEfficiency },
     protection,
     valid,
     warnings: [
@@ -486,7 +573,7 @@ export default function EmergencySystemSettings() {
   }), []);
 
   const inputDraft = readDraft("shil:calculationInputsDraft", readDraft("shil:calculationInputDraft", {}));
-  const specificHandoff = readDraft(`shil:systemSetupHandoff:emergency:${handoff?.source?.method || localStorage.getItem("shil:calculationMethod") || "equipment"}`, null);
+  const specificHandoff = readDraft(`shil:systemSetupHandoff:emergency:${handoff?.source?.method || readLocalOrSessionItem("shil:calculationMethod") || "equipment"}`, null);
   const defaultHours = clampEmergencyBackupHours(
     toNumber(specificHandoff?.autonomy?.inputHours, 0)
       || toNumber(specificHandoff?.autonomy?.hours, 0)
@@ -496,6 +583,7 @@ export default function EmergencySystemSettings() {
       || EMERGENCY_DEFAULT_BACKUP_HOURS
   );
   const [backupHours, setBackupHours] = useState(defaultHours);
+  const [backupHoursOpen, setBackupHoursOpen] = useState(false);
   const [reserveFactor, setReserveFactor] = useState(defaults.safetyFactor || 1.25);
   const [dodPercent, setDodPercent] = useState(toNumber(adminDefaults.emergencyDefaultDodPercent, 80));
   const [cableLengthM, setCableLengthM] = useState(toNumber(defaults.cableLengthM, 10));
@@ -504,9 +592,10 @@ export default function EmergencySystemSettings() {
   const [inverterId, setInverterId] = useState("");
   const [batteryId, setBatteryId] = useState("");
   const [liveSaved, setLiveSaved] = useState(false);
+  const [confirmError, setConfirmError] = useState("");
 
   const design = useMemo(() => buildEmergencyDesign({ handoff, backupHours, reserveFactor, dodPercent, inverterId, batteryId, manualMode, banks, cableLengthM, lengthFactor }), [handoff, backupHours, reserveFactor, dodPercent, inverterId, batteryId, manualMode, banks, cableLengthM, lengthFactor]);
-  const inverterOptions = useMemo(() => filterEmergencyInverters(banks.inverters, design.inverter.designPowerW || design.load.surgePowerW), [banks.inverters, design.inverter.designPowerW, design.load.surgePowerW]);
+  const inverterOptions = useMemo(() => filterEmergencyInverters(banks.inverters, design.inverter.designPowerW || design.load.surgePowerW, { phaseAC: design.load.phaseAC, voltageAC: design.load.voltageAC }), [banks.inverters, design.inverter.designPowerW, design.load.surgePowerW]);
   const batteryOptions = useMemo(() => filterEmergencyBatteries(banks.batteries, design.inverter, design.battery.requiredRawKWh), [banks.batteries, design.inverter, design.battery.requiredRawKWh]);
   const emergencyInverterDetailRows = [
     ["توان طراحی", `${faNumber(design.inverter.designPowerW)} W`],
@@ -536,23 +625,52 @@ export default function EmergencySystemSettings() {
   }, [manualMode, design.inverter.id, design.battery.id]);
 
   useEffect(() => {
-    localStorage.setItem("shil:emergencySystemDesign:live", JSON.stringify(design));
-    localStorage.setItem("shil:systemSettingsDraft:live", JSON.stringify({ domain: "emergency", design, sourceHandoff: handoff }));
+    safeLocalSetItem("shil:emergencySystemDesign:live", JSON.stringify(design));
+    safeLocalSetItem("shil:systemSettingsDraft:live", JSON.stringify({ domain: "emergency", design, sourceHandoff: handoff }));
     setLiveSaved(true);
     const timer = setTimeout(() => setLiveSaved(false), 900);
     return () => clearTimeout(timer);
   }, [design, handoff]);
 
   const confirm = () => {
-    if (!design.valid) return;
+    if (!design.valid) {
+      const reason = Array.isArray(design.warnings) && design.warnings.length
+        ? design.warnings.join(" | ")
+        : "طراحی برق اضطراری هنوز معتبر نیست. توان بار، اینورتر، باتری، حفاظت DC و کابل را بررسی کنید.";
+      setConfirmError(reason);
+      return;
+    }
+
+    setConfirmError("");
     const finalDesign = { ...design, confirmedAt: new Date().toISOString() };
-    approveProjectStep("system");
-    localStorage.setItem("shil:emergencySystemDesign", JSON.stringify(finalDesign));
-    localStorage.removeItem("shil:solarSystemDesign");
-    localStorage.removeItem("shil:solarPanelPowerInput");
-    localStorage.removeItem("shil:solarPanelPowerPreview");
-    localStorage.setItem("shil:systemSettingsDraft", JSON.stringify({ domain: "emergency", displayName: "برق اضطراری با اینورتر و باتری", calculationModel: "ups_like_battery_inverter", design: finalDesign, sourceHandoff: handoff }));
-    navigate("/new-project/summary/emergency");
+
+    try {
+      approveProjectStep("system");
+    } catch (error) {
+      console.warn("[SHIL] emergency system workflow persistence skipped", error);
+    }
+
+    // Persistence failure must not make a valid confirmation button appear dead.
+    // safeLocalSetItem transparently falls back to sessionStorage.
+    safeLocalSetItem("shil:emergencySystemDesign", JSON.stringify(finalDesign));
+    safeLocalRemoveItem("shil:solarSystemDesign");
+    safeLocalRemoveItem("shil:solarPanelPowerInput");
+    safeLocalRemoveItem("shil:solarPanelPowerPreview");
+    safeLocalSetItem("shil:systemSettingsDraft", JSON.stringify({
+      domain: "emergency",
+      displayName: "برق اضطراری با اینورتر و باتری",
+      calculationModel: "ups_like_battery_inverter",
+      design: finalDesign,
+      sourceHandoff: handoff,
+    }));
+
+    const target = "/new-project/summary/emergency";
+    try {
+      navigate(target);
+    } catch (error) {
+      console.error("[SHIL] emergency summary navigation fallback", error);
+      window.location.assign(target);
+    }
   };
 
   return (
@@ -615,6 +733,20 @@ export default function EmergencySystemSettings() {
           box-shadow:none!important;outline:none!important;
         }
         .shil-settings-summary-page .shil-summary-kv-card input:focus{border-color:#7c6ce7!important}
+        .shil-settings-summary-page .shil-backup-hours-control{display:flex!important;flex-direction:column!important;gap:7px!important;width:100%!important}
+        .shil-settings-summary-page .shil-backup-hours-control>input{width:100%!important}
+        .shil-settings-summary-page .shil-backup-hours-toggle{
+          width:100%!important;min-height:38px!important;padding:7px 11px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:8px!important;
+          border:1px solid #b8c9da!important;border-radius:10px!important;background:rgba(255,255,255,.96)!important;color:#183153!important;
+          font:800 11px/1.4 inherit!important;cursor:pointer!important;box-shadow:none!important;
+        }
+        .shil-settings-summary-page .shil-backup-hours-toggle-icon{font-size:10px!important;line-height:1!important}
+        .shil-settings-summary-page .shil-backup-hours-options{max-height:0!important;opacity:0!important;overflow:hidden!important;margin-top:-7px!important;transition:max-height 220ms ease,opacity 180ms ease,margin-top 220ms ease!important}
+        .shil-settings-summary-page .shil-backup-hours-options.open{max-height:190px!important;opacity:1!important;overflow:visible!important;margin-top:0!important}
+        .shil-settings-summary-page .shil-backup-hours-grid{display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;gap:6px!important;padding:8px!important;border:1px solid #cbd5e1!important;border-radius:11px!important;background:rgba(248,250,252,.98)!important}
+        .shil-settings-summary-page .shil-backup-hour-option{min-height:34px!important;padding:4px!important;border:1px solid #c4d3e2!important;border-radius:9px!important;background:#fff!important;color:#173254!important;font:900 12px/1 inherit!important;cursor:pointer!important;box-shadow:none!important}
+        .shil-settings-summary-page .shil-backup-hour-option.selected{border-color:#5a7ee5!important;background:#e8efff!important;color:#102b62!important}
+        .shil-settings-summary-page .shil-backup-hour-option:focus-visible,.shil-settings-summary-page .shil-backup-hours-toggle:focus-visible{outline:2px solid #6d7ee8!important;outline-offset:2px!important}
         .shil-settings-summary-page .shil-summary-accordion-chip{
           display:block!important;min-height:34px!important;height:auto!important;margin:8px auto 0!important;padding:5px 11px!important;
           border:1px solid #cbd5e1!important;border-radius:8px!important;background:#fff!important;background-image:none!important;
@@ -641,6 +773,7 @@ export default function EmergencySystemSettings() {
           .shil-settings-summary-page .shil-summary-kv-card{min-height:56px!important;padding:7px 8px!important;border-radius:11px!important}
           .shil-settings-summary-page .shil-summary-kv-label{font-size:10.5px!important}
           .shil-settings-summary-page .shil-summary-kv-value,.shil-settings-summary-page .shil-summary-kv-card input{font-size:12px!important}
+          .shil-settings-summary-page .shil-backup-hours-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
         }
       `}</style>
 
@@ -649,7 +782,75 @@ export default function EmergencySystemSettings() {
           <div className="shil-summary-data">
             <SettingsGrid editable rows={[
               ["ساعت مبنای تجهیزات", `${EMERGENCY_BASE_LOAD_HOURS} ساعت`, null],
-              ["زمان پشتیبانی هدف", null, <input key="hours" value={backupHours} readOnly aria-readonly="true" />],
+              ["زمان پشتیبانی هدف", null, <div key="hours" className="shil-backup-hours-control">
+  <input
+    type="number"
+    min="1"
+    max="12"
+    step="1"
+    inputMode="numeric"
+    value={backupHours}
+    onChange={(e) => {
+      const value = e.target.value;
+
+      if (value === "") {
+        setBackupHours("");
+        return;
+      }
+
+      const numericValue = Number(value);
+      if (Number.isFinite(numericValue) && numericValue >= 1 && numericValue <= 12) {
+        setBackupHours(value);
+      }
+    }}
+    onBlur={() => {
+      const numericValue = Number(backupHours);
+      setBackupHours(
+        Number.isFinite(numericValue)
+          ? Math.min(12, Math.max(1, Math.round(numericValue)))
+          : 1
+      );
+    }}
+    aria-label="زمان پشتیبانی هدف"
+  />
+
+  <button
+    type="button"
+    className="shil-backup-hours-toggle"
+    aria-expanded={backupHoursOpen}
+    aria-controls="shil-backup-hours-options"
+    onClick={() => setBackupHoursOpen((open) => !open)}
+  >
+    <span>انتخاب ساعت از لیست</span>
+    <span className="shil-backup-hours-toggle-icon" aria-hidden="true">{backupHoursOpen ? "▲" : "▼"}</span>
+  </button>
+
+  <div
+    id="shil-backup-hours-options"
+    className={backupHoursOpen ? "shil-backup-hours-options open" : "shil-backup-hours-options"}
+    aria-hidden={!backupHoursOpen}
+  >
+    <div className="shil-backup-hours-grid">
+      {Array.from({ length: 12 }, (_, index) => index + 1).map((hour) => {
+        const selected = Number(backupHours) === hour;
+        return (
+          <button
+            key={hour}
+            type="button"
+            className={selected ? "shil-backup-hour-option selected" : "shil-backup-hour-option"}
+            aria-pressed={selected}
+            onClick={() => {
+              setBackupHours(hour);
+              setBackupHoursOpen(false);
+            }}
+          >
+            {hour}
+          </button>
+        );
+      })}
+    </div>
+  </div>
+</div>],
               ["ضریب اطمینان اینورتر", null, <input key="reserve" value={reserveFactor} inputMode="decimal" onChange={(e) => setReserveFactor(e.target.value)} />],
               ["عمق دشارژ مجاز %", null, <input key="dod" value={dodPercent} inputMode="decimal" onChange={(e) => setDodPercent(e.target.value)} />],
               ["طول یک‌طرفه کابل (m)", null, <input key="length" value={cableLengthM} inputMode="decimal" onChange={(e) => setCableLengthM(e.target.value)} />],
@@ -697,10 +898,15 @@ export default function EmergencySystemSettings() {
 
         <ShilWarningOverlay messages={design.warnings} inline />
 
+        {confirmError ? <div role="alert" style={{ margin: "12px 0", padding: "12px 14px", borderRadius: 12, background: "rgba(180, 40, 40, 0.10)", lineHeight: 1.9 }}>
+          <strong>خطای طراحی برق اضطراری:</strong> {confirmError}
+        </div> : null}
+
         <div className="shil-env-content-confirm-slot" aria-label="تأیید تنظیمات برق اضطراری">
-          <ShilPrimaryButton className="shil-env-content-confirm-button" disabled={!design.valid} onClick={confirm} label="تأیید" />
+          <ShilPrimaryButton className="shil-env-content-confirm-button" onClick={confirm} label={design.valid ? "تأیید" : "بررسی خطاهای طراحی"} />
         </div>
       </div>
     </EngineeringPageShell>
   );
 }
+

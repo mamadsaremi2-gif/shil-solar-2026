@@ -23,15 +23,34 @@ export const levelMeta = {
 
 const levelOrder = ["light", "medium", "heavy"];
 const domainOrder = ["solar", "emergency"];
+const locationPool = [
+  { city: "تهران", province: "تهران" },
+  { city: "اصفهان", province: "اصفهان" },
+  { city: "شیراز", province: "فارس" },
+  { city: "مشهد", province: "خراسان رضوی" },
+  { city: "تبریز", province: "آذربایجان شرقی" },
+  { city: "اهواز", province: "خوزستان" },
+  { city: "کرج", province: "البرز" },
+  { city: "قم", province: "قم" },
+  { city: "رشت", province: "گیلان" },
+  { city: "کرمان", province: "کرمان" },
+];
+
 
 function makeScenario(domain, level, serial) {
   const d = domainMeta[domain];
   const l = levelMeta[level];
   const loadEstimate = Math.round(d.baseLoadW[level] + serial * 35 * l.factor);
   const dailyEnergyWh = Math.round(loadEstimate * (domain === "solar" ? 4.8 : d.backupHours[level]));
+  const phaseAC = domain === "emergency" && level === "heavy" ? "three" : "single";
+  const voltageAC = phaseAC === "three" ? 380 : 220;
+  const totalCurrentA = domain === "emergency"
+    ? Number((loadEstimate / (voltageAC * (phaseAC === "three" ? Math.sqrt(3) : 1))).toFixed(2))
+    : 0;
   const suggestedPanels = domain === "solar" ? Math.max(2, Math.ceil(dailyEnergyWh / 2300)) : 0;
   const inverterRatedW = Math.ceil((loadEstimate * (domain === "emergency" ? 1.4 : 1.25)) / 500) * 500;
   const batteryAh = Math.ceil((dailyEnergyWh / 48 / 0.8) / 50) * 50;
+  const location = locationPool[(serial - 1) % locationPool.length];
 
   return {
     id: `${domain}-${level}-${String(serial).padStart(3, "0")}`,
@@ -42,10 +61,15 @@ function makeScenario(domain, level, serial) {
     category: d.fa,
     title: `${d.fa} - سناریوی ${l.fa} ${serial}`,
     description: `سناریوی آماده ${l.fa} برای ${d.fa} با ورودی استاندارد برای اتصال به شرایط محیطی، تجهیزات و موتور محاسباتی SHIL.`,
+    city: location.city,
+    province: location.province,
     loadEstimate,
     dailyEnergyWh,
     backupHours: d.backupHours[level],
     autonomyDays: d.autonomyDays[level],
+    phaseAC,
+    voltageAC,
+    totalCurrentA,
     inverter: domain === "solar" ? "اینورتر خورشیدی" : "اینورتر برق اضطراری",
     inverterRatedW,
     batteryType: domain === "solar" ? "Lithium / AGM" : "Lithium / AGM / Tubular",

@@ -1,9 +1,10 @@
-const hasLocalStorage = () => typeof localStorage !== "undefined" && localStorage !== null;
+import { readLocalOrSessionItem, safeLocalSetItem } from "../../services/storageQuotaGuard.js";
+const hasLocalStorage = () => typeof window !== "undefined";
 
 export function readJson(key, fallback = null) {
   try {
     if (!hasLocalStorage()) return fallback;
-    const value = JSON.parse(localStorage.getItem(key) || "null");
+    const value = JSON.parse(readLocalOrSessionItem(key) || "null");
     return value ?? fallback;
   } catch {
     return fallback;
@@ -11,14 +12,14 @@ export function readJson(key, fallback = null) {
 }
 
 export function writeJson(key, value) {
-  if (hasLocalStorage()) localStorage.setItem(key, JSON.stringify(value));
+  if (hasLocalStorage()) safeLocalSetItem(key, JSON.stringify(value));
   return value;
 }
 
 export function getProjectPath() {
   const raw = readJson("shil:projectPath", null) || readJson("shil:selectedProjectPath", null);
   if (typeof raw === "string") return { domain: raw, type: raw };
-  return raw || { domain: hasLocalStorage() ? localStorage.getItem("shil:calculationDomain") || "solar" : "solar" };
+  return raw || { domain: hasLocalStorage() ? readLocalOrSessionItem("shil:calculationDomain") || "solar" : "solar" };
 }
 
 export function getSystemSetupHandoff() {
@@ -27,7 +28,7 @@ export function getSystemSetupHandoff() {
     source: {
       projectPath: projectPath.domain || "solar",
       domain: projectPath.domain || "solar",
-      method: hasLocalStorage() ? localStorage.getItem("shil:calculationMethod") || "equipment" : "equipment",
+      method: hasLocalStorage() ? readLocalOrSessionItem("shil:calculationMethod") || "equipment" : "equipment",
       from: "legacy-local-storage",
     },
     normalizedLoad: readJson("shil:loadEngineResult", {}),

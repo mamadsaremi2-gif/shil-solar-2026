@@ -14,3 +14,9 @@ android/local.properties
 .env*.local
 .env.*.local
 .vercel/
+
+*.zip
+
+_backup_*/
+
+SHIL_V25_*_PATCH/

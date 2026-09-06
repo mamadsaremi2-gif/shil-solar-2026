@@ -1,4 +1,5 @@
-﻿const SCENARIO_KEYS = [
+import { readLocalOrSessionItem, safeLocalSetItem, safeLocalRemoveItem } from "../services/storageQuotaGuard.js";
+const SCENARIO_KEYS = [
   "shil:scenarioFlowActive",
   "shil:selectedScenario",
   "shil:scenarioNextStep",
@@ -36,9 +37,9 @@ export const FLOW_MODES = Object.freeze({
   SCENARIO: "scenario",
 });
 
-function safeRemove(key) { try { localStorage.removeItem(key); } catch { /* noop */ } }
-function safeSet(key, value) { try { localStorage.setItem(key, value); } catch { /* noop */ } }
-function safeGet(key) { try { return localStorage.getItem(key); } catch { return null; } }
+function safeRemove(key) { safeLocalRemoveItem(key); }
+function safeSet(key, value) { return safeLocalSetItem(key, value); }
+function safeGet(key) { return readLocalOrSessionItem(key); }
 function safeJson(key, fallback = null) { try { return JSON.parse(safeGet(key) || "null") ?? fallback; } catch { return fallback; } }
 function safeSetJson(key, value) { safeSet(key, JSON.stringify(value)); }
 
