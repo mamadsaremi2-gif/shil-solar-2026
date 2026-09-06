@@ -97,10 +97,10 @@ export default function LoginPage() {
         </form>
         <button type="button" className="shil-guest-btn" onClick={()=>{setError("");setGuestMode(v=>!v)}}>{guestMode ? "بستن ورود آزمایشی" : "ورود آزمایشی"}</button>
         {guestMode ? <form className="shil-auth-form shil-guest-form" onSubmit={handleGuestSubmit}>
-          <input value={guest.fullName} onChange={(e)=>setGuest({...guest,fullName:e.target.value})} placeholder="نام و نام خانوادگی"/>
-          <input type="email" value={guest.email} onChange={(e)=>setGuest({...guest,email:e.target.value})} placeholder="ایمیل - اختیاری" dir="ltr"/>
-          <input value={guest.phone} onChange={(e)=>setGuest({...guest,phone:e.target.value})} placeholder="شماره تماس - اختیاری" dir="ltr"/>
-          <input value={guest.company} onChange={(e)=>setGuest({...guest,company:e.target.value})} placeholder="شرکت / مجموعه - اختیاری"/>
+          <input className="shil-guest-field" value={guest.fullName} onChange={(e)=>setGuest({...guest,fullName:e.target.value})} placeholder="نام و نام خانوادگی" dir="rtl"/>
+          <input className="shil-guest-field" type="email" inputMode="email" value={guest.email} onChange={(e)=>setGuest({...guest,email:e.target.value})} placeholder="ایمیل - اختیاری" dir="rtl"/>
+          <input className="shil-guest-field" inputMode="tel" value={guest.phone} onChange={(e)=>setGuest({...guest,phone:e.target.value})} placeholder="شماره تماس - اختیاری" dir="rtl"/>
+          <input className="shil-guest-field" value={guest.company} onChange={(e)=>setGuest({...guest,company:e.target.value})} placeholder="شرکت / مجموعه - اختیاری" dir="rtl"/>
           {error ? <p className="shil-auth-error">{error}</p> : null}
           <button type="submit" disabled={loading}>{loading ? "در حال ثبت..." : "ثبت اطلاعات و ورود آزمایشی"}</button>
         </form> : null}

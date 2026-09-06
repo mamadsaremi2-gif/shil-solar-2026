@@ -1,0 +1,23 @@
+SHIL V12.3 - LOGIN + RESPONSIVE DEVICE FIT
+
+Changes:
+1. Guest registration fields are now a single equal-width RTL column.
+2. Guest field text and placeholders are dark/black on light inputs.
+3. PWA install prompt no longer overlaps the guest submit area on mobile.
+4. Mobile-first viewport handling added for phone, tablet, laptop, and desktop.
+5. Installed PWA is no longer forced to portrait; orientation is set to "any".
+6. Viewport meta no longer disables user zoom and uses the physical device width.
+7. Existing engineering calculations/routes/storage logic were not modified.
+
+Breakpoints:
+- < 600px: phone-first full-width layout
+- 600-1023px: tablet
+- 1024-1599px: laptop
+- >=1600px: large desktop
+
+Primary changed files:
+- src/pages/LoginPage.jsx
+- src/appearance/styles/shil-responsive-device-fit-v12-3-final.css
+- src/main.jsx
+- public/manifest.webmanifest
+- index.html

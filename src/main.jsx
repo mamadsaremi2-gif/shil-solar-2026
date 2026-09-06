@@ -312,3 +312,6 @@ import "./appearance/styles/shil-global-connection-v12-final.css";
 
 /* V12.2: iOS/mobile equipment picker text visibility hard fix. MUST stay absolute last. */
 import "./appearance/styles/shil-equipment-mobile-visibility-v12-2-final.css";
+
+/* V12.3: mobile-first login + device-fit responsive shell. MUST stay absolute last. */
+import "./appearance/styles/shil-responsive-device-fit-v12-3-final.css";

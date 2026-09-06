@@ -1,0 +1,199 @@
+/*
+ * SHIL V12.3 - Mobile-first / device-fit final layer
+ * Goals:
+ * - guest login fields: one column, equal width, RTL alignment
+ * - high-contrast text on white/light inputs
+ * - full device viewport on phone / tablet / laptop / desktop / installed PWA
+ * - avoid PWA install button overlapping the guest form
+ */
+
+:root {
+  --shil-device-inline-gap: clamp(8px, 1.8vw, 24px);
+  --shil-device-max: 100vw;
+}
+
+html,
+body,
+#root {
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  min-height: 100% !important;
+  margin: 0 !important;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  overflow-x: hidden !important;
+}
+
+/* Installed PWA and browser mode both consume the real available viewport. */
+.shil-page-shell,
+.shil-page-content,
+.shil-ds-page-root {
+  min-width: 0 !important;
+}
+
+.shil-page-shell:not(.shil-page--auth) {
+  width: 100vw !important;
+  max-width: 100vw !important;
+  margin-inline: 0 !important;
+}
+
+/* ---------- AUTH / LOGIN : mobile first ---------- */
+.shil-auth-page {
+  width: 100vw !important;
+  min-width: 0 !important;
+  min-height: 100svh !important;
+  min-height: 100dvh !important;
+}
+
+.shil-auth-card {
+  min-width: 0 !important;
+}
+
+/* All guest fields have exactly the same geometry and direction. */
+.shil-auth-page .shil-guest-form {
+  width: 100% !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 10px !important;
+}
+
+.shil-auth-page .shil-guest-form .shil-guest-field {
+  display: block !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding-inline: 16px !important;
+  direction: rtl !important;
+  text-align: right !important;
+  color: #050b12 !important;
+  -webkit-text-fill-color: #050b12 !important;
+  caret-color: #050b12 !important;
+  opacity: 1 !important;
+  background: rgba(255,255,255,.96) !important;
+}
+
+.shil-auth-page .shil-guest-form .shil-guest-field::placeholder {
+  direction: rtl !important;
+  text-align: right !important;
+  color: #111827 !important;
+  -webkit-text-fill-color: #111827 !important;
+  opacity: .88 !important;
+}
+
+/* Typed text stays black even after iOS/Chrome autofill. */
+.shil-auth-page .shil-guest-form .shil-guest-field:-webkit-autofill,
+.shil-auth-page .shil-guest-form .shil-guest-field:-webkit-autofill:hover,
+.shil-auth-page .shil-guest-form .shil-guest-field:-webkit-autofill:focus {
+  -webkit-text-fill-color: #050b12 !important;
+  box-shadow: 0 0 0 1000px #fff inset !important;
+}
+
+/* Mobile: use nearly the whole screen and reserve room for install UI. */
+@media (max-width: 599px) {
+  .shil-auth-page {
+    justify-content: center !important;
+    align-items: flex-start !important;
+    padding:
+      max(12px, env(safe-area-inset-top))
+      12px
+      calc(84px + env(safe-area-inset-bottom)) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+  }
+
+  .shil-auth-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    padding: 14px !important;
+    border-radius: 20px !important;
+  }
+
+  .shil-auth-form input,
+  .shil-auth-page .shil-guest-form .shil-guest-field {
+    min-height: 48px !important;
+    height: 48px !important;
+    font-size: 15px !important;
+  }
+
+  .shil-beta-install-app {
+    left: 12px !important;
+    right: auto !important;
+    bottom: max(12px, env(safe-area-inset-bottom)) !important;
+    max-width: calc(100vw - 24px) !important;
+    z-index: 10050 !important;
+  }
+}
+
+/* Tablet: full usable viewport with a comfortable centered login card. */
+@media (min-width: 600px) and (max-width: 1023px) {
+  .shil-auth-page {
+    justify-content: center !important;
+    align-items: center !important;
+    padding: clamp(20px, 4vw, 42px) !important;
+  }
+
+  .shil-auth-card {
+    width: min(72vw, 560px) !important;
+    max-width: 560px !important;
+    margin: auto !important;
+  }
+}
+
+/* Laptop: app fills the laptop viewport; auth card scales up, not phone-sized. */
+@media (min-width: 1024px) and (max-width: 1599px) {
+  .shil-page-shell:not(.shil-page--auth) {
+    width: 100vw !important;
+    max-width: 100vw !important;
+  }
+
+  .shil-auth-page {
+    justify-content: flex-end !important;
+    align-items: center !important;
+    padding: clamp(28px, 4vw, 64px) !important;
+  }
+
+  .shil-auth-card {
+    width: clamp(460px, 38vw, 620px) !important;
+    max-width: 620px !important;
+  }
+}
+
+/* Desktop / large monitor: preserve full-monitor layout with bounded readable auth form. */
+@media (min-width: 1600px) {
+  .shil-page-shell:not(.shil-page--auth) {
+    width: 100vw !important;
+    max-width: 100vw !important;
+  }
+
+  .shil-auth-page {
+    justify-content: flex-end !important;
+    align-items: center !important;
+    padding: clamp(40px, 5vw, 96px) !important;
+  }
+
+  .shil-auth-card {
+    width: clamp(520px, 32vw, 680px) !important;
+    max-width: 680px !important;
+  }
+}
+
+/* Standalone PWA: use the installed window, including safe areas and landscape. */
+@media (display-mode: standalone) {
+  html,
+  body,
+  #root,
+  .shil-page-shell {
+    width: 100% !important;
+    max-width: none !important;
+    min-height: 100dvh !important;
+  }
+}
