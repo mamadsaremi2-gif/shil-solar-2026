@@ -170,7 +170,7 @@ export function checkPvInverterCompatibility(panel = {}, inverter = {}, seriesCo
 
   if (coldVoc > maxDcVoltage) issues.push({ code: "PV_MAX_DC_EXCEEDED", severity: "error", message: "ولتاژ Voc سرد رشته از حد مجاز اینورتر بیشتر است." });
   if (stringVmp < mpptMin || stringVmp > mpptMax) issues.push({ code: "PV_MPPT_MISMATCH", severity: "error", message: "ولتاژ کاری رشته خارج از بازه MPPT اینورتر است." });
-  if (currentA > maxPvInputCurrentA) issues.push({ code: "PV_INPUT_CURRENT_HIGH", severity: "warning", message: "جریان ورودی PV به بازبینی MPPT یا تقسیم رشته نیاز دارد." });
+  if (currentA > maxPvInputCurrentA) issues.push({ code: "PV_INPUT_CURRENT_HIGH", severity: "error", message: "جریان ورودی PV از حد مجاز هر MPPT بیشتر است؛ آرایش رشته باید اصلاح شود." });
 
   return {
     compatible: !issues.some((issue) => issue.severity === "error"),

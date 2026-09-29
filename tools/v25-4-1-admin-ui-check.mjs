@@ -6,7 +6,7 @@ const css = read('src/styles/shil-admin-v2541-ui-refinement.css');
 const checks = [
   ['short solar entry', admin.includes('<strong>خورشیدی</strong><span>پیش‌فرض‌های مسیر</span>')],
   ['short emergency entry', admin.includes('<strong>برق اضطراری</strong><span>پیش‌فرض‌های مسیر</span>')],
-  ['compact path header', admin.includes('☀ پیش‌فرض‌های خورشیدی · ۸ مرحله') && admin.includes('⚡ پیش‌فرض‌های برق اضطراری · ۸ مرحله')],
+  ['compact path header', admin.includes('☀ پیش‌فرض‌های خورشیدی · ۸ مرحله واقعی') && admin.includes('⚡ پیش‌فرض‌های برق اضطراری · ۷ مرحله واقعی')],
   ['closed cards title only', !admin.includes('<small>{step.note}</small>')],
   ['compact actions', admin.includes('>ذخیره</button>') && admin.includes('>انتشار</button>') && admin.includes('>بازنشانی</button>')],
   ['stylesheet imported last', main.includes('shil-admin-path-defaults-v254.css";\nimport "./styles/shil-admin-v2541-ui-refinement.css";')],

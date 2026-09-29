@@ -41,9 +41,9 @@ export function applyCatalogSelection(form, selection = {}) {
         ? {
             ratedPowerW: inverter.ratedPowerW,
             surgePowerW: inverter.surgePowerW,
-            maxDcVoltage: inverter.maxDcVoltage,
-            mpptMinVoltage: inverter.mpptMinVoltage,
-            mpptMaxVoltage: inverter.mpptMaxVoltage,
+            maxDcVoltage: inverter.maxDcVoltage ?? inverter.maxPvVocV,
+            mpptMinVoltage: inverter.mpptMinVoltage ?? inverter.mpptMinV,
+            mpptMaxVoltage: inverter.mpptMaxVoltage ?? inverter.mpptMaxV,
             efficiency: inverter.efficiency
           }
         : {})
@@ -54,8 +54,8 @@ export function applyCatalogSelection(form, selection = {}) {
         ? {
             nominalVoltage: battery.nominalVoltage,
             capacityAh: battery.capacityAh,
-            depthOfDischarge: battery.recommendedDoD,
-            roundTripEfficiency: battery.roundTripEfficiency
+            depthOfDischarge: battery.recommendedDoD ?? battery.usableDod,
+            roundTripEfficiency: battery.roundTripEfficiency ?? battery.efficiency
           }
         : {})
     },

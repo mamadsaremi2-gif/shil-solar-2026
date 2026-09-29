@@ -12,7 +12,7 @@ orchestrator.next();
 assert(store.getState().currentStep === "environment", "Workflow next should move to environment.");
 
 const map = orchestrator.getStepMap();
-assert(map.some((step) => step.id === "battery" && step.requiredNow === true), "Battery should be required for offgrid.");
+assert(map.some((step) => step.id === "system-settings" && step.requiredNow === true), "System settings should be required in the current workflow.");
 
 const result = orchestrator.runCalculation({ stopOnValidationError: false });
 assert(result.outputs.pv.arrayPowerW === 4400, "Workflow should run calculation.");

@@ -7,7 +7,7 @@ const checks=[
  ['دو مسیر پیش فرض', admin.includes('پیش‌فرض‌های خورشیدی') && admin.includes('پیش‌فرض‌های برق اضطراری')],
  ['هشت مرحله مهندسی', ['path','info','environment','method','inputs','system','summary','run'].every(k=>admin.includes(`key: "${k}"`))],
  ['آکاردئون مراحل', admin.includes('shil-default-stage-v254') && admin.includes('<details key={step.key}')],
- ['برق اضطراری 1 تا 24', admin.includes('min="1" max="24"') && admin.includes('ساعت مبنای همه مصرف‌کننده‌ها ثابت و برابر ۱ ساعت')],
+ ['برق اضطراری 1 تا 24', admin.includes('min="1" max="24"') && admin.includes('ساعت مبنای همه تجهیزات ثابت و برابر ۱ ساعت')],
  ['Runtime admin defaults', store.includes('saveRuntimeAppData(RUNTIME_KEYS.adminDefaults, saved)')],
  ['گرادیان آبی', css.includes('linear-gradient') && !/purple|violet|#7c3aed|#8b5cf6/i.test(css)],
  ['موبایل دو ستونه', css.includes('grid-template-columns:repeat(2,minmax(0,1fr))')],

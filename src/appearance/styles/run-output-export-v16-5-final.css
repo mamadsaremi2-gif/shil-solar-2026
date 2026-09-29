@@ -1,0 +1,172 @@
+/* SHIL V16.5 - final A4 export integrity patch.
+   Fixes the legacy V11 fixed-grid rows when draft banner/status rows are present,
+   and keeps PDF/PNG capture inside one A4 page. */
+#shil-execution-output-root .shil-a4-final-form,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-final-form {
+  display: flex !important;
+  flex-direction: column !important;
+  width: 794px !important;
+  height: 1123px !important;
+  min-height: 1123px !important;
+  max-height: 1123px !important;
+  aspect-ratio: auto !important;
+  align-content: initial !important;
+  gap: 5px !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+#shil-execution-output-root .shil-a4-header,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-header {
+  flex: 0 0 72px !important;
+  min-height: 72px !important;
+  height: 72px !important;
+}
+
+#shil-execution-output-root .shil-a4-draft-banner,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-draft-banner {
+  flex: 0 0 auto !important;
+  width: 100% !important;
+  min-height: 30px !important;
+  height: auto !important;
+  padding: 6px 10px !important;
+  line-height: 1.5 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
+}
+
+#shil-execution-output-root .shil-a4-status-strip,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-status-strip {
+  flex: 0 0 auto !important;
+  width: 100% !important;
+  min-height: 0 !important;
+  height: auto !important;
+  display: grid !important;
+  grid-template-columns: repeat(3,minmax(0,1fr)) !important;
+  gap: 5px !important;
+  align-items: stretch !important;
+}
+
+#shil-execution-output-root .shil-a4-status-chip,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-status-chip {
+  min-height: 28px !important;
+  height: auto !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 4px 6px !important;
+  box-sizing: border-box !important;
+  line-height: 1.35 !important;
+}
+
+#shil-execution-output-root .shil-a4-section,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-section {
+  flex: 0 0 auto !important;
+  min-height: 0 !important;
+  height: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 3px !important;
+  overflow: visible !important;
+}
+
+#shil-execution-output-root .shil-a4-section-title,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-section-title {
+  flex: 0 0 28px !important;
+  min-height: 28px !important;
+  height: 28px !important;
+  padding: 3px 12px !important;
+}
+
+#shil-execution-output-root .shil-a4-fields,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-fields {
+  height: auto !important;
+  min-height: 0 !important;
+  grid-auto-rows: auto !important;
+  gap: 4px !important;
+}
+
+#shil-execution-output-root .shil-a4-fields > div,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-fields > div {
+  min-height: 46px !important;
+  height: auto !important;
+  padding: 5px 7px !important;
+}
+
+#shil-execution-output-root .shil-a4-table,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-table {
+  height: auto !important;
+  min-height: 0 !important;
+  gap: 3px !important;
+}
+
+#shil-execution-output-root .shil-a4-table .shil-a4-table-head,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-table .shil-a4-table-head {
+  min-height: 22px !important;
+  height: 22px !important;
+  padding: 2px 8px !important;
+}
+
+#shil-execution-output-root .shil-a4-table > div:not(.shil-a4-table-head),
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-table > div:not(.shil-a4-table-head) {
+  min-height: 42px !important;
+  height: auto !important;
+  padding: 5px 8px !important;
+}
+
+#shil-execution-output-root .shil-a4-table > div > b,
+#shil-execution-output-root .shil-a4-table > div > small,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-table > div > b,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-table > div > small {
+  min-width: 0 !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  word-break: normal !important;
+}
+
+#shil-execution-output-root .shil-a4-execution-grid,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-grid {
+  height: auto !important;
+  min-height: 0 !important;
+  grid-auto-rows: auto !important;
+  gap: 4px !important;
+}
+
+#shil-execution-output-root .shil-a4-execution-card,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-card {
+  min-height: 54px !important;
+  height: auto !important;
+  padding: 5px 6px !important;
+  overflow: hidden !important;
+}
+
+#shil-execution-output-root .shil-a4-execution-card-structured .shil-engineering-item-print,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-card-structured .shil-engineering-item-print {
+  min-height: 22px !important;
+  grid-template-columns: minmax(58px,1.35fr) repeat(4,minmax(28px,.7fr)) !important;
+  gap: 2px !important;
+}
+
+#shil-execution-output-root .shil-a4-execution-card-structured .shil-engineering-item-print > span,
+#shil-execution-output-root .shil-a4-execution-card-structured .shil-engineering-item-print > b,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-card-structured .shil-engineering-item-print > span,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-card-structured .shil-engineering-item-print > b {
+  min-width: 0 !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+}
+
+/* Export host is intentionally off-screen but still fully rendered for html2canvas. */
+body > #shil-execution-output-root.shil-a4-export-host {
+  position: fixed !important;
+  left: -12000px !important;
+  top: 0 !important;
+  width: 794px !important;
+  height: 1123px !important;
+  overflow: hidden !important;
+  background: #fff !important;
+  z-index: -1 !important;
+  pointer-events: none !important;
+}

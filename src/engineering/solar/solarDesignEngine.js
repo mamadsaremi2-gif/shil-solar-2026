@@ -46,10 +46,16 @@ function uniqueMessages(items = []) {
   return [...new Set(items.filter(Boolean))];
 }
 
-function calcRequiredBatteryKWh(finalEnergyKWh, autonomy, needsBattery) {
+function calcRequiredBatteryUsableKWh(finalEnergyKWh, autonomy, needsBattery) {
   if (!needsBattery) return 0;
   const autonomyDays = Math.max(number(autonomy.days, 0), number(autonomy.hours, 0) / 24);
   return Math.round(finalEnergyKWh * Math.max(autonomyDays, 0) * 100) / 100;
+}
+
+function batteryUsableFraction(battery = {}) {
+  const dod = Math.min(1, Math.max(0.5, number(battery.usableDod ?? battery.depthOfDischarge ?? 0.9, 0.9)));
+  const efficiency = Math.min(1, Math.max(0.5, number(battery.efficiency ?? battery.roundTripEfficiency ?? 0.94, 0.94)));
+  return Math.max(0.25, dod * efficiency);
 }
 
 export function buildSolarSystemDesign({ handoff = {}, settings = {}, banks = {} }) {
@@ -122,14 +128,19 @@ export function buildSolarSystemDesign({ handoff = {}, settings = {}, banks = {}
   const designPowerW = Math.ceil(basePowerW);
   const finalPowerW = Math.ceil(basePowerW);
 
-  const environmentEnergyKWh = (basePowerW / 1000) * psh;
-  const hasExplicitDailyEnergy = positive(routePayload.dailyEnergyKWh || routePayload.totalEnergyKWh || routePayload.generatedDailyKWh || routePayload.usableDailyEnergyKWh, 0) > 0;
+  const methodKey = String(method || "").toLowerCase();
+  const explicitRouteEnergyKWh = positive(
+    routePayload.dailyEnergyKWh || routePayload.totalEnergyKWh || routePayload.generatedDailyKWh || routePayload.usableDailyEnergyKWh,
+    0
+  );
+  const explicitLoadEnergyKWh = positive(load.dailyEnergyKWh, 0);
+  const usageHours = positive(routePayload.manualHours || routePayload.usageHours || handoff?.normalizedLoad?.usageHours, 0);
+  const powerDerivedEnergyKWh = basePowerW > 0 && usageHours > 0 ? (basePowerW / 1000) * usageHours : 0;
   const rawEnergyKWh =
     methodSummary?.basis === "pv_generation"
-      ? positive(routePayload.generatedDailyKWh || routePayload.usableDailyEnergyKWh, load.dailyEnergyKWh)
-      : ["power", "current", "total_power"].includes(String(method || "").toLowerCase()) && !hasExplicitDailyEnergy
-        ? environmentEnergyKWh
-        : positive(load.dailyEnergyKWh, environmentEnergyKWh);
+      ? positive(routePayload.generatedDailyKWh || routePayload.usableDailyEnergyKWh, explicitLoadEnergyKWh)
+      : positive(explicitLoadEnergyKWh, positive(explicitRouteEnergyKWh, powerDerivedEnergyKWh));
+  const missingConsumptionDuration = ["power", "current", "total_power"].includes(methodKey) && rawEnergyKWh <= 0;
   const baseEnergyKWh = rawEnergyKWh;
   // Daily energy remains the route result. The panel count is based on energy / (PSH * environment efficiency).
   const designEnergyKWh = Math.round(rawEnergyKWh * 100) / 100;
@@ -151,7 +162,12 @@ export function buildSolarSystemDesign({ handoff = {}, settings = {}, banks = {}
     ? Math.max(1, Math.ceil(positive(routePayload.panelCount, 1)))
     : Math.max(1, energyBasedPanelCount);
 
-  const inverterSizingPowerW = Math.max(1, Math.ceil(pvArrayBasePowerW * inverterAdjustmentFactor));
+  const inverterSizingPowerW = Math.max(
+    1,
+    Math.ceil(basePowerW),
+    Math.ceil(positive(load.surgePowerW, 0)),
+    Math.ceil(pvArrayBasePowerW * inverterAdjustmentFactor)
+  );
   const preferredInverter = selectSmartInverter(inverters, settings.inverterId, inverterSizingPowerW, systemType);
   const inverterRatedW = positive(preferredInverter?.ratedPowerW || preferredInverter?.powerW, inverterSizingPowerW || 5000);
   const inverterCount = Math.max(1, Math.ceil(inverterSizingPowerW / Math.max(1, inverterRatedW)));
@@ -170,21 +186,31 @@ export function buildSolarSystemDesign({ handoff = {}, settings = {}, banks = {}
   const arrayPowerW = panelCount * panelPowerW;
   const estimatedDailyKWh = Math.round((arrayPowerW / 1000) * psh * efficiency * 100) / 100;
 
-  const requiredBatteryKWh = calcRequiredBatteryKWh(finalEnergyKWh, autonomy, needsBattery);
-  const selectedBattery = selectCompatibleBattery(batteries, preferredInverter || {}, settings.batteryId, requiredBatteryKWh);
+  const requiredBatteryUsableKWh = calcRequiredBatteryUsableKWh(finalEnergyKWh, autonomy, needsBattery);
+  const conservativeGrossRequirementKWh = requiredBatteryUsableKWh > 0 ? requiredBatteryUsableKWh / (0.9 * 0.94) : 0;
+  const selectedBattery = selectCompatibleBattery(batteries, preferredInverter || {}, settings.batteryId, conservativeGrossRequirementKWh);
   const batterySeriesCount = selectedBattery ? batterySeriesCountForInverter(selectedBattery, preferredInverter || {}) : 0;
   const unitBatteryKWh = selectedBattery ? batteryEnergyKWh(selectedBattery) : 0;
+  const usableFraction = selectedBattery ? batteryUsableFraction(selectedBattery) : 0;
+  const requiredBatteryGrossKWh = usableFraction > 0 ? requiredBatteryUsableKWh / usableFraction : requiredBatteryUsableKWh;
   const seriesStringEnergyKWh = unitBatteryKWh * Math.max(1, batterySeriesCount);
-  const parallelStringCount = needsBattery && seriesStringEnergyKWh > 0 ? Math.max(1, Math.ceil(requiredBatteryKWh / seriesStringEnergyKWh)) : 0;
+  const parallelStringCount = needsBattery && seriesStringEnergyKWh > 0 ? Math.max(1, Math.ceil(requiredBatteryGrossKWh / seriesStringEnergyKWh)) : 0;
   const batteryCount = needsBattery && selectedBattery ? Math.max(1, batterySeriesCount) * Math.max(1, parallelStringCount) : 0;
   const grossBatteryKWh = Math.round(unitBatteryKWh * batteryCount * 100) / 100;
+  const usableBatteryKWh = Math.round(grossBatteryKWh * usableFraction * 100) / 100;
 
   const bankWarnings = [
     !preferredPanel ? "پنل مناسب در بانک تجهیزات پیدا نشد؛ محاسبات با مقدار پیش‌فرض پنل انجام شد." : null,
     !preferredInverter ? "اینورتر مناسب در بانک تجهیزات پیدا نشد؛ محاسبات با مقدار پیش‌فرض اینورتر انجام شد." : null,
     needsBattery && !selectedBattery ? "باتری برای این مسیر الزامی است اما بانک باتری سازگار پیدا نشد." : null,
-    needsBattery && selectedBattery && grossBatteryKWh < requiredBatteryKWh
-      ? "ظرفیت باتری انتخاب‌شده کمتر از انرژی پشتیبان موردنیاز است."
+    needsBattery && selectedBattery && usableBatteryKWh + 1e-9 < requiredBatteryUsableKWh
+      ? "انرژی قابل استفاده بانک باتری با درنظرگرفتن DoD و راندمان کمتر از خودکفایی درخواستی است."
+      : null,
+    missingConsumptionDuration
+      ? "برای مسیر توان/جریان، ساعت مصرف روزانه یا انرژی روزانه باید ثبت شود؛ PSH جایگزین مدت مصرف بار نیست."
+      : null,
+    preferredInverter && positive(preferredInverter.ratedPowerW || preferredInverter.powerW, 0) * inverterCount < Math.max(basePowerW, positive(load.surgePowerW, 0))
+      ? "توان نصب‌شده اینورتر از توان بار/پیک موردنیاز کمتر است."
       : null,
     (stringActualPanelCount - requiredPanelCount) > 0 ? `آرایش استرینگ پیشنهادی ظرفیت ${stringActualPanelCount} پنل دارد؛ تعداد اجرایی ثبت‌شده همان ${requiredPanelCount} پنل است و توزیع نهایی روی MPPT باید در نقشه اجرا تنظیم شود.` : null,
     preferredInverter && arrayPowerW > positive(preferredInverter.maxPvPowerW, Infinity) * inverterCount
@@ -197,13 +223,15 @@ export function buildSolarSystemDesign({ handoff = {}, settings = {}, banks = {}
 
   const warnings = uniqueMessages([...(layout.compatibility.issues || []).map((issue) => issue.message), ...bankWarnings]);
   const hasError = layout.compatibility.issues?.some((issue) => issue.severity === "error");
+  const batteryCapacityValid = !needsBattery || !selectedBattery || usableBatteryKWh + 1e-9 >= requiredBatteryUsableKWh;
+  const inverterCapacityValid = !preferredInverter || positive(preferredInverter.ratedPowerW || preferredInverter.powerW, 0) * inverterCount >= Math.max(basePowerW, positive(load.surgePowerW, 0));
 
   return {
     version: 5,
     source: handoff.source || {},
     methodSummary,
     handoff,
-    valid: !hasError && Boolean(preferredPanel) && Boolean(preferredInverter) && (!needsBattery || Boolean(selectedBattery)),
+    valid: !hasError && !missingConsumptionDuration && inverterCapacityValid && batteryCapacityValid && Boolean(preferredPanel) && Boolean(preferredInverter) && (!needsBattery || Boolean(selectedBattery)),
     load: {
       ...load,
       basePowerW,
@@ -222,6 +250,8 @@ export function buildSolarSystemDesign({ handoff = {}, settings = {}, banks = {}
       designAdjustmentPercent,
       designAdjustmentMode,
       inverterAdjustmentFactor,
+      safetyFactor: 1,
+      usageHours,
     },
     system: {
       systemType,
@@ -238,8 +268,12 @@ export function buildSolarSystemDesign({ handoff = {}, settings = {}, banks = {}
           item: selectedBattery,
           count: batteryCount,
           unitEnergyKWh: Math.round(unitBatteryKWh * 100) / 100,
-          requiredEnergyKWh: requiredBatteryKWh,
+          requiredEnergyKWh: requiredBatteryUsableKWh,
+          requiredUsableEnergyKWh: requiredBatteryUsableKWh,
+          requiredGrossEnergyKWh: Math.round(requiredBatteryGrossKWh * 100) / 100,
           grossEnergyKWh: grossBatteryKWh,
+          usableEnergyKWh: usableBatteryKWh,
+          usableFraction,
           seriesCount: batterySeriesCount,
           parallelCount: parallelStringCount,
           packVoltage: Math.round(positive(selectedBattery.nominalVoltage || selectedBattery.voltageV, 0) * Math.max(1, batterySeriesCount) * 10) / 10,

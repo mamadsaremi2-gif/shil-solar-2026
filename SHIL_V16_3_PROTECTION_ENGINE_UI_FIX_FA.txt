@@ -1,0 +1,10 @@
+SHIL V16.3 - Final Run Protection Engine + Mobile UI Fix
+
+- Protection Engine V4 is now run directly against the exact confirmed SystemSettings solar design.
+- Final Run receives calculated PV/DC, battery DC and AC protection from the authoritative design state.
+- Calculated protection is merged into final result.values.protection and result.protection.
+- Battery/AC/PV device ratings are based on operating current, design factor and next standard rating.
+- Catalog matching remains explicit; missing prospective short-circuit current keeps Icu/Ics confirmation as a warning rather than inventing a value.
+- Protection details on mobile are constrained to the card width.
+- Expanded device detail rows switch to stacked mobile cards below 640px; no horizontal overflow or popup-like table.
+- Quick protection chips use three fixed responsive columns and wrap safely.

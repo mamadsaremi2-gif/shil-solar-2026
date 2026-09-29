@@ -7,6 +7,7 @@ const init = await app.initialize();
 
 assert(init.settings.locale === "fa-IR", "App kernel should initialize settings.");
 assert(init.readiness.health.ok === true, "App kernel should initialize readiness service.");
-assert(app.permissions.can(PERMISSIONS.PROJECT_CREATE) === true, "Default kernel role should allow project create.");
+assert(app.permissions.can(PERMISSIONS.PROJECT_READ) === true, "Default kernel role should allow project read.");
+assert(app.permissions.can(PERMISSIONS.PROJECT_CREATE) === false, "Default kernel role should remain least-privilege viewer.");
 
 console.log("appKernel.test passed");

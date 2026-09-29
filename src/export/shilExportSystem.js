@@ -26,14 +26,19 @@ function batteryNoteText(bank = {}) {
 }
 
 function downloadBlob(blob, filename) {
+  if (!(blob instanceof Blob) || blob.size <= 0) throw new Error("Export blob is empty");
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
   a.download = filename;
+  a.rel = "noopener";
+  a.style.display = "none";
   document.body.appendChild(a);
   a.click();
   a.remove();
-  window.setTimeout(() => URL.revokeObjectURL(url), 600);
+  // Mobile browsers/WebViews may consume the object URL asynchronously.
+  window.setTimeout(() => URL.revokeObjectURL(url), 5000);
+  return { url, filename, size: blob.size };
 }
 
 function normalizeFileName(name) {
@@ -127,31 +132,73 @@ export function exportDeliveryHtml(delivery) {
   downloadBlob(new Blob([html], { type: "text/html;charset=utf-8" }), `${normalizeFileName(delivery.meta.title)}-shil-report.html`);
 }
 
+async function waitForExportAssets(root) {
+  if (document.fonts?.ready) {
+    try { await document.fonts.ready; } catch { /* font readiness is best-effort */ }
+  }
+  const images = Array.from(root?.querySelectorAll?.("img") || []);
+  await Promise.all(images.map((img) => {
+    if (img.complete && img.naturalWidth > 0) return Promise.resolve();
+    return new Promise((resolve) => {
+      const done = () => resolve();
+      img.addEventListener("load", done, { once: true });
+      img.addEventListener("error", done, { once: true });
+      window.setTimeout(done, 2500);
+    });
+  }));
+  await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+}
+
+function hardenA4Clone(clone) {
+  const important = (node, prop, value) => node?.style?.setProperty(prop, value, "important");
+  important(clone, "display", "flex");
+  important(clone, "flex-direction", "column");
+  important(clone, "width", "794px");
+  important(clone, "min-width", "794px");
+  important(clone, "max-width", "794px");
+  important(clone, "height", "1123px");
+  important(clone, "min-height", "1123px");
+  important(clone, "max-height", "1123px");
+  important(clone, "aspect-ratio", "auto");
+  important(clone, "margin", "0");
+  important(clone, "transform", "none");
+  important(clone, "overflow", "hidden");
+  important(clone, "box-sizing", "border-box");
+
+  clone.querySelectorAll?.(".shil-a4-draft-banner,.shil-a4-status-strip,.shil-a4-section").forEach((node) => {
+    important(node, "flex", "0 0 auto");
+    important(node, "height", "auto");
+    important(node, "min-height", "0");
+  });
+  clone.querySelectorAll?.(".shil-a4-section").forEach((node) => {
+    important(node, "display", "flex");
+    important(node, "flex-direction", "column");
+  });
+  clone.querySelectorAll?.(".shil-a4-fields,.shil-a4-table,.shil-a4-execution-grid").forEach((node) => {
+    important(node, "height", "auto");
+    important(node, "min-height", "0");
+  });
+}
+
 async function renderElementAsA4Canvas(element) {
   if (!element) throw new Error("Export element not found");
 
   const host = document.createElement("div");
   host.id = "shil-execution-output-root";
   host.className = "shil-a4-export-host";
+  host.dataset.shilRunOutputVersion = "16.5";
   host.setAttribute("aria-hidden", "true");
 
   const clone = element.cloneNode(true);
   clone.removeAttribute("ref");
-  clone.style.width = "794px";
-  clone.style.height = "1123px";
-  clone.style.maxWidth = "none";
-  clone.style.minHeight = "0";
-  clone.style.margin = "0";
-  clone.style.transform = "none";
-  clone.style.aspectRatio = "auto";
+  hardenA4Clone(clone);
 
   host.appendChild(clone);
   document.body.appendChild(host);
 
   try {
-    if (document.fonts?.ready) await document.fonts.ready;
-    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-    return await html2canvas(clone, {
+    await waitForExportAssets(clone);
+    const canvas = await html2canvas(clone, {
       scale: 2,
       width: 794,
       height: 1123,
@@ -159,10 +206,16 @@ async function renderElementAsA4Canvas(element) {
       windowHeight: 1123,
       backgroundColor: "#ffffff",
       useCORS: true,
+      allowTaint: false,
+      imageTimeout: 5000,
       logging: false,
       scrollX: 0,
       scrollY: 0,
+      foreignObjectRendering: false,
+      onclone: (_doc, clonedElement) => hardenA4Clone(clonedElement),
     });
+    if (!canvas || canvas.width < 1 || canvas.height < 1) throw new Error("A4 capture produced an empty canvas");
+    return canvas;
   } finally {
     host.remove();
   }
@@ -185,6 +238,7 @@ function canvasToA4Pdf(canvas, delivery) {
 export async function exportElementAsPng(element, filename = "shil-output.png") {
   const canvas = await renderElementAsA4Canvas(element);
   const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png", 0.96));
+  if (!blob) throw new Error("PNG encoding failed");
   downloadBlob(blob, filename);
   return canvas;
 }
@@ -204,12 +258,17 @@ export async function shareElementAsPdf(element, delivery, filename = "shil-outp
   const text = `خروجی نهایی مهندسی SHIL - ${delivery?.meta?.title || "پروژه"}`;
 
   if (navigator.share && (!navigator.canShare || navigator.canShare({ files: [file] }))) {
-    await navigator.share({
-      title: delivery?.meta?.title || "SHIL Final Engineering Delivery",
-      text,
-      files: [file],
-    });
-    return "shared-pdf";
+    try {
+      await navigator.share({
+        title: delivery?.meta?.title || "SHIL Final Engineering Delivery",
+        text,
+        files: [file],
+      });
+      return "shared-pdf";
+    } catch (error) {
+      if (error?.name === "AbortError") return "share-cancelled";
+      // Fall through to a real file download if Web Share is unavailable/broken.
+    }
   }
 
   downloadBlob(blob, filename);

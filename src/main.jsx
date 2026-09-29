@@ -254,6 +254,7 @@ import "./appearance/styles/run-output-final-a4-v11.css";
 
 import "./appearance/styles/run-output-native-v12.css";
 import "./appearance/styles/run-output-v14-export-fix.css";
+import "./appearance/styles/run-output-v16-report-redesign.css";
 
 /* V13: global number-before-unit bidi contract. Keep absolute last. */
 import "./appearance/styles/engineering-value-order-v13.css";
@@ -315,3 +316,9 @@ import "./appearance/styles/shil-equipment-mobile-visibility-v12-2-final.css";
 
 /* V12.3: mobile-first login + device-fit responsive shell. MUST stay absolute last. */
 import "./appearance/styles/shil-responsive-device-fit-v12-3-final.css";
+
+/* V16.3: final-run protection engine UI hardening; MUST remain absolute last. */
+import "./appearance/styles/run-output-protection-v16-4-final.css";
+
+/* V16.5: final A4/PDF/PNG/share export integrity patch. MUST remain absolute last. */
+import "./appearance/styles/run-output-export-v16-5-final.css";

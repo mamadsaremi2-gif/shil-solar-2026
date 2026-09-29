@@ -1,0 +1,256 @@
+/* SHIL V16 - premium engineering report redesign */
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-final-form,
+#shil-execution-output-root .shil-a4-export-source .shil-a4-final-form {
+  width: 794px !important; height: 1123px !important; padding: 22px !important;
+  gap: 7px !important; border-radius: 0 !important; background: #f7fbfe !important;
+  box-sizing: border-box !important; overflow: hidden !important;
+}
+#shil-execution-output-root .shil-a4-header {
+  min-height: 72px !important; flex: 0 0 72px !important;
+  border: 1px solid #9fc5df !important; border-radius: 16px !important;
+  background: linear-gradient(135deg,#eaf6fc 0%,#f8fcff 58%,#eef7fc 100%) !important;
+  box-shadow: 0 4px 14px rgba(16,37,58,.08) !important;
+}
+#shil-execution-output-root .shil-a4-section { gap: 4px !important; }
+#shil-execution-output-root .shil-a4-section-title {
+  min-height: 30px !important; height: 30px !important; flex-basis: 30px !important;
+  border-color: #a9cbe2 !important; background: linear-gradient(90deg,#e7f3fa,#f6fbfe) !important;
+}
+#shil-execution-output-root .shil-a4-fields { display:grid !important; grid-template-columns:repeat(3,minmax(0,1fr)) !important; gap:5px !important; }
+#shil-execution-output-root .shil-a4-fields > div {
+  min-height: 52px !important; padding: 6px 8px !important; border:1px solid #c7dce9 !important;
+  border-radius:10px !important; background:#fff !important; display:flex !important; flex-direction:column !important;
+  align-items:center !important; justify-content:center !important; text-align:center !important;
+}
+#shil-execution-output-root .shil-a4-table { display:grid !important; grid-template-columns:1fr !important; gap:4px !important; }
+#shil-execution-output-root .shil-a4-table .shil-a4-table-head,
+#shil-execution-output-root .shil-a4-table > div:not(.shil-a4-table-head) {
+  display:grid !important; grid-template-columns: .7fr 1.55fr 1fr !important; align-items:center !important; gap:8px !important;
+}
+#shil-execution-output-root .shil-a4-table .shil-a4-table-head { min-height:24px !important; padding:3px 8px !important; background:#dcecf6 !important; border-radius:8px !important; }
+#shil-execution-output-root .shil-a4-table > div:not(.shil-a4-table-head) {
+  min-height:50px !important; height:auto !important; padding:6px 8px !important; border:1px solid #c7dce9 !important;
+  border-radius:10px !important; background:#fff !important;
+}
+#shil-execution-output-root .shil-a4-table > div:not(.shil-a4-table-head) > * { display:block !important; visibility:visible !important; opacity:1 !important; }
+#shil-execution-output-root .shil-a4-execution-grid { display:grid !important; grid-template-columns:repeat(3,minmax(0,1fr)) !important; gap:5px !important; }
+#shil-execution-output-root .shil-a4-execution-grid > div {
+  min-height:68px !important; padding:6px 7px !important; border:1px solid #c7dce9 !important; border-radius:10px !important;
+  background:#fff !important; display:flex !important; flex-direction:column !important; align-items:center !important; justify-content:center !important; text-align:center !important;
+}
+#shil-execution-output-root .shil-a4-draft-banner { margin:0 !important; padding:6px 10px !important; min-height:34px !important; border-radius:10px !important; }
+#shil-execution-output-root .shil-a4-status-strip { display:grid !important; grid-template-columns:repeat(3,1fr) !important; gap:5px !important; }
+#shil-execution-output-root .shil-a4-status-chip { padding:5px 6px !important; border:1px solid #ead49a !important; border-radius:8px !important; background:#fffaf0 !important; text-align:center !important; font-size:7.5px !important; font-weight:850 !important; color:#71520a !important; }
+
+/* V16.1 - final section 04 redesign: readable protection matrix + cable cards */
+#shil-execution-output-root[data-shil-run-output-version^="16"] .shil-a4-section:last-of-type,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-section:last-of-type {
+  min-height: 0 !important;
+  overflow: visible !important;
+}
+#shil-execution-output-root[data-shil-run-output-version^="16"] .shil-a4-execution-grid,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3,minmax(0,1fr)) !important;
+  grid-auto-rows: auto !important;
+  align-items: stretch !important;
+  gap: 6px !important;
+  min-height: 0 !important;
+}
+#shil-execution-output-root[data-shil-run-output-version^="16"] .shil-a4-execution-card,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-card {
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  box-sizing: border-box !important;
+  padding: 6px 7px !important;
+  border: 1px solid #c4d7e6 !important;
+  border-radius: 11px !important;
+  background: #fff !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  text-align: center !important;
+  overflow: hidden !important;
+}
+#shil-execution-output-root[data-shil-run-output-version^="16"] .shil-a4-execution-card:nth-child(3n+1),
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-card:nth-child(3n+1) { background:#f8f5ff !important; }
+#shil-execution-output-root[data-shil-run-output-version^="16"] .shil-a4-execution-card:nth-child(3n+2),
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-card:nth-child(3n+2) { background:#f2f9fd !important; }
+#shil-execution-output-root[data-shil-run-output-version^="16"] .shil-a4-execution-card:nth-child(3n),
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-card:nth-child(3n) { background:#fff9f0 !important; }
+
+/* Card heading: prominent, not washed out. */
+#shil-execution-output-root[data-shil-run-output-version^="16"] .shil-a4-execution-card > span,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-card > span {
+  display:block !important;
+  margin:0 0 4px !important;
+  color:#23445f !important;
+  font-size:9px !important;
+  line-height:1.25 !important;
+  font-weight:900 !important;
+  text-align:center !important;
+}
+
+/* Protection rows are a true 5-column matrix: device | A | V | poles | qty. */
+#shil-execution-output-root[data-shil-run-output-version^="16"] .shil-a4-execution-card-structured .shil-engineering-items,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-card-structured .shil-engineering-items {
+  width:100% !important;
+  display:grid !important;
+  gap:3px !important;
+  margin:0 !important;
+}
+#shil-execution-output-root[data-shil-run-output-version^="16"] .shil-a4-execution-card-structured .shil-engineering-item-print,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-card-structured .shil-engineering-item-print {
+  width:100% !important;
+  min-width:0 !important;
+  min-height:24px !important;
+  margin:0 !important;
+  padding:3px 4px !important;
+  box-sizing:border-box !important;
+  display:grid !important;
+  grid-template-columns:minmax(62px,1.45fr) repeat(4,minmax(30px,.72fr)) !important;
+  gap:3px !important;
+  align-items:center !important;
+  border:1px solid #d6e3ed !important;
+  border-radius:7px !important;
+  background:rgba(255,255,255,.72) !important;
+}
+#shil-execution-output-root[data-shil-run-output-version^="16"] .shil-a4-execution-card-structured .shil-engineering-item-print > span,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-card-structured .shil-engineering-item-print > span {
+  margin:0 !important;
+  color:#17344d !important;
+  font-size:7.2px !important;
+  line-height:1.15 !important;
+  font-weight:900 !important;
+  text-align:right !important;
+  overflow-wrap:anywhere !important;
+}
+#shil-execution-output-root[data-shil-run-output-version^="16"] .shil-a4-execution-card-structured .shil-engineering-item-print > b,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-card-structured .shil-engineering-item-print > b {
+  min-width:0 !important;
+  margin:0 !important;
+  color:#10253a !important;
+  font-size:7.1px !important;
+  line-height:1.1 !important;
+  font-weight:850 !important;
+  text-align:center !important;
+  white-space:nowrap !important;
+}
+#shil-execution-output-root[data-shil-run-output-version^="16"] .shil-a4-execution-card > small,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-card > small {
+  display:block !important;
+  margin:4px 0 0 !important;
+  padding-top:3px !important;
+  border-top:1px dashed #c9d9e5 !important;
+  color:#60778a !important;
+  font-size:6.7px !important;
+  line-height:1.3 !important;
+  font-weight:700 !important;
+  text-align:center !important;
+  overflow-wrap:anywhere !important;
+}
+
+/* Cable cards: clear empty-state and installation note. */
+#shil-execution-output-root[data-shil-run-output-version^="16"] .shil-a4-execution-card-cable,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-card-cable {
+  min-height:62px !important;
+  justify-content:center !important;
+}
+#shil-execution-output-root[data-shil-run-output-version^="16"] .shil-a4-execution-card-cable > b,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-card-cable > b {
+  color:#10253a !important;
+  font-size:10px !important;
+  line-height:1.2 !important;
+  font-weight:950 !important;
+}
+
+/* V16.2 - signature report polish: one visual language for every block */
+#shil-execution-output-root[data-shil-run-output-version^="16"] .shil-a4-final-form,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-final-form {
+  --sig-ink:#10253a;
+  --sig-muted:#587086;
+  --sig-line:#bdd3e3;
+  --sig-soft:#edf5fa;
+  --sig-card:#ffffff;
+  background:linear-gradient(180deg,#f8fbfd 0%,#f3f8fb 100%) !important;
+}
+/* Section titles are identical and deliberately unnumbered. */
+#shil-execution-output-root[data-shil-run-output-version^="16"] .shil-a4-section-title,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-section-title {
+  height:32px !important; min-height:32px !important; flex-basis:32px !important;
+  padding:4px 14px !important; border:1px solid var(--sig-line) !important;
+  border-radius:10px !important; background:linear-gradient(180deg,#f6fbfe,#edf5fa) !important;
+  box-shadow:none !important;
+}
+#shil-execution-output-root[data-shil-run-output-version^="16"] .shil-a4-section-title > span,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-section-title > span { display:none !important; }
+#shil-execution-output-root[data-shil-run-output-version^="16"] .shil-a4-section-title h3,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-section-title h3 {
+  margin:0 !important; font-size:14px !important; line-height:1.2 !important; font-weight:900 !important;
+  color:var(--sig-ink) !important; letter-spacing:0 !important; text-align:center !important;
+}
+/* Same card geometry everywhere. */
+#shil-execution-output-root[data-shil-run-output-version^="16"] .shil-a4-fields > div,
+#shil-execution-output-root[data-shil-run-output-version^="16"] .shil-a4-table > div:not(.shil-a4-table-head),
+#shil-execution-output-root[data-shil-run-output-version^="16"] .shil-a4-execution-card,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-fields > div,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-table > div:not(.shil-a4-table-head),
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-card {
+  border:1px solid var(--sig-line) !important; border-radius:10px !important;
+  background:var(--sig-card) !important; box-shadow:none !important;
+}
+#shil-execution-output-root[data-shil-run-output-version^="16"] .shil-a4-fields > div,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-fields > div {
+  min-height:55px !important; padding:7px 10px !important;
+}
+#shil-execution-output-root[data-shil-run-output-version^="16"] .shil-a4-table .shil-a4-table-head,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-table .shil-a4-table-head {
+  min-height:25px !important; padding:4px 10px !important; border:1px solid var(--sig-line) !important;
+  border-radius:9px !important; background:var(--sig-soft) !important;
+}
+#shil-execution-output-root[data-shil-run-output-version^="16"] .shil-a4-table > div:not(.shil-a4-table-head),
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-table > div:not(.shil-a4-table-head) {
+  min-height:48px !important; padding:6px 10px !important;
+}
+/* Unified typography hierarchy. */
+#shil-execution-output-root[data-shil-run-output-version^="16"] .shil-a4-fields span,
+#shil-execution-output-root[data-shil-run-output-version^="16"] .shil-a4-table span,
+#shil-execution-output-root[data-shil-run-output-version^="16"] .shil-a4-execution-card > span,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-fields span,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-table span,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-card > span {
+  color:#294a64 !important; font-size:8.4px !important; line-height:1.25 !important; font-weight:850 !important;
+}
+#shil-execution-output-root[data-shil-run-output-version^="16"] .shil-a4-fields b,
+#shil-execution-output-root[data-shil-run-output-version^="16"] .shil-a4-table b,
+#shil-execution-output-root[data-shil-run-output-version^="16"] .shil-a4-execution-card > b,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-fields b,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-table b,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-card > b {
+  color:var(--sig-ink) !important; font-size:10px !important; line-height:1.28 !important; font-weight:900 !important;
+}
+#shil-execution-output-root[data-shil-run-output-version^="16"] .shil-a4-table small,
+#shil-execution-output-root[data-shil-run-output-version^="16"] .shil-a4-execution-card > small,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-table small,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-card > small {
+  color:var(--sig-muted) !important; font-size:7px !important; line-height:1.3 !important; font-weight:700 !important;
+}
+/* Section 04 uses the exact same white-card language; no independent color coding. */
+#shil-execution-output-root[data-shil-run-output-version^="16"] .shil-a4-execution-grid,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-grid { gap:5px !important; }
+#shil-execution-output-root[data-shil-run-output-version^="16"] .shil-a4-execution-card,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-card {
+  min-height:66px !important; padding:7px 8px !important; justify-content:center !important;
+}
+#shil-execution-output-root[data-shil-run-output-version^="16"] .shil-a4-execution-card:nth-child(n),
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-card:nth-child(n) { background:var(--sig-card) !important; }
+#shil-execution-output-root[data-shil-run-output-version^="16"] .shil-a4-execution-card-structured .shil-engineering-item-print,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-card-structured .shil-engineering-item-print {
+  border:1px solid #d8e5ee !important; border-radius:7px !important; background:#f7fafc !important;
+}
+#shil-execution-output-root[data-shil-run-output-version^="16"] .shil-a4-execution-card > small,
+body > #shil-execution-output-root.shil-a4-export-host .shil-a4-execution-card > small {
+  border-top:1px solid #dce7ee !important; padding-top:4px !important;
+}

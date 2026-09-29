@@ -7,6 +7,7 @@ import shilMainLogo from "../../assets/logos/shil-main-logo.png";
 import { approveProjectStep } from "../../workflow/projectWorkflow.js";
 import { markCurrentProjectFinal, showUxToast } from "../../workflow/uxFlowController.js";
 import { runEngineeringDesign } from "../../runEngineeringDesign.js";
+import { protectionRule } from "../../engine/rules/electrical/protection.rules.js";
 import { buildScenarioCalculationInput } from "../../core/scenario/scenarioToEngineeringForm.js";
 import { buildMethodSummary, getActiveMethodKey } from "../../core/summary/methodSummaryEngine.js";
 import { safeText, safeList, safeKey } from "../../utils/safeRender.js";
@@ -35,6 +36,59 @@ function makeFallbackForm(domain) {
     battery: { nominalVoltage: 48, capacityAh: 100, depthOfDischarge: 0.85, roundTripEfficiency: 0.94 },
     inverter: { ratedPowerW: 3000, surgePowerW: 6000, maxDcVoltage: 500, mpptMinVoltage: 120, mpptMaxVoltage: 450, efficiency: 0.95 },
     cable: { lengthM: 20, currentA: 30, crossSectionMm2: 0, material: "copper", allowedVoltageDropPercent: 3 },
+    designDomain: domain,
+  };
+}
+
+
+function buildCanonicalSolarForm(solarDesign = {}, domain = "solar") {
+  const panel = solarDesign?.panel || {};
+  const inverter = solarDesign?.inverter || {};
+  const battery = solarDesign?.battery?.item || solarDesign?.battery || {};
+  const load = solarDesign?.load || {};
+  const system = solarDesign?.system || {};
+  const pvArray = solarDesign?.pvArray || {};
+  return {
+    project: {
+      scenario: system.systemType || "offgrid",
+      dailyEnergyWh: Math.round(Number(load.finalEnergyKWh || load.baseEnergyKWh || 0) * 1000),
+      peakLoadW: Number(load.basePowerW || load.finalPowerW || 0),
+      autonomyDays: Number(system?.autonomy?.days || 0),
+    },
+    environment: {
+      peakSunHours: Number(system.psh || 0),
+      irradianceLossPercent: Math.max(0, Number(system.lossRatio || 0) * 100),
+      soilingLossPercent: 0,
+      shadingLossPercent: 0,
+    },
+    pv: {
+      panelPowerW: Number(panel.powerW || panel.ratedPowerW || 0),
+      panelVoc: Number(panel.voc || 0),
+      panelVmp: Number(panel.vmp || 0),
+      panelIsc: Number(panel.isc || 0),
+      panelImp: Number(panel.imp || 0),
+      seriesCount: Number(pvArray.seriesCount || 1),
+      parallelCount: Number(pvArray.parallelCount || 1),
+      dcBusVoltage: Number(inverter.dcVoltage || inverter.batteryVoltage || 48),
+      tempCoeffVocPercentPerC: Number(panel.tempCoeffVocPctC ?? -0.28),
+      temperatureMinC: 0,
+      temperatureMaxC: 45,
+    },
+    battery: {
+      nominalVoltage: Number(battery.nominalVoltage || battery.voltageV || 48),
+      capacityAh: Number(battery.capacityAh || 0),
+      depthOfDischarge: Number(battery.usableDod ?? 0.9),
+      roundTripEfficiency: Number(battery.efficiency ?? 0.94),
+    },
+    inverter: {
+      ratedPowerW: Number(inverter.ratedPowerW || inverter.powerW || 0),
+      surgePowerW: Number(inverter.surgePowerW || (Number(inverter.ratedPowerW || 0) * 2)),
+      maxDcVoltage: Number(inverter.maxDcVoltage || inverter.maxPvVocV || inverter.maxPvVoc || 500),
+      mpptMinVoltage: Number(inverter.mpptMinV || inverter.mpptMinVoltage || 60),
+      mpptMaxVoltage: Number(inverter.mpptMaxV || inverter.mpptMaxVoltage || 450),
+      efficiency: Number(inverter.efficiency || 0.93),
+    },
+    cable: { lengthM: 20, currentA: 0, crossSectionMm2: 0, material: "copper", allowedVoltageDropPercent: 3 },
     designDomain: domain,
   };
 }
@@ -73,24 +127,95 @@ function runCore(domain) {
   }
   try {
     const centralState = readDraft("shil:projectDesignState", null);
-    const solarDesign = centralState?.design || readDraft("shil:solarSystemDesign", null);
+    const confirmedDraft = readDraft("shil:systemSettingsDraft", {});
+    // SystemSettings confirmation is the authoritative hand-off. An older central state
+    // must never overwrite the equipment/load the user just confirmed.
+    const solarDesign = confirmedDraft?.designResult || confirmedDraft?.design || centralState?.design || readDraft("shil:solarSystemDesign", null);
     if (solarDesign?.version) {
       const calculationInput = readCalculationInput();
-      const form = calculationInput?.form || makeFallbackForm(domain);
+      const form = buildCanonicalSolarForm(solarDesign, "solar");
       const centralResult = runEngineeringDesign(form, { domain: "solar", mode: "final-core", stopOnValidationError: false });
+
+      // Final-run protection must be calculated from the exact design the user confirmed.
+      // Re-running the generic pipeline without the selected equipment banks can rebuild a
+      // simplified solar design and incorrectly report PV protection as not required.
+      // Feed the authoritative SystemSettings design directly to Protection Engine V4 so
+      // PV string, battery and AC protection all use the real selected equipment/state.
+      let canonicalProtection = centralResult?.protection || centralResult?.values?.protection || {};
+      let protectionWarnings = [];
+      let protectionExplanations = [];
+      try {
+        const environment = readDraft("shil:environmentDraft", {});
+        const project = {
+          ...readDraft("shil:projectDraft", {}),
+          ...readDraft("shil:projectInfo", {}),
+          ...readDraft("shil:projectInfoDraft", {}),
+        };
+        const protectionRun = protectionRule.run({
+          project,
+          projectInfo: project,
+          environment,
+          systemSettings: confirmedDraft,
+          settings: confirmedDraft,
+          load: solarDesign?.load || {},
+          inverter: solarDesign?.inverter || {},
+          battery: solarDesign?.battery?.item || solarDesign?.battery || {},
+          panel: solarDesign?.panel || {},
+          cableDetails: solarDesign?.cableDetails || confirmedDraft?.cableDetails || {},
+          cables: solarDesign?.cables || confirmedDraft?.cables || {},
+        }, {
+          solarDesign,
+          values: { solarDesign },
+          pvArray: solarDesign?.pvArray || {},
+          equipment: {
+            inverter: solarDesign?.inverter || {},
+            battery: solarDesign?.battery?.item || solarDesign?.battery || {},
+            panel: solarDesign?.panel || {},
+          },
+          load: solarDesign?.load || {},
+        }) || {};
+        const directProtection = protectionRun?.values?.protection || protectionRun?.equipment?.protection;
+        if (directProtection && Object.keys(directProtection).length) canonicalProtection = directProtection;
+        protectionWarnings = Array.isArray(protectionRun?.warnings) ? protectionRun.warnings : [];
+        protectionExplanations = Array.isArray(protectionRun?.explanations) ? protectionRun.explanations : [];
+      } catch (protectionError) {
+        protectionWarnings = [{
+          code: "FINAL_PROTECTION_ENGINE_ERROR",
+          message: `محاسبه حفاظت اجرای نهایی کامل نشد: ${String(protectionError?.message || protectionError)}`,
+        }];
+      }
+
+      const canonicalSolarDesign = canonicalProtection && Object.keys(canonicalProtection).length
+        ? { ...solarDesign, protection: canonicalProtection }
+        : solarDesign;
+      const canonicalValues = {
+        ...(centralResult?.values || {}),
+        protection: canonicalProtection,
+        loadPowerW: Number(solarDesign?.load?.basePowerW || 0),
+        finalPowerW: Number(solarDesign?.load?.finalPowerW || 0),
+        dailyEnergyWh: Math.round(Number(solarDesign?.load?.finalEnergyKWh || 0) * 1000),
+        panelCount: Number(solarDesign?.pvArray?.panelCount || 0),
+        installedPvPowerW: Number(solarDesign?.pvArray?.arrayPowerW || 0),
+        inverterCount: Number(solarDesign?.inverter?.count || 1),
+        batteryCount: Number(solarDesign?.battery?.count || 0),
+        batteryTotalKWh: Number(solarDesign?.battery?.grossEnergyKWh || 0),
+        solarDesign: canonicalSolarDesign,
+      };
       return {
-        input: calculationInput,
+        input: { ...(calculationInput || {}), form, canonical: true },
         result: {
           ...centralResult,
-          status: solarDesign.valid && centralResult?.valid !== false ? "success" : "needs-review",
-          valid: solarDesign.valid !== false && centralResult?.valid !== false,
+          status: solarDesign.valid !== false ? "success" : "needs-review",
+          valid: solarDesign.valid !== false,
           mode: "UNIFIED_SOLAR_FINAL_CORE",
-          solarDesign,
-          values: { ...(centralResult?.values || {}), solarDesign },
-          warnings: [...new Set([...(centralResult?.warnings || []), ...(solarDesign.warnings || [])])],
+          solarDesign: canonicalSolarDesign,
+          protection: canonicalProtection,
+          values: canonicalValues,
+          warnings: [...new Set([...(centralResult?.warnings || []), ...(solarDesign.warnings || []), ...protectionWarnings])],
           explanations: [
             ...(centralResult?.explanations || []),
-            "تجهیزات، حفاظت و کابل‌های خروجی نهایی بر اساس داده‌های ثبت‌شده پروژه محاسبه شدند.",
+            ...protectionExplanations,
+            "خروجی نهایی از Project Design State واحد ساخته شد و مقادیر مراحل قبل دوباره مقداردهی پیش‌فرض نمی‌شوند.",
           ],
         },
       };
@@ -565,7 +690,7 @@ function buildExecutionContext({ domain, project, summary, result, solarDesign, 
   const billOfMaterials = resultSummary?.billOfMaterials || {};
   const batteryBank = battery?.item || battery?.battery || battery;
 
-  const safetyFactor = pick(solarDesign?.load?.reserveFactor, systemSettings?.systemConfig?.reserveFactor, systemSettings?.safetyFactor, systemSettings?.standardSafetyFactor, finalParams?.safetyFactor, 1.2);
+  const safetyFactor = pick(solarDesign?.load?.safetyFactor, systemSettings?.safetyFactor, systemSettings?.standardSafetyFactor, finalParams?.safetyFactor, 1);
   const autonomyDays = pick(solarDesign?.system?.autonomy?.days, systemSettings?.systemConfig?.autonomyDays, systemSettings?.autonomyDays, finalParams?.autonomyDays, battery?.autonomyDays, 0);
   const basePowerW = pick(solarDesign?.load?.basePowerW, finalParams?.basePowerW, finalParams?.totalPowerW, systemSettings?.basePowerW, systemSettings?.loadPowerW, values?.loadPowerW, 0);
   const powerAfterFactorW = pick(solarDesign?.load?.finalPowerW, finalParams?.powerAfterFactorW, finalParams?.finalPowerW, systemSettings?.powerAfterFactorW, systemSettings?.finalPowerW, Number(basePowerW || 0) * Number(safetyFactor || 1), values?.finalPowerW);
@@ -834,10 +959,10 @@ export default function RunCalculation() {
   };
   const summary = readDraft("shil:summaryDraft", {});
   const centralState = getProjectDesignState();
-  const solarDesign = centralState?.design || readDraft("shil:solarSystemDesign", summary?.solarDesign || {});
+  const systemSettings = readDraft("shil:systemSettingsDraft", {});
+  const solarDesign = systemSettings?.designResult || systemSettings?.design || centralState?.design || readDraft("shil:solarSystemDesign", summary?.solarDesign || {});
   const solarPanelPowerInput = readDraft("shil:solarPanelPowerInput", {});
   const loadResult = readDraft("shil:loadEngineResult", {});
-  const systemSettings = readDraft("shil:systemSettingsDraft", {});
   const selectedEquipment = readDraft("shil:selectedEquipments", []);
   const calculationInput = readCalculationInput();
   const methodKey = getActiveMethodKey({ domain });
@@ -945,6 +1070,30 @@ export default function RunCalculation() {
   ];
 
   const protectionRows = buildProtectionRows(runContext);
+  const hasProtectionData = emergency || Boolean(
+    Object.keys(runContext?.protection || {}).length ||
+    Object.keys(runContext?.unifiedProtection || {}).length
+  );
+  const hasCableData = emergency || Boolean(
+    Object.keys(runContext?.cables || {}).length ||
+    Object.keys(runContext?.cableDetails || {}).length
+  );
+  const engineeringReady = Boolean(result?.valid !== false && (emergency || solarDesign?.valid !== false) && hasProtectionData && hasCableData);
+  const executionIntegrityMessage = !engineeringReady && !emergency
+    ? "خروجی هنوز پیش‌نویس مهندسی است: حفاظت و طول/سایز کابل‌های نهایی باید تکمیل شوند. دریافت تصویر و PDF پیش‌نویس مجاز است، اما پروژه تا تکمیل این موارد نهایی نمی‌شود."
+    : "";
+  const exportDelivery = engineeringReady ? delivery : {
+    ...delivery,
+    meta: { ...delivery.meta, status: "پیش‌نویس مهندسی", version: `${delivery.meta?.version || "SHIL Export"} · DRAFT` },
+    validations: [
+      ...(delivery.validations || []).filter((row) => row?.check !== "خروجی نهایی"),
+      { check: "خروجی نهایی", status: "پیش‌نویس", detail: "حفاظت و طول/سایز کابل‌های نهایی هنوز تکمیل نشده‌اند؛ این فایل فقط برای بازبینی است." },
+    ],
+    warnings: [
+      "پیش‌نویس مهندسی: حفاظت و طول/سایز کابل‌های نهایی باید قبل از صدور نهایی تکمیل شوند.",
+      ...(delivery.warnings || []),
+    ],
+  };
   const nativeProjectRows = emergency ? [
     { label: "نام پروژه", value: project.projectName || project.name || projectTitle, ltr: false },
     { label: "کارفرما", value: project.clientName || project.customerName || project.employerName || "SHIL CO", ltr: false },
@@ -968,11 +1117,11 @@ export default function RunCalculation() {
     { label: "انرژی خام موردنیاز", value: formatMetric(runContext.requiredStorageKWh, "KWH", 2) },
   ] : [
     { label: "توان طراحی نهایی", value: formatMetric(runContext.powerAfterFactorW, "W", 2) },
-    { label: "انرژی روزانه", value: formatMetric(Number(runContext.dailyEnergyWh || 0) / 1000, "KWH", 2) },
-    { label: "PSH", value: formatMetric(runContext.psh, "H", 2) },
+    { label: "انرژی روزانه", value: formatMetric(Number(runContext.dailyEnergyWh || 0) / 1000, "kWh/day", 2) },
+    { label: "PSH", value: formatMetric(runContext.psh, "h", 2) },
     { label: "راندمان محیطی", value: String(runContext.envEfficiency).includes("%") ? formatPercent(runContext.envEfficiency, 1) : cleanValue(runContext.envEfficiency) },
     { label: "جهت پیشنهادی", value: runContext.direction, ltr: false },
-    { label: "زاویه پنل", value: formatMetric(runContext.tilt, "DEG", 1) },
+    { label: "زاویه پنل", value: `${formatNumber(runContext.tilt, 1)}°` },
     { label: "ضریب اطمینان", value: formatNumber(runContext.safetyFactor, 2) },
     { label: "نوع طراحی", value: runContext.designType, ltr: false },
   ];
@@ -992,19 +1141,22 @@ export default function RunCalculation() {
     if (finalizationRef.current) return;
     finalizationRef.current = true;
 
-    approveProjectStep("run");
     const savedAt = new Date().toISOString();
-    const payload = { domain, project, summary, result, aiPreview, savedAt };
+    const payload = { domain, project, summary, result, aiPreview, engineeringReady, savedAt };
     safeLocalSetItem("shil:finalEngineeringOutput", JSON.stringify(payload));
-    markCurrentProjectFinal({ result, aiPreview, savedAt });
-    window.dispatchEvent(new CustomEvent("shil-workflow-updated"));
-  }, [domain, project, summary, result, aiPreview]);
+    if (engineeringReady) {
+      approveProjectStep("run");
+      markCurrentProjectFinal({ result, aiPreview, savedAt });
+      window.dispatchEvent(new CustomEvent("shil-workflow-updated"));
+    }
+  }, [domain, project, summary, result, aiPreview, engineeringReady]);
 
   async function exportPdf() {
     try {
       setExporting("pdf");
-      await exportElementAsPdf(exportSheetRef.current, delivery, `${projectTitle || "shil"}-one-page-summary.pdf`);
-      showUxToast("PDF خلاصه یک‌صفحه‌ای ذخیره شد", "success");
+      const suffix = engineeringReady ? "one-page-summary" : "engineering-draft";
+      await exportElementAsPdf(exportSheetRef.current, exportDelivery, `${projectTitle || "shil"}-${suffix}.pdf`);
+      showUxToast(engineeringReady ? "PDF خلاصه یک‌صفحه‌ای ذخیره شد" : "PDF پیش‌نویس مهندسی ذخیره شد", engineeringReady ? "success" : "warning");
     } catch {
       showUxToast("خروجی PDF با خطا روبه‌رو شد", "warning");
     } finally {
@@ -1015,8 +1167,9 @@ export default function RunCalculation() {
   async function shareProject() {
     try {
       setExporting("share");
-      await shareElementAsPdf(exportSheetRef.current, delivery, `${projectTitle || "shil"}-one-page-summary.pdf`);
-      showUxToast("فایل PDF نهایی برای اشتراک آماده شد", "success");
+      const suffix = engineeringReady ? "one-page-summary" : "engineering-draft";
+      await shareElementAsPdf(exportSheetRef.current, exportDelivery, `${projectTitle || "shil"}-${suffix}.pdf`);
+      showUxToast(engineeringReady ? "فایل PDF نهایی برای اشتراک آماده شد" : "PDF پیش‌نویس برای اشتراک آماده شد", engineeringReady ? "success" : "warning");
     } catch {
       showUxToast("اشتراک‌گذاری PDF انجام نشد", "warning");
     } finally {
@@ -1027,8 +1180,9 @@ export default function RunCalculation() {
   async function saveProjectImage() {
     try {
       setExporting("png");
-      await exportElementAsPng(exportSheetRef.current, `${projectTitle || "shil"}-one-page-summary.png`);
-      showUxToast("تصویر خلاصه یک‌صفحه‌ای ذخیره شد", "success");
+      const suffix = engineeringReady ? "one-page-summary" : "engineering-draft";
+      await exportElementAsPng(exportSheetRef.current, `${projectTitle || "shil"}-${suffix}.png`);
+      showUxToast(engineeringReady ? "تصویر خلاصه یک‌صفحه‌ای ذخیره شد" : "تصویر پیش‌نویس مهندسی ذخیره شد", engineeringReady ? "success" : "warning");
     } catch {
       showUxToast("ذخیره تصویر انجام نشد", "warning");
     } finally {
@@ -1038,7 +1192,8 @@ export default function RunCalculation() {
 
   return (
     <EngineeringPageShell title="اجرا و خروجی نهایی">
-      <section data-shil-run-output-version="15" id="shil-execution-output-root" className={`shil-final-delivery-page shil-final-delivery-compact shil-execution-output-page ${emergency ? "shil-emergency-run-output" : ""}`}>
+      <section data-shil-run-output-version="16.4" id="shil-execution-output-root" className={`shil-final-delivery-page shil-final-delivery-compact shil-execution-output-page ${emergency ? "shil-emergency-run-output" : ""}`}>
+        {executionIntegrityMessage ? <UserFacingMessageCard text={executionIntegrityMessage} warning /> : null}
         <NativeSection index="01" title="مشخصات پروژه">
           <NativeMetricGrid rows={nativeProjectRows} />
         </NativeSection>
@@ -1061,9 +1216,21 @@ export default function RunCalculation() {
               <img className="shil-a4-main-logo" src={shilMainLogo} alt="SHIL Iran" style={A4_HARD_STYLE.logo} />
               <h1 style={A4_HARD_STYLE.heroTitle}>چکیده طراحی</h1>
             </header>
+            {!engineeringReady ? (
+              <div className="shil-a4-draft-banner" style={{ border: "1px solid #d6a23a", background: "#fff7df", color: "#6a4a00", fontSize: "9px", fontWeight: 900, textAlign: "center" }}>
+                پیش‌نویس مهندسی — حفاظت و طول/سایز کابل‌های نهایی هنوز تکمیل نشده‌اند و این خروجی برای صدور نهایی نیست.
+              </div>
+            ) : null}
+            {!engineeringReady && !emergency ? (
+              <div className="shil-a4-status-strip">
+                <div className="shil-a4-status-chip">حفاظت‌ها: نیازمند تکمیل</div>
+                <div className="shil-a4-status-chip">کابل‌ها: نیازمند طول و سطح مقطع</div>
+                <div className="shil-a4-status-chip">وضعیت: پیش‌نویس مهندسی</div>
+              </div>
+            ) : null}
 
             <section className="shil-a4-section">
-              <div className="shil-a4-section-title" style={A4_HARD_STYLE.sectionTitle}><span style={A4_HARD_STYLE.sectionIndex}>01</span><h3 style={A4_HARD_STYLE.sectionHeading}>مشخصات پروژه</h3></div>
+              <div className="shil-a4-section-title" style={A4_HARD_STYLE.sectionTitle}><h3 style={A4_HARD_STYLE.sectionHeading}>مشخصات پروژه</h3></div>
               <div className="shil-a4-fields shil-a4-fields-project">
                 <div><A4Label>نام پروژه</A4Label><b style={A4_HARD_STYLE.answer}>{project.projectName || project.name || projectTitle}</b></div>
                 <div><A4Label>کارفرما</A4Label><b style={A4_HARD_STYLE.answer}>{project.clientName || project.customerName || project.employerName || "SHIL CO"}</b></div>
@@ -1075,7 +1242,7 @@ export default function RunCalculation() {
             </section>
 
             <section className="shil-a4-section">
-              <div className="shil-a4-section-title" style={A4_HARD_STYLE.sectionTitle}><span style={A4_HARD_STYLE.sectionIndex}>02</span><h3 style={A4_HARD_STYLE.sectionHeading}>چکیده محاسبات</h3></div>
+              <div className="shil-a4-section-title" style={A4_HARD_STYLE.sectionTitle}><h3 style={A4_HARD_STYLE.sectionHeading}>چکیده محاسبات</h3></div>
               <div className="shil-a4-fields shil-a4-fields-design">
                 {emergency ? (<>
                   <div><A4Label>توان بار ضروری</A4Label><A4Metric>{formatMetric(runContext.loadPowerW, "W", 2)}</A4Metric></div>
@@ -1088,11 +1255,11 @@ export default function RunCalculation() {
                   <div><A4Label>انرژی خام موردنیاز</A4Label><A4Metric>{formatMetric(runContext.requiredStorageKWh, "KWH", 2)}</A4Metric></div>
                 </>) : (<>
                   <div><A4Label>توان طراحی نهایی</A4Label><A4Metric>{formatMetric(runContext.powerAfterFactorW, "W", 2)}</A4Metric></div>
-                  <div><A4Label>انرژی روزانه</A4Label><A4Metric>{formatMetric(Number(runContext.dailyEnergyWh || 0) / 1000, "KWH", 2)}</A4Metric></div>
-                  <div><A4Label>PSH</A4Label><A4Metric>{formatMetric(runContext.psh, "H", 2)}</A4Metric></div>
+                  <div><A4Label>انرژی روزانه</A4Label><A4Metric>{formatMetric(Number(runContext.dailyEnergyWh || 0) / 1000, "kWh/day", 2)}</A4Metric></div>
+                  <div><A4Label>PSH</A4Label><A4Metric>{formatMetric(runContext.psh, "h", 2)}</A4Metric></div>
                   <div><A4Label>راندمان محیطی</A4Label><A4Metric>{String(runContext.envEfficiency).includes("%") ? formatPercent(runContext.envEfficiency, 1) : cleanValue(runContext.envEfficiency)}</A4Metric></div>
                   <div><A4Label>جهت پیشنهادی</A4Label><b style={A4_HARD_STYLE.answer}>{runContext.direction}</b></div>
-                  <div><A4Label>زاویه پنل</A4Label><A4Metric>{formatMetric(runContext.tilt, "DEG", 1)}</A4Metric></div>
+                  <div><A4Label>زاویه پنل</A4Label><A4Metric>{`${formatNumber(runContext.tilt, 1)}°`}</A4Metric></div>
                   <div><A4Label>ضریب اطمینان</A4Label><b style={A4_HARD_STYLE.answer}>{formatNumber(runContext.safetyFactor, 2)}</b></div>
                   <div><A4Label>نوع طراحی</A4Label><b style={A4_HARD_STYLE.answer}>{runContext.designType}</b></div>
                 </>)}
@@ -1100,7 +1267,7 @@ export default function RunCalculation() {
             </section>
 
             <section className="shil-a4-section">
-              <div className="shil-a4-section-title" style={A4_HARD_STYLE.sectionTitle}><span style={A4_HARD_STYLE.sectionIndex}>03</span><h3 style={A4_HARD_STYLE.sectionHeading}>تجهیزات نهایی پروژه</h3></div>
+              <div className="shil-a4-section-title" style={A4_HARD_STYLE.sectionTitle}><h3 style={A4_HARD_STYLE.sectionHeading}>تجهیزات نهایی پروژه</h3></div>
               <div className="shil-a4-table">
                 <div className="shil-a4-table-head"><span style={A4_HARD_STYLE.label}>تجهیز</span><span style={A4_HARD_STYLE.label}>مدل / مشخصات نهایی</span><span style={A4_HARD_STYLE.label}>تعداد / آرایش</span></div>
                 {emergency ? (<>
@@ -1115,10 +1282,10 @@ export default function RunCalculation() {
             </section>
 
             <section className="shil-a4-section">
-              <div className="shil-a4-section-title" style={A4_HARD_STYLE.sectionTitle}><span style={A4_HARD_STYLE.sectionIndex}>04</span><h3 style={A4_HARD_STYLE.sectionHeading}>حفاظت و الزامات اجرا</h3></div>
+              <div className="shil-a4-section-title" style={A4_HARD_STYLE.sectionTitle}><h3 style={A4_HARD_STYLE.sectionHeading}>حفاظت و الزامات اجرا</h3></div>
               <div className="shil-a4-execution-grid">
                 {protectionRows.slice(0, 6).map((row, index) => (
-                  <div key={`a4-protection-${index}`} className={row.items?.length ? "shil-a4-execution-card-structured" : ""}>
+                  <div key={`a4-protection-${index}`} className={row.items?.length ? "shil-a4-execution-card shil-a4-execution-card-protection shil-a4-execution-card-structured" : "shil-a4-execution-card shil-a4-execution-card-cable"}>
                     <A4Label>{row.label}</A4Label>
                     {row.items?.length ? <EngineeringItems items={row.items} compact /> : <b style={A4_HARD_STYLE.answer}>{safeText(row.value)}</b>}
                     {row.note ? <small style={A4_HARD_STYLE.note}>{safeText(row.note)}</small> : null}
@@ -1150,9 +1317,9 @@ export default function RunCalculation() {
           </button>
           {finalOutputOpen ? (
             <div className="shil-run-data-accordion-body shil-output-actions shil-output-actions-three">
-              <button className="shil-run-data-card shil-run-action-card" type="button" onClick={saveProjectImage} disabled={Boolean(exporting)}>{exporting === "png" ? "در حال ساخت تصویر..." : "دریافت تصویر"}</button>
-              <button className="shil-run-data-card shil-run-action-card" type="button" onClick={exportPdf} disabled={Boolean(exporting)}>{exporting === "pdf" ? "در حال ساخت PDF..." : "دریافت فایل PDF"}</button>
-              <button className="shil-run-data-card shil-run-action-card" type="button" onClick={shareProject} disabled={Boolean(exporting)}>{exporting === "share" ? "در حال آماده‌سازی PDF..." : "اشتراک‌گذاری فایل PDF"}</button>
+              <button className="shil-run-data-card shil-run-action-card" type="button" onClick={saveProjectImage} disabled={Boolean(exporting)} title={!engineeringReady ? "دریافت تصویر پیش‌نویس مهندسی" : undefined}>{exporting === "png" ? "در حال ساخت تصویر..." : engineeringReady ? "دریافت تصویر" : "دریافت تصویر پیش‌نویس"}</button>
+              <button className="shil-run-data-card shil-run-action-card" type="button" onClick={exportPdf} disabled={Boolean(exporting)} title={!engineeringReady ? "دریافت PDF پیش‌نویس مهندسی" : undefined}>{exporting === "pdf" ? "در حال ساخت PDF..." : engineeringReady ? "دریافت فایل PDF" : "دریافت PDF پیش‌نویس"}</button>
+              <button className="shil-run-data-card shil-run-action-card" type="button" onClick={shareProject} disabled={Boolean(exporting)} title={!engineeringReady ? "اشتراک PDF پیش‌نویس مهندسی" : undefined}>{exporting === "share" ? "در حال آماده‌سازی PDF..." : engineeringReady ? "اشتراک‌گذاری فایل PDF" : "اشتراک‌گذاری PDF پیش‌نویس"}</button>
             </div>
           ) : null}
         </div>

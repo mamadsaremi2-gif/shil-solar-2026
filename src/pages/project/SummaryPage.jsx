@@ -312,10 +312,12 @@ function SolarSummary({ handoff, draft }) {
       <SummarySection title="چکیده تنظیمات" meta="تجهیزات انتخابی">
         <SummaryGrid rows={[
           ["پنل", `${titleOf(design?.panel)} / ${faNumber(design?.pvArray?.panelCount)} عدد`],
-          ["توان آرایه", `${faNumber(design?.pvArray?.arrayPowerKW, 2)} KW`],
+          ["توان آرایه نصب‌شده", `${faNumber(design?.pvArray?.arrayPowerKW, 2)} kWp`],
+          ["توان محاسباتی موردنیاز آرایه", `${faNumber(design?.pvArray?.baseRequiredPowerKW, 2)} kW`],
           ["اینورتر", `${titleOf(design?.inverter)} / ${faNumber(design?.inverter?.count || 1)} عدد`],
-          ["باتری", design?.system?.needsBattery ? `${titleOf(design?.battery?.item)} / ${faNumber(design?.battery?.grossEnergyKWh, 2)} KWH` : "غیرفعال"],
-          ["تولید روزانه تخمینی", `${faNumber(design?.pvArray?.estimatedDailyKWh, 2)} KWH`],
+          ["باتری", design?.system?.needsBattery ? `${titleOf(design?.battery?.item)} / ${faNumber(design?.battery?.grossEnergyKWh, 2)} kWh اسمی / ${faNumber(design?.battery?.usableEnergyKWh, 2)} kWh قابل استفاده` : "غیرفعال"],
+          ["استرینگ", `${faNumber(design?.pvArray?.seriesCount)} سری × ${faNumber(design?.pvArray?.parallelCount)} موازی / ${faNumber(design?.inverter?.mpptCount || 1)} MPPT`],
+          ["تولید روزانه تخمینی", `${faNumber(design?.pvArray?.estimatedDailyKWh, 2)} kWh`],
           ["اعتبارسنجی", design?.valid ? "قابل اجرا" : "نیازمند بازبینی"],
         ]} />
         <ShilWarningOverlay messages={design?.warnings} inline />
@@ -385,6 +387,9 @@ export default function SummaryPage() {
   const handoff = useMemo(() => getSystemSetupHandoff(), []);
   const centralState = useMemo(() => getProjectDesignState(), []);
   const draft = useMemo(() => getSystemSettingsDraft(), []);
+  // The confirmed SystemSettings draft is the authoritative snapshot for the next page.
+  // Prefer it over an older projectDesignState left by a previous calculation.
+  const confirmedSolarDesign = draft?.designResult || draft?.design || centralState?.design || {};
   const emergencyDesign = useMemo(() => {
     try {
       return JSON.parse(readLocalOrSessionItem("shil:emergencySystemDesign") || "null")
@@ -417,7 +422,7 @@ export default function SummaryPage() {
         {domain === "solar" ? (
           <SolarSummary
             handoff={handoff}
-            draft={centralState?.design ? { designResult: centralState.design } : draft}
+            draft={{ ...draft, designResult: confirmedSolarDesign }}
           />
         ) : null}
         {domain === "emergency" ? <EmergencySummary draft={draft?.design ? draft : { design: emergencyDesign }} /> : null}
@@ -433,6 +438,8 @@ export default function SummaryPage() {
           <ShilPrimaryButton
             className="shil-env-content-confirm-button"
             onClick={run}
+            disabled={domain === "solar" && centralState?.design?.valid === false}
+            title={domain === "solar" && centralState?.design?.valid === false ? "ابتدا خطاهای مهندسی مرحله تنظیمات را اصلاح کنید." : undefined}
             label={domain === "emergency" ? "تأیید" : "تأیید چکیده"}
           />
         </div>

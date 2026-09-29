@@ -26,9 +26,10 @@ export function getSupabaseAdmin() {
 }
 
 export function requireAdmin(req) {
-  const expected = process.env.SHIL_ADMIN_PIN || '1366';
-  const supplied = req.headers.get('x-admin-pin') || '';
-  return supplied === expected;
+  const expected = String(process.env.SHIL_ADMIN_PIN || '').trim();
+  if (!expected) return false;
+  const supplied = String(req.headers.get('x-admin-pin') || '').trim();
+  return supplied.length > 0 && supplied === expected;
 }
 
 export async function readJson(req) {

@@ -148,7 +148,13 @@ export const protectionRule = Object.freeze({
     const inverterCount = Math.max(1, Math.ceil(num(inverter.count || pvArray.inverterCount, 1)));
     const mpptCount = Math.max(1, Math.ceil(num(inverter.mpptCount || inverter.mpptChannels, 1)));
     const totalStrings = Math.max(1, Math.ceil(num(pvArray.totalStringCount || pvArray.parallelCount * inverterCount, inverterCount * mpptCount)));
-    const stringsPerMppt = Math.max(1, Math.ceil(totalStrings / Math.max(1, inverterCount * mpptCount)));
+    const totalMpptChannels = Math.max(1, inverterCount * mpptCount);
+    const activeMpptCount = Math.max(1, Math.min(totalStrings, totalMpptChannels));
+    const stringsPerMppt = Math.max(1, Math.ceil(totalStrings / totalMpptChannels));
+    // A dedicated gPV string fuse is only required by this engine when more than one
+    // string is paralleled on the same MPPT. A single string must not be reported as
+    // requiring a fuse merely because the catalog contains one.
+    const stringFuseRequired = stringsPerMppt > 1;
     const hasPv = Boolean(Object.keys(solar || {}).length && (solar?.panel || panel?.id || num(panel?.powerW || panel?.ratedPowerW, 0) > 0));
     const panelIsc = num(panel.isc || panel.shortCircuitCurrentA || panel.imp, 0);
     const panelVoc = num(panel.voc || panel.openCircuitVoltageV, 0);
@@ -190,7 +196,7 @@ export const protectionRule = Object.freeze({
     const acBreakerType = acRatingA <= 125 ? 'AC_BREAKER' : 'AC_MCCB';
     const batteryBreakerType = batteryRatingA <= 125 ? 'DC_MCB' : 'DC_MCCB';
     const pvBreaker = selectDevice(pvBreakerType, pvRatingA, pvVoltage, 'PV_DC', pvFaultKA);
-    const pvFuse = selectDevice('PV_FUSE', nextStandardAmp(Math.max(panelIsc * 1.25, 1)), pvVoltage, 'PV_DC', pvFaultKA);
+    const pvFuse = stringFuseRequired ? selectDevice('PV_FUSE', nextStandardAmp(Math.max(panelIsc * 1.25, 1)), pvVoltage, 'PV_DC', pvFaultKA) : null;
     const pvIsolator = selectDevice(['DC_ISOLATOR','DC_LOAD_DISCONNECTOR'], pvRatingA, pvVoltage, pvRatingA > 32 ? '' : 'PV_DC');
     const acBreaker = selectDevice([acBreakerType,'AC_BREAKER','AC_MCCB'], acRatingA, phase.voltage, 'AC', acFaultKA);
     const changeoverSwitch = selectDevice(['CHANGEOVER_SWITCH','TRANSFER_SWITCH'], changeoverRatingA, phase.voltage, 'AC');
@@ -228,11 +234,14 @@ export const protectionRule = Object.freeze({
         brand: 'SHIL',
         designVoltageV: round(pvVoltage, 2), operatingCurrentA: round(pvOperatingCurrentA, 2), currentA: pvDesignCurrentA, breakerA: pvRatingA,
         breakerType: pvRatingA <= 125 ? 'DC MCB' : 'DC MCCB', breaker: `SHIL ${pvRatingA} A ${pvRatingA <= 125 ? 'DC MCB' : 'DC MCCB'}`,
-        breakerSelection: rec(pvBreaker, `${pvRatingA} A ${pvRatingA <= 125 ? 'DC MCB' : 'DC MCCB'}`, pvRatingA, inverterCount * mpptCount, { requiredBreakingCapacityKA: pvFaultKA, requiredVoltageV: round(pvVoltage, 2), breakingCapacityVerified: pvFaultKA ? Boolean(pvBreaker) : null, operatingCurrentA: round(pvOperatingCurrentA, 2), designCurrentA: pvDesignCurrentA, designFactor: 1.25, polesRequired: '2P / 4P متناسب با توپولوژی', selectionReason: `جریان کار ${round(pvOperatingCurrentA, 2)} A × ضریب طراحی 1.25 = ${pvDesignCurrentA} A؛ ریتینگ استاندارد بعدی ${pvRatingA} A انتخاب شد.` }),
-        fuseA: stringFuseRatingA, fuse: `SHIL ${stringFuseRatingA} A gPV Fuse`, fuseSelection: rec(pvFuse, `${stringFuseRatingA} A gPV Fuse`, stringFuseRatingA, totalStrings, { requiredBreakingCapacityKA: pvFaultKA, requiredVoltageV: round(pvVoltage, 2), operatingCurrentA: round(panelIsc, 2), designCurrentA: round(panelIsc * 1.25, 2), designFactor: 1.25, polesRequired: 'هر رشته', selectionReason: `Isc پنل ${round(panelIsc, 2)} A × 1.25 = ${round(panelIsc * 1.25, 2)} A؛ فیوز gPV استاندارد ${stringFuseRatingA} A انتخاب شد.` }),
+        breakerSelection: rec(pvBreaker, `${pvRatingA} A ${pvRatingA <= 125 ? 'DC MCB' : 'DC MCCB'}`, pvRatingA, activeMpptCount, { requiredBreakingCapacityKA: pvFaultKA, requiredVoltageV: round(pvVoltage, 2), breakingCapacityVerified: pvFaultKA ? Boolean(pvBreaker) : null, operatingCurrentA: round(pvOperatingCurrentA, 2), designCurrentA: pvDesignCurrentA, designFactor: 1.25, polesRequired: '2P / 4P متناسب با توپولوژی', selectionReason: `جریان کار ${round(pvOperatingCurrentA, 2)} A × ضریب طراحی 1.25 = ${pvDesignCurrentA} A؛ ریتینگ استاندارد بعدی ${pvRatingA} A انتخاب شد.` }),
+        fuseRequired: stringFuseRequired,
+        fuseA: stringFuseRequired ? stringFuseRatingA : null,
+        fuse: stringFuseRequired ? `SHIL ${stringFuseRatingA} A gPV Fuse` : null,
+        fuseSelection: stringFuseRequired ? rec(pvFuse, `${stringFuseRatingA} A gPV Fuse`, stringFuseRatingA, totalStrings, { requiredBreakingCapacityKA: pvFaultKA, requiredVoltageV: round(pvVoltage, 2), operatingCurrentA: round(panelIsc, 2), designCurrentA: round(panelIsc * 1.25, 2), designFactor: 1.25, polesRequired: 'هر رشته موازی', selectionReason: `برای ${stringsPerMppt} رشته موازی روی هر MPPT، Isc پنل ${round(panelIsc, 2)} A × 1.25 = ${round(panelIsc * 1.25, 2)} A؛ فیوز gPV استاندارد ${stringFuseRatingA} A انتخاب شد.` }) : null,
         spd: pvSpd?.title || `SHIL SPD DC ${pvSpdType}`, spdSelection: spdRecord(pvSpd, `SPD DC ${pvSpdType}`, inverterCount, pvVoltage),
         isolator: `SHIL ${pvRatingA} A DC Isolator`, isolatorSelection: rec(pvIsolator, `${pvRatingA} A DC Isolator`, pvRatingA, inverterCount, { requiredVoltageV: round(pvVoltage, 2), operatingCurrentA: round(pvOperatingCurrentA, 2), designCurrentA: pvDesignCurrentA, designFactor: 1.25, polesRequired: '2P / 4P متناسب با توپولوژی', selectionReason: `ایزولاتور باید حداقل جریان طراحی ${pvDesignCurrentA} A و ولتاژ DC آرایه ${round(pvVoltage, 2)} V را تحمل کند؛ ریتینگ ${pvRatingA} A انتخاب شد.` }),
-        poles: '2P/4P متناسب با توپولوژی', inverterCount, mpptCount, totalStrings, stringsPerMppt,
+        poles: '2P/4P متناسب با توپولوژی', inverterCount, mpptCount, activeMpptCount, totalStrings, stringsPerMppt,
         cableCoordination: pvCableCoordination,
         standards: ['IEC 62548-1:2023 + AMD1:2025', 'IEC 60364-7-712:2025', 'IEC 60269-6', 'IEC 61643-31:2018'],
       } : { required: false, designVoltageV: 0, currentA: 0, inverterCount, mpptCount: 0, totalStrings: 0 },

@@ -5,7 +5,6 @@ import { PermissionService } from "../auth/PermissionService.js";
 import { ProductionReadinessService } from "../qa/ProductionReadinessService.js";
 import { AutoSaveController } from "../mobile/adapters/AutoSaveController.js";
 import { RulesetService } from "../rulesets/RulesetService.js";
-import { BackupService } from "../data/backup/BackupService.js";
 import { TelemetryService } from "../telemetry/TelemetryService.js";
 import { PluginRegistry } from "../plugins/PluginRegistry.js";
 import { performanceRatioPlugin } from "../plugins/builtins/performanceRatioPlugin.js";
@@ -46,7 +45,6 @@ export class ShilAppKernel {
       repository: this.projects.projects
     });
     this.rulesets = new RulesetService(storage);
-    this.backup = new BackupService(storage);
     this.offlineBackup = new OfflineBackupManager(storage);
     this.offlineConflicts = new OfflineConflictJournal(storage);
     this.telemetry = new TelemetryService(storage);

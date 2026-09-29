@@ -1,0 +1,248 @@
+/* SHIL V16.3 — final-run protection cards, mobile-safe detail layout.
+   This file intentionally wins over older run-output patches. */
+#shil-execution-output-root[data-shil-run-output-version] .shil-engineering-items {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  display: grid !important;
+  gap: 8px !important;
+  overflow: visible !important;
+}
+#shil-execution-output-root[data-shil-run-output-version] .shil-protection-device {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  border: 1px solid #c6d7e5 !important;
+  border-radius: 13px !important;
+  background: rgba(249,252,254,.97) !important;
+  box-sizing: border-box !important;
+}
+#shil-execution-output-root[data-shil-run-output-version] .shil-protection-device-summary {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  display: grid !important;
+  grid-template-columns: minmax(92px,.85fr) minmax(0,1.45fr) 22px !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 9px 10px !important;
+  box-sizing: border-box !important;
+  cursor: pointer !important;
+  overflow: hidden !important;
+}
+#shil-execution-output-root[data-shil-run-output-version] .shil-protection-device-summary > strong {
+  min-width: 0 !important;
+  font-size: 13px !important;
+  line-height: 1.35 !important;
+  text-align: right !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+}
+#shil-execution-output-root[data-shil-run-output-version] .shil-protection-quick {
+  min-width: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  display: grid !important;
+  grid-template-columns: repeat(3,minmax(0,1fr)) !important;
+  gap: 5px !important;
+  direction: ltr !important;
+}
+#shil-execution-output-root[data-shil-run-output-version] .shil-protection-quick > b {
+  min-width: 0 !important;
+  width: 100% !important;
+  min-height: 30px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 4px 3px !important;
+  box-sizing: border-box !important;
+  border: 1px solid #d4e0e9 !important;
+  border-radius: 8px !important;
+  background: #f1f6fa !important;
+  color: #13263a !important;
+  font-size: 10px !important;
+  line-height: 1.2 !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  text-align: center !important;
+}
+#shil-execution-output-root[data-shil-run-output-version] .shil-protection-device-summary > i {
+  width: 22px !important;
+  height: 22px !important;
+  display: grid !important;
+  place-items: center !important;
+  font-size: 14px !important;
+  font-style: normal !important;
+}
+#shil-execution-output-root[data-shil-run-output-version] .shil-protection-detail-wrap {
+  position: static !important;
+  inset: auto !important;
+  transform: none !important;
+  float: none !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  max-height: none !important;
+  margin: 0 !important;
+  padding: 8px !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+  background: #fbfdff !important;
+  border-top: 1px solid #d9e4ec !important;
+  z-index: auto !important;
+}
+#shil-execution-output-root[data-shil-run-output-version] .shil-protection-detail-table {
+  position: static !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  table-layout: fixed !important;
+  border-collapse: collapse !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+  font-size: 11px !important;
+  line-height: 1.45 !important;
+}
+#shil-execution-output-root[data-shil-run-output-version] .shil-protection-detail-table th,
+#shil-execution-output-root[data-shil-run-output-version] .shil-protection-detail-table td {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  padding: 8px 7px !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  word-break: normal !important;
+  vertical-align: middle !important;
+  box-sizing: border-box !important;
+}
+#shil-execution-output-root[data-shil-run-output-version] .shil-protection-detail-table th {
+  width: 43% !important;
+  text-align: right !important;
+  font-weight: 850 !important;
+  background: #eef5fa !important;
+}
+#shil-execution-output-root[data-shil-run-output-version] .shil-protection-detail-table td {
+  width: 57% !important;
+  text-align: right !important;
+  font-weight: 750 !important;
+  background: #fff !important;
+}
+@media (max-width: 640px) {
+  #shil-execution-output-root[data-shil-run-output-version] .shil-protection-device-summary {
+    grid-template-columns: 1fr 22px !important;
+    grid-template-areas: "title arrow" "quick quick" !important;
+    gap: 7px !important;
+    padding: 9px !important;
+  }
+  #shil-execution-output-root[data-shil-run-output-version] .shil-protection-device-summary > strong {
+    grid-area: title !important;
+    text-align: center !important;
+    font-size: 13px !important;
+  }
+  #shil-execution-output-root[data-shil-run-output-version] .shil-protection-device-summary > .shil-protection-quick { grid-area: quick !important; }
+  #shil-execution-output-root[data-shil-run-output-version] .shil-protection-device-summary > i { grid-area: arrow !important; }
+  #shil-execution-output-root[data-shil-run-output-version] .shil-protection-quick > b {
+    min-height: 28px !important;
+    font-size: 9.5px !important;
+  }
+  #shil-execution-output-root[data-shil-run-output-version] .shil-protection-detail-wrap { padding: 6px !important; }
+  #shil-execution-output-root[data-shil-run-output-version] .shil-protection-detail-table,
+  #shil-execution-output-root[data-shil-run-output-version] .shil-protection-detail-table tbody,
+  #shil-execution-output-root[data-shil-run-output-version] .shil-protection-detail-table tr,
+  #shil-execution-output-root[data-shil-run-output-version] .shil-protection-detail-table th,
+  #shil-execution-output-root[data-shil-run-output-version] .shil-protection-detail-table td {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  #shil-execution-output-root[data-shil-run-output-version] .shil-protection-detail-table tr {
+    margin: 0 0 6px !important;
+    overflow: hidden !important;
+    border: 1px solid #dbe6ee !important;
+    border-radius: 9px !important;
+    background: #fff !important;
+  }
+  #shil-execution-output-root[data-shil-run-output-version] .shil-protection-detail-table th {
+    padding: 6px 8px 4px !important;
+    border: 0 !important;
+    font-size: 10px !important;
+    text-align: center !important;
+    color: #496074 !important;
+    background: #eef5fa !important;
+  }
+  #shil-execution-output-root[data-shil-run-output-version] .shil-protection-detail-table td {
+    padding: 5px 8px 7px !important;
+    border: 0 !important;
+    font-size: 11px !important;
+    text-align: center !important;
+    color: #10253a !important;
+    background: #fff !important;
+  }
+}
+
+/* V16.4 emergency/solar final-run hard containment. */
+#shil-execution-output-root[data-shil-run-output-version] .shil-protection-device,
+#shil-execution-output-root[data-shil-run-output-version] .shil-protection-device * {
+  box-sizing: border-box !important;
+}
+#shil-execution-output-root[data-shil-run-output-version] .shil-protection-device summary,
+#shil-execution-output-root[data-shil-run-output-version] .shil-protection-detail-wrap,
+#shil-execution-output-root[data-shil-run-output-version] .shil-protection-detail-table {
+  max-inline-size: 100% !important;
+  inline-size: 100% !important;
+}
+#shil-execution-output-root[data-shil-run-output-version] .shil-protection-device[open] {
+  overflow: clip !important;
+}
+@media (max-width: 760px) {
+  #shil-execution-output-root[data-shil-run-output-version] .shil-protection-device-summary {
+    display: grid !important;
+    grid-template-columns: minmax(0,1fr) 22px !important;
+    grid-template-areas: "title arrow" "quick quick" !important;
+    gap: 6px !important;
+  }
+  #shil-execution-output-root[data-shil-run-output-version] .shil-protection-quick {
+    grid-template-columns: repeat(3,minmax(0,1fr)) !important;
+  }
+  #shil-execution-output-root[data-shil-run-output-version] .shil-protection-detail-wrap {
+    overflow: clip !important;
+    padding: 6px !important;
+  }
+  #shil-execution-output-root[data-shil-run-output-version] .shil-protection-detail-table,
+  #shil-execution-output-root[data-shil-run-output-version] .shil-protection-detail-table tbody,
+  #shil-execution-output-root[data-shil-run-output-version] .shil-protection-detail-table tr,
+  #shil-execution-output-root[data-shil-run-output-version] .shil-protection-detail-table th,
+  #shil-execution-output-root[data-shil-run-output-version] .shil-protection-detail-table td {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+  #shil-execution-output-root[data-shil-run-output-version] .shil-protection-detail-table tr {
+    margin: 0 0 6px !important;
+    border: 1px solid #dbe6ee !important;
+    border-radius: 10px !important;
+    overflow: hidden !important;
+    background: #fff !important;
+  }
+  #shil-execution-output-root[data-shil-run-output-version] .shil-protection-detail-table th,
+  #shil-execution-output-root[data-shil-run-output-version] .shil-protection-detail-table td {
+    padding: 6px 8px !important;
+    border: 0 !important;
+    text-align: center !important;
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
+  }
+  #shil-execution-output-root[data-shil-run-output-version] .shil-protection-detail-table th {
+    font-size: 10px !important;
+    line-height: 1.35 !important;
+  }
+  #shil-execution-output-root[data-shil-run-output-version] .shil-protection-detail-table td {
+    font-size: 10.5px !important;
+    line-height: 1.4 !important;
+  }
+  #shil-execution-output-root[data-shil-run-output-version] .shil-protection-detail-table td[dir="ltr"] {
+    direction: ltr !important;
+    unicode-bidi: isolate !important;
+  }
+}
