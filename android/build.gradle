@@ -7,3 +7,17 @@ apply from: 'variables.gradle'
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+
+// SHIL-FINAL-ANDROID-REPOS
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+
+        flatDir {
+            dirs "${rootProject.projectDir}/capacitor-cordova-android-plugins/src/main/libs"
+            dirs "${rootProject.projectDir}/app/libs"
+        }
+    }
+}
