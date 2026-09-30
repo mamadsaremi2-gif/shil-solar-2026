@@ -1,0 +1,1 @@
+const e=1,a=3,r=1,n=12;function t(e,a=3){const r=String(e??"").replace(/[۰-۹]/g,e=>String("۰۱۲۳۴۵۶۷۸۹".indexOf(e))).replace(/[٠-٩]/g,e=>String("٠١٢٣٤٥٦٧٨٩".indexOf(e))).replace(/٫/g,".").replace(/٬|,/g,"").trim(),n=""===r?Number.NaN:Number(r),t=Number.isFinite(n)?n:a;return Math.max(1,Math.min(12,t))}export{e as E,a,n as b,t as c,r as d};
