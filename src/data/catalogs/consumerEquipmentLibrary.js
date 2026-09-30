@@ -122,6 +122,9 @@ function normalizeList(list) {
     type: String(item.type || ((Number(item.startupFactor ?? item.surgeFactor ?? 1) > 1.7) ? "inductive" : "resistive/electronic")),
     profile: String(item.profile || "mixed"),
     priority: String(item.priority || "عادی"),
+    class: String(item.class || "medium"),
+    brand: String(item.brand || ""),
+    model: String(item.model || ""),
     active: item.active !== false,
     publishStatus: String(item.publishStatus || "published"),
   }));
@@ -183,12 +186,21 @@ export function searchConsumerEquipment(query = "", source = getConsumerEquipmen
   const q = String(query || "").trim().toLowerCase();
   const list = normalizeList(source).filter(isPublicConsumerEquipment);
   if (!q) return list;
-  return list.filter((item) =>
-    item.title.toLowerCase().includes(q) ||
-    item.category.toLowerCase().includes(q) ||
-    item.priority.toLowerCase().includes(q) ||
-    item.class.toLowerCase().includes(q) ||
-    String(item.brand || "").toLowerCase().includes(q) ||
-    String(item.model || "").toLowerCase().includes(q)
-  );
+  return list.filter((item) => {
+    const searchable = [
+      item.title,
+      item.baseTitle,
+      item.category,
+      item.priority,
+      item.class,
+      item.brand,
+      item.model,
+      item.type,
+      item.profile,
+    ]
+      .map((value) => String(value ?? "").toLowerCase())
+      .join(" ");
+
+    return searchable.includes(q);
+  });
 }

@@ -1,5 +1,6 @@
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
+import { isNativeExportAvailable, saveBlobNative, shareBlobNative } from "./nativeExportBridge.js";
 
 function safeText(value, fallback = "ثبت نشده") {
   if (value === null || value === undefined || value === "") return fallback;
@@ -239,14 +240,26 @@ export async function exportElementAsPng(element, filename = "shil-output.png") 
   const canvas = await renderElementAsA4Canvas(element);
   const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png", 0.96));
   if (!blob) throw new Error("PNG encoding failed");
-  downloadBlob(blob, filename);
+  if (isNativeExportAvailable()) {
+    const result = await saveBlobNative(blob, filename, "image/png");
+    if (!result?.uri) throw new Error("Native PNG save failed");
+  } else {
+    downloadBlob(blob, filename);
+  }
   return canvas;
 }
 
 export async function exportElementAsPdf(element, delivery, filename = "shil-output.pdf") {
   const canvas = await renderElementAsA4Canvas(element);
   const pdf = canvasToA4Pdf(canvas, delivery);
-  pdf.save(filename);
+  if (isNativeExportAvailable()) {
+    const blob = pdf.output("blob");
+    const result = await saveBlobNative(blob, filename, "application/pdf");
+    if (!result?.uri) throw new Error("Native PDF save failed");
+  } else {
+    const blob = pdf.output("blob");
+    downloadBlob(blob, filename);
+  }
   return pdf;
 }
 
@@ -254,9 +267,14 @@ export async function shareElementAsPdf(element, delivery, filename = "shil-outp
   const canvas = await renderElementAsA4Canvas(element);
   const pdf = canvasToA4Pdf(canvas, delivery);
   const blob = pdf.output("blob");
-  const file = new File([blob], filename, { type: "application/pdf" });
   const text = `خروجی نهایی مهندسی SHIL - ${delivery?.meta?.title || "پروژه"}`;
 
+  if (isNativeExportAvailable()) {
+    await shareBlobNative(blob, filename, "application/pdf", delivery?.meta?.title || "SHIL Final Engineering Delivery");
+    return "shared-pdf";
+  }
+
+  const file = new File([blob], filename, { type: "application/pdf" });
   if (navigator.share && (!navigator.canShare || navigator.canShare({ files: [file] }))) {
     try {
       await navigator.share({
@@ -267,7 +285,6 @@ export async function shareElementAsPdf(element, delivery, filename = "shil-outp
       return "shared-pdf";
     } catch (error) {
       if (error?.name === "AbortError") return "share-cancelled";
-      // Fall through to a real file download if Web Share is unavailable/broken.
     }
   }
 
@@ -362,7 +379,13 @@ function fullCanvasToMultiPagePdf(canvas, title = "SHIL Project Report") {
 export async function exportElementAsMultiPagePdf(element, filename = "shil-project-report.pdf", title = "SHIL Project Report") {
   const canvas = await renderElementAsFullCanvas(element);
   const pdf = fullCanvasToMultiPagePdf(canvas, title);
-  pdf.save(filename);
+  const blob = pdf.output("blob");
+  if (isNativeExportAvailable()) {
+    const result = await saveBlobNative(blob, filename, "application/pdf");
+    if (!result?.uri) throw new Error("Native PDF save failed");
+  } else {
+    downloadBlob(blob, filename);
+  }
   return pdf;
 }
 
@@ -370,6 +393,10 @@ export async function shareElementAsMultiPagePdf(element, filename = "shil-proje
   const canvas = await renderElementAsFullCanvas(element);
   const pdf = fullCanvasToMultiPagePdf(canvas, title);
   const blob = pdf.output("blob");
+  if (isNativeExportAvailable()) {
+    await shareBlobNative(blob, filename, "application/pdf", title);
+    return "shared-pdf";
+  }
   const file = new File([blob], filename, { type: "application/pdf" });
   if (navigator.share && (!navigator.canShare || navigator.canShare({ files: [file] }))) {
     await navigator.share({ title, text: `گزارش کامل پروژه SHIL - ${title}`, files: [file] });

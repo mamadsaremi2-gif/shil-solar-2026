@@ -290,7 +290,7 @@ export default function CalculationInputs() {
   const [autonomyDays, setAutonomyDays] = React.useState("");
 
   const items = React.useMemo(() => {
-    const results = searchConsumerEquipment(query);
+    const results = searchConsumerEquipment(query, equipmentLibrary);
     return results;
   }, [query, equipmentLibrary]);
 
